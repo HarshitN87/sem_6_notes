@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit III — Syntax-Directed Translation &amp; Run-Time Environments | Compiler Design</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,900;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f4ede3;--surface:#faf6ef;--card:#fffdf7;
+  --accent:#c27b6e;--accent-light:#e8c5bc;
+  --accent2:#7b9e6b;--accent2-light:#c5d8b8;
+  --accent3:#d4a76a;--accent3-light:#e8d4aa;
+  --accent4:#6e85a0;--accent4-light:#b0c0d0;
+  --accent5:#9b7bb0;--accent5-light:#cdbde0;
+  --text:#2c2418;--text2:#5a4e3e;--textm:#8a7e6e;
+  --border:#ddd2c0;--border-l:#e8dfd0;
+  --code-bg:#2c2418;--code-tx:#e8dcc8;
+  --font-d:'Playfair Display',Georgia,serif;
+  --font-b:'Source Serif 4',Georgia,serif;
+  --font-m:'DM Mono','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:17px}
+body{font-family:var(--font-b);color:var(--text);background:var(--bg);line-height:1.78;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4,h5{font-family:var(--font-d);font-weight:700;line-height:1.25;color:var(--text)}
+h1{font-size:2.8rem;font-weight:900}h2{font-size:2.1rem}h3{font-size:1.55rem}h4{font-size:1.2rem}
+p{margin-bottom:1.25rem;text-align:justify;hyphens:auto}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid var(--accent-light);transition:.2s}
+a:hover{border-bottom-color:var(--accent)}
+code{font-family:var(--font-m);font-size:.82em;background:var(--code-bg);color:var(--code-tx);padding:.15em .4em;border-radius:3px}
+pre{background:var(--code-bg);color:var(--code-tx);padding:1.4rem 1.6rem;border-radius:8px;overflow-x:auto;margin:1.4rem 0;font-family:var(--font-m);font-size:.82rem;line-height:1.65;border:1px solid rgba(255,255,255,.06)}
+pre code{background:none;padding:0}
+.container{max-width:1200px;margin:0 auto;padding:0 2rem}
+.content-narrow{max-width:800px;margin:0 auto}
+/* Hero */
+.hero{text-align:center;padding:5rem 2rem 3.5rem;border-bottom:3px double var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 25% 40%,rgba(194,123,110,.07) 0%,transparent 55%),radial-gradient(ellipse at 75% 60%,rgba(123,158,107,.06) 0%,transparent 55%);pointer-events:none}
+.hero-label{font-family:var(--font-m);font-size:.72rem;letter-spacing:.35em;text-transform:uppercase;color:var(--textm);margin-bottom:1rem;display:block}
+.hero h1{position:relative;margin-bottom:.6rem}
+.hero h1 span{display:block;font-size:1rem;font-weight:400;font-family:var(--font-m);letter-spacing:.12em;color:var(--textm);margin-bottom:.5rem}
+.hero-sub{font-family:var(--font-d);font-style:italic;font-size:1.25rem;color:var(--text2);margin-bottom:1.2rem}
+.hero-meta{font-family:var(--font-m);font-size:.68rem;color:var(--textm);letter-spacing:.18em;text-transform:uppercase}
+/* Decorative rule */
+.deco-rule{border:none;border-top:2px solid var(--border);margin:3rem auto;width:80%;position:relative}
+.deco-rule::after{content:'◆';position:absolute;top:-.65em;left:50%;transform:translateX(-50%);background:var(--bg);padding:0 .8rem;color:var(--border);font-size:.7rem}
+/* TOC */
+.toc{background:var(--surface);border-bottom:1px solid var(--border);padding:2rem 0}
+.toc-inner{max-width:900px;margin:0 auto;padding:0 2rem}
+.toc h3{font-size:1.1rem;margin-bottom:1rem;text-align:center;letter-spacing:.08em}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+.toc-col h4{font-size:.85rem;font-family:var(--font-m);letter-spacing:.15em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem;border-bottom:1px solid var(--border-l);padding-bottom:.4rem}
+.toc-col ol{list-style:none;counter-reset:toc}
+.toc-col li{counter-increment:toc;margin-bottom:.35rem;font-size:.88rem}
+.toc-col li::before{content:counter(toc,decimal-leading-zero)".";font-family:var(--font-m);font-size:.72rem;color:var(--textm);margin-right:.5rem}
+.toc-col a{border:none;color:var(--text2);transition:.2s}
+.toc-col a:hover{color:var(--accent)}
+/* Sections */
+.part-header{text-align:center;padding:4rem 2rem 2rem;position:relative}
+.part-header::before{content:'';display:block;width:50px;height:3px;background:var(--accent);margin:0 auto 1.5rem}
+.part-header h2{font-size:2.2rem;margin-bottom:.5rem}
+.part-header .part-sub{font-family:var(--font-d);font-style:italic;color:var(--text2);font-size:1.05rem}
+section.topic{padding:3rem 0;border-bottom:1px solid var(--border-l)}
+.topic .content-narrow{padding:0 2rem}
+.topic h3{color:var(--accent);border-left:4px solid var(--accent);padding-left:1rem;margin-bottom:1.5rem}
+.topic h4{color:var(--text2);margin-top:2rem;margin-bottom:.8rem}
+.topic h5{font-size:1.05rem;color:var(--accent2);margin-top:1.5rem;margin-bottom:.6rem}
+/* Cards */
+.card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.8rem;margin:1.5rem 0;box-shadow:0 2px 12px rgba(44,36,24,.04)}
+.card-accent{border-left:4px solid var(--accent)}
+.card-green{border-left:4px solid var(--accent2)}
+.card-amber{border-left:4px solid var(--accent3)}
+.card-blue{border-left:4px solid var(--accent4)}
+.card-title{font-family:var(--font-m);font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--textm);margin-bottom:.8rem}
+/* Definition box */
+.def-box{background:var(--surface);border:2px solid var(--accent3-light);border-radius:8px;padding:1.6rem 1.8rem;margin:1.5rem 0;position:relative}
+.def-box::before{content:'DEFINITION';position:absolute;top:-.6rem;left:1.5rem;background:var(--surface);padding:0 .6rem;font-family:var(--font-m);font-size:.65rem;letter-spacing:.25em;color:var(--accent3);font-weight:500}
+/* Exam tip */
+.exam-tip{background:linear-gradient(135deg,rgba(194,123,110,.06),rgba(123,158,107,.06));border:1px dashed var(--accent);border-radius:8px;padding:1.4rem 1.6rem;margin:1.5rem 0;position:relative}
+.exam-tip::before{content:'EXAM TIP';position:absolute;top:-.6rem;left:1.2rem;background:var(--bg);padding:0 .5rem;font-family:var(--font-m);font-size:.62rem;letter-spacing:.3em;color:var(--accent);font-weight:500}
+/* Memory anchor */
+.mnemonic{background:var(--accent3-light);border-radius:8px;padding:1.2rem 1.5rem;margin:1.2rem 0;font-style:italic}
+.mnemonic strong{font-style:normal;color:var(--text)}
+/* Pull quote */
+.pull-quote{border-left:3px solid var(--accent2);padding:1rem 1.5rem;margin:2rem 0;font-family:var(--font-d);font-style:italic;font-size:1.15rem;color:var(--text2);line-height:1.6}
+/* Tables */
+.table-wrap{overflow-x:auto;margin:1.5rem 0}
+table{width:100%;border-collapse:collapse;font-size:.9rem}
+th{background:var(--accent);color:#fff;font-family:var(--font-m);font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;padding:.8rem 1rem;text-align:left;font-weight:500}
+td{padding:.75rem 1rem;border-bottom:1px solid var(--border-l);vertical-align:top}
+tr:nth-child(even) td{background:rgba(244,237,227,.4)}
+tr:hover td{background:rgba(194,123,110,.06)}
+/* SVG diagram container */
+.diagram-wrap{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin:2rem 0;text-align:center;overflow-x:auto}
+.diagram-wrap svg{max-width:100%;height:auto}
+.diagram-caption{font-family:var(--font-m);font-size:.72rem;color:var(--textm);margin-top:.8rem;letter-spacing:.08em}
+/* Collapsible */
+details{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin:1.2rem 0;overflow:hidden}
+details summary{padding:1rem 1.4rem;cursor:pointer;font-family:var(--font-m);font-size:.85rem;font-weight:500;color:var(--text2);letter-spacing:.05em;transition:.2s;list-style:none;position:relative;padding-left:2.2rem}
+details summary::before{content:'▸';position:absolute;left:1rem;top:50%;transform:translateY(-50%);transition:transform .2s;color:var(--accent)}
+details[open] summary::before{transform:translateY(-50%) rotate(90deg)}
+details summary:hover{color:var(--accent)}
+details .detail-body{padding:0 1.4rem 1.4rem}
+/* Revision cards */
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem;margin:1.5rem 0}
+.rev-card{background:var(--card);border:1px solid var(--border);border-radius:8px;padding:1.4rem;transition:transform .2s,box-shadow .2s}
+.rev-card:hover{transform:translateY(-3px);box-shadow:0 6px 20px rgba(44,36,24,.08)}
+.rev-card h5{font-size:.95rem;color:var(--accent);margin-bottom:.6rem}
+.rev-card p{font-size:.88rem;line-height:1.6;margin-bottom:0}
+/* Footer */
+footer{text-align:center;padding:3rem 2rem;border-top:3px double var(--border);margin-top:4rem}
+footer p{font-family:var(--font-m);font-size:.72rem;color:var(--textm);letter-spacing:.1em}
+/* Animations */
+.fade-in{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease}
+.fade-in.visible{opacity:1;transform:translateY(0)}
+/* Print */
+@media print{
+  body{font-size:11pt;background:#fff}
+  .hero::before,.deco-rule::after{display:none}
+  details[open] .detail-body,.exam-tip,.mnemonic{break-inside:avoid}
+  .toc{break-after:page}
+  section.topic{break-inside:avoid}
+}
+/* Responsive */
+@media(max-width:768px){
+  html{font-size:15px}
+  h1{font-size:2rem}.hero{padding:3rem 1.5rem 2.5rem}
+  .toc-grid{grid-template-columns:1fr}
+  .topic .content-narrow{padding:0 1rem}
+  .rev-grid{grid-template-columns:1fr}
+  .diagram-wrap{padding:1rem}
+}
+/* Ordered/unordered lists */
+ol,ul{margin:0 0 1.25rem 1.5rem}
+li{margin-bottom:.4rem}
+/* Emphasis */
+strong{color:var(--text);font-weight:600}
+em{color:var(--text2)}
+/* Sidenote annotation style */
+.side-note{font-family:var(--font-m);font-size:.75rem;color:var(--textm);background:var(--surface);border-left:2px solid var(--border);padding:.6rem 1rem;margin:1rem 0;border-radius:0 6px 6px 0}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<header class="hero">
+  <span class="hero-label">Compiler Design — University Examination Guide</span>
+  <h1>
+    <span>Unit III</span>
+    Syntax-Directed Translation<br>&amp; Run-Time Environments
+  </h1>
+</header>
+
+<!-- ═══════════════════════ TOC ═══════════════════════ -->
+<nav class="toc">
+  <div class="toc-inner">
+    <h3>Table of Contents</h3>
+    <div class="toc-grid">
+      <div class="toc-col">
+        <h4>Part I — Syntax-Directed Translation</h4>
+        <ol>
+          <li><a href="#sdt-intro">Introduction &amp; Motivation</a></li>
+          <li><a href="#sdd">Syntax-Directed Definitions (SDD)</a></li>
+          <li><a href="#synth">Synthesized Attributes</a></li>
+          <li><a href="#inh">Inherited Attributes</a></li>
+          <li><a href="#depg">Dependency Graphs &amp; Evaluation</a></li>
+          <li><a href="#sattr">S-Attributed Definitions</a></li>
+          <li><a href="#lattr">L-Attributed Definitions</a></li>
+          <li><a href="#stree">Construction of Syntax Trees</a></li>
+          <li><a href="#bottomup">Bottom-Up Evaluation</a></li>
+          <li><a href="#topdown">Top-Down Translation</a></li>
+          <li><a href="#sdt-exam">Exam Corner — SDT</a></li>
+        </ol>
+      </div>
+      <div class="toc-col">
+        <h4>Part II — Run-Time Environments</h4>
+        <ol>
+          <li><a href="#rt-intro">Introduction &amp; Source Language Issues</a></li>
+          <li><a href="#storage-org">Storage Organization</a></li>
+          <li><a href="#static">Static Allocation</a></li>
+          <li><a href="#stack">Stack Allocation</a></li>
+          <li><a href="#heap">Heap Allocation</a></li>
+          <li><a href="#actrec">Activation Records</a></li>
+          <li><a href="#acttree">Activation Trees &amp; Control Stack</a></li>
+          <li><a href="#clang">Storage Allocation in C</a></li>
+          <li><a href="#params">Parameter Passing</a></li>
+          <li><a href="#symtab">Symbol Tables</a></li>
+          <li><a href="#rt-exam">Exam Corner — Run-Time</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--                    PART I: SDT                         -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="part-header" id="part1">
+  <h2>Part I</h2>
+  <p class="part-sub">Syntax-Directed Translation</p>
+</div>
+
+<!-- ─── 1. INTRODUCTION ─── -->
+<section class="topic fade-in" id="sdt-intro">
+<div class="content-narrow">
+<h3>1. Introduction to Syntax-Directed Translation</h3>
+
+<p>When a compiler parses a program, it does far more than merely check whether the source code conforms to the grammar rules of the language. The parser must also <em>gather meaning</em> from the syntactic structure it discovers — computing values, building intermediate representations, generating code annotations, and performing type checking. Syntax-Directed Translation (SDT) is the foundational framework that enables a compiler to attach <strong>semantic actions</strong> (computations) to the productions of a context-free grammar, so that as the parser recognizes syntactic structure, it simultaneously performs the associated computations. In essence, SDT marries the <em>shape</em> of the parse tree with the <em>meaning</em> carried by its nodes.</p>
+
+<p>Consider the problem from an intuitive standpoint. Suppose you are reading the arithmetic expression <code>3 * 4 * 5 + 6</code>. As a human, you naturally evaluate the multiplications first (following precedence) and then the addition, arriving at 66. But a computer parser does not have your intuition — it sees only tokens and grammar rules. SDT provides the mechanism by which we tell the parser: "whenever you recognize that <code>T → T * F</code> has been matched, compute the product of the values associated with the <code>T</code> child and the <code>F</code> child, and store that product as the value of this <code>T</code> node." By attaching such instructions to every production, the entire expression can be evaluated automatically during parsing.</p>
+
+<p>The historical motivation for SDT emerges from the early days of compiler construction in the 1960s and 1970s. Before SDT was formalized, compiler writers had to write ad hoc code to walk the parse tree after construction, extracting and computing values in a separate pass. This was error-prone, difficult to maintain, and conceptually unsatisfying. The realization that semantic computations could be <em>coupled</em> with syntactic recognition — that the grammar itself could serve as a skeleton for translation — was a profound insight attributed to Lewis, Rosenkrantz, and Stearns (1974), and later refined by Aho, Sethi, and Ullman in the Dragon Book. SDT became the standard framework because it provides a clean separation between the <em>what</em> (the grammar and its attributes) and the <em>how</em> (the evaluation strategy).</p>
+
+<div class="card card-accent">
+<div class="card-title">Key Idea</div>
+<p style="margin:0">Syntax-Directed Translation = Context-Free Grammar + Attributes + Semantic Rules. The grammar defines the structure; attributes carry information at each node; semantic rules define how that information is computed.</p>
+</div>
+
+<p>SDT has a remarkably wide range of applications in compiler design. It is used for <strong>type checking</strong> (attaching type attributes to expressions and verifying compatibility), <strong>intermediate code generation</strong> (constructing three-address code or abstract syntax trees), <strong>constant folding</strong> (evaluating constant expressions at compile time), <strong>symbol table management</strong> (tracking declarations and scopes), <strong>code optimization annotations</strong>, and even <strong>error reporting</strong> (attaching source-location attributes to nodes so that error messages can reference specific lines and columns). In the context of your university examinations, SDT questions frequently appear as 10-mark or 15-mark descriptive questions asking you to explain concepts, construct annotated parse trees, compare evaluation strategies, and trace through worked examples. The material in this section will prepare you thoroughly for all such questions.</p>
+
+<div class="exam-tip">
+<p><strong>Common Exam Question:</strong> "What do you mean by Syntax-Directed Translation? Explain with examples." — This is a classic 5-mark opener. Begin with the definition, mention the three components (grammar, attributes, rules), give a small example like a desk calculator, and conclude with applications.</p>
+</div>
+</div>
+</section>
+
+<!-- ─── 2. SDD ─── -->
+<section class="topic fade-in" id="sdd">
+<div class="content-narrow">
+<h3>2. Syntax-Directed Definitions (SDD)</h3>
+
+<p>A <strong>Syntax-Directed Definition (SDD)</strong> is the formal specification of a syntax-directed translation. It is a context-free grammar augmented with two additional components: a set of <em>attributes</em> associated with the grammar symbols (non-terminals and terminals), and a set of <em>semantic rules</em> (also called semantic functions) attached to each production that define how the attributes are computed. The SDD is a declarative specification — it tells us <em>what</em> to compute at each node, without specifying <em>when</em> or in what order the computation happens. The question of evaluation order is addressed separately by the concepts of S-attributed and L-attributed definitions, which we shall explore shortly.</p>
+
+<div class="def-box">
+<p><strong>Formal Definition:</strong> A Syntax-Directed Definition (SDD) is a tuple <code>(G, A, R)</code> where <code>G</code> is a context-free grammar, <code>A</code> is a set of attributes associated with the grammar symbols in each production, and <code>R</code> is a set of semantic rules — one rule per attribute per production — that define how each attribute's value is computed from other attributes and constants.</p>
+</div>
+
+<p>To understand the anatomy of an SDD, consider the following desk-calculator SDD, which is a staple of university examinations. The grammar describes arithmetic expressions with addition and multiplication, and the SDD computes the value of the entire expression:</p>
+
+<pre><code>Production          Semantic Rule
+─────────────────────────────────────────
+L → E               { L.val = E.val }
+E → E₁ + T          { E.val = E₁.val + T.val }
+E → T               { E.val = T.val }
+T → T₁ * F          { T.val = T₁.val * F.val }
+T → F               { T.val = F.val }
+F → ( E )           { F.val = E.val }
+F → digit           { F.val = digit.lexval }</code></pre>
+
+<p>Here, each grammar symbol carries an attribute called <code>val</code> (except <code>digit</code>, which carries <code>lexval</code> obtained from the lexer). The subscript <code>₁</code> on <code>E₁</code> and <code>T₁</code> is a notational convenience to distinguish between multiple instances of the same non-terminal on the right-hand side of a production. The semantic rules are written in the style of mathematical assignments: they define equations that must hold after evaluation. For instance, the rule <code>E.val = E₁.val + T.val</code> says that the value of the <code>E</code> on the left side of the production must equal the sum of the value of the <code>E</code> child and the <code>T</code> child.</p>
+
+<p>An SDD is typically presented as a <strong>semantic-action table</strong> or as annotations directly on the grammar productions. When we draw the <strong>annotated parse tree</strong> for a particular input, we place the computed attribute values next to each node. This annotated parse tree is the central artifact that students must be able to construct in examinations — it demonstrates both understanding of the grammar and correct application of the semantic rules.</p>
+
+<h4>Structure of an SDD — Three Components in Detail</h4>
+
+<p><strong>1. The Grammar (G):</strong> This is a context-free grammar consisting of terminals, non-terminals, a start symbol, and productions. The grammar defines the syntactic structure of the language — it tells us what strings are valid and how they are structured. In the desk-calculator example above, the grammar is an ordinary expression grammar with proper precedence (multiplication binds tighter than addition because <code>T</code> is lower in the derivation tree than <code>E</code>).</p>
+
+<p><strong>2. Attributes (A):</strong> Each grammar symbol <code>X</code> can have a set of attributes associated with it, denoted <code>X.a</code>, <code>X.b</code>, etc. Attributes carry information — they might represent computed values, types, strings, code fragments, or any other data relevant to the translation. There are two fundamental kinds of attributes: <em>synthesized attributes</em> (which carry information upward from children to parents in the parse tree) and <em>inherited attributes</em> (which carry information downward or sideways from parents and siblings to a node). The distinction between these two kinds is so important that we devote the next two sections entirely to them.</p>
+
+<p><strong>3. Semantic Rules (R):</strong> For each production <code>A → X₁ X₂ ... Xₙ</code>, the SDD includes semantic rules of the form <code>A.b = f(X₁.a, X₂.a, ..., Xₙ.a)</code>, where <code>f</code> is a function (often a simple arithmetic expression, but potentially arbitrary). The semantic rules define a system of equations over the attributes of the parse tree. The key property is that this system of equations must have a consistent solution — there must be no circular dependencies. If the dependency graph (explained later) is acyclic, then the attributes can be evaluated in some topological order.</p>
+
+<div class="pull-quote">
+"The SDD is a declarative specification. It says <em>what</em> to compute, not <em>when</em> to compute it. The evaluation order is a separate concern, determined by the type of attributes and the parsing strategy."
+</div>
+</div>
+</section>
+
+<!-- ─── 3. SYNTHESIZED ─── -->
+<section class="topic fade-in" id="synth">
+<div class="content-narrow">
+<h3>3. Synthesized Attributes</h3>
+
+<p>A <strong>synthesized attribute</strong> is an attribute of a non-terminal node in the parse tree whose value is computed from the attributes of its <em>children</em> in the parse tree. The term "synthesized" captures the essential idea: information is <em>built up</em> or <em>synthesized</em> from the leaves toward the root. If you imagine the parse tree as a factory assembly line, synthesized attributes represent the product being assembled as parts (child attributes) flow upward and are combined at each station (parent node).</p>
+
+<div class="def-box">
+<p><strong>Formal Definition:</strong> An attribute <code>B.i</code> of a non-terminal <code>B</code> occurring at a parse-tree node <code>n</code> is <strong>synthesized</strong> if its value is determined by a semantic rule associated with the production used at node <code>n</code>. That is, for a production with <code>B</code> on the left-hand side, the rule for <code>B.i</code> depends only on attributes of the symbols on the right-hand side of that production (the children of <code>n</code>).</p>
+</div>
+
+<p>In the desk-calculator SDD, every attribute is synthesized. Consider the production <code>E → E₁ + T</code> with the semantic rule <code>E.val = E₁.val + T.val</code>. Here, <code>E.val</code> is a synthesized attribute because its value is computed from the attributes of its children: <code>E₁.val</code> (the value of the left child <code>E</code>) and <code>T.val</code> (the value of the right child <code>T</code>). Similarly, <code>T.val = T₁.val * F.val</code> synthesizes the product of child values, and <code>F.val = digit.lexval</code> synthesizes the digit's value from the terminal leaf.</p>
+
+<p>Synthesized attributes have a beautiful property: they can always be evaluated in a <strong>bottom-up</strong> order. Since each attribute depends only on its children's attributes, we can evaluate the attributes at the leaves first (where the values are typically given directly from the lexer or as constants), then move upward level by level, evaluating each parent's attributes once all its children's attributes are ready. This bottom-up evaluation strategy is natural for shift-reduce parsers (such as LR parsers), which construct the parse tree from leaves to root.</p>
+
+<p>Every SDD that uses only synthesized attributes is called an <strong>S-Attributed Definition</strong> (discussed in detail in Section 6). S-attributed definitions are the simplest and most commonly encountered type, and they form the foundation for understanding more complex attribute grammars.</p>
+
+<h4>Worked Example: Evaluating Synthesized Attributes for "3 * 4 * 5 + 6"</h4>
+
+<p>Let us trace through the complete evaluation of the expression <code>3 * 4 * 5 + 6</code> using the desk-calculator SDD. We construct the parse tree, then evaluate all synthesized attributes bottom-up.</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 860 455" xmlns="http://www.w3.org/2000/svg" style="max-width:860px">
+  <defs><filter id="ds1" x="-4%" y="-4%" width="108%" height="112%"><feDropShadow dx="1" dy="1" stdDeviation="1.5" flood-opacity=".12"/></filter></defs>
+  <!-- Edges -->
+  <g stroke="#c4a882" stroke-width="1.5" fill="none">
+    <line x1="569" y1="42" x2="569" y2="73"/>
+    <line x1="569" y1="97" x2="368" y2="128"/>
+    <line x1="569" y1="97" x2="655" y2="128"/>
+    <line x1="569" y1="97" x2="770" y2="128"/>
+    <line x1="368" y1="152" x2="368" y2="183"/>
+    <line x1="770" y1="152" x2="770" y2="183"/>
+    <line x1="368" y1="207" x2="195" y2="238"/>
+    <line x1="368" y1="207" x2="425" y2="238"/>
+    <line x1="368" y1="207" x2="540" y2="238"/>
+    <line x1="770" y1="207" x2="770" y2="238"/>
+    <line x1="195" y1="262" x2="80" y2="293"/>
+    <line x1="195" y1="262" x2="195" y2="293"/>
+    <line x1="195" y1="262" x2="310" y2="293"/>
+    <line x1="540" y1="262" x2="540" y2="293"/>
+    <line x1="80" y1="317" x2="80" y2="348"/>
+    <line x1="310" y1="317" x2="310" y2="348"/>
+    <line x1="80" y1="372" x2="80" y2="403"/>
+  </g>
+  <!-- Non-terminal nodes -->
+  <g font-family="'DM Mono',monospace" font-size="9.5" filter="url(#ds1)">
+    <rect x="529" y="18" width="80" height="24" rx="4" fill="#c27b6e"/><text x="569" y="34" text-anchor="middle" fill="#fff">L.val=66</text>
+    <rect x="529" y="73" width="80" height="24" rx="4" fill="#c27b6e"/><text x="569" y="89" text-anchor="middle" fill="#fff">E.val=66</text>
+    <rect x="328" y="128" width="80" height="24" rx="4" fill="#c27b6e"/><text x="368" y="144" text-anchor="middle" fill="#fff">E.val=60</text>
+    <rect x="730" y="128" width="80" height="24" rx="4" fill="#7b9e6b"/><text x="770" y="144" text-anchor="middle" fill="#fff">T.val=6</text>
+    <rect x="328" y="183" width="80" height="24" rx="4" fill="#7b9e6b"/><text x="368" y="199" text-anchor="middle" fill="#fff">T.val=60</text>
+    <rect x="730" y="183" width="80" height="24" rx="4" fill="#d4a76a"/><text x="770" y="199" text-anchor="middle" fill="#fff">F.val=6</text>
+    <rect x="155" y="238" width="80" height="24" rx="4" fill="#7b9e6b"/><text x="195" y="254" text-anchor="middle" fill="#fff">T.val=12</text>
+    <rect x="500" y="238" width="80" height="24" rx="4" fill="#d4a76a"/><text x="540" y="254" text-anchor="middle" fill="#fff">F.val=5</text>
+    <rect x="40" y="293" width="80" height="24" rx="4" fill="#7b9e6b"/><text x="80" y="309" text-anchor="middle" fill="#fff">T.val=3</text>
+    <rect x="270" y="293" width="80" height="24" rx="4" fill="#d4a76a"/><text x="310" y="309" text-anchor="middle" fill="#fff">F.val=4</text>
+    <rect x="40" y="348" width="80" height="24" rx="4" fill="#d4a76a"/><text x="80" y="364" text-anchor="middle" fill="#fff">F.val=3</text>
+  </g>
+  <!-- Terminal nodes -->
+  <g font-family="'DM Mono',monospace" font-size="12" filter="url(#ds1)">
+    <rect x="639" y="128" width="32" height="24" rx="4" fill="#6e85a0"/><text x="655" y="144" text-anchor="middle" fill="#fff">+</text>
+    <rect x="409" y="238" width="32" height="24" rx="4" fill="#6e85a0"/><text x="425" y="254" text-anchor="middle" fill="#fff">*</text>
+    <rect x="179" y="293" width="32" height="24" rx="4" fill="#6e85a0"/><text x="195" y="309" text-anchor="middle" fill="#fff">*</text>
+    <rect x="754" y="238" width="32" height="24" rx="4" fill="#b8866e"/><text x="770" y="254" text-anchor="middle" fill="#fff">6</text>
+    <rect x="524" y="293" width="32" height="24" rx="4" fill="#b8866e"/><text x="540" y="309" text-anchor="middle" fill="#fff">5</text>
+    <rect x="294" y="348" width="32" height="24" rx="4" fill="#b8866e"/><text x="310" y="364" text-anchor="middle" fill="#fff">4</text>
+    <rect x="64" y="403" width="32" height="24" rx="4" fill="#b8866e"/><text x="80" y="419" text-anchor="middle" fill="#fff">3</text>
+  </g>
+  <!-- Legend -->
+  <g font-family="'DM Mono',monospace" font-size="9" transform="translate(10,440)">
+    <rect x="0" y="-8" width="10" height="10" rx="2" fill="#c27b6e"/><text x="15" y="1" fill="#5a4e3e">E/L</text>
+    <rect x="60" y="-8" width="10" height="10" rx="2" fill="#7b9e6b"/><text x="75" y="1" fill="#5a4e3e">T</text>
+    <rect x="100" y="-8" width="10" height="10" rx="2" fill="#d4a76a"/><text x="115" y="1" fill="#5a4e3e">F</text>
+    <rect x="140" y="-8" width="10" height="10" rx="2" fill="#6e85a0"/><text x="155" y="1" fill="#5a4e3e">Op</text>
+    <rect x="185" y="-8" width="10" height="10" rx="2" fill="#b8866e"/><text x="200" y="1" fill="#5a4e3e">digit</text>
+  </g>
+</svg>
+<p class="diagram-caption">Fig. 1 — Annotated parse tree for "3 * 4 * 5 + 6" showing synthesized attribute values (L.val = 66)</p>
+</div>
+
+<p><strong>Evaluation trace (bottom-up):</strong> We begin at the leaves, where the lexer provides <code>digit.lexval</code> values: 3, 4, 5, and 6. Moving upward, the production <code>F → digit</code> gives us <code>F.val = digit.lexval</code>, so we get <code>F.val = 3</code>, <code>F.val = 4</code>, <code>F.val = 5</code>, and <code>F.val = 6</code>. The production <code>T → F</code> propagates values upward without change: <code>T.val = 3</code> (for the leftmost <code>T</code>). Then <code>T → T₁ * F</code> computes products: <code>T.val = 3 * 4 = 12</code>, and then <code>T.val = 12 * 5 = 60</code>. The production <code>E → T</code> gives <code>E.val = 60</code>. On the right side, <code>T → F</code> gives <code>T.val = 6</code>. Finally, <code>E → E₁ + T</code> computes <code>E.val = 60 + 6 = 66</code>, and <code>L → E</code> gives <code>L.val = 66</code>. The entire expression evaluates to 66.</p>
+
+<div class="side-note"><strong>Exam Writing Tip:</strong> When asked to "illustrate with examples," always draw the annotated parse tree and show the evaluation order explicitly. Professors award marks for both the correct tree structure and the correct attribute values at each node.</div>
+</div>
+</section>
+
+<!-- ─── 4. INHERITED ─── -->
+<section class="topic fade-in" id="inh">
+<div class="content-narrow">
+<h3>4. Inherited Attributes</h3>
+
+<p>An <strong>inherited attribute</strong> is an attribute of a non-terminal node whose value is determined by the attributes of its <em>parent</em> and/or its <em>siblings</em> in the parse tree, rather than its children. While synthesized attributes carry information <em>upward</em>, inherited attributes carry information <em>downward</em> or <em>laterally</em> through the parse tree. This distinction is not merely a technical convenience — it reflects a fundamentally different kind of information flow that arises naturally in many translation tasks.</p>
+
+<div class="def-box">
+<p><strong>Formal Definition:</strong> An attribute <code>B.i</code> of a non-terminal <code>B</code> at a parse-tree node <code>n</code> is <strong>inherited</strong> if its value is determined by a semantic rule associated with the production at the <em>parent</em> of <code>n</code>. That is, the rule for <code>B.i</code> depends on attributes of the parent node and/or siblings of <code>B</code> in the right-hand side of the production, but <em>not</em> on attributes of <code>B</code>'s own children.</p>
+</div>
+
+<p>The canonical example of inherited attributes arises in <strong>type declaration processing</strong>. Consider a C-like declaration <code>int a, b, c;</code>. The grammar for such declarations might be:</p>
+
+<pre><code>D → T L           { L.inh = T.type }
+T → int           { T.type = integer }
+T → float         { T.type = real }
+L → L₁ , id       { L₁.inh = L.inh; addType(id.entry, L.inh) }
+L → id            { addType(id.entry, L.inh) }</code></pre>
+
+<p>Here, <code>L.inh</code> is an inherited attribute. When the parser recognizes <code>D → T L</code>, it sets <code>L.inh = T.type</code> — the type declared by <code>T</code> (e.g., <code>integer</code>) is <em>passed down</em> to the list of identifiers <code>L</code>. As <code>L</code> is expanded recursively through <code>L → L₁ , id</code>, the inherited attribute is propagated to each successive <code>L₁</code>, ensuring that every identifier in the comma-separated list receives the same type. The function <code>addType</code> records the type of each identifier in the symbol table.</p>
+
+<p>This example illustrates why inherited attributes are necessary: the type information originates at the <code>T</code> node (a sibling of <code>L</code> in the production <code>D → T L</code>) and must flow downward through the list of identifiers. Synthesized attributes alone cannot accomplish this, because the <code>L</code> nodes have no way of learning the type from their children (the children are just identifiers and commas).</p>
+
+<h4>Another Example: Sign and Number Processing</h4>
+
+<p>Consider the SDD from the university PYQ:</p>
+
+<pre><code>S → A Sign         { if Sign.sign = 1 then S.val = A.val
+                     else S.val = -A.val }
+Sign → +           { Sign.sign = 1 }
+Sign → -           { Sign.sign = 0 }
+A → A₁ d           { A.val = A₁.val * 10 + d.lexval }
+A → d              { A.val = d.lexval }</code></pre>
+
+<p>Here, <code>A.val</code> is synthesized (computed from children), <code>Sign.sign</code> is synthesized (determined by the terminal), and <code>S.val</code> is synthesized (computed from <code>A.val</code> and <code>Sign.sign</code>). However, if we were to modify the SDD so that the sign information must be propagated into the digit-processing rules (for instance, to handle negative digits directly), we would need inherited attributes to pass the sign information downward.</p>
+
+<h4>Key Differences: Synthesized vs. Inherited</h4>
+
+<div class="table-wrap">
+<table>
+<tr><th>Aspect</th><th>Synthesized Attributes</th><th>Inherited Attributes</th></tr>
+<tr><td><strong>Direction of flow</strong></td><td>Bottom-up (children → parent)</td><td>Top-down or lateral (parent/sibling → node)</td></tr>
+<tr><td><strong>Depends on</strong></td><td>Attributes of children in parse tree</td><td>Attributes of parent and/or siblings</td></tr>
+<tr><td><strong>Evaluation order</strong></td><td>After children are evaluated</td><td>Before the node's own children are evaluated</td></tr>
+<tr><td><strong>Common use</strong></td><td>Computing values, types of expressions</td><td>Passing context (type, scope) to sub-trees</td></tr>
+<tr><td><strong>Parser compatibility</strong></td><td>Natural with bottom-up (LR) parsers</td><td>Natural with top-down (LL) parsers</td></tr>
+<tr><td><strong>Notation</strong></td><td><code>X.syn</code> or just <code>X.val</code></td><td><code>X.inh</code> or <code>X.in</code></td></tr>
+</table>
+</div>
+
+<div class="exam-tip">
+<p><strong>Frequently Asked:</strong> "Compare synthesized and inherited attributes in detail with examples." — This is a classic 5-mark or 10-mark question. Structure your answer with definitions, direction of flow, examples (desk calculator for synthesized, type declaration for inherited), and a comparison table.</p>
+</div>
+</div>
+</section>
+
+<!-- ─── 5. DEPENDENCY GRAPHS ─── -->
+<section class="topic fade-in" id="depg">
+<div class="content-narrow">
+<h3>5. Dependency Graphs &amp; Attribute Evaluation</h3>
+
+<p>When we have an annotated parse tree with both synthesized and inherited attributes, the question arises: in what order should we evaluate the attributes? The answer lies in the <strong>dependency graph</strong>, a directed graph that captures the data-flow relationships among all attributes in the parse tree. If the dependency graph is acyclic, then a valid evaluation order exists (any topological sort of the graph), and the SDD is said to be <em>well-defined</em>.</p>
+
+<div class="def-box">
+<p><strong>Dependency Graph:</strong> For a given parse tree, the dependency graph is a directed graph whose nodes correspond to attribute instances in the tree. There is a directed edge from attribute instance <code>b</code> to attribute instance <code>c</code> if the semantic rule for <code>c</code> depends on the value of <code>b</code>. In other words, an edge <code>b → c</code> means "c must be evaluated after b."</p>
+</div>
+
+<h4>Constructing the Dependency Graph for "10 + 8 * 5"</h4>
+
+<p>Let us construct the dependency graph for the expression <code>10 + 8 * 5</code> using the desk-calculator SDD. The parse tree structure is <code>E → E₁ + T</code>, where <code>E₁ → T → F → digit(10)</code>, and <code>T → T₁ * F</code>, where <code>T₁ → F → digit(8)</code> and <code>F → digit(5)</code>.</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 620 420" xmlns="http://www.w3.org/2000/svg" style="max-width:620px">
+  <defs><marker id="ah1" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#c27b6e"/></marker></defs>
+  <!-- Layer 1: digit leaves -->
+  <g font-family="'DM Mono',monospace" font-size="10">
+    <rect x="30" y="370" width="100" height="26" rx="5" fill="#b8866e"/><text x="80" y="388" text-anchor="middle" fill="#fff">digit₁.val=10</text>
+    <rect x="230" y="370" width="100" height="26" rx="5" fill="#b8866e"/><text x="280" y="388" text-anchor="middle" fill="#fff">digit₂.val=8</text>
+    <rect x="430" y="370" width="100" height="26" rx="5" fill="#b8866e"/><text x="480" y="388" text-anchor="middle" fill="#fff">digit₃.val=5</text>
+    <!-- Layer 2: F nodes -->
+    <rect x="30" y="300" width="100" height="26" rx="5" fill="#d4a76a"/><text x="80" y="318" text-anchor="middle" fill="#fff">F₁.val = 10</text>
+    <rect x="230" y="300" width="100" height="26" rx="5" fill="#d4a76a"/><text x="280" y="318" text-anchor="middle" fill="#fff">F₂.val = 8</text>
+    <rect x="430" y="300" width="100" height="26" rx="5" fill="#d4a76a"/><text x="480" y="318" text-anchor="middle" fill="#fff">F₃.val = 5</text>
+    <!-- Layer 3: T nodes -->
+    <rect x="30" y="230" width="100" height="26" rx="5" fill="#7b9e6b"/><text x="80" y="248" text-anchor="middle" fill="#fff">T₁.val = 10</text>
+    <rect x="230" y="230" width="100" height="26" rx="5" fill="#7b9e6b"/><text x="280" y="248" text-anchor="middle" fill="#fff">T₂.val = 8</text>
+    <!-- Layer 4: E₁ and T₃ -->
+    <rect x="30" y="160" width="100" height="26" rx="5" fill="#c27b6e"/><text x="80" y="178" text-anchor="middle" fill="#fff">E₁.val = 10</text>
+    <rect x="330" y="160" width="110" height="26" rx="5" fill="#7b9e6b"/><text x="385" y="178" text-anchor="middle" fill="#fff">T₃.val = 40</text>
+    <!-- Layer 5: E₂ -->
+    <rect x="155" y="80" width="110" height="26" rx="5" fill="#c27b6e"/><text x="210" y="98" text-anchor="middle" fill="#fff">E₂.val = 50</text>
+  </g>
+  <!-- Arrows -->
+  <g stroke="#c27b6e" stroke-width="1.5" fill="none" marker-end="url(#ah1)">
+    <line x1="80" y1="370" x2="80" y2="326"/><line x1="80" y1="300" x2="80" y2="256"/>
+    <line x1="80" y1="230" x2="80" y2="186"/>
+    <line x1="280" y1="370" x2="280" y2="326"/><line x1="280" y1="300" x2="280" y2="256"/>
+    <line x1="480" y1="370" x2="480" y2="326"/>
+    <line x1="280" y1="230" x2="360" y2="186"/><line x1="480" y1="300" x2="400" y2="186"/>
+    <line x1="80" y1="160" x2="180" y2="106"/><line x1="385" y1="160" x2="240" y2="106"/>
+  </g>
+</svg>
+<p class="diagram-caption">Fig. 2 — Dependency graph for "10 + 8 * 5" showing attribute evaluation order (arrows indicate data-flow dependencies)</p>
+</div>
+
+<p>The dependency graph reveals the evaluation order clearly. The leaf attributes (<code>digit.lexval</code>) have no incoming edges — they are the starting points. From there, evaluation proceeds upward: <code>F.val</code> values depend on <code>digit.lexval</code>; <code>T.val</code> values depend on <code>F.val</code> and (for multiplication) on other <code>T.val</code> and <code>F.val</code> values; and finally, <code>E.val</code> depends on <code>E₁.val</code> and <code>T.val</code>. One valid topological ordering is: <code>digit₁ → F₁ → T₁ → E₁</code>, <code>digit₂ → F₂ → T₂</code>, <code>digit₃ → F₃ → T₃ → E₂</code>. The final result is <code>E₂.val = 10 + 40 = 50</code>.</p>
+
+<div class="card card-green">
+<div class="card-title">Why Dependency Graphs Matter</div>
+<p style="margin:0">If the dependency graph contains a <strong>cycle</strong>, the SDD is ill-defined — there is no consistent evaluation order, and the attributes cannot be computed. In practice, well-designed SDDs for compiler tasks always produce acyclic dependency graphs. The dependency graph also tells us whether an SDD can be evaluated during a single pass of the parser (e.g., bottom-up for S-attributed, left-to-right for L-attributed).</p>
+</div>
+</div>
+</section>
+
+<!-- ─── 6. S-ATTRIBUTED ─── -->
+<section class="topic fade-in" id="sattr">
+<div class="content-narrow">
+<h3>6. S-Attributed Definitions</h3>
+
+<p>An SDD that uses <em>only synthesized attributes</em> is called an <strong>S-Attributed Definition</strong>. This is the simplest and most commonly encountered form of syntax-directed definition. In an S-attributed definition, every attribute is computed from the attributes of the node's children in the parse tree, meaning information flows exclusively upward from leaves to root.</p>
+
+<div class="def-box">
+<p><strong>Formal Definition:</strong> An SDD is <strong>S-Attributed</strong> if every attribute is a synthesized attribute. That is, for every production, the semantic rules compute attributes of the left-hand side non-terminal from attributes of the right-hand side symbols only.</p>
+</div>
+
+<p>The desk-calculator SDD presented earlier is a perfect example of an S-attributed definition: every <code>.val</code> attribute is computed from child attributes. The beauty of S-attributed definitions is their simplicity and their natural compatibility with <strong>bottom-up parsing</strong>. Since LR parsers (such as SLR, CLR, and LALR parsers) construct the parse tree from the leaves upward — reducing children to parents — synthesized attributes can be evaluated at the exact moment each reduction is performed. The parser maintains an <strong>attribute stack</strong> (parallel to the state stack) that stores the attribute values of symbols on the stack. When a reduction <code>A → X₁ X₂ ... Xₙ</code> occurs, the parser pops the top <code>n</code> entries from the attribute stack, applies the semantic rule to compute <code>A</code>'s attribute, and pushes the result back.</p>
+
+<h4>Properties of S-Attributed Definitions</h4>
+<ul>
+<li><strong>No inherited attributes:</strong> All information flows bottom-up.</li>
+<li><strong>Acyclic dependency graph guaranteed:</strong> Since every edge in the dependency graph goes from a child to its parent, cycles are impossible in a finite tree.</li>
+<li><strong>Single-pass evaluation:</strong> Attributes can be computed during a single bottom-up traversal of the parse tree, making them ideal for LR parsing.</li>
+<li><strong>Simple implementation:</strong> Only a value stack is needed alongside the parser stack.</li>
+<li><strong>Limitation:</strong> Cannot express translations that require top-down information flow (such as propagating type information from a declaration to its variable list).</li>
+</ul>
+
+<div class="exam-tip">
+<p><strong>Key Exam Distinction:</strong> S-Attributed definitions are a <em>subset</em> of L-attributed definitions. Every S-attributed definition is L-attributed (trivially, since there are no inherited attributes to violate the L-attributed constraint), but not every L-attributed definition is S-attributed.</p>
+</div>
+</div>
+</section>
+
+<!-- ─── 7. L-ATTRIBUTED ─── -->
+<section class="topic fade-in" id="lattr">
+<div class="content-narrow">
+<h3>7. L-Attributed Definitions</h3>
+
+<p>An <strong>L-Attributed Definition</strong> (where "L" stands for "left-to-right" traversal) is an SDD in which attributes may be both synthesized and inherited, subject to a crucial constraint: for each production <code>A → X₁ X₂ ... Xₙ</code>, the semantic rule for an attribute of <code>Xⱼ</code> (where 1 ≤ j ≤ n) may depend only on:</p>
+
+<ol>
+<li>Attributes of the symbols <code>X₁, X₂, ..., Xⱼ₋₁</code> (the siblings to the <em>left</em> of <code>Xⱼ</code>), and</li>
+<li>Attributes of <code>A</code> (the parent, which provides inherited attributes to <code>Xⱼ</code>), and</li>
+<li>Synthesized attributes of <code>Xⱼ</code> itself (which may depend on <code>Xⱼ</code>'s children).</li>
+</ol>
+
+<p>The constraint essentially says that attributes must be evaluable in a <strong>left-to-right pass</strong> over the right-hand side of each production. You cannot use attributes of symbols to the <em>right</em> of <code>Xⱼ</code> when computing <code>Xⱼ</code>'s attributes. This restriction ensures that L-attributed definitions can be evaluated during a single left-to-right traversal of the parse tree — making them compatible with both top-down (LL) and bottom-up (LR) parsing strategies.</p>
+
+<div class="def-box">
+<p><strong>Formal Definition:</strong> An SDD is <strong>L-Attributed</strong> if, for every production <code>A → X₁ X₂ ... Xₙ</code> and for every semantic rule associated with <code>Xⱼ</code>, the rule depends only on:
+<br>(a) Synthesized attributes of <code>Xⱼ</code> or attributes of <code>X₁, ..., Xⱼ₋₁</code> (symbols to the left), and
+<br>(b) Inherited attributes of <code>A</code> (the parent).
+</p>
+</div>
+
+<h4>Example of an L-Attributed Definition</h4>
+
+<p>The type-declaration SDD from Section 4 is L-attributed. In the production <code>D → T L</code>, the rule <code>L.inh = T.type</code> computes <code>L</code>'s inherited attribute from <code>T</code>'s synthesized attribute — and <code>T</code> is to the left of <code>L</code> in the production. In the production <code>L → L₁ , id</code>, the rule <code>L₁.inh = L.inh</code> propagates the inherited attribute from the parent <code>L</code> to the child <code>L₁</code> (which is also to the left of the <code>,</code> and <code>id</code>). All dependencies respect the left-to-right constraint.</p>
+
+<h4>Properties of L-Attributed Definitions</h4>
+<ul>
+<li><strong>More expressive than S-attributed:</strong> Can handle both bottom-up and top-down information flow.</li>
+<li><strong>Left-to-right evaluation:</strong> Attributes can be computed in a single pass from left to right over each production's right-hand side.</li>
+<li><strong>Compatible with LL parsing:</strong> Can be evaluated during predictive (top-down) parsing by computing inherited attributes before expanding a non-terminal and synthesized attributes after.</li>
+<li><strong>Also compatible with LR parsing:</strong> With some modifications (using a side stack or passing attributes through the parser state).</li>
+<li><strong>No right-to-left dependencies:</strong> Cannot use attributes of symbols to the right in computing a given attribute.</li>
+</ul>
+
+<div class="table-wrap">
+<table>
+<tr><th>Feature</th><th>S-Attributed</th><th>L-Attributed</th></tr>
+<tr><td>Attribute types</td><td>Only synthesized</td><td>Synthesized + Inherited</td></tr>
+<tr><td>Information flow</td><td>Bottom-up only</td><td>Left-to-right, top-down, bottom-up</td></tr>
+<tr><td>Evaluation strategy</td><td>Bottom-up (during reductions)</td><td>Left-to-right traversal</td></tr>
+<tr><td>Parser compatibility</td><td>LR parsers (natural)</td><td>LL and LR parsers</td></tr>
+<tr><td>Expressiveness</td><td>Less expressive</td><td>More expressive</td></tr>
+<tr><td>Subset relation</td><td>Subset of L-attributed</td><td>Superset of S-attributed</td></tr>
+<tr><td>Example</td><td>Desk calculator</td><td>Type declarations</td></tr>
+<tr><td>Implementation</td><td>Attribute stack alongside parser stack</td><td>Global variables or stack with side information</td></tr>
+</table>
+</div>
+
+<div class="pull-quote">
+"Every S-attributed definition is automatically L-attributed (the left-to-right constraint is trivially satisfied when there are no inherited attributes), but the converse is not true."
+</div>
+
+<div class="exam-tip">
+<p><strong>PYQ Alert:</strong> "Compare S-Attributed Definitions vs L-Attributed Definitions" appears frequently as a 5-mark or 10-mark question. Always present the comparison table and give one example of each type.</p>
+</div>
+</div>
+</section>
+
+<!-- ─── 8. SYNTAX TREES ─── -->
+<section class="topic fade-in" id="stree">
+<div class="content-narrow">
+<h3>8. Construction of Syntax Trees</h3>
+
+<p>A <strong>syntax tree</strong> (also called an <strong>abstract syntax tree</strong> or AST) is a condensed representation of the parse tree that captures the essential structure of the source program while omitting redundant syntactic details such as parentheses, single-production chains, and punctuation. While a parse tree (also called a <strong>concrete syntax tree</strong>) faithfully reflects every grammar production used during parsing, a syntax tree strips away the scaffolding and retains only the operators, operands, and their hierarchical relationships.</p>
+
+<p>For example, the expression <code>(3 + 4) * 5</code> would have a parse tree with nodes for the parentheses and multiple intermediate non-terminals (<code>E</code>, <code>T</code>, <code>F</code>), but its syntax tree would simply be:</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 340 200" xmlns="http://www.w3.org/2000/svg" style="max-width:340px">
+  <g font-family="'DM Mono',monospace" font-size="12">
+    <!-- * root -->
+    <line x1="170" y1="30" x2="90" y2="90" stroke="#c4a882" stroke-width="1.5"/>
+    <line x1="170" y1="30" x2="260" y2="90" stroke="#c4a882" stroke-width="1.5"/>
+    <rect x="148" y="14" width="44" height="28" rx="6" fill="#6e85a0"/><text x="170" y="33" text-anchor="middle" fill="#fff">*</text>
+    <!-- + left child -->
+    <line x1="90" y1="110" x2="50" y2="160" stroke="#c4a882" stroke-width="1.5"/>
+    <line x1="90" y1="110" x2="130" y2="160" stroke="#c4a882" stroke-width="1.5"/>
+    <rect x="68" y="90" width="44" height="28" rx="6" fill="#6e85a0"/><text x="90" y="109" text-anchor="middle" fill="#fff">+</text>
+    <rect x="30" y="160" width="40" height="24" rx="5" fill="#b8866e"/><text x="50" y="176" text-anchor="middle" fill="#fff">3</text>
+    <rect x="110" y="160" width="40" height="24" rx="5" fill="#b8866e"/><text x="130" y="176" text-anchor="middle" fill="#fff">4</text>
+    <!-- 5 right child -->
+    <rect x="240" y="88" width="40" height="24" rx="5" fill="#b8866e"/><text x="260" y="104" text-anchor="middle" fill="#fff">5</text>
+  </g>
+</svg>
+<p class="diagram-caption">Fig. 3 — Syntax tree for "(3 + 4) * 5" — note the absence of parentheses and intermediate non-terminals</p>
+</div>
+
+<h4>Syntax Tree vs. Parse Tree</h4>
+
+<div class="table-wrap">
+<table>
+<tr><th>Aspect</th><th>Parse Tree</th><th>Syntax Tree</th></tr>
+<tr><td>Also called</td><td>Concrete syntax tree</td><td>Abstract syntax tree (AST)</td></tr>
+<tr><td>Detail level</td><td>Shows every grammar production</td><td>Shows only essential structure</td></tr>
+<tr><td>Nodes</td><td>All grammar symbols (terminals &amp; non-terminals)</td><td>Only operators and operands</td></tr>
+<tr><td>Parentheses</td><td>Present as terminal nodes</td><td>Implicit in tree structure</td></tr>
+<tr><td>Single productions</td><td>Each has a node</td><td>Collapsed/eliminated</td></tr>
+<tr><td>Use</td><td>Parsing verification</td><td>Code generation, optimization</td></tr>
+</table>
+</div>
+
+<h4>Constructing Syntax Trees via SDD</h4>
+
+<p>A syntax tree can be constructed during parsing using an SDD that creates tree nodes. Each grammar symbol is augmented with an attribute <code>.node</code> (a pointer to a tree node), and the semantic rules create new nodes using a function like <code>mkNode(op, left, right)</code> for interior nodes and <code>mkLeaf(val)</code> for leaf nodes. For example:</p>
+
+<pre><code>E → E₁ + T    { E.node = mkNode('+', E₁.node, T.node) }
+E → T          { E.node = T.node }
+T → T₁ * F    { T.node = mkNode('*', T₁.node, F.node) }
+T → F          { T.node = F.node }
+F → ( E )      { F.node = E.node }
+F → digit      { F.node = mkLeaf(digit.lexval) }</code></pre>
+
+<p>This SDD is S-attributed (all attributes are synthesized), and it constructs the syntax tree bottom-up as the parser reduces. Each reduction creates a new node (or reuses an existing one for single-production chains like <code>E → T</code>), and the resulting tree is the abstract syntax tree of the expression.</p>
+</div>
+</section>
+
+<!-- ─── 9. BOTTOM-UP EVALUATION ─── -->
+<section class="topic fade-in" id="bottomup">
+<div class="content-narrow">
+<h3>9. Bottom-Up Evaluation of S-Attributed Definitions</h3>
+
+<p>Since S-attributed definitions use only synthesized attributes, they can be evaluated naturally during <strong>bottom-up (LR) parsing</strong>. The mechanism is elegant and straightforward: the parser maintains an <strong>attribute value stack</strong> that runs parallel to the parser's state stack. Each time a symbol is shifted onto the state stack, its attribute value (if any) is pushed onto the value stack. When a reduction <code>A → X₁ X₂ ... Xₙ</code> occurs, the parser:</p>
+
+<ol>
+<li>Pops the top <code>n</code> entries from the value stack (these are the attribute values of <code>X₁, X₂, ..., Xₙ</code>).</li>
+<li>Applies the semantic rule to compute <code>A</code>'s synthesized attribute from the popped values.</li>
+<li>Pushes <code>A</code>'s attribute value onto the value stack.</li>
+</ol>
+
+<p>This process is identical to how a shift-reduce parser works, with the value stack providing the "memory" for attribute computation. The value stack is sometimes called the <strong>semantic stack</strong> or <strong>attribute stack</strong>.</p>
+
+<h4>Worked Example: Evaluating "3 * 4 + 5" During LR Parsing</h4>
+
+<p>Let us trace the bottom-up evaluation for the input <code>3 * 4 + 5</code> using the desk-calculator SDD. We show the parser state stack, the value stack, and the action at each step:</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>Step</th><th>Parser Stack</th><th>Value Stack</th><th>Input</th><th>Action</th></tr>
+<tr><td>1</td><td>$</td><td></td><td>3 * 4 + 5 $</td><td>Shift 3</td></tr>
+<tr><td>2</td><td>$ digit(3)</td><td>[3]</td><td>* 4 + 5 $</td><td>Reduce F → digit; F.val = 3</td></tr>
+<tr><td>3</td><td>$ F</td><td>[3]</td><td>* 4 + 5 $</td><td>Reduce T → F; T.val = 3</td></tr>
+<tr><td>4</td><td>$ T</td><td>[3]</td><td>* 4 + 5 $</td><td>Shift *</td></tr>
+<tr><td>5</td><td>$ T *</td><td>[3]</td><td>4 + 5 $</td><td>Shift 4</td></tr>
+<tr><td>6</td><td>$ T * digit(4)</td><td>[3, 4]</td><td>+ 5 $</td><td>Reduce F → digit; F.val = 4</td></tr>
+<tr><td>7</td><td>$ T * F</td><td>[3, 4]</td><td>+ 5 $</td><td>Reduce T → T * F; T.val = 3*4 = 12</td></tr>
+<tr><td>8</td><td>$ T</td><td>[12]</td><td>+ 5 $</td><td>Reduce E → T; E.val = 12</td></tr>
+<tr><td>9</td><td>$ E</td><td>[12]</td><td>+ 5 $</td><td>Shift +</td></tr>
+<tr><td>10</td><td>$ E +</td><td>[12]</td><td>5 $</td><td>Shift 5</td></tr>
+<tr><td>11</td><td>$ E + digit(5)</td><td>[12, 5]</td><td>$</td><td>Reduce F → digit; F.val = 5</td></tr>
+<tr><td>12</td><td>$ E + F</td><td>[12, 5]</td><td>$</td><td>Reduce T → F; T.val = 5</td></tr>
+<tr><td>13</td><td>$ E + T</td><td>[12, 5]</td><td>$</td><td>Reduce E → E + T; E.val = 12+5 = 17</td></tr>
+<tr><td>14</td><td>$ E</td><td>[17]</td><td>$</td><td>Accept</td></tr>
+</table>
+</div>
+
+<p>The final value on the value stack is 17, which is the correct result of <code>3 * 4 + 5</code>. Notice how the value stack mirrors the parse stack: when three symbols are popped during a reduction (step 7: <code>T → T * F</code>), three values are popped from the value stack and combined using the semantic rule.</p>
+
+<div class="side-note"><strong>Memory Anchor:</strong> Think of the value stack as a "shadow" of the parser stack — every time the parser stack changes, the value stack changes in the same way. The semantic rules are applied at reduction time, just as the grammar rules are.</div>
+</div>
+</section>
+
+<!-- ─── 10. TOP-DOWN ─── -->
+<section class="topic fade-in" id="topdown">
+<div class="content-narrow">
+<h3>10. Top-Down Translation</h3>
+
+<p>L-attributed definitions can be evaluated during <strong>top-down (LL) parsing</strong>, specifically during predictive parsing. The approach involves two kinds of actions embedded in the parsing process:</p>
+
+<ol>
+<li><strong>Inherited attribute computation:</strong> When a production <code>A → X₁ X₂ ... Xₙ</code> is chosen during parsing, the inherited attributes of each <code>Xⱼ</code> are computed <em>before</em> <code>Xⱼ</code> is expanded. This is possible because the L-attributed constraint ensures that <code>Xⱼ</code>'s inherited attributes depend only on <code>A</code>'s attributes and attributes of <code>X₁, ..., Xⱼ₋₁</code>, which are already available.</li>
+<li><strong>Synthesized attribute computation:</strong> After <code>Xⱼ</code> has been fully expanded (i.e., its entire subtree has been parsed), its synthesized attributes become available. These can then be used to compute inherited attributes of subsequent symbols <code>Xⱼ₊₁, Xⱼ₊₂, ...</code>, and ultimately to compute <code>A</code>'s synthesized attributes.</li>
+</ol>
+
+<h4>Approach 1: Embedding Actions in Productions</h4>
+
+<p>The most common technique for top-down translation is to embed <strong>semantic actions</strong> (pieces of code) within the productions at specific points. By carefully placing these actions, we ensure that attributes are computed at the correct time. For example, consider the type-declaration SDD rewritten with actions:</p>
+
+<pre><code>D → T L          { L.inh = T.type }
+T → int          { T.type = integer }
+T → float        { T.type = real }
+L → id R         { addType(id.entry, L.inh); R.inh = L.inh }
+R → , id R₁      { addType(id.entry, R.inh); R₁.inh = R.inh }
+R → ε            { /* nothing */ }</code></pre>
+
+<p>Here, the action <code>{ L.inh = T.type }</code> is placed immediately after <code>T</code> is parsed and before <code>L</code> is expanded, ensuring that <code>L.inh</code> is available when needed. The inherited attribute <code>R.inh</code> is similarly set before expanding <code>R</code>.</p>
+
+<h4>Approach 2: Global Variables</h4>
+
+<p>A simpler (though less elegant) approach uses <strong>global variables</strong> to pass information between parsing functions. Each non-terminal's parsing function computes synthesized attributes as return values and uses global variables for inherited attributes. This approach is easy to implement in a recursive-descent parser but lacks the formal rigor of the embedded-action approach.</p>
+
+<pre><code>// Pseudocode for recursive-descent with translation
+int parse_T() {
+    if (lookahead == INT) { match(INT); return integer; }
+    else { match(FLOAT); return real; }
+}
+
+void parse_L(int inherited_type) {
+    match(ID); addType(id.entry, inherited_type);
+    while (lookahead == COMMA) {
+        match(COMMA); match(ID);
+        addType(id.entry, inherited_type);
+    }
+}
+
+void parse_D() {
+    int t = parse_T();
+    parse_L(t);  // pass type as inherited attribute
+}</code></pre>
+
+<div class="exam-tip">
+<p><strong>PYQ:</strong> "Explain top-down translation" — Describe how L-attributed SDDs are evaluated during LL parsing, mention the two approaches (embedded actions vs. global variables), and give a worked example with a small grammar.</p>
+</div>
+</div>
+</section>
+
+<!-- ─── 11. SDT EXAM CORNER ─── -->
+<section class="topic fade-in" id="sdt-exam">
+<div class="content-narrow">
+<h3>11. Exam Corner — Syntax-Directed Translation</h3>
+
+<h4>Most Likely Questions &amp; How to Answer Them</h4>
+
+<details>
+<summary>Q: What is an SDD? Explain synthesized and inherited attributes with examples. (10 marks)</summary>
+<div class="detail-body">
+<p><strong>Structure your answer:</strong></p>
+<ol>
+<li><strong>Definition of SDD</strong> (2 marks): Grammar + Attributes + Semantic Rules. Give the formal definition.</li>
+<li><strong>Synthesized attributes</strong> (3 marks): Define, explain direction of flow (bottom-up), give desk-calculator example, draw a small annotated parse tree.</li>
+<li><strong>Inherited attributes</strong> (3 marks): Define, explain direction of flow (top-down/lateral), give type-declaration example, explain why they're needed.</li>
+<li><strong>Comparison table</strong> (2 marks): Present the synthesized vs. inherited comparison table from Section 4.</li>
+</ol>
+</div>
+</details>
+
+<details>
+<summary>Q: Compare S-Attributed vs L-Attributed Definitions. (5–10 marks)</summary>
+<div class="detail-body">
+<p>Present the comparison table from Section 7, give one example of each, and explain the subset relationship. For 10 marks, also discuss evaluation strategies and parser compatibility.</p>
+</div>
+</details>
+
+<details>
+<summary>Q: Construct the SDD for binary to decimal conversion. (5–10 marks)</summary>
+<div class="detail-body">
+<p>Grammar: <code>B → B₁ 0 { B.val = B₁.val * 2 }</code>, <code>B → B₁ 1 { B.val = B₁.val * 2 + 1 }</code>, <code>B → 0 { B.val = 0 }</code>, <code>B → 1 { B.val = 1 }</code>. Show the evaluation for a sample binary number like <code>1011</code>: trace <code>1→1→3→6→11</code> (decimal 11). Draw the annotated parse tree.</p>
+</div>
+</details>
+
+<details>
+<summary>Q: Construct the parse tree and compute L.val for "3 * 4 * 5 + 6". (10 marks)</summary>
+<div class="detail-body">
+<p>Draw the parse tree as shown in Fig. 1. Show all productions used. Evaluate bottom-up: digit values → F.val → T.val (products) → E.val (sum) → L.val. The answer is <strong>66</strong>.</p>
+</div>
+</details>
+
+<details>
+<summary>Q: Explain the dependency graph. (5 marks)</summary>
+<div class="detail-body">
+<p>Define the dependency graph, explain its construction from semantic rules, mention that acyclic graphs indicate well-defined SDDs, and draw the dependency graph for a small expression like "10 + 8 * 5" as shown in Fig. 2.</p>
+</div>
+</details>
+
+<h4>Quick Revision — SDT</h4>
+<div class="rev-grid">
+<div class="rev-card">
+<h5>SDT = Grammar + Attributes + Rules</h5>
+<p>Attributes carry information; rules define computation; grammar defines structure. Three inseparable components.</p>
+</div>
+<div class="rev-card">
+<h5>Synthesized = Bottom-Up</h5>
+<p>Value computed from children. Flows upward. Example: expression evaluation. Compatible with LR parsers.</p>
+</div>
+<div class="rev-card">
+<h5>Inherited = Top-Down/Sideways</h5>
+<p>Value from parent or left siblings. Flows downward. Example: type propagation. Needs L-attributed framework.</p>
+</div>
+<div class="rev-card">
+<h5>S-Attributed ⊂ L-Attributed</h5>
+<p>S-attributed uses only synthesized. L-attributed allows both, constrained to left-to-right evaluation.</p>
+</div>
+<div class="rev-card">
+<h5>Dependency Graph</h5>
+<p>Nodes = attribute instances. Edges = data dependencies. Acyclic → valid evaluation order exists.</p>
+</div>
+<div class="rev-card">
+<h5>Syntax Tree ≠ Parse Tree</h5>
+<p>Syntax tree omits parentheses and single-productions. Used for code generation and optimization.</p>
+</div>
+</div>
+
+<div class="mnemonic">
+<strong>Memory Aid — "SILK":</strong> <strong>S</strong>ynthesized (bottom-up), <strong>I</strong>nherited (top-down), <strong>L</strong>-attributed (left-to-right), <strong>K</strong>-onstraint (no right-to-left dependencies in L-attributed).
+</div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--              PART II: RUN-TIME ENVIRONMENTS             -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="part-header" id="part2">
+  <h2>Part II</h2>
+  <p class="part-sub">Run-Time Environments</p>
+</div>
+
+<!-- ─── RT INTRO ─── -->
+<section class="topic fade-in" id="rt-intro">
+<div class="content-narrow">
+<h3>1. Introduction &amp; Source Language Issues</h3>
+
+<p>The run-time environment is the infrastructure that supports the execution of a program after it has been compiled. While the front end of a compiler (lexer, parser, semantic analyzer) deals with understanding the source program, and the back end (code generator, optimizer) deals with producing target code, the run-time environment is the <em>context</em> in which that target code actually executes. It encompasses everything from how memory is organized and allocated, to how function calls are managed, to how variables are accessed, to how parameters are passed between procedures. Understanding the run-time environment is essential for a compiler designer because the code generator must produce code that correctly interacts with this environment.</p>
+
+<p>The need for a well-designed run-time environment arises from several <strong>source language issues</strong> that the compiler must address at execution time. The most fundamental of these is the question of <strong>scope</strong> — the region of the program text within which a variable name is meaningful. Most modern programming languages use <strong>static (lexical) scoping</strong>, where the scope of a variable is determined by the structure of the source code (the block in which it is declared), rather than by the order of function calls at run time. Static scoping requires the compiler to build a compile-time scope structure, but the run-time environment must support the corresponding mechanism for variable access — typically through <strong>access links</strong> or <strong>display registers</strong>.</p>
+
+<p>A second critical issue is <strong>binding</strong> — the association between a name and the entity it refers to (a variable, a memory location, a type, a value). A <strong>binding is static</strong> if it occurs before run time and does not change during execution; it is <strong>dynamic</strong> if it occurs during execution and may change. For example, the binding of a local variable to a memory location on the stack is dynamic — a new location is allocated each time the function is called. The <strong>lifetime</strong> of a variable is the period during which it is bound to a particular memory location. Understanding lifetimes is crucial for choosing the correct storage allocation strategy.</p>
+
+<p>A third issue is <strong>name management</strong>. During execution, the same variable name may refer to different storage locations at different times (e.g., a local variable in a recursive function). The run-time environment must provide mechanisms to distinguish between these different incarnations of the same name. This is typically accomplished through the use of <strong>activation records</strong> (also called stack frames), which we discuss in detail later.</p>
+
+<div class="card card-accent">
+<div class="card-title">Key Concepts to Remember</div>
+<ul style="margin:0">
+<li><strong>Scope:</strong> Where a name is visible (compile-time concept).</li>
+<li><strong>Binding:</strong> Association between a name and an entity (can be static or dynamic).</li>
+<li><strong>Lifetime:</strong> Duration of a binding (run-time concept).</li>
+<li><strong>Environment:</strong> The current set of name-to-location bindings at a program point.</li>
+<li><strong>State:</strong> The current values stored in all memory locations.</li>
+</ul>
+</div>
+</div>
+</section>
+
+<!-- ─── STORAGE ORG ─── -->
+<section class="topic fade-in" id="storage-org">
+<div class="content-narrow">
+<h3>2. Storage Organization</h3>
+
+<p>The memory available to a running program is typically organized into several distinct regions, each serving a specific purpose. Understanding this organization is fundamental to understanding how the three storage allocation strategies (static, stack, and heap) operate. The canonical memory layout of a running program, from low addresses to high addresses, is as follows:</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 520 440" xmlns="http://www.w3.org/2000/svg" style="max-width:480px">
+  <defs>
+    <linearGradient id="gCode" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#6e85a0" stop-opacity=".15"/><stop offset="100%" stop-color="#6e85a0" stop-opacity=".05"/></linearGradient>
+    <linearGradient id="gStatic" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#d4a76a" stop-opacity=".2"/><stop offset="100%" stop-color="#d4a76a" stop-opacity=".07"/></linearGradient>
+    <linearGradient id="gHeap" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#7b9e6b" stop-opacity=".2"/><stop offset="100%" stop-color="#7b9e6b" stop-opacity=".07"/></linearGradient>
+    <linearGradient id="gStack" x1="0" y1="0" x2="1" y2="0"><stop offset="0%" stop-color="#c27b6e" stop-opacity=".2"/><stop offset="100%" stop-color="#c27b6e" stop-opacity=".07"/></linearGradient>
+  </defs>
+  <!-- Main box -->
+  <rect x="80" y="20" width="360" height="400" rx="6" fill="none" stroke="#c4a882" stroke-width="2"/>
+  <!-- Code section -->
+  <rect x="80" y="20" width="360" height="70" fill="url(#gCode)" stroke="#c4a882" stroke-width="1"/>
+  <text x="260" y="52" text-anchor="middle" font-family="'DM Mono',monospace" font-size="13" fill="#6e85a0" font-weight="500">CODE (Text)</text>
+  <text x="260" y="72" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8a7e6e">Executable instructions</text>
+  <!-- Static data section -->
+  <rect x="80" y="90" width="360" height="70" fill="url(#gStatic)" stroke="#c4a882" stroke-width="1"/>
+  <text x="260" y="122" text-anchor="middle" font-family="'DM Mono',monospace" font-size="13" fill="#b08a4f" font-weight="500">STATIC DATA</text>
+  <text x="260" y="142" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8a7e6e">Global variables, constants</text>
+  <!-- Heap section -->
+  <rect x="80" y="160" width="360" height="100" fill="url(#gHeap)" stroke="#c4a882" stroke-width="1"/>
+  <text x="260" y="195" text-anchor="middle" font-family="'DM Mono',monospace" font-size="13" fill="#5a7a4f" font-weight="500">HEAP</text>
+  <text x="260" y="215" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8a7e6e">Dynamic allocation (malloc/new)</text>
+  <text x="260" y="240" text-anchor="middle" font-family="'DM Mono',monospace" font-size="11" fill="#7b9e6b">↑ grows upward</text>
+  <!-- Free space -->
+  <rect x="80" y="260" width="360" height="60" fill="none" stroke="#c4a882" stroke-width="1" stroke-dasharray="6,4"/>
+  <text x="260" y="295" text-anchor="middle" font-family="'DM Mono',monospace" font-size="11" fill="#c4a882" font-style="italic">Free Space</text>
+  <!-- Stack section -->
+  <rect x="80" y="320" width="360" height="100" fill="url(#gStack)" stroke="#c4a882" stroke-width="1"/>
+  <text x="260" y="355" text-anchor="middle" font-family="'DM Mono',monospace" font-size="13" fill="#8a5a4f" font-weight="500">STACK</text>
+  <text x="260" y="375" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8a7e6e">Activation records, local variables</text>
+  <text x="260" y="400" text-anchor="middle" font-family="'DM Mono',monospace" font-size="11" fill="#c27b6e">↓ grows downward</text>
+  <!-- Address labels -->
+  <text x="60" y="30" text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#8a7e6e">High addr</text>
+  <text x="60" y="420" text-anchor="end" font-family="'DM Mono',monospace" font-size="9" fill="#8a7e6e">Low addr</text>
+  <line x1="68" y1="25" x2="78" y2="25" stroke="#c4a882" stroke-width="1"/>
+  <line x1="68" y1="415" x2="78" y2="415" stroke="#c4a882" stroke-width="1"/>
+</svg>
+<p class="diagram-caption">Fig. 4 — Canonical memory organization of a running program</p>
+</div>
+
+<p><strong>The Code (Text) segment</strong> resides at the lowest addresses and contains the compiled machine instructions. This region is typically read-only to prevent accidental modification of the program during execution. Its size is fixed at compile time (or load time) and does not change during execution.</p>
+
+<p><strong>The Static Data segment</strong> holds global variables, static local variables, and compile-time constants. Like the code segment, its size is known before execution begins. In languages like C and FORTRAN, global variables are allocated here. In Java, class-level static fields reside in this region (within the method area of the JVM).</p>
+
+<p><strong>The Heap</strong> is the region used for dynamic memory allocation — when a program requests memory at run time using constructs like <code>malloc()</code> in C, <code>new</code> in Java/C++, or garbage-collected allocation in Python. The heap typically grows upward from the static data area.</p>
+
+<p><strong>The Stack</strong> is used for managing function calls and their local variables. Each function call creates a new <strong>activation record</strong> (stack frame) on the stack, and each return destroys it. The stack typically grows downward from the high addresses. In many programs, the heap and stack grow toward each other from opposite ends of the available memory, meeting in the middle. If they collide, the program runs out of memory (stack overflow or heap exhaustion).</p>
+
+<div class="side-note"><strong>Exam Note:</strong> Always draw the memory diagram (Fig. 4) when asked about storage organization. Label all four/five sections clearly and indicate the growth directions of heap and stack. This earns easy marks.</div>
+</div>
+</section>
+
+<!-- ─── STATIC ALLOCATION ─── -->
+<section class="topic fade-in" id="static">
+<div class="content-narrow">
+<h3>3. Static Allocation</h3>
+
+<p>In <strong>static allocation</strong>, the storage for every variable is determined at compile time and remains fixed throughout the entire execution of the program. The compiler knows the exact memory address (or offset from a fixed base) for each variable before the program runs. No allocation or deallocation occurs at run time — everything is pre-determined.</p>
+
+<p>Static allocation is the simplest storage strategy, but it comes with significant limitations. It was the primary allocation method in early languages like FORTRAN (the original FORTRAN 77 standard required static allocation). The key characteristic is that the <strong>lifetime</strong> of every variable is the entire duration of the program — there is no concept of a variable coming into existence when a function is called and ceasing to exist when it returns.</p>
+
+<h4>How It Works</h4>
+
+<p>The compiler assigns each global variable and each static local variable to a fixed memory address in the static data segment. When the program starts, these addresses are initialized (either to zero or to specified initial values). During execution, the generated code simply loads from and stores to these fixed addresses. There is no need for a stack pointer, frame pointer, or any dynamic memory management.</p>
+
+<h4>Advantages</h4>
+<ul>
+<li><strong>Simplicity:</strong> No run-time overhead for allocation or deallocation.</li>
+<li><strong>Fast access:</strong> Variables are accessed at known, fixed addresses — no pointer indirection needed.</li>
+<li><strong>No memory fragmentation:</strong> Memory layout is fixed at compile time.</li>
+<li><strong>Predictable behavior:</strong> No stack overflow or heap exhaustion possible.</li>
+</ul>
+
+<h4>Disadvantages</h4>
+<ul>
+<li><strong>No recursion:</strong> Since each variable has only one storage location, a recursive function cannot have separate copies of its local variables for each invocation. This is the most severe limitation.</li>
+<li><strong>No dynamic data structures:</strong> Cannot create data structures whose size is determined at run time.</li>
+<li><strong>Inflexible:</strong> Memory is wasted if variables are not always in use.</li>
+<li><strong>No separate compilation support:</strong> All memory addresses must be resolved at compile time, making it difficult to compile modules separately.</li>
+</ul>
+
+<div class="exam-tip">
+<p><strong>Classic Exam Question:</strong> "Explain static allocation with advantages and disadvantages." — Always mention FORTRAN as the historical example, explain why recursion is impossible, and draw a simple memory layout showing fixed addresses.</p>
+</div>
+</div>
+</section>
+
+<!-- ─── STACK ALLOCATION ─── -->
+<section class="topic fade-in" id="stack">
+<div class="content-narrow">
+<h3>4. Stack Allocation</h3>
+
+<p><strong>Stack allocation</strong> is the most widely used storage allocation strategy for managing function calls and their local variables. It is based on the observation that function calls follow a <strong>Last-In-First-Out (LIFO)</strong> discipline: the most recently called function is the first to return. This natural ordering makes a stack the ideal data structure for managing activation records.</p>
+
+<h4>How It Works</h4>
+
+<p>Each time a function is called, a new <strong>activation record</strong> (also called a <strong>stack frame</strong>) is pushed onto the stack. This activation record contains storage for the function's local variables, parameters, return address, and bookkeeping information. When the function returns, its activation record is popped from the stack, deallocating all its local storage. The stack pointer (SP) always points to the top of the stack (the most recently allocated activation record).</p>
+
+<p>The beauty of stack allocation is that it naturally handles <strong>recursion</strong>. Each recursive call creates a new, independent activation record with its own copies of the local variables. When the call returns, its activation record is destroyed, and the previous incarnation's variables are restored (they were always there, just below the top of the stack).</p>
+
+<h4>Advantages</h4>
+<ul>
+<li><strong>Supports recursion:</strong> Each call gets its own independent storage.</li>
+<li><strong>Efficient allocation/deallocation:</strong> Push and pop are O(1) operations.</li>
+<li><strong>Automatic management:</strong> No explicit deallocation needed — the stack handles it.</li>
+<li><strong>Good locality of reference:</strong> Recent frames are in cache.</li>
+<li><strong>Natural match for nested function calls.</strong></li>
+</ul>
+
+<h4>Disadvantages</h4>
+<ul>
+<li><strong>Cannot keep data beyond function return:</strong> Returning a pointer to a local variable is dangerous (dangling pointer).</li>
+<li><strong>Fixed-size allocation:</strong> The size of each frame must be known at compile time (for arrays, this means fixed-size arrays).</li>
+<li><strong>Stack overflow:</strong> Deep recursion or large local arrays can exhaust the stack.</li>
+<li><strong>No dynamic allocation:</strong> Cannot allocate memory whose size is determined at run time.</li>
+</ul>
+</div>
+</section>
+
+<!-- ─── HEAP ALLOCATION ─── -->
+<section class="topic fade-in" id="heap">
+<div class="content-narrow">
+<h3>5. Heap Allocation</h3>
+
+<p><strong>Heap allocation</strong> is the strategy used for dynamic memory allocation — memory that is requested during program execution and may be released at an arbitrary later time. Unlike stack allocation, heap allocation does not follow a LIFO order: memory can be allocated and freed in any order. This flexibility is essential for data structures like linked lists, trees, hash tables, and objects whose lifetimes are not tied to function calls.</p>
+
+<h4>How It Works</h4>
+
+<p>The heap is a large region of memory managed by the run-time system. When a program requests memory (via <code>malloc()</code>, <code>new</code>, etc.), the allocator searches the heap for a free block of sufficient size and returns a pointer to it. When the memory is no longer needed, it can be returned to the pool (via <code>free()</code>) for reuse. In languages with <strong>garbage collection</strong> (Java, Python, Go), the run-time system automatically reclaims memory that is no longer reachable by the program.</p>
+
+<h4>Memory Management Strategies</h4>
+
+<p><strong>First Fit:</strong> Allocate the first free block that is large enough. Fast but may leave small fragments at the beginning.</p>
+<p><strong>Best Fit:</strong> Allocate the smallest free block that is large enough. Reduces wasted space but requires searching the entire free list.</p>
+<p><strong>Worst Fit:</strong> Allocate the largest free block. Leaves the largest remaining block, but degrades over time.</p>
+<p><strong>Buddy System:</strong> Memory is divided into blocks of power-of-2 sizes. When a block is freed, it can be merged with its "buddy" if the buddy is also free. Efficient but suffers from internal fragmentation.</p>
+
+<h4>Dangling References</h4>
+
+<p>A <strong>dangling reference</strong> (also called a <strong>dangling pointer</strong>) occurs when a program holds a pointer to memory that has already been deallocated. Accessing such a pointer leads to undefined behavior — the memory may have been reallocated for a different purpose, leading to data corruption or crashes. Dangling references are one of the most common and dangerous bugs in C/C++ programs.</p>
+
+<pre><code>// Dangling reference example in C
+int* create_value() {
+    int x = 42;
+    return &x;   // BAD: x is on the stack, will be deallocated on return
+}
+
+int main() {
+    int* p = create_value();
+    printf("%d", *p);  // UNDEFINED BEHAVIOR: p is a dangling reference
+}</code></pre>
+
+<p>In contrast, <strong>garbage-collected languages</strong> (Java, Python) prevent dangling references by only deallocating memory when no references to it remain. However, they may suffer from <strong>memory leaks</strong> if references to unneeded objects are accidentally retained.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>Strategy</th><th>Allocation Speed</th><th>Deallocation Speed</th><th>Supports Recursion</th><th>Supports Dynamic Data</th><th>Example Languages</th></tr>
+<tr><td><strong>Static</strong></td><td>None (compile-time)</td><td>None</td><td>No</td><td>No</td><td>FORTRAN 77</td></tr>
+<tr><td><strong>Stack</strong></td><td>Fast (O(1))</td><td>Fast (O(1))</td><td>Yes</td><td>No</td><td>C, Java (locals)</td></tr>
+<tr><td><strong>Heap</strong></td><td>Variable</td><td>Variable</td><td>Yes</td><td>Yes</td><td>C (malloc), Java (objects)</td></tr>
+</table>
+</div>
+
+<div class="exam-tip">
+<p><strong>PYQ Alert:</strong> "Explain the various types of storage allocation strategies with advantages and disadvantages." — This is a classic 10-mark question. Cover all three strategies (static, stack, heap) with definitions, mechanisms, advantages, disadvantages, and examples. Always include the comparison table.</p>
+</div>
+</div>
+</section>
+
+<!-- ─── ACTIVATION RECORDS ─── -->
+<section class="topic fade-in" id="actrec">
+<div class="content-narrow">
+<h3>6. Activation Records</h3>
+
+<p>An <strong>activation record</strong> (also called a <strong>stack frame</strong>) is the block of memory allocated on the stack each time a function (or procedure, method, or subroutine) is called. It contains all the information needed to execute the function and to properly return control to the caller when the function completes. The activation record is the fundamental data structure of stack-based allocation, and understanding its structure is essential for anyone studying compiler design or systems programming.</p>
+
+<div class="def-box">
+<p><strong>Definition:</strong> An activation record is a contiguous block of storage on the run-time stack that manages the execution of a single procedure activation. It contains the procedure's parameters, local variables, return address, saved registers, and other bookkeeping information needed for proper execution and return.</p>
+</div>
+
+<h4>Fields of an Activation Record</h4>
+
+<p>A general-purpose activation record contains the following fields, arranged from the top (high address) to the bottom (low address) of the stack frame:</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 480 520" xmlns="http://www.w3.org/2000/svg" style="max-width:440px">
+  <defs>
+    <marker id="ah2" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#8a7e6e"/></marker>
+  </defs>
+  <!-- Frame -->
+  <rect x="100" y="20" width="280" height="470" rx="4" fill="none" stroke="#c4a882" stroke-width="2"/>
+  <!-- SP arrow -->
+  <line x1="420" y1="490" x2="420" y2="40" stroke="#c27b6e" stroke-width="1.5" marker-end="url(#ah2)" stroke-dasharray="4,3"/>
+  <text x="440" y="255" font-family="'DM Mono',monospace" font-size="10" fill="#c27b6e" transform="rotate(90,440,255)" text-anchor="middle">Stack grows ↓</text>
+  <!-- Fields -->
+  <rect x="100" y="20" width="280" height="50" fill="#6e85a0" fill-opacity=".12" stroke="#c4a882"/>
+  <text x="240" y="40" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#6e85a0" font-weight="500">Return Value</text>
+  <text x="240" y="58" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#8a7e6e">Space for function's return value</text>
+
+  <rect x="100" y="70" width="280" height="55" fill="#d4a76a" fill-opacity=".12" stroke="#c4a882"/>
+  <text x="240" y="93" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#b08a4f" font-weight="500">Actual Parameters</text>
+  <text x="240" y="112" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#8a7e6e">Arguments passed by the caller</text>
+
+  <rect x="100" y="125" width="280" height="45" fill="#7b9e6b" fill-opacity=".12" stroke="#c4a882"/>
+  <text x="240" y="148" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#5a7a4f" font-weight="500">Return Address</text>
+  <text x="240" y="162" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#8a7e6e">Where to resume after return</text>
+
+  <rect x="100" y="170" width="280" height="45" fill="#9b7bb0" fill-opacity=".12" stroke="#c4a882"/>
+  <text x="240" y="193" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#7a5a90" font-weight="500">Saved Control Link</text>
+  <text x="240" y="207" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#8a7e6e">Pointer to caller's frame (old SP)</text>
+
+  <rect x="100" y="215" width="280" height="45" fill="#9b7bb0" fill-opacity=".12" stroke="#c4a882"/>
+  <text x="240" y="238" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#7a5a90" font-weight="500">Saved Access Link</text>
+  <text x="240" y="252" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#8a7e6e">Pointer to enclosing scope's frame</text>
+
+  <rect x="100" y="260" width="280" height="55" fill="#c27b6e" fill-opacity=".12" stroke="#c4a882"/>
+  <text x="240" y="283" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#8a5a4f" font-weight="500">Saved Machine Status</text>
+  <text x="240" y="302" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#8a7e6e">Registers, program counter state</text>
+
+  <rect x="100" y="315" width="280" height="70" fill="#d4a76a" fill-opacity=".12" stroke="#c4a882"/>
+  <text x="240" y="345" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#b08a4f" font-weight="500">Local Data</text>
+  <text x="240" y="365" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#8a7e6e">Local variables of the function</text>
+
+  <rect x="100" y="385" width="280" height="55" fill="#6e85a0" fill-opacity=".12" stroke="#c4a882"/>
+  <text x="240" y="408" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#6e85a0" font-weight="500">Temporaries</text>
+  <text x="240" y="428" text-anchor="middle" font-family="'DM Mono',monospace" font-size="8" fill="#8a7e6e">Intermediate expression results</text>
+
+  <!-- SP pointer -->
+  <line x1="60" y1="440" x2="95" y2="440" stroke="#c27b6e" stroke-width="2" marker-end="url(#ah2)"/>
+  <text x="20" y="444" font-family="'DM Mono',monospace" font-size="11" fill="#c27b6e" font-weight="500">SP</text>
+
+  <!-- High/Low labels -->
+  <text x="70" y="28" font-family="'DM Mono',monospace" font-size="8" fill="#8a7e6e">High addr (top)</text>
+  <text x="70" y="495" font-family="'DM Mono',monospace" font-size="8" fill="#8a7e6e">Low addr (SP)</text>
+</svg>
+<p class="diagram-caption">Fig. 5 — General activation record structure showing all standard fields</p>
+</div>
+
+<p><strong>1. Return Value:</strong> Space allocated for the function's return value. In many calling conventions, small return values are passed in registers rather than on the stack, but the conceptual field exists in every activation record.</p>
+
+<p><strong>2. Actual Parameters:</strong> The arguments passed by the calling function. In some architectures (like x86-64), the first few parameters are passed in registers for efficiency, with overflow parameters placed on the stack. The number and size of parameters are known at compile time.</p>
+
+<p><strong>3. Return Address:</strong> The address in the calling function to which control should return when the called function completes. This is typically saved automatically by the <code>CALL</code> instruction on most architectures.</p>
+
+<p><strong>4. Saved Control Link (Dynamic Link):</strong> A pointer to the activation record of the caller. This forms a chain of activation records on the stack, allowing the run-time system to unwind the stack when a function returns. The control link is also called the <strong>dynamic link</strong> because it reflects the dynamic (run-time) calling sequence.</p>
+
+<p><strong>5. Saved Access Link (Static Link):</strong> A pointer to the activation record of the lexically enclosing function. This is needed in languages with nested functions (like Pascal, Python, and modern JavaScript) where an inner function may need to access variables declared in an outer function. The access link is also called the <strong>static link</strong> because it reflects the static (compile-time) nesting structure. In languages without nested functions (like C), the access link is not needed.</p>
+
+<p><strong>6. Saved Machine Status:</strong> Register values and other processor state that must be preserved across the function call. The calling convention specifies which registers the callee must save ("callee-saved" registers) and which the caller must save ("caller-saved" registers).</p>
+
+<p><strong>7. Local Data:</strong> Storage for the function's local variables. The size of this section is determined at compile time based on the declarations in the function.</p>
+
+<p><strong>8. Temporaries:</strong> Storage for intermediate values generated during expression evaluation that cannot be held in registers. The size of this section is determined by the code generator.</p>
+
+<div class="card card-green">
+<div class="card-title">Exam Diagram Tip</div>
+<p style="margin:0">When drawing an activation record in an exam, use a vertical rectangle divided into labeled horizontal bands. Label each field clearly and indicate the stack pointer (SP) at the bottom. Add arrows for the control link and access link pointing to other frames on the stack. This diagram alone can earn 3–5 marks in a 10-mark question.</p>
+</div>
+</div>
+</section>
+
+<!-- ─── ACTIVATION TREE ─── -->
+<section class="topic fade-in" id="acttree">
+<div class="content-narrow">
+<h3>7. Activation Trees &amp; Control Stack</h3>
+
+<p>An <strong>activation tree</strong> is a tree that represents the dynamic calling structure of a program during execution. Each node in the tree corresponds to a single activation (invocation) of a function, and an edge from node <code>A</code> to node <code>B</code> indicates that function <code>B</code> was called directly by function <code>A</code>. The root of the tree represents the initial invocation of the <code>main</code> function. The activation tree is a conceptual tool — it is not explicitly constructed at run time, but it helps us understand the relationship between function calls and the stack.</p>
+
+<div class="diagram-wrap">
+  <svg viewBox="0 0 420 260"
+       xmlns="http://www.w3.org/2000/svg"
+       style="max-width:420px">
+
+    <g font-family="'DM Mono', monospace" font-size="12">
+
+      <!-- Connections from main -->
+      <line x1="210" y1="44" x2="110" y2="90"
+            stroke="#c4a882" stroke-width="1.5"/>
+
+      <line x1="210" y1="44" x2="310" y2="90"
+            stroke="#c4a882" stroke-width="1.5"/>
+
+      <!-- main -->
+      <rect x="175" y="14" width="70" height="30" rx="6"
+            fill="#c27b6e"/>
+      <text x="210" y="34"
+            text-anchor="middle"
+            fill="#fff">main</text>
+
+      <!-- foo() -->
+      <rect x="75" y="90" width="70" height="30" rx="6"
+            fill="#7b9e6b"/>
+      <text x="110" y="110"
+            text-anchor="middle"
+            fill="#fff">foo()</text>
+
+      <!-- bar() -->
+      <rect x="275" y="90" width="70" height="30" rx="6"
+            fill="#7b9e6b"/>
+      <text x="310" y="110"
+            text-anchor="middle"
+            fill="#fff">bar()</text>
+
+      <!-- foo() -> baz() -->
+      <line x1="110" y1="120" x2="60" y2="175"
+            stroke="#c4a882" stroke-width="1.5"/>
+
+      <line x1="110" y1="120" x2="160" y2="175"
+            stroke="#c4a882" stroke-width="1.5"/>
+
+      <!-- baz() left -->
+      <rect x="25" y="175" width="70" height="30" rx="6"
+            fill="#d4a76a"/>
+      <text x="60" y="195"
+            text-anchor="middle"
+            fill="#fff">baz()</text>
+
+      <!-- baz() right -->
+      <rect x="125" y="175" width="70" height="30" rx="6"
+            fill="#d4a76a"/>
+      <text x="160" y="195"
+            text-anchor="middle"
+            fill="#fff">baz()</text>
+
+      <!-- bar() -> qux() -->
+      <line x1="310" y1="120" x2="310" y2="175"
+            stroke="#c4a882" stroke-width="1.5"/>
+
+      <!-- qux() -->
+      <rect x="275" y="175" width="70" height="30" rx="6"
+            fill="#d4a76a"/>
+      <text x="310" y="195"
+            text-anchor="middle"
+            fill="#fff">qux()</text>
+
+      <!-- qux() -> baz() -->
+      <line x1="310" y1="205" x2="310" y2="225"
+            stroke="#c4a882" stroke-width="1.5"/>
+
+      <!-- baz() bottom -->
+      <rect x="275" y="225" width="70" height="30" rx="6"
+            fill="#9b7bb0"/>
+      <text x="310" y="245"
+            text-anchor="middle"
+            fill="#fff">baz()</text>
+
+    </g>
+  </svg>
+
+  <p class="diagram-caption">
+    Fig. 6 — Activation tree for a sample program:
+    <code>main</code> calls <code>foo()</code> and <code>bar()</code>;
+    <code>foo()</code> calls <code>baz()</code> twice;
+    <code>bar()</code> calls <code>qux()</code> which calls <code>baz()</code>.
+  </p>
+</div>
+<p>The relationship between the activation tree and the <strong>control stack</strong> is one of the most elegant observations in compiler design. As the program executes, the sequence of function calls traces a path through the activation tree in <strong>preorder</strong> (visit the node, then recursively visit children left to right). The control stack at any given moment contains exactly the nodes along the path from the root to the currently active node. When a function is called, its node is pushed onto the stack; when it returns, its node is popped.</p>
+
+<p>Consider the activation tree in Fig. 6. The execution proceeds as follows: <code>main()</code> is called first (pushed onto the stack). <code>main()</code> calls <code>foo()</code> (pushed). <code>foo()</code> calls <code>baz()</code> the first time (pushed). <code>baz()</code> returns (popped). <code>foo()</code> calls <code>baz()</code> the second time (pushed). <code>baz()</code> returns (popped). <code>foo()</code> returns (popped). <code>main()</code> calls <code>bar()</code> (pushed). And so on. At each moment, the control stack mirrors the path from root to current node in the tree.</p>
+
+<h4>Dangling References (Detailed)</h4>
+
+<p>A <strong>dangling reference</strong> arises when a program holds a pointer or reference to a storage location that has been deallocated. This is one of the most pernicious categories of bugs in systems programming, and understanding it is essential for both compiler design and software engineering. The most common scenario occurs when a function returns a pointer to a local variable allocated on the stack:</p>
+
+<pre><code>int* dangerous() {
+    int local = 42;
+    return &local;  // local will be deallocated when function returns
+}
+
+void caller() {
+    int* p = dangerous();
+    // p now points to deallocated stack memory — dangling reference!
+    printf("%d\n", *p);  // undefined behavior
+}</code></pre>
+
+<p>When <code>dangerous()</code> returns, its activation record (including <code>local</code>) is popped from the stack. The pointer <code>p</code> in <code>caller()</code> now points to memory that may be overwritten by the next function call's activation record. The compiler cannot prevent this at compile time in languages like C — it is the programmer's responsibility. In contrast, Java and Python use garbage collection, which prevents dangling references by design (objects are only collected when no references to them remain).</p>
+
+<div class="card card-amber">
+<div class="card-title">Common Student Confusion</div>
+<p style="margin:0">Many students confuse <strong>dangling references</strong> with <strong>memory leaks</strong>. A dangling reference is a pointer to <em>freed</em> memory (accessing it is undefined). A memory leak is memory that has been allocated but <em>never freed</em> (it becomes unreachable but is not returned to the system). They are opposite problems: dangling references free too early; memory leaks never free.</p>
+</div>
+</div>
+</section>
+
+<!-- ─── STORAGE ALLOCATION IN C ─── -->
+<section class="topic fade-in" id="clang">
+<div class="content-narrow">
+<h3>8. Storage Allocation in C</h3>
+
+<p>The C programming language provides a particularly instructive case study for understanding storage allocation, because C exposes all three strategies — static, stack, and heap — directly to the programmer. Unlike higher-level languages that abstract away memory management details, C requires the programmer to explicitly choose how and where memory is allocated, making it an ideal language for studying the tradeoffs involved.</p>
+
+<h4>Static Allocation in C</h4>
+
+<p>In C, <strong>global variables</strong> (declared outside any function) and <strong>static local variables</strong> (declared with the <code>static</code> keyword inside a function) are allocated statically. Their storage is reserved at program startup and persists for the entire duration of the program. Static local variables are particularly interesting: they retain their values across function calls, unlike regular local variables which are destroyed and recreated with each call.</p>
+
+<pre><code>void counter() {
+    static int count = 0;  // allocated once, persists across calls
+    count++;
+    printf("Called %d times\n", count);
+}
+
+int main() {
+    counter();  // prints "Called 1 times"
+    counter();  // prints "Called 2 times"
+    counter();  // prints "Called 3 times"
+}</code></pre>
+
+<p>The variable <code>count</code> is initialized to 0 exactly once (at program startup, not at each function call). Each invocation of <code>counter()</code> increments and prints the same variable. The storage for <code>count</code> resides in the static data segment, not on the stack. This is a clear example of how static allocation gives a variable a lifetime that exceeds any single function activation.</p>
+
+<h4>Stack Allocation in C</h4>
+
+<p>Regular local variables in C are allocated on the stack. Each time a function is called, a new activation record is created, and local variables are allocated within it. When the function returns, the activation record is destroyed, and all local variable storage is implicitly deallocated. This is why local variables do not retain their values between calls (unless declared <code>static</code>).</p>
+
+<pre><code>void example() {
+    int x = 10;     // on the stack
+    char buf[100];  // on the stack — 100 bytes reserved in this frame
+    double y = 3.14; // on the stack
+    // all three are deallocated when example() returns
+}</code></pre>
+
+<p>The size of the stack frame is determined at compile time: the compiler counts all local variables, calculates their sizes (including arrays with compile-time-known sizes), and allocates the appropriate amount of space. This is why variable-length arrays (VLAs), introduced in C99, are problematic — their size is not known until run time, making stack frame size dynamic.</p>
+
+<h4>Heap Allocation in C</h4>
+
+<p>C provides the <code>malloc()</code>, <code>calloc()</code>, <code>realloc()</code>, and <code>free()</code> functions for explicit heap memory management. Heap-allocated memory persists until explicitly freed by the programmer, regardless of which function allocated it or when it was called.</p>
+
+<pre><code>struct Node* create_node(int data) {
+    struct Node* n = (struct Node*)malloc(sizeof(struct Node));
+    n->data = data;
+    n->next = NULL;
+    return n;  // safe: heap memory survives function return
+}
+
+void destroy_list(struct Node* head) {
+    while (head) {
+        struct Node* temp = head;
+        head = head->next;
+        free(temp);  // explicitly return memory to heap
+    }
+}</code></pre>
+
+<p>The critical difference between stack and heap allocation in C is the <strong>responsibility for deallocation</strong>. Stack memory is automatically managed by the compiler (allocation on function entry, deallocation on function exit). Heap memory requires explicit management by the programmer. Failure to call <code>free()</code> results in memory leaks; calling <code>free()</code> too early (while pointers still reference the memory) creates dangling references.</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 560 300" xmlns="http://www.w3.org/2000/svg" style="max-width:520px">
+  <defs>
+    <marker id="ah3" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#8a7e6e"/></marker>
+  </defs>
+  <g font-family="'DM Mono',monospace" font-size="10">
+    <!-- Static Data -->
+    <rect x="20" y="20" width="160" height="80" rx="6" fill="#d4a76a" fill-opacity=".15" stroke="#d4a76a" stroke-width="1.5"/>
+    <text x="100" y="45" text-anchor="middle" fill="#b08a4f" font-weight="500" font-size="11">Static Data</text>
+    <text x="100" y="65" text-anchor="middle" fill="#8a7e6e" font-size="9">Global vars</text>
+    <text x="100" y="80" text-anchor="middle" fill="#8a7e6e" font-size="9">Static locals</text>
+
+    <!-- Heap -->
+    <rect x="200" y="20" width="160" height="80" rx="6" fill="#7b9e6b" fill-opacity=".15" stroke="#7b9e6b" stroke-width="1.5"/>
+    <text x="280" y="45" text-anchor="middle" fill="#5a7a4f" font-weight="500" font-size="11">Heap</text>
+    <text x="280" y="65" text-anchor="middle" fill="#8a7e6e" font-size="9">malloc / new</text>
+    <text x="280" y="80" text-anchor="middle" fill="#8a7e6e" font-size="9">Dynamic data</text>
+
+    <!-- Stack -->
+    <rect x="380" y="20" width="160" height="80" rx="6" fill="#c27b6e" fill-opacity=".15" stroke="#c27b6e" stroke-width="1.5"/>
+    <text x="460" y="45" text-anchor="middle" fill="#8a5a4f" font-weight="500" font-size="11">Stack</text>
+    <text x="460" y="65" text-anchor="middle" fill="#8a7e6e" font-size="9">Local vars</text>
+    <text x="460" y="80" text-anchor="middle" fill="#8a7e6e" font-size="9">Parameters</text>
+
+    <!-- Lifetime arrows -->
+    <text x="280" y="125" text-anchor="middle" fill="#2c2418" font-size="11" font-weight="500">Variable Lifetimes in C</text>
+
+    <!-- int g = 5 -->
+    <rect x="30" y="150" width="140" height="30" rx="4" fill="#d4a76a" fill-opacity=".25" stroke="#d4a76a"/>
+    <text x="100" y="170" text-anchor="middle" fill="#5a4e3e" font-size="9">int g = 5;  // global</text>
+    <line x1="30" y1="165" x2="10" y2="165" stroke="#d4a76a" stroke-width="2"/>
+    <text x="5" y="185" font-size="8" fill="#b08a4f">program start → end</text>
+
+    <!-- static int s -->
+    <rect x="30" y="190" width="140" height="30" rx="4" fill="#d4a76a" fill-opacity=".25" stroke="#d4a76a"/>
+    <text x="100" y="210" text-anchor="middle" fill="#5a4e3e" font-size="9">static int s; // local</text>
+
+    <!-- int* p = malloc -->
+    <rect x="210" y="150" width="140" height="30" rx="4" fill="#7b9e6b" fill-opacity=".25" stroke="#7b9e6b"/>
+    <text x="280" y="170" text-anchor="middle" fill="#5a4e3e" font-size="9">p = malloc(...)</text>
+    <text x="280" y="200" text-anchor="middle" fill="#5a7a4f" font-size="8">malloc() → free()</text>
+
+    <!-- int x -->
+    <rect x="390" y="150" width="140" height="30" rx="4" fill="#c27b6e" fill-opacity=".25" stroke="#c27b6e"/>
+    <text x="460" y="170" text-anchor="middle" fill="#5a4e3e" font-size="9">int x; // local</text>
+    <text x="460" y="200" text-anchor="middle" fill="#8a5a4f" font-size="8">function entry → return</text>
+
+    <!-- Summary -->
+    <rect x="60" y="240" width="440" height="45" rx="6" fill="none" stroke="#c4a882" stroke-width="1" stroke-dasharray="4,3"/>
+    <text x="280" y="260" text-anchor="middle" fill="#5a4e3e" font-size="10">C exposes all 3 strategies: static (global/static), stack (local), heap (malloc)</text>
+    <text x="280" y="276" text-anchor="middle" fill="#8a7e6e" font-size="9">Programmer manages heap; compiler manages stack; OS manages static</text>
+  </g>
+</svg>
+<p class="diagram-caption">Fig. 7 — Storage allocation strategies in C: static, stack, and heap with variable lifetimes</p>
+</div>
+</div>
+</section>
+
+<!-- ─── PARAMETER PASSING ─── -->
+<section class="topic fade-in" id="params">
+<div class="content-narrow">
+<h3>9. Parameter Passing Mechanisms</h3>
+
+<p>When a function (the <em>caller</em>) invokes another function (the <em>callee</em>), it must communicate data to the callee through <strong>parameters</strong>. The mechanism by which this communication occurs is called <strong>parameter passing</strong>, and different languages support different mechanisms, each with distinct semantics, performance characteristics, and use cases. Understanding parameter passing is essential for compiler design (the compiler must generate correct code for each mechanism), for language design (choosing the right default mechanism affects language usability), and for exam preparation (parameter passing comparisons appear frequently in university examinations).</p>
+
+<h4>1. Call by Value</h4>
+
+<p>In <strong>call by value</strong>, the caller computes the value of each actual parameter and passes a <em>copy</em> of that value to the callee. The callee receives this copy in its formal parameter variables, which are local to the callee's activation record. Any modification to the formal parameters inside the callee does <em>not</em> affect the actual parameters in the caller. This is the default parameter passing mechanism in C, Java (for primitive types), and many other languages.</p>
+
+<pre><code>void swap(int a, int b) {  // a and b are copies
+    int temp = a;
+    a = b;         // modifies local copy only
+    b = temp;      // modifies local copy only
+}
+
+int main() {
+    int x = 5, y = 10;
+    swap(x, y);
+    printf("x=%d, y=%d\n", x, y);  // prints "x=5, y=10" — swap failed!
+}</code></pre>
+
+<p>The swap function fails because <code>a</code> and <code>b</code> are copies of <code>x</code> and <code>y</code>. Modifying the copies has no effect on the originals. Call by value is <strong>safe</strong> (the callee cannot accidentally corrupt the caller's data) but <strong>limited</strong> (the callee cannot communicate results back through parameter modification).</p>
+
+<p><strong>Advantages:</strong> Simplicity, safety (callee cannot corrupt caller's variables), easy to reason about (no aliasing issues).</p>
+<p><strong>Disadvantages:</strong> Inefficient for large data structures (entire structure must be copied), cannot use parameters for output.</p>
+
+<h4>2. Call by Reference</h4>
+
+<p>In <strong>call by reference</strong>, the caller passes the <em>address</em> (or reference) of each actual parameter to the callee. The callee's formal parameters become aliases for the actual parameters — any modification to the formal parameter directly modifies the actual parameter in the caller's storage. This is the default in C++ (with <code>&amp;</code> syntax), C# (with <code>ref</code> keyword), and Pascal (for <code>var</code> parameters).</p>
+
+<pre><code>// C++ example
+void swap(int &a, int &b) {  // a and b are references to caller's variables
+    int temp = a;
+    a = b;         // modifies the original x
+    b = temp;      // modifies the original y
+}
+
+int main() {
+    int x = 5, y = 10;
+    swap(x, y);
+    cout << "x=" << x << ", y=" << y;  // prints "x=10, y=5" — swap works!
+}</code></pre>
+
+<p><strong>Advantages:</strong> Efficient (only an address is passed, not a copy of the data), allows the callee to modify caller's variables, natural for output parameters.</p>
+<p><strong>Disadvantages:</strong> Risk of unintended side effects (aliasing), harder to reason about code, callee can corrupt caller's data.</p>
+
+<h4>3. Call by Value-Result (Copy-In / Copy-Out)</h4>
+
+<p><strong>Call by value-result</strong> (also called <strong>copy-in, copy-out</strong>) is a hybrid mechanism. Like call by value, the callee receives a copy of the actual parameter. However, when the callee returns, the final value of the formal parameter is <em>copied back</em> to the actual parameter. This gives the callee the ability to modify the caller's variables (like call by reference) while maintaining the locality benefits of call by value during execution.</p>
+
+<pre><code>// Pseudocode
+procedure swap(a, b: integer)  // value-result parameters
+    temp := a
+    a := b
+    b := temp
+end
+
+x := 5; y := 10
+swap(x, y)
+// After return: a's final value (10) is copied to x
+//               b's final value (5) is copied to y
+// Result: x=10, y=5</code></pre>
+
+<p><strong>Key difference from call by reference:</strong> In value-result, the callee works on a <em>copy</em> during execution, so if the callee reads the parameter multiple times and the caller modifies the original between reads, the callee sees a consistent snapshot. In call by reference, the callee sees the caller's variable directly, which can lead to aliasing issues.</p>
+
+<h4>4. Call by Result</h4>
+
+<p><strong>Call by result</strong> is similar to value-result, but the initial value of the formal parameter is <em>undefined</em> when the callee begins execution (no copy-in). Only on return is the final value of the formal parameter copied back to the actual parameter (copy-out). This is used for <strong>output-only</strong> parameters — parameters whose sole purpose is to communicate a result from the callee back to the caller.</p>
+
+<h4>5. Call by Name</h4>
+
+<p><strong>Call by name</strong> is a parameter passing mechanism in which the actual parameter is not evaluated at the time of the call. Instead, the actual parameter expression is re-evaluated each time the corresponding formal parameter is <em>used</em> inside the callee. This is conceptually equivalent to textual substitution of the actual parameter for the formal parameter in the callee's body. Call by name was used in ALGOL 60 and is the theoretical basis for <strong>lazy evaluation</strong> in modern functional languages.</p>
+
+<pre><code>// ALGOL 60-style pseudocode
+procedure increment(n, x)
+    n := n + 1
+    x := x + 1
+end
+
+i := 0
+increment(i, i)
+// n receives i (name "i"), x receives i (name "i")
+// Step 1: n := n + 1 → i := i + 1 → i becomes 1
+// Step 2: x := x + 1 → i := i + 1 → i becomes 2
+// Result: i = 2</code></pre>
+
+<p>Call by name is powerful but confusing (the <strong>Jensen's device</strong> trick exploits it for elegant summation functions) and has largely been replaced by call by need (lazy evaluation) in modern languages like Haskell.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>Parameter Passing</th><th>What Is Passed</th><th>Callee Can Modify Caller?</th><th>Efficiency</th><th>Safety</th><th>Example Languages</th></tr>
+<tr><td><strong>Call by Value</strong></td><td>Copy of value</td><td>No</td><td>Slow for large data</td><td>High</td><td>C, Java (primitives)</td></tr>
+<tr><td><strong>Call by Reference</strong></td><td>Address of variable</td><td>Yes (directly)</td><td>Fast</td><td>Low (aliasing)</td><td>C++ (ref), C# (ref)</td></tr>
+<tr><td><strong>Call by Value-Result</strong></td><td>Copy in, copy out</td><td>Yes (on return)</td><td>Medium</td><td>Medium</td><td>Fortran (some), Ada</td></tr>
+<tr><td><strong>Call by Result</strong></td><td>Nothing in, value out</td><td>Yes (output only)</td><td>Medium</td><td>Medium</td><td>Ada (out params)</td></tr>
+<tr><td><strong>Call by Name</strong></td><td>Unevaluated expression</td><td>Depends on expression</td><td>Variable</td><td>Low</td><td>ALGOL 60</td></tr>
+</table>
+</div>
+
+<h4>Can Call by Value, Call by Result, and Call by Reference Produce Different Results?</h4>
+
+<p><strong>Yes, absolutely.</strong> Consider the following example adapted from the PYQ:</p>
+
+<pre><code>procedure P(x, y: integer)
+    x := x + 1
+    y := y + 1
+end
+
+a := 5
+P(a, a)</code></pre>
+
+<p>Under <strong>call by value</strong>: <code>x = 5, y = 5</code> (copies). After <code>x := x + 1</code>, <code>x = 6</code>. After <code>y := y + 1</code>, <code>y = 6</code>. The original <code>a</code> is unchanged: <code>a = 5</code>.</p>
+
+<p>Under <strong>call by reference</strong>: Both <code>x</code> and <code>y</code> are aliases for <code>a</code>. After <code>x := x + 1</code>, <code>a</code> becomes 6. After <code>y := y + 1</code>, <code>a</code> becomes 7. Result: <code>a = 7</code>.</p>
+
+<p>Under <strong>call by value-result</strong>: <code>x = 5, y = 5</code> (copies). After execution, <code>x = 6, y = 6</code>. On return, <code>x</code>'s value (6) is copied to <code>a</code>, then <code>y</code>'s value (6) is copied to <code>a</code>. Result: <code>a = 6</code> (but this depends on copy-out order — if <code>y</code> is copied first, <code>a = 6</code>; if <code>x</code> is copied first, <code>a = 6</code> in this case, but can differ in other scenarios).</p>
+
+<div class="exam-tip">
+<p><strong>PYQ Alert:</strong> "Compare call-by-value, call-by-result, and call-by-reference. Can they produce different results? When?" — Use the example above. Show all three results for the same input. This is a classic 10-mark question. Draw a small table summarizing the differences.</p>
+</div>
+
+<div class="pull-quote">
+"The choice of parameter passing mechanism is not merely a technical detail — it shapes how programmers think about data flow, function contracts, and program correctness."
+</div>
+</div>
+</section>
+
+<!-- ─── SYMBOL TABLES ─── -->
+<section class="topic fade-in" id="symtab">
+<div class="content-narrow">
+<h3>10. Symbol Tables</h3>
+
+<p>A <strong>symbol table</strong> is a data structure maintained by the compiler (and sometimes by the run-time system) that stores information about all the identifiers (symbols) encountered in the source program. For each identifier, the symbol table records attributes such as its name, type, scope (the region of the program where it is visible), memory location (or offset), size, and any other relevant information. The symbol table is consulted during every phase of compilation: the lexer inserts new identifiers, the parser checks for declarations, the semantic analyzer verifies type compatibility, and the code generator uses it to determine memory addresses.</p>
+
+<div class="def-box">
+<p><strong>Definition:</strong> A symbol table is an association data structure that maps identifier names to their attributes (type, scope, memory location, etc.), supporting efficient lookup, insertion, and deletion operations during compilation.</p>
+</div>
+
+<h4>Operations on Symbol Tables</h4>
+
+<p>The three fundamental operations on a symbol table are:</p>
+
+<ol>
+<li><strong>Insert(symbol, attributes):</strong> Add a new identifier with its associated attributes. This is called when a declaration is processed. If the symbol already exists in the current scope, it indicates a duplicate declaration error.</li>
+<li><strong>Lookup(symbol):</strong> Search for an identifier and return its attributes. This is called when the identifier is used in an expression or statement. If the symbol is not found, it indicates an undeclared variable error.</li>
+<li><strong>Delete(scope):</strong> Remove all symbols belonging to a particular scope. This is called when a scope ends (e.g., when a function returns or a block closes). This operation is essential for managing nested scopes correctly.</li>
+</ol>
+
+<h4>Data Structures for Symbol Tables</h4>
+
+<p>Several data structures can be used to implement symbol tables, each with different performance characteristics:</p>
+
+<p><strong>1. Linear List:</strong> The simplest implementation — a list of (name, attributes) pairs. Lookup is O(n) — scan the list from the beginning. Insertion is O(1) if added at the front. Deletion is O(n). This is acceptable for small programs but too slow for large ones.</p>
+
+<p><strong>2. Hash Table (Hash Map):</strong> The most commonly used implementation in production compilers. A hash function maps identifier names to indices in an array of "buckets." Lookup, insertion, and deletion are all O(1) on average (O(n) worst case with many collisions). Collisions are handled by chaining (each bucket is a linked list) or open addressing. The hash table is typically organized as a <strong>set of hash tables</strong>, one per scope, to handle nested scopes efficiently.</p>
+
+<p><strong>3. Binary Search Tree (BST):</strong> Identifiers are stored in a BST ordered lexicographically. Lookup, insertion, and deletion are O(log n) in the balanced case. A balanced BST (such as an AVL tree or red-black tree) guarantees O(log n) worst case. BSTs are less commonly used than hash tables for symbol tables but provide ordered traversal, which is useful for debugging and error messages.</p>
+
+<p><strong>4. Tree-Structured Symbol Tables:</strong> For languages with nested scopes (like C, Java, Pascal), the symbol table is often organized as a tree of hash tables. Each scope has its own hash table, and the tree structure mirrors the nesting of scopes. When looking up an identifier, the compiler searches the current scope first, then the enclosing scope, and so on up to the global scope. This naturally implements static (lexical) scoping.</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 520 320" xmlns="http://www.w3.org/2000/svg" style="max-width:520px">
+  <g font-family="'DM Mono',monospace" font-size="10">
+    <!-- Global scope -->
+    <rect x="180" y="15" width="160" height="55" rx="6" fill="#6e85a0" fill-opacity=".15" stroke="#6e85a0" stroke-width="1.5"/>
+    <text x="260" y="35" text-anchor="middle" fill="#6e85a0" font-weight="500" font-size="11">Global Scope</text>
+    <text x="260" y="52" text-anchor="middle" fill="#8a7e6e" font-size="9">main, x, y, printf</text>
+
+    <!-- Lines down -->
+    <line x1="220" y1="70" x2="120" y2="105" stroke="#c4a882" stroke-width="1.2"/>
+    <line x1="300" y1="70" x2="400" y2="105" stroke="#c4a882" stroke-width="1.2"/>
+
+    <!-- Function scope 1 -->
+    <rect x="40" y="105" width="160" height="55" rx="6" fill="#c27b6e" fill-opacity=".15" stroke="#c27b6e" stroke-width="1.5"/>
+    <text x="120" y="125" text-anchor="middle" fill="#8a5a4f" font-weight="500" font-size="11">Scope: foo()</text>
+    <text x="120" y="142" text-anchor="middle" fill="#8a7e6e" font-size="9">a, b, temp</text>
+
+    <!-- Function scope 2 -->
+    <rect x="320" y="105" width="160" height="55" rx="6" fill="#7b9e6b" fill-opacity=".15" stroke="#7b9e6b" stroke-width="1.5"/>
+    <text x="400" y="125" text-anchor="middle" fill="#5a7a4f" font-weight="500" font-size="11">Scope: bar()</text>
+    <text x="400" y="142" text-anchor="middle" fill="#8a7e6e" font-size="9">i, arr[10]</text>
+
+    <!-- Block scope -->
+    <line x1="120" y1="160" x2="120" y2="190" stroke="#c4a882" stroke-width="1.2"/>
+    <rect x="40" y="190" width="160" height="55" rx="6" fill="#d4a76a" fill-opacity=".15" stroke="#d4a76a" stroke-width="1.5"/>
+    <text x="120" y="210" text-anchor="middle" fill="#b08a4f" font-weight="500" font-size="11">Block Scope</text>
+    <text x="120" y="227" text-anchor="middle" fill="#8a7e6e" font-size="9">temp (inner declaration)</text>
+
+    <!-- Lookup arrow -->
+    <line x1="400" y1="160" x2="400" y2="260" stroke="#c27b6e" stroke-width="1.5" stroke-dasharray="4,3"/>
+    <line x1="400" y1="260" x2="260" y2="260" stroke="#c27b6e" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#ah3)"/>
+    <text x="340" y="280" text-anchor="middle" fill="#c27b6e" font-size="9">Lookup: not found locally → search parent scope</text>
+
+    <!-- Bottom note -->
+    <text x="260" y="310" text-anchor="middle" fill="#5a4e3e" font-size="10">Tree-structured symbol table with nested scopes and lookup chain</text>
+  </g>
+</svg>
+<p class="diagram-caption">Fig. 8 — Tree-structured symbol table showing nested scopes and the lookup chain for static scoping</p>
+</div>
+
+<p><strong>5. Sorted Array with Binary Search:</strong> Identifiers are stored in a sorted array. Lookup is O(log n) using binary search. Insertion is O(n) due to shifting. This is simple to implement but not practical for heavily modified symbol tables.</p>
+
+<div class="table-wrap">
+<table>
+<tr><th>Data Structure</th><th>Lookup</th><th>Insert</th><th>Delete</th><th>Best For</th></tr>
+<tr><td>Linear List</td><td>O(n)</td><td>O(1)</td><td>O(n)</td><td>Small programs, simplicity</td></tr>
+<tr><td>Hash Table</td><td>O(1) avg</td><td>O(1) avg</td><td>O(1) avg</td><td>Production compilers (most common)</td></tr>
+<tr><td>Balanced BST</td><td>O(log n)</td><td>O(log n)</td><td>O(log n)</td><td>When ordered traversal is needed</td></tr>
+<tr><td>Sorted Array</td><td>O(log n)</td><td>O(n)</td><td>O(n)</td><td>Static symbol tables</td></tr>
+</table>
+</div>
+
+<div class="exam-tip">
+<p><strong>PYQ Alert:</strong> "What is a Symbol Table? What are the different data structures used to manage it?" — Define symbol table, list the operations (insert, lookup, delete), describe each data structure with time complexities, and conclude with the recommendation of hash tables for production use.</p>
+</div>
+</div>
+</section>
+
+<!-- ─── RT EXAM CORNER ─── -->
+<section class="topic fade-in" id="rt-exam">
+<div class="content-narrow">
+<h3>11. Exam Corner — Run-Time Environments</h3>
+
+<h4>Most Likely Questions &amp; Answer Strategies</h4>
+
+<details>
+<summary>Q: Explain the various storage allocation strategies with advantages and disadvantages. (10 marks)</summary>
+<div class="detail-body">
+<p><strong>Structure for 10 marks:</strong></p>
+<ol>
+<li><strong>Introduction</strong> (1 mark): Why storage allocation matters; the three strategies.</li>
+<li><strong>Static Allocation</strong> (2.5 marks): Definition, how it works, FORTRAN example, advantages (simple, fast), disadvantages (no recursion, inflexible).</li>
+<li><strong>Stack Allocation</strong> (2.5 marks): Definition, activation records, LIFO discipline, supports recursion, advantages (efficient, automatic), disadvantages (no dynamic data, stack overflow risk).</li>
+<li><strong>Heap Allocation</strong> (2.5 marks): Definition, malloc/new, garbage collection, advantages (flexible, supports dynamic data), disadvantages (fragmentation, dangling references, memory leaks).</li>
+<li><strong>Comparison table</strong> (1.5 marks): Present the three-strategy comparison table from Section 5.</li>
+</ol>
+</div>
+</details>
+
+<details>
+<summary>Q: What is an activation record? Draw and explain its fields. (10 marks)</summary>
+<div class="detail-body">
+<p><strong>Structure:</strong></p>
+<ol>
+<li><strong>Definition</strong> (2 marks): Define activation record; mention it is also called a stack frame.</li>
+<li><strong>Diagram</strong> (4 marks): Draw Fig. 5 — the labeled rectangle with all fields. This alone earns substantial marks.</li>
+<li><strong>Field explanations</strong> (4 marks): Explain each field — return value, actual parameters, return address, control link, access link, saved status, local data, temporaries.</li>
+</ol>
+<p><strong>Key tip:</strong> Always draw the diagram. A well-labeled diagram can earn 40% of the marks for this question.</p>
+</div>
+</details>
+
+<details>
+<summary>Q: Explain control stack, activation tree, and dangling references. (10 marks)</summary>
+<div class="detail-body">
+<p><strong>Structure:</strong></p>
+<ol>
+<li><strong>Control Stack</strong> (3 marks): Define, explain LIFO management of activation records, show how push/pop correspond to call/return.</li>
+<li><strong>Activation Tree</strong> (3 marks): Define, explain nodes and edges, draw a small example tree (Fig. 6), explain preorder traversal relationship.</li>
+<li><strong>Dangling References</strong> (4 marks): Define, give the C code example (returning pointer to local variable), explain why it's dangerous, contrast with garbage collection.</li>
+</ol>
+</div>
+</details>
+
+<details>
+<summary>Q: Compare call-by-value, call-by-result, and call-by-reference. (10 marks)</summary>
+<div class="detail-body">
+<p>Present each mechanism with a definition, code example, and explanation. Then show the worked example where all three produce different results (the <code>P(a, a)</code> example from Section 9). Include the comparison table. Conclude with a discussion of when each is preferred.</p>
+</div>
+</details>
+
+<details>
+<summary>Q: What is a symbol table? Explain data structures used. (5–10 marks)</summary>
+<div class="detail-body">
+<p>Define symbol table (2 marks). List operations: insert, lookup, delete (2 marks). Describe each data structure — linear list, hash table, BST, sorted array — with time complexities (4 marks). Conclude with hash table recommendation (2 marks for 10-mark version).</p>
+</div>
+</details>
+
+<h4>Quick Revision — Run-Time Environments</h4>
+<div class="rev-grid">
+<div class="rev-card">
+<h5>Memory Layout</h5>
+<p>Code (low) → Static Data → Heap (↑ grows up) → [Free Space] → Stack (↓ grows down, high addresses)</p>
+</div>
+<div class="rev-card">
+<h5>Static Allocation</h5>
+<p>Fixed at compile time. No recursion. No dynamic data. Fast access. FORTRAN 77 example.</p>
+</div>
+<div class="rev-card">
+<h5>Stack Allocation</h5>
+<p>LIFO. Activation records pushed/popped. Supports recursion. Automatic deallocation. Stack overflow risk.</p>
+</div>
+<div class="rev-card">
+<h5>Heap Allocation</h5>
+<p>Dynamic. Arbitrary order. malloc/free or garbage collection. Supports linked lists, trees, objects.</p>
+</div>
+<div class="rev-card">
+<h5>Activation Record Fields</h5>
+<p>Return value, parameters, return address, control link, access link, saved registers, local data, temporaries.</p>
+</div>
+<div class="rev-card">
+<h5>Parameter Passing</h5>
+<p>Value (copy), Reference (alias), Value-Result (copy in/out), Result (output only), Name (re-evaluate).</p>
+</div>
+<div class="rev-card">
+<h5>Dangling Reference</h5>
+<p>Pointer to freed memory. Caused by returning address of local variable. Prevented by garbage collection.</p>
+</div>
+<div class="rev-card">
+<h5>Symbol Table</h5>
+<p>Maps identifiers to attributes. Operations: insert, lookup, delete. Best implementation: hash table.</p>
+</div>
+</div>
+
+<h4>How to Structure a 15-Mark Answer on Storage Allocation Strategies</h4>
+
+<div class="card card-accent">
+<div class="card-title">Recommended Answer Structure</div>
+<ol>
+<li><strong>Introduction</strong> (1 mark): Define storage allocation; explain why it matters for compilers; mention the three strategies.</li>
+<li><strong>Static Allocation</strong> (3 marks): Define; explain mechanism; draw memory layout; give FORTRAN example; list 3 advantages and 3 disadvantages.</li>
+<li><strong>Stack Allocation</strong> (3 marks): Define; explain LIFO mechanism; draw activation record diagram; explain recursion support; list advantages/disadvantages.</li>
+<li><strong>Heap Allocation</strong> (3 marks): Define; explain dynamic allocation; mention malloc and garbage collection; explain dangling references and memory leaks; list advantages/disadvantages.</li>
+<li><strong>Comparison Table</strong> (2 marks): Three-strategy comparison table with 5+ criteria.</li>
+<li><strong>Real-world Context</strong> (2 marks): Explain how C uses all three; mention Java's garbage-collected heap; discuss stack overflow in deep recursion.</li>
+<li><strong>Conclusion</strong> (1 mark): Summarize that modern systems use all three strategies together.</li>
+</ol>
+</div>
+
+<h4>What Professors Usually Expect</h4>
+<ul>
+<li><strong>Diagrams:</strong> Always draw the memory layout diagram (Fig. 4) and the activation record diagram (Fig. 5). These earn easy marks.</li>
+<li><strong>Comparisons:</strong> Professors love comparison tables. Always include them for parameter passing and allocation strategies.</li>
+<li><strong>Examples:</strong> Give concrete code examples (C is the expected language in most Indian universities).</li>
+<li><strong>Advantages/Disadvantages:</strong> List them explicitly with bullet points. Each advantage/disadvantage is typically worth half a mark.</li>
+<li><strong>Definitions:</strong> Use formal, textbook-style definitions. Start with "A symbol table is a..." rather than informal language.</li>
+</ul>
+
+<div class="mnemonic">
+<strong>Memory Aid — "SHADeS":</strong> <strong>S</strong>tatic (fixed, no recursion), <strong>HA</strong>p (Heap — dynamic, garbage), <strong>D</strong>angling references (freed memory), <strong>S</strong>tack (LIFO, activation records). For activation record fields: "RAP CAL T" — <strong>R</strong>eturn value, <strong>A</strong>ctual parameters, <strong>P</strong>rogram counter (return address), <strong>C</strong>ontrol link, <strong>A</strong>ccess link, <strong>L</strong>ocal data, <strong>T</strong>emporaries.
+</div>
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--              MASTER REVISION SHEET                      -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<div class="part-header">
+  <h2>Exam Night Revision Sheet</h2>
+  <p class="part-sub">Ultra-condensed recap for the final hours before the exam</p>
+</div>
+
+<section class="topic fade-in">
+<div class="content-narrow">
+
+<div class="card card-accent">
+<div class="card-title">SDT — 60-Second Recap</div>
+<ul>
+<li><strong>SDT</strong> = Grammar + Attributes + Semantic Rules. Attaches computations to grammar productions.</li>
+<li><strong>SDD</strong> = Declarative specification. Says WHAT to compute, not WHEN.</li>
+<li><strong>Synthesized</strong> = computed from children (bottom-up). <strong>Inherited</strong> = from parent/siblings (top-down/sideways).</li>
+<li><strong>S-Attributed</strong> = only synthesized. Compatible with LR parsers. Evaluated during reductions.</li>
+<li><strong>L-Attributed</strong> = synthesized + inherited, constrained to left-to-right evaluation. Compatible with LL and LR parsers.</li>
+<li><strong>Dependency graph</strong> = directed graph of attribute dependencies. Acyclic → valid evaluation order.</li>
+<li><strong>Syntax tree</strong> = condensed parse tree without parentheses and single-productions. Built via <code>mkNode</code> / <code>mkLeaf</code>.</li>
+<li><strong>Bottom-up evaluation</strong> = attribute stack parallel to parser stack. Values pushed on shift, combined on reduce.</li>
+<li><strong>Top-down translation</strong> = embedded actions in LL parsing. Compute inherited before expanding, synthesized after.</li>
+</ul>
+</div>
+
+<div class="card card-green">
+<div class="card-title">Run-Time Environments — 60-Second Recap</div>
+<ul>
+<li><strong>Memory layout:</strong> Code → Static → Heap (↑) → Free → Stack (↓).</li>
+<li><strong>Static:</strong> Fixed addresses, compile-time. No recursion. Fast. FORTRAN.</li>
+<li><strong>Stack:</strong> LIFO activation records. Supports recursion. O(1) alloc/dealloc. Local variables.</li>
+<li><strong>Heap:</strong> Dynamic. malloc/new. Garbage collection. Supports dynamic data structures.</li>
+<li><strong>Activation record:</strong> Return value, params, return addr, control link, access link, saved regs, locals, temps.</li>
+<li><strong>Control link (dynamic):</strong> Points to caller's frame. <strong>Access link (static):</strong> Points to enclosing scope's frame.</li>
+<li><strong>Activation tree:</strong> Nodes = function invocations. Preorder = call order. Control stack = path from root to current.</li>
+<li><strong>Dangling reference:</strong> Pointer to deallocated memory. Caused by returning &amp;local. Prevented by GC.</li>
+<li><strong>Call by value:</strong> Copy. Safe. <strong>Reference:</strong> Alias. Fast but dangerous. <strong>Value-Result:</strong> Copy in/out. <strong>Name:</strong> Re-evaluate expression.</li>
+<li><strong>Symbol table:</strong> Maps names to attributes. Operations: insert, lookup, delete. Best: hash table (O(1) avg).</li>
+</ul>
+</div>
+
+<div class="card card-amber">
+<div class="card-title">Top 10 Most Likely Exam Questions — Unit III</div>
+<ol>
+<li>What is SDD? Explain synthesized and inherited attributes with examples. (10 marks)</li>
+<li>Compare S-Attributed vs L-Attributed Definitions. (5–10 marks)</li>
+<li>Construct parse tree and compute L.val for an arithmetic expression. (10 marks)</li>
+<li>Explain dependency graph with construction example. (5 marks)</li>
+<li>Construct SDD for binary-to-decimal or octal-to-decimal conversion. (5–10 marks)</li>
+<li>Explain storage allocation strategies (static, stack, heap) with advantages/disadvantages. (10 marks)</li>
+<li>What is an activation record? Draw and explain its fields. (10 marks)</li>
+<li>Compare call-by-value, call-by-reference, call-by-result with examples. (10 marks)</li>
+<li>Explain control stack, activation tree, and dangling references. (10 marks)</li>
+<li>What is a symbol table? Explain data structures used for it. (5–10 marks)</li>
+</ol>
+</div>
+
+<div class="card card-blue">
+<div class="card-title">Diagram Checklist for Exams</div>
+<ul>
+<li><strong>Annotated parse tree</strong> — for SDD evaluation questions. Label every node with attribute values.</li>
+<li><strong>Dependency graph</strong> — for evaluation order questions. Show arrows from dependencies.</li>
+<li><strong>Memory layout diagram</strong> — for storage organization. Four sections with growth arrows.</li>
+<li><strong>Activation record diagram</strong> — labeled rectangle with all 8 fields. Show SP arrow.</li>
+<li><strong>Activation tree</strong> — for calling sequence questions. Nodes = function calls.</li>
+<li><strong>Symbol table tree</strong> — for scope questions. Nested boxes with lookup arrows.</li>
+</ul>
+</div>
+
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--                        FOOTER                          -->
+<!-- ═══════════════════════════════════════════════════════ -->
+
+<footer>
+  <p>Unit III — Syntax-Directed Translation &amp; Run-Time Environments</p>
+  <p style="margin-top:.5rem;font-size:.65rem;color:var(--textm)">Compiler Design · University Examination Guide · Crafted for Deep Understanding &amp; Exam Excellence</p>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════ -->
+<!--                    JAVASCRIPT                          -->
+<!-- ═══════════════════════════════════════════════════════ -->
+<script>
+// Scroll-triggered fade-in for sections
+(function(){
+  const els = document.querySelectorAll('.fade-in');
+  if(!els.length) return;
+  const observer = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('visible');
+        observer.unobserve(entry.target);
+      }
+    });
+  },{threshold:0.08, rootMargin:'0px 0px -40px 0px'});
+  els.forEach(function(el){ observer.observe(el); });
+})();
+
+// Smooth scroll for TOC links
+document.querySelectorAll('.toc-col a').forEach(function(a){
+  a.addEventListener('click', function(e){
+    e.preventDefault();
+    var target = document.querySelector(this.getAttribute('href'));
+    if(target){
+      target.scrollIntoView({behavior:'smooth', block:'start'});
+    }
+  });
+});
+
+// Print-friendly: expand all details on print
+window.addEventListener('beforeprint', function(){
+  document.querySelectorAll('details').forEach(function(d){ d.open = true; });
+});
+</script>
+
+</body>
+</html>

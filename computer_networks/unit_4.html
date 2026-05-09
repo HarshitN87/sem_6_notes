@@ -1,0 +1,2261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 4 — Software Defined Networking & Delay Tolerant Networks</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+:root {
+  --bg: #F7F2EA;
+  --bg-warm: #FDF8F0;
+  --card: #FFFCF5;
+  --card-alt: #FBF6ED;
+  --fg: #2C1810;
+  --fg-light: #5C4A3A;
+  --muted: #8A7565;
+  --heading: #1A0F08;
+  --accent-sdn: #C17050;
+  --accent-sdn-light: #E8A888;
+  --accent-sdn-bg: #FDF0EA;
+  --accent-dtn: #5B7F6E;
+  --accent-dtn-light: #8FB5A2;
+  --accent-dtn-bg: #EDF5F1;
+  --accent-gold: #C9A84C;
+  --accent-gold-bg: #FDF8E8;
+  --accent-red: #B85450;
+  --accent-red-bg: #FDF0EF;
+  --border: #D8CBBA;
+  --border-light: #E8DDD0;
+  --sidebar-bg: #2C1810;
+  --sidebar-fg: #E8DDD0;
+  --sidebar-accent: #C9A84C;
+  --shadow: rgba(44,24,16,0.08);
+  --shadow-strong: rgba(44,24,16,0.15);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html { scroll-behavior: smooth; font-size: 17px; }
+
+body {
+  font-family: 'Lora', Georgia, serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection { background: var(--accent-gold); color: var(--heading); }
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  position: fixed; top:0; left:0; width: 260px; height:100vh;
+  background: var(--sidebar-bg); color: var(--sidebar-fg);
+  overflow-y: auto; z-index: 100; padding: 2rem 1.25rem;
+  transition: transform 0.35s ease;
+  border-right: 1px solid rgba(201,168,76,0.2);
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.3); border-radius:2px; }
+
+.sidebar-brand {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.3rem; font-weight: 700; color: var(--sidebar-accent);
+  letter-spacing: 0.05em; margin-bottom: 0.3rem;
+}
+.sidebar-sub {
+  font-size: 0.7rem; color: var(--muted); letter-spacing: 0.15em;
+  text-transform: uppercase; margin-bottom: 2rem; padding-bottom:1rem;
+  border-bottom: 1px solid rgba(201,168,76,0.15);
+}
+.sidebar-section-label {
+  font-size: 0.65rem; letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--sidebar-accent); margin-top: 1.5rem; margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.sidebar a {
+  display: block; padding: 0.35rem 0.75rem; color: var(--sidebar-fg);
+  text-decoration: none; font-size: 0.78rem; border-left: 2px solid transparent;
+  transition: all 0.2s ease; line-height: 1.5; border-radius: 0 3px 3px 0;
+}
+.sidebar a:hover, .sidebar a.active {
+  background: rgba(201,168,76,0.1); border-left-color: var(--sidebar-accent);
+  color: #fff;
+}
+.sidebar a .num {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+  color: var(--sidebar-accent); margin-right: 0.4rem;
+}
+
+.menu-toggle {
+  display: none; position: fixed; top:1rem; left:1rem; z-index: 200;
+  background: var(--sidebar-bg); color: var(--sidebar-accent); border: none;
+  width:44px; height:44px; border-radius: 50%; cursor: pointer;
+  font-size:1.1rem; box-shadow: 0 2px 10px var(--shadow-strong);
+}
+
+/* ─── MAIN ─── */
+.main { margin-left: 260px; }
+
+.hero {
+  padding: 5rem 3rem 4rem; text-align: center;
+  background: linear-gradient(180deg, #2C1810 0%, #3D2A1E 60%, #5C3D2E 100%);
+  color: #F7F2EA; position: relative; overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(201,168,76,0.08) 0%, transparent 70%);
+}
+.hero-unit {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.75rem;
+  letter-spacing: 0.3em; text-transform: uppercase; color: var(--sidebar-accent);
+  margin-bottom: 1rem; position: relative;
+}
+.hero-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 3.2rem;
+  font-weight: 700; line-height: 1.15; margin-bottom: 1rem;
+  letter-spacing: -0.01em; position: relative;
+}
+.hero-subtitle {
+  font-size: 1.05rem; color: rgba(247,242,234,0.7); max-width: 680px;
+  margin: 0 auto 2rem; line-height: 1.7; position: relative;
+}
+.hero-topics {
+  display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;
+  position: relative;
+}
+.hero-topic-pill {
+  font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.45rem 1.1rem; border: 1px solid rgba(201,168,76,0.35);
+  border-radius: 2px; color: var(--sidebar-accent);
+}
+
+.content { max-width: 860px; margin: 0 auto; padding: 3rem 2.5rem 6rem; }
+
+/* ─── SECTION STYLING ─── */
+.part-header {
+  margin: 4rem 0 2.5rem; padding: 2.5rem 0; text-align: center;
+  border-top: 2px solid var(--border); border-bottom: 1px solid var(--border-light);
+}
+.part-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+  letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.5rem;
+}
+.part-header.sdn .part-label { color: var(--accent-sdn); }
+.part-header.dtn .part-label { color: var(--accent-dtn); }
+.part-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 2.4rem;
+  font-weight: 700; color: var(--heading); line-height: 1.2;
+}
+
+.section { margin: 3rem 0; }
+.section-num {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+  letter-spacing: 0.25em; text-transform: uppercase; display: block;
+  margin-bottom: 0.4rem;
+}
+.sdn-accent { color: var(--accent-sdn); }
+.dtn-accent { color: var(--accent-dtn); }
+.gold-accent { color: var(--accent-gold); }
+.red-accent { color: var(--accent-red); }
+
+.section-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 1.85rem;
+  font-weight: 700; color: var(--heading); line-height: 1.25;
+  margin-bottom: 1.5rem; padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.subsection { margin: 2rem 0; }
+.subsection-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 1.35rem;
+  font-weight: 600; color: var(--heading); margin-bottom: 1rem;
+  padding-left: 0.75rem; border-left: 3px solid var(--accent-gold);
+}
+
+.sub-subsection-title {
+  font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;
+  font-weight: 600; color: var(--fg-light); margin: 1.5rem 0 0.75rem;
+}
+
+p { margin-bottom: 1.1rem; }
+
+/* ─── CALLOUT BOXES ─── */
+.callout {
+  padding: 1.25rem 1.5rem; margin: 1.5rem 0; border-radius: 3px;
+  border-left: 3px solid; font-size: 0.92rem; line-height: 1.7;
+}
+.callout-intuition {
+  background: var(--accent-gold-bg); border-color: var(--accent-gold);
+}
+.callout-exam {
+  background: var(--accent-red-bg); border-color: var(--accent-red);
+}
+.callout-dtn {
+  background: var(--accent-dtn-bg); border-color: var(--accent-dtn);
+}
+.callout-sdn {
+  background: var(--accent-sdn-bg); border-color: var(--accent-sdn);
+}
+.callout-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+  letter-spacing: 0.18em; text-transform: uppercase; font-weight: 600;
+  margin-bottom: 0.4rem; display: block;
+}
+.callout-intuition .callout-label { color: #8A6D1B; }
+.callout-exam .callout-label { color: var(--accent-red); }
+.callout-dtn .callout-label { color: var(--accent-dtn); }
+.callout-sdn .callout-label { color: var(--accent-sdn); }
+
+/* ─── PULL QUOTE ─── */
+.pull-quote {
+  margin: 2rem -1.5rem; padding: 1.5rem 2rem; text-align: center;
+  border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+  font-family: 'Cormorant Garamond', serif; font-size: 1.3rem;
+  font-style: italic; color: var(--fg-light); line-height: 1.6;
+}
+
+/* ─── DIAGRAM CONTAINERS ─── */
+.diagram-container {
+  margin: 2rem 0; padding: 2rem; background: var(--card);
+  border: 1px solid var(--border); border-radius: 4px;
+  box-shadow: 0 2px 12px var(--shadow);
+}
+.diagram-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.65rem;
+  letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+  text-align: center; margin-bottom: 1rem;
+}
+.diagram-container svg { width: 100%; height: auto; }
+.diagram-caption {
+  font-size: 0.82rem; color: var(--muted); text-align: center;
+  margin-top: 1rem; font-style: italic;
+}
+
+/* ─── TABLES ─── */
+.table-wrap {
+  margin: 1.5rem 0; overflow-x: auto; border: 1px solid var(--border);
+  border-radius: 3px; background: var(--card);
+}
+.table-wrap table {
+  width: 100%; border-collapse: collapse; font-size: 0.88rem;
+}
+.table-wrap th {
+  background: var(--card-alt); font-family: 'Cormorant Garamond', serif;
+  font-weight: 600; font-size: 0.9rem; text-align: left;
+  padding: 0.75rem 1rem; border-bottom: 2px solid var(--border);
+  color: var(--heading);
+}
+.table-wrap td {
+  padding: 0.65rem 1rem; border-bottom: 1px solid var(--border-light);
+  vertical-align: top; line-height: 1.6;
+}
+.table-wrap tr:last-child td { border-bottom: none; }
+.table-wrap tr:hover td { background: var(--accent-gold-bg); }
+
+/* ─── COLLAPSIBLE ─── */
+.collapsible-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.85rem 1.25rem; background: var(--card-alt);
+  border: 1px solid var(--border); border-radius: 3px;
+  cursor: pointer; font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem; font-weight: 600; color: var(--heading);
+  transition: all 0.2s ease; user-select: none;
+}
+.collapsible-header:hover { background: var(--accent-gold-bg); }
+.collapsible-header .chevron {
+  transition: transform 0.3s ease; color: var(--muted); font-size: 0.8rem;
+}
+.collapsible-header.open .chevron { transform: rotate(180deg); }
+.collapsible-body {
+  max-height: 0; overflow: hidden; transition: max-height 0.4s ease;
+  border: 1px solid transparent; border-top: none;
+}
+.collapsible-body.open {
+  max-height: 5000px; border-color: var(--border-light);
+}
+.collapsible-body-inner { padding: 1.25rem; }
+
+/* ─── REVISION CARD ─── */
+.revision-card {
+  margin: 2rem 0; padding: 1.5rem; background: var(--card);
+  border: 2px solid var(--accent-gold); border-radius: 4px;
+  position: relative;
+}
+.revision-card::before {
+  content: 'REVISION CARD'; position: absolute; top: -0.6rem; left: 1.5rem;
+  background: var(--card); padding: 0 0.5rem;
+  font-family: 'JetBrains Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.2em; color: var(--accent-gold); font-weight: 600;
+}
+.revision-card ul { list-style: none; padding: 0; }
+.revision-card li {
+  padding: 0.4rem 0; padding-left: 1.5rem; position: relative;
+  font-size: 0.9rem; line-height: 1.6;
+}
+.revision-card li::before {
+  content: '◆'; position: absolute; left: 0; color: var(--accent-gold);
+  font-size: 0.55rem; top: 0.6rem;
+}
+
+/* ─── EXAM QUESTION BOX ─── */
+.exam-q {
+  margin: 1rem 0; padding: 1rem 1.25rem;
+  border: 1px dashed var(--accent-red); border-radius: 3px;
+  background: rgba(184,84,80,0.03);
+}
+.exam-q-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.15em; color: var(--accent-red); font-weight: 600;
+}
+.exam-q-text { font-size: 0.9rem; margin-top: 0.3rem; font-style: italic; }
+
+/* ─── MNEMONIC ─── */
+.mnemonic-box {
+  margin: 1.5rem 0; padding: 1rem 1.5rem; background: var(--accent-dtn-bg);
+  border-radius: 3px; border: 1px solid rgba(91,127,110,0.2);
+}
+.mnemonic-label {
+  font-family: 'JetBrains Mono', monospace; font-size: 0.6rem;
+  letter-spacing: 0.18em; color: var(--accent-dtn); font-weight: 600;
+  margin-bottom: 0.3rem; display: block;
+}
+
+/* ─── STEP LIST ─── */
+.step-list { list-style: none; padding: 0; margin: 1rem 0; counter-reset: step; }
+.step-list li {
+  padding: 0.6rem 0 0.6rem 3rem; position: relative;
+  border-left: 2px solid var(--border-light); margin-left: 1rem;
+  counter-increment: step;
+}
+.step-list li::before {
+  content: counter(step); position: absolute; left: -0.85rem; top: 0.55rem;
+  width: 1.7rem; height: 1.7rem; background: var(--accent-gold);
+  color: #fff; border-radius: 50%; display: flex; align-items: center;
+  justify-content: center; font-family: 'JetBrains Mono', monospace;
+  font-size: 0.7rem; font-weight: 600;
+}
+.step-list li:last-child { border-left-color: transparent; }
+
+/* ─── TERM DEF ─── */
+.term { font-weight: 600; color: var(--heading); }
+.def-inline {
+  display: inline; background: rgba(201,168,76,0.12);
+  padding: 0.1rem 0.35rem; border-radius: 2px; font-size: 0.88rem;
+}
+
+/* ─── ADV/DISADV ─── */
+.pros-cons {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 1.5rem 0;
+}
+.pros-cons > div {
+  padding: 1.25rem; border-radius: 3px; border: 1px solid var(--border-light);
+}
+.pros-cons h4 {
+  font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+.pros-cons .pros { background: rgba(91,127,110,0.06); }
+.pros-cons .pros h4 { color: var(--accent-dtn); }
+.pros-cons .cons { background: rgba(184,84,80,0.04); }
+.pros-cons .cons h4 { color: var(--accent-red); }
+.pros-cons ul { list-style: none; padding: 0; }
+.pros-cons li { padding: 0.25rem 0; font-size: 0.88rem; padding-left: 1.2rem; position: relative; }
+.pros-cons .pros li::before { content: '+'; position: absolute; left: 0; color: var(--accent-dtn); font-weight: 700; }
+.pros-cons .cons li::before { content: '−'; position: absolute; left: 0; color: var(--accent-red); font-weight: 700; }
+
+/* ─── SIDENOTE ─── */
+.sidenote {
+  float: right; width: 200px; margin: 0 -14rem 1rem 1.5rem;
+  padding: 1rem; background: var(--card-alt); border: 1px solid var(--border-light);
+  border-radius: 3px; font-size: 0.78rem; color: var(--muted); line-height: 1.6;
+}
+
+/* ─── MARKER ─── */
+.marker {
+  display: inline-block; padding: 0.1rem 0.5rem; border-radius: 2px;
+  font-size: 0.78rem; font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+}
+.marker-sdn { background: var(--accent-sdn-bg); color: var(--accent-sdn); }
+.marker-dtn { background: var(--accent-dtn-bg); color: var(--accent-dtn); }
+.marker-gold { background: var(--accent-gold-bg); color: #8A6D1B; }
+
+/* ─── FLOW CHART ITEMS ─── */
+.flow-row {
+  display: flex; align-items: stretch; gap: 0.5rem; margin: 0.5rem 0;
+  flex-wrap: wrap;
+}
+.flow-box {
+  flex: 1; min-width: 120px; padding: 0.75rem 1rem;
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 3px; text-align: center; font-size: 0.85rem;
+  position: relative;
+}
+.flow-box.active { border-color: var(--accent-gold); background: var(--accent-gold-bg); }
+.flow-arrow {
+  display: flex; align-items: center; color: var(--muted);
+  font-size: 0.8rem;
+}
+
+/* ─── PRINT ─── */
+@media print {
+  .sidebar, .menu-toggle { display: none !important; }
+  .main { margin-left: 0 !important; }
+  .hero { padding: 2rem; }
+  .content { padding: 1rem; }
+  .collapsible-body { max-height: none !important; }
+  body { font-size: 14px; }
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 1024px) {
+  .sidenote { float: none; width: 100%; margin: 1rem 0; }
+}
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .sidebar.open { transform: translateX(0); }
+  .menu-toggle { display: flex; align-items: center; justify-content: center; }
+  .main { margin-left: 0; }
+  .hero-title { font-size: 2.2rem; }
+  .content { padding: 2rem 1.25rem; }
+  .pros-cons { grid-template-columns: 1fr; }
+  .hero-topics { flex-direction: column; align-items: center; }
+}
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in { animation: fadeUp 0.6s ease forwards; }
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(201,168,76,0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(201,168,76,0); }
+}
+
+/* ─── TABS ─── */
+.tab-group { margin: 1.5rem 0; }
+.tab-headers { display: flex; gap: 0; border-bottom: 2px solid var(--border); }
+.tab-header {
+  padding: 0.6rem 1.25rem; cursor: pointer; font-size: 0.85rem;
+  font-family: 'Cormorant Garamond', serif; font-weight: 600;
+  border: 1px solid transparent; border-bottom: none;
+  border-radius: 3px 3px 0 0; color: var(--muted);
+  transition: all 0.2s ease; background: transparent;
+}
+.tab-header:hover { color: var(--fg); }
+.tab-header.active {
+  background: var(--card); border-color: var(--border);
+  color: var(--heading); margin-bottom: -2px;
+  border-bottom: 2px solid var(--card);
+}
+.tab-panel { display: none; padding: 1.25rem; border: 1px solid var(--border); border-top: none; background: var(--card); border-radius: 0 0 3px 3px; }
+.tab-panel.active { display: block; }
+
+/* ─── CONFUSION BOX ─── */
+.confusion-box {
+  margin: 1.5rem 0; padding: 1.25rem; background: #FFF8F0;
+  border: 1px solid #E8C8A0; border-radius: 3px;
+}
+.confusion-box .confusion-title {
+  font-family: 'Cormorant Garamond', serif; font-weight: 700;
+  color: #9A6B30; font-size: 0.95rem; margin-bottom: 0.5rem;
+}
+.confusion-box .confusion-title i { margin-right: 0.4rem; }
+
+/* ─── BACK TO TOP ─── */
+.back-top {
+  position: fixed; bottom: 2rem; right: 2rem; width: 44px; height: 44px;
+  background: var(--sidebar-bg); color: var(--sidebar-accent);
+  border: 1px solid rgba(201,168,76,0.3); border-radius: 50%;
+  cursor: pointer; font-size: 1rem; z-index: 90;
+  display: none; align-items: center; justify-content: center;
+  transition: all 0.3s ease; box-shadow: 0 2px 12px var(--shadow-strong);
+}
+.back-top:hover { background: var(--accent-gold); color: #fff; }
+
+/* ─── TOAST ─── */
+.toast {
+  position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(100px);
+  background: var(--sidebar-bg); color: var(--sidebar-fg);
+  padding: 0.75rem 1.5rem; border-radius: 3px; font-size: 0.85rem;
+  z-index: 300; opacity: 0; transition: all 0.4s ease;
+  box-shadow: 0 4px 20px var(--shadow-strong);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+
+<!-- MENU TOGGLE -->
+<button class="menu-toggle" onclick="toggleSidebar()" aria-label="Toggle navigation">
+  <i class="fas fa-bars"></i>
+</button>
+
+<!-- SIDEBAR -->
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-brand">CN-II</div>
+  <div class="sidebar-sub">Unit 4 Study Document</div>
+
+  <div class="sidebar-section-label">Part I — SDN</div>
+  <a href="#sdn-intro"><span class="num">1.1</span> Introduction to SDN</a>
+  <a href="#control-data"><span class="num">1.2</span> Control &amp; Data Planes</a>
+  <a href="#sdn-arch"><span class="num">1.3</span> SDN Architecture</a>
+  <a href="#sdn-components"><span class="num">1.4</span> Architecture Components</a>
+  <a href="#openflow"><span class="num">1.5</span> OpenFlow Protocol</a>
+
+  <div class="sidebar-section-label">Part II — DTN</div>
+  <a href="#dtn-intro"><span class="num">2.1</span> Introduction to DTN</a>
+  <a href="#dtn-arch"><span class="num">2.2</span> DTN Architecture</a>
+  <a href="#bundle"><span class="num">2.3</span> Bundle Protocol</a>
+  <a href="#dtn-routing"><span class="num">2.4</span> Routing Taxonomy</a>
+  <a href="#replication"><span class="num">2.5</span> Replication Protocols</a>
+
+  <div class="sidebar-section-label">Exam Prep</div>
+  <a href="#revision"><span class="num">★</span> Quick Revision</a>
+  <a href="#exam-questions"><span class="num">★</span> Expected Questions</a>
+  <a href="#viva"><span class="num">★</span> Viva Questions</a>
+  <a href="#answer-structure"><span class="num">★</span> Answer Structuring</a>
+</nav>
+
+<!-- MAIN CONTENT -->
+<div class="main">
+
+  <!-- HERO -->
+  <header class="hero">
+    <div class="hero-unit">Unit IV</div>
+    <h1 class="hero-title">Software Defined Networking<br>&amp; Delay Tolerant Networks</h1>
+    <p class="hero-subtitle">A comprehensive examination-oriented study document covering the architectural philosophy of SDN, the OpenFlow protocol, and the store-carry-forward paradigm of Delay Tolerant Networks — prepared for Indian university descriptive examinations.</p>
+    <div class="hero-topics">
+      <span class="hero-topic-pill">SDN Architecture</span>
+      <span class="hero-topic-pill">OpenFlow</span>
+      <span class="hero-topic-pill">DTN &amp; Bundle Protocol</span>
+      <span class="hero-topic-pill">DTN Routing</span>
+    </div>
+  </header>
+
+  <div class="content">
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- PART I: SDN -->
+    <!-- ═══════════════════════════════════════ -->
+
+    <div class="part-header sdn" id="part-sdn">
+      <div class="part-label sdn-accent">Part I</div>
+      <h2 class="part-title">Software Defined Networking</h2>
+    </div>
+
+    <!-- 1.1 INTRO -->
+    <section class="section" id="sdn-intro">
+      <span class="section-num sdn-accent">Section 1.1</span>
+      <h3 class="section-title">Introduction to Software-Defined Networking</h3>
+
+      <p>Imagine, for a moment, that you are the network administrator of a mid-sized enterprise. You manage forty-seven switches, twelve routers, and a tangle of firewall rules that nobody fully understands anymore. When a new VLAN needs to be created, you do not simply click a button — you log into each switch individually, type commands in a vendor-specific syntax, and pray that you have not introduced a subtle inconsistency that will bring down a department's connectivity at the worst possible moment. Every device thinks for itself, makes its own decisions, and operates in isolation from the holistic needs of the network. This is the world of traditional networking, and it is precisely the world that Software-Defined Networking was invented to escape.</p>
+
+      <p>Software-Defined Networking, abbreviated as SDN, is fundamentally an architectural approach to building networks in which the <span class="term">control plane</span> — the part of the network that <em>decides</em> how traffic should be routed — is physically and logically separated from the <span class="term">data plane</span> — the part that actually <em>moves</em> the packets from one port to another. In traditional networking, every router and switch contains both planes bundled together inside the same box, running proprietary firmware that the network operator cannot easily inspect or modify. SDN proposes that these two functions should be disaggregated, with the control plane extracted into a centralized software controller that programs the data plane devices through well-defined, open interfaces.</p>
+
+      <div class="callout callout-intuition">
+        <span class="callout-label">Intuitive Analogy</span>
+        Think of a traditional network as a restaurant where every waiter independently decides which kitchen station to send an order to, based on their personal judgment and a small rulebook they carry in their pocket. SDN is like installing a head chef who sees the entire restaurant, knows which stations are busy, and directs every waiter accordingly. The waiters no longer decide — they simply follow instructions. The head chef is the controller; the waiters are the switches.
+      </div>
+
+      <p>The historical motivation for SDN arose from several converging frustrations. First, network operators found themselves locked into vendor ecosystems — a Cisco switch spoke a slightly different language than a Juniper switch, and neither was eager to make their firmware programmable by competitors' tools. Second, the pace of innovation in networking hardware was glacial compared to software: deploying a new routing protocol required firmware upgrades across hundreds of devices, a process that could take months. Third, the rise of cloud computing and massive data centers demanded a level of network flexibility and automation that traditional architectures simply could not provide. When you need to spin up ten thousand virtual machines and reconfigure the network in seconds, logging into individual switches with a command-line interface becomes a parody of engineering.</p>
+
+      <p>The core idea behind SDN, then, is that networks have these two distinct planes of operation, and the separation between them should be codified not as an internal implementation detail but as an open, standardized interface. The control plane determines how the network should behave — it runs routing protocols, computes forwarding paths, and enforces policies. The data plane implements that behavior on individual packets — it reads the forwarding table and sends each packet out the appropriate port. By extracting the control plane into a centralized, programmable entity, SDN transforms the network from a collection of independent, opaque devices into a coherent system that can be managed holistically, automated, and innovated upon at the speed of software rather than the speed of hardware procurement.</p>
+
+      <div class="callout callout-exam">
+        <span class="callout-label">Exam Writing Tip</span>
+        When asked "What is SDN?", do not merely say "separating control and data plane." That earns 2 marks. To fill a 10-mark answer, explain: (1) the traditional networking problem, (2) what control and data planes are, (3) how SDN separates them, (4) what benefits this separation provides, (5) what OpenFlow is, and (6) a real-world example. Layer your answer from problem to solution.
+      </div>
+    </section>
+
+    <!-- 1.2 CONTROL & DATA PLANES -->
+    <section class="section" id="control-data">
+      <span class="section-num sdn-accent">Section 1.2</span>
+      <h3 class="section-title">Centralized and Distributed Control &amp; Data Planes</h3>
+
+      <p>To understand SDN deeply, we must first understand the two fundamental planes of network operation — the control plane and the data plane — and then examine how each can be organized in either a centralized or distributed fashion. This four-quadrant analysis (centralized control, distributed control, centralized data, distributed data) is essential for university examinations because it reveals why SDN chose its particular combination and what tradeoffs were involved.</p>
+
+      <div class="subsection">
+        <h4 class="subsection-title">The Control Plane</h4>
+        <p>The control plane is the decision-making layer of the network. Its job is to determine the route that packets should follow through the network topology. In practical terms, the control plane runs routing protocols — BGP for inter-domain routing, OSPF or RIP for intra-domain routing — and populates the forwarding tables that the data plane consults. The control plane does not touch individual packets; it computes the <em>rules</em> by which packets will be forwarded. Think of it as the legislative branch of the network: it writes the laws, but it does not enforce them on a case-by-case basis.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">The Data Plane</h4>
+        <p>The data plane, sometimes called the forwarding plane, is the execution layer. It is responsible for receiving each incoming packet, consulting the forwarding table that the control plane has installed, and sending the packet out through the correct port. This happens at line rate — meaning millions of packets per second — and therefore must be implemented in specialized hardware (typically ASICs, Application-Specific Integrated Circuits) for speed. The data plane does not ask questions about whether a route is optimal; it simply follows the rules it has been given. It is the executive branch: it enforces the law as written, without interpretation.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Centralized vs. Distributed Control Plane</h4>
+        <p>In a <span class="term">distributed control plane</span>, which is the architecture of traditional networking, every router runs its own instance of the routing protocol. Each router independently discovers its neighbors, exchanges routing information, and computes its own forwarding table. This is how the Internet has historically operated — no single entity has a complete view of the network, and routing decisions emerge from the collective behavior of thousands of independent routers running distributed algorithms. The advantage of this approach is resilience: if one router fails, the others reconverge and find alternative paths. The disadvantage is that no router has a global view, which means routing can be suboptimal, policy enforcement is inconsistent, and troubleshooting is a nightmare of cross-referencing logs from dozens of devices.</p>
+
+        <p>In a <span class="term">centralized control plane</span>, a single logical entity — the SDN controller — maintains a complete, global view of the entire network topology and computes forwarding paths for all devices. Instead of each switch running OSPF and making independent decisions, the controller tells every switch exactly what to do. This enables globally optimal routing, consistent policy enforcement, and rapid adaptation to changes. The tradeoff is that the controller becomes a single point of failure, which is why production SDN deployments use clusters of controllers for redundancy. But logically, the control plane remains centralized: there is one brain, not dozens.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Centralized vs. Distributed Data Plane</h4>
+        <p>The data plane is almost always distributed in practice, because the very nature of packet forwarding requires physical devices at different locations — a switch in Building A cannot forward packets that arrive at a switch in Building B. However, it is useful to distinguish between a data plane that consists of programmable but autonomous forwarding devices (distributed data plane with local intelligence) and a data plane that consists of simple, programmable devices with no autonomous decision-making capability (distributed data plane with centralized programming, which is the SDN model). In the SDN model, the data plane devices are deliberately kept "dumb" — they contain forwarding tables but no routing logic. They cannot compute paths; they can only follow instructions from the controller.</p>
+      </div>
+
+      <!-- Comparison Diagram -->
+      <div class="diagram-container">
+        <div class="diagram-label">Figure 1.1 — Control &amp; Data Plane Organization</div>
+        <svg viewBox="0 0 780 360" xmlns="http://www.w3.org/2000/svg">
+          <!-- Traditional -->
+          <rect x="20" y="20" width="350" height="320" rx="4" fill="none" stroke="#C17050" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="195" y="50" text-anchor="middle" font-family="Cormorant Garamond" font-size="16" font-weight="700" fill="#C17050">Traditional Networking</text>
+          <text x="195" y="70" text-anchor="middle" font-family="Lora" font-size="11" fill="#8A7565">(Distributed Control + Distributed Data)</text>
+          <!-- Routers -->
+          <rect x="60" y="100" width="90" height="90" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+          <text x="105" y="130" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050">ROUTER A</text>
+          <text x="105" y="148" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Control Plane</text>
+          <text x="105" y="162" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Data Plane</text>
+          <text x="105" y="180" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A7565">OSPF+BGP+Fwd</text>
+
+          <rect x="200" y="100" width="90" height="90" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+          <text x="245" y="130" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050">ROUTER B</text>
+          <text x="245" y="148" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Control Plane</text>
+          <text x="245" y="162" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Data Plane</text>
+          <text x="245" y="180" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A7565">OSPF+BGP+Fwd</text>
+
+          <line x1="150" y1="145" x2="200" y2="145" stroke="#C17050" stroke-width="1.2" marker-end="url(#arrowSdn)"/>
+          <line x1="200" y1="155" x2="150" y2="155" stroke="#C17050" stroke-width="1.2" marker-end="url(#arrowSdn)"/>
+
+          <rect x="130" y="230" width="90" height="90" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+          <text x="175" y="260" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050">ROUTER C</text>
+          <text x="175" y="278" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Control Plane</text>
+          <text x="175" y="292" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Data Plane</text>
+          <text x="175" y="310" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A7565">OSPF+BGP+Fwd</text>
+
+          <text x="195" y="345" text-anchor="middle" font-family="Lora" font-size="10" fill="#8A7565" font-style="italic">Each device makes independent decisions</text>
+
+          <!-- SDN -->
+          <rect x="410" y="20" width="350" height="320" rx="4" fill="none" stroke="#5B7F6E" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="585" y="50" text-anchor="middle" font-family="Cormorant Garamond" font-size="16" font-weight="700" fill="#5B7F6E">SDN Networking</text>
+          <text x="585" y="70" text-anchor="middle" font-family="Lora" font-size="11" fill="#8A7565">(Centralized Control + Distributed Data)</text>
+
+          <!-- Controller -->
+          <rect x="470" y="95" width="230" height="60" rx="3" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1.5"/>
+          <text x="585" y="120" text-anchor="middle" font-family="Cormorant Garamond" font-size="13" font-weight="700" fill="#5B7F6E">SDN Controller</text>
+          <text x="585" y="140" text-anchor="middle" font-family="Lora" font-size="9" fill="#5C4A3A">Centralized Control Plane — Global View</text>
+
+          <!-- Switches -->
+          <rect x="440" y="220" width="80" height="55" rx="3" fill="#FFFCF5" stroke="#5B7F6E" stroke-width="1"/>
+          <text x="480" y="242" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#5B7F6E">SWITCH 1</text>
+          <text x="480" y="258" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Data Plane Only</text>
+          <text x="480" y="270" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A7565">Forward only</text>
+
+          <rect x="545" y="220" width="80" height="55" rx="3" fill="#FFFCF5" stroke="#5B7F6E" stroke-width="1"/>
+          <text x="585" y="242" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#5B7F6E">SWITCH 2</text>
+          <text x="585" y="258" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Data Plane Only</text>
+          <text x="585" y="270" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A7565">Forward only</text>
+
+          <rect x="650" y="220" width="80" height="55" rx="3" fill="#FFFCF5" stroke="#5B7F6E" stroke-width="1"/>
+          <text x="690" y="242" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#5B7F6E">SWITCH 3</text>
+          <text x="690" y="258" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Data Plane Only</text>
+          <text x="690" y="270" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A7565">Forward only</text>
+
+          <!-- Lines from controller to switches -->
+          <line x1="530" y1="155" x2="480" y2="220" stroke="#5B7F6E" stroke-width="1.2" stroke-dasharray="4,2"/>
+          <line x1="585" y1="155" x2="585" y2="220" stroke="#5B7F6E" stroke-width="1.2" stroke-dasharray="4,2"/>
+          <line x1="640" y1="155" x2="690" y2="220" stroke="#5B7F6E" stroke-width="1.2" stroke-dasharray="4,2"/>
+
+          <text x="585" y="310" text-anchor="middle" font-family="Lora" font-size="9" fill="#5B7F6E">OpenFlow (Southbound API)</text>
+          <text x="585" y="345" text-anchor="middle" font-family="Lora" font-size="10" fill="#8A7565" font-style="italic">Controller programs all devices centrally</text>
+
+          <defs>
+            <marker id="arrowSdn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#C17050"/>
+            </marker>
+          </defs>
+        </svg>
+        <div class="diagram-caption">Figure 1.1 — Traditional networking bundles control and data in each device; SDN centralizes control and distributes only the data plane.</div>
+      </div>
+
+      <!-- Comparison Table -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Aspect</th>
+              <th>Traditional (Distributed Control)</th>
+              <th>SDN (Centralized Control)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Control Plane Location</td><td>Inside each router/switch</td><td>Centralized SDN Controller</td></tr>
+            <tr><td>Routing Decisions</td><td>Each device decides independently</td><td>Controller decides for all devices</td></tr>
+            <tr><td>Network View</td><td>Local / partial view per device</td><td>Global, complete network view</td></tr>
+            <tr><td>Protocol Running</td><td>OSPF, BGP, RIP on each device</td><td>Controller computes paths; no routing protocol on switches</td></tr>
+            <tr><td>Configuration</td><td>Per-device CLI / SNMP</td><td>Programmatic via controller APIs</td></tr>
+            <tr><td>Vendor Lock-in</td><td>High (proprietary firmware)</td><td>Low (open interfaces like OpenFlow)</td></tr>
+            <tr><td>Innovation Speed</td><td>Slow (firmware upgrades)</td><td>Fast (software updates on controller)</td></tr>
+            <tr><td>Single Point of Failure</td><td>No (distributed resilience)</td><td>Risk (mitigated by controller clusters)</td></tr>
+            <tr><td>Policy Consistency</td><td>Hard to enforce globally</td><td>Enforced centrally by controller</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="confusion-box">
+        <div class="confusion-title"><i class="fas fa-exclamation-triangle"></i> Common Student Confusion</div>
+        <p>Students often confuse "centralized data plane" with "centralized control plane." The data plane is <em>always</em> distributed in practice — packets must be forwarded by physical devices at different locations. What SDN centralizes is the <em>control</em> — the decision-making about <em>how</em> packets should be forwarded. The data plane devices (switches) still exist at every hop; they simply follow the controller's instructions rather than making their own routing decisions.</p>
+      </div>
+
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Advantages of Centralized Control (SDN)</h4>
+          <ul>
+            <li>Global network visibility enables optimal routing decisions</li>
+            <li>Consistent policy enforcement across the entire network</li>
+            <li>Programmability allows rapid innovation and automation</li>
+            <li>Open interfaces reduce vendor lock-in</li>
+            <li>Simplified management — one controller instead of hundreds of CLI sessions</li>
+            <li>Enables network slicing, traffic engineering, and dynamic resource allocation</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Disadvantages of Centralized Control (SDN)</h4>
+          <ul>
+            <li>Controller is a potential single point of failure</li>
+            <li>Scalability challenges as network size grows</li>
+            <li>Latency between controller and switch can delay rule installation</li>
+            <li>Security risk — compromising the controller compromises the entire network</li>
+            <li>Transition from legacy infrastructure is complex and expensive</li>
+            <li>Requires new skill sets (programming, API interaction) from network engineers</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="exam-q">
+        <div class="exam-q-label">Likely Exam Question — 10 Marks</div>
+        <div class="exam-q-text">"Compare and contrast centralized and distributed control planes. Why does SDN adopt centralized control? What are the tradeoffs involved?"</div>
+      </div>
+    </section>
+
+    <!-- 1.3 SDN ARCHITECTURE -->
+    <section class="section" id="sdn-arch">
+      <span class="section-num sdn-accent">Section 1.3</span>
+      <h3 class="section-title">SDN Architecture Layers</h3>
+
+      <p>The SDN architecture is organized into three distinct layers, each with a clearly defined role and separated from the others by well-specified interfaces. This layered approach is not merely a theoretical abstraction — it maps directly to the physical and logical organization of a working SDN deployment, and understanding it at a granular level is essential for both conceptual clarity and examination performance.</p>
+
+      <!-- SDN 3-Layer Diagram -->
+      <div class="diagram-container">
+        <div class="diagram-label">Figure 1.2 — SDN Three-Layer Architecture</div>
+        <svg viewBox="0 0 700 480" xmlns="http://www.w3.org/2000/svg">
+          <!-- Application Layer -->
+          <rect x="50" y="30" width="600" height="110" rx="4" fill="#FDF0EA" stroke="#C17050" stroke-width="1.5"/>
+          <text x="350" y="58" text-anchor="middle" font-family="Cormorant Garamond" font-size="18" font-weight="700" fill="#C17050">Application Layer</text>
+          <!-- Apps -->
+          <rect x="80" y="75" width="130" height="48" rx="3" fill="#FFFCF5" stroke="#C17050" stroke-width="1"/>
+          <text x="145" y="97" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050">Monitoring</text>
+          <text x="145" y="112" text-anchor="middle" font-family="Lora" font-size="8" fill="#8A7565">Network visibility</text>
+          <rect x="230" y="75" width="130" height="48" rx="3" fill="#FFFCF5" stroke="#C17050" stroke-width="1"/>
+          <text x="295" y="97" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050">Traffic Engg.</text>
+          <text x="295" y="112" text-anchor="middle" font-family="Lora" font-size="8" fill="#8A7565">Path optimization</text>
+          <rect x="380" y="75" width="130" height="48" rx="3" fill="#FFFCF5" stroke="#C17050" stroke-width="1"/>
+          <text x="445" y="97" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050">Security</text>
+          <text x="445" y="112" text-anchor="middle" font-family="Lora" font-size="8" fill="#8A7565">Firewall / ACL</text>
+          <rect x="530" y="75" width="100" height="48" rx="3" fill="#FFFCF5" stroke="#C17050" stroke-width="1"/>
+          <text x="580" y="97" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050">Load Bal.</text>
+          <text x="580" y="112" text-anchor="middle" font-family="Lora" font-size="8" fill="#8A7565">Traffic dist.</text>
+
+          <!-- Northbound API -->
+          <line x1="100" y1="145" x2="100" y2="185" stroke="#C9A84C" stroke-width="2"/>
+          <line x1="350" y1="145" x2="350" y2="185" stroke="#C9A84C" stroke-width="2"/>
+          <line x1="600" y1="145" x2="600" y2="185" stroke="#C9A84C" stroke-width="2"/>
+          <rect x="240" y="152" width="220" height="26" rx="13" fill="#FDF8E8" stroke="#C9A84C" stroke-width="1"/>
+          <text x="350" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8A6D1B" font-weight="600">NORTHBOUND API (REST)</text>
+
+          <!-- Control Layer -->
+          <rect x="50" y="190" width="600" height="120" rx="4" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1.5"/>
+          <text x="350" y="218" text-anchor="middle" font-family="Cormorant Garamond" font-size="18" font-weight="700" fill="#5B7F6E">Control Layer (SDN Controller)</text>
+          <rect x="160" y="235" width="380" height="55" rx="3" fill="#FFFCF5" stroke="#5B7F6E" stroke-width="1"/>
+          <text x="350" y="258" text-anchor="middle" font-family="Lora" font-size="11" fill="#2C1810">Global Network View · Routing Decisions</text>
+          <text x="350" y="278" text-anchor="middle" font-family="Lora" font-size="11" fill="#2C1810">Policy Implementation · Device Management</text>
+
+          <!-- Southbound API -->
+          <line x1="100" y1="315" x2="100" y2="355" stroke="#C9A84C" stroke-width="2"/>
+          <line x1="350" y1="315" x2="350" y2="355" stroke="#C9A84C" stroke-width="2"/>
+          <line x1="600" y1="315" x2="600" y2="355" stroke="#C9A84C" stroke-width="2"/>
+          <rect x="230" y="322" width="240" height="26" rx="13" fill="#FDF8E8" stroke="#C9A84C" stroke-width="1"/>
+          <text x="350" y="340" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8A6D1B" font-weight="600">SOUTHBOUND API (OpenFlow)</text>
+
+          <!-- Infrastructure Layer -->
+          <rect x="50" y="360" width="600" height="100" rx="4" fill="#FBF6ED" stroke="#D4A853" stroke-width="1.5"/>
+          <text x="350" y="390" text-anchor="middle" font-family="Cormorant Garamond" font-size="18" font-weight="700" fill="#8A6D1B">Infrastructure Layer (Data Plane)</text>
+          <rect x="90" y="408" width="110" height="38" rx="3" fill="#FFFCF5" stroke="#D4A853" stroke-width="1"/>
+          <text x="145" y="432" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8A6D1B">Switches</text>
+          <rect x="230" y="408" width="110" height="38" rx="3" fill="#FFFCF5" stroke="#D4A853" stroke-width="1"/>
+          <text x="285" y="432" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8A6D1B">Routers</text>
+          <rect x="370" y="408" width="140" height="38" rx="3" fill="#FFFCF5" stroke="#D4A853" stroke-width="1"/>
+          <text x="440" y="432" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8A6D1B">Access Points</text>
+          <rect x="540" y="408" width="90" height="38" rx="3" fill="#FFFCF5" stroke="#D4A853" stroke-width="1"/>
+          <text x="585" y="432" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#8A6D1B">vSwitches</text>
+        </svg>
+        <div class="diagram-caption">Figure 1.2 — The three-layer SDN architecture with Northbound and Southbound APIs as interfaces.</div>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Application Layer</h4>
+        <p>The application layer sits at the top of the SDN architecture and is where network applications reside. These are not end-user applications like web browsers or email clients — they are <em>network applications</em> that define how the network should behave. A traffic engineering application computes optimal paths for different classes of traffic. A security application installs firewall rules across all switches. A load balancer application redirects flows to less-loaded servers. A monitoring application collects statistics and raises alerts. The critical insight is that these applications do not directly configure switches — they communicate their requirements to the SDN controller through the <span class="term">Northbound API</span>, and the controller translates those requirements into specific forwarding rules that are pushed down to the infrastructure layer.</p>
+
+        <p>This separation is architecturally significant. In traditional networking, every application that needed to influence network behavior (quality of service, access control, traffic shaping) had to be configured directly on each network device. In SDN, the application layer provides a single, programmable interface for expressing network-wide policies, and the controller takes responsibility for implementing those policies across all devices consistently. This is why SDN is often described as making the network "programmable" — software developers can write applications that control network behavior without knowing the details of individual switch hardware.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Control Layer (SDN Controller)</h4>
+        <p>The control layer is the central brain of the SDN network, embodied in the <span class="term">SDN Controller</span>. The controller maintains a global, real-time view of the entire network topology — which switches exist, how they are connected, what hosts are attached, and how much traffic is flowing on each link. Using this global view, the controller makes all routing and forwarding decisions, implements policies received from the application layer, and pushes specific forwarding rules down to individual switches through the <span class="term">Southbound API</span> (most commonly OpenFlow).</p>
+
+        <p>The controller is not a monolithic entity. As we will see in the next section, it contains multiple internal components — topology managers, host trackers, slicing managers, orchestration functions — that work together to provide the intelligence that the network requires. The controller also exposes a northbound interface (typically RESTful APIs) that allows applications to request network services without needing to understand the internal complexity of the controller's operation. Notable open-source controller implementations include <span class="term">OpenDaylight</span> and <span class="term">ONOS</span> (Open Network Operating System).</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Infrastructure Layer (Data Plane)</h4>
+        <p>The infrastructure layer, also known as the data plane, consists of the physical and virtual network devices that actually forward packets — switches, routers, access points, and virtual switches (vSwitches). These devices are deliberately simple in the SDN model: they contain forwarding tables that the controller populates, and they follow those tables to make packet-by-packet forwarding decisions. They do not run routing protocols, they do not make autonomous decisions about path selection, and they do not hold any global knowledge about the network. Their role is purely executive — receive a packet, look up the forwarding table, send it out the correct port.</p>
+
+        <p>This deliberate simplicity is what makes SDN switches cheaper and faster than traditional routers. A traditional router must contain a general-purpose processor to run OSPF, BGP, and management software alongside its forwarding hardware. An SDN switch needs only the forwarding hardware and a communication channel to the controller. The result is lower cost, lower power consumption, and higher forwarding performance for the same silicon budget.</p>
+      </div>
+
+      <div class="callout callout-sdn">
+        <span class="callout-label">Key Interface Definitions</span>
+        <p><strong>Northbound API:</strong> The interface between the Application Layer and the Control Layer. Typically implemented using RESTful APIs. Allows applications to request network services (e.g., bandwidth allocation, path computation) from the controller without knowing internal details.</p>
+        <p><strong>Southbound API:</strong> The interface between the Control Layer and the Infrastructure Layer. The most widely used southbound protocol is OpenFlow. It allows the controller to install forwarding rules on switches, collect statistics, and manage device behavior.</p>
+      </div>
+
+      <div class="mnemonic-box">
+        <span class="mnemonic-label">Memory Anchor</span>
+        <p><strong>"Apps North, Switches South, Controller in the Middle"</strong> — Application layer is at the top (North), Infrastructure at the bottom (South), and the Controller sits between them. Northbound API goes up (toward apps), Southbound API goes down (toward switches). Like a compass: N = Apps, S = Devices.</p>
+      </div>
+    </section>
+
+    <!-- 1.4 ARCHITECTURE COMPONENTS -->
+    <section class="section" id="sdn-components">
+      <span class="section-num sdn-accent">Section 1.4</span>
+      <h3 class="section-title">SDN Architecture — Detailed Component Breakdown</h3>
+
+      <p>The professor's slides present a detailed internal architecture of the SDN controller that goes well beyond the simple three-layer model. This expanded view reveals the internal components that make the controller function as a coherent system. Understanding these components is essential for examination purposes because questions frequently ask students to explain the role of specific elements like the Service Abstraction Layer, protocol plug-ins, or the slicing manager. Let us walk through each component systematically, from the top of the architecture to the bottom.</p>
+
+      <!-- Detailed Architecture SVG -->
+      <div class="diagram-container">
+        <div class="diagram-label">Figure 1.3 — Detailed SDN Controller Architecture</div>
+        <svg viewBox="0 0 760 700" xmlns="http://www.w3.org/2000/svg">
+          <!-- Background layers -->
+          <rect x="20" y="10" width="720" height="115" rx="4" fill="#FDF0EA" stroke="#C17050" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="380" y="30" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" letter-spacing="2">APPLICATION LAYER</text>
+
+          <rect x="20" y="130" width="720" height="380" rx="4" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="380" y="150" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5B7F6E" letter-spacing="2">CONTROL LAYER (CONTROLLER)</text>
+
+          <rect x="20" y="570" width="720" height="120" rx="4" fill="#FBF6ED" stroke="#D4A853" stroke-width="1" stroke-dasharray="4,2"/>
+          <text x="380" y="590" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8A6D1B" letter-spacing="2">INFRASTRUCTURE LAYER</text>
+
+          <!-- Apps -->
+          <rect x="40" y="45" width="100" height="60" rx="3" fill="#FFFCF5" stroke="#C17050" stroke-width="1"/>
+          <text x="90" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Monitoring</text>
+          <text x="90" y="88" text-anchor="middle" font-family="Lora" font-size="7" fill="#8A7565">App</text>
+          <rect x="155" y="45" width="100" height="60" rx="3" fill="#FFFCF5" stroke="#C17050" stroke-width="1"/>
+          <text x="205" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Traffic Engg</text>
+          <text x="205" y="88" text-anchor="middle" font-family="Lora" font-size="7" fill="#8A7565">App</text>
+          <rect x="270" y="45" width="100" height="60" rx="3" fill="#FFFCF5" stroke="#C17050" stroke-width="1"/>
+          <text x="320" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Security</text>
+          <text x="320" y="88" text-anchor="middle" font-family="Lora" font-size="7" fill="#8A7565">App</text>
+          <rect x="385" y="45" width="100" height="60" rx="3" fill="#FFFCF5" stroke="#C17050" stroke-width="1"/>
+          <text x="435" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Load Bal</text>
+          <text x="435" y="88" text-anchor="middle" font-family="Lora" font-size="7" fill="#8A7565">App</text>
+
+          <!-- Northbound API -->
+          <rect x="500" y="55" width="220" height="38" rx="3" fill="#FDF8E8" stroke="#C9A84C" stroke-width="1"/>
+          <text x="610" y="72" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#8A6D1B" font-weight="600">1. Northbound APIs</text>
+          <text x="610" y="85" text-anchor="middle" font-family="Lora" font-size="7" fill="#8A7565">(RESTful)</text>
+
+          <!-- Network Service Functions -->
+          <rect x="40" y="165" width="340" height="140" rx="3" fill="#FFFCF5" stroke="#5B7F6E" stroke-width="1"/>
+          <text x="210" y="185" text-anchor="middle" font-family="Cormorant Garamond" font-size="12" font-weight="700" fill="#5B7F6E">2. Network Service Functions</text>
+          <rect x="55" y="198" width="95" height="45" rx="2" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="0.8"/>
+          <text x="102" y="216" text-anchor="middle" font-family="JetBrains Mono" font-size="7.5" fill="#5B7F6E">Slicing</text>
+          <text x="102" y="230" text-anchor="middle" font-family="JetBrains Mono" font-size="7.5" fill="#5B7F6E">Manager</text>
+          <rect x="160" y="198" width="95" height="45" rx="2" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="0.8"/>
+          <text x="207" y="216" text-anchor="middle" font-family="JetBrains Mono" font-size="7.5" fill="#5B7F6E">Topology</text>
+          <text x="207" y="230" text-anchor="middle" font-family="JetBrains Mono" font-size="7.5" fill="#5B7F6E">Manager</text>
+          <rect x="265" y="198" width="95" height="45" rx="2" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="0.8"/>
+          <text x="312" y="216" text-anchor="middle" font-family="JetBrains Mono" font-size="7.5" fill="#5B7F6E">Host</text>
+          <text x="312" y="230" text-anchor="middle" font-family="JetBrains Mono" font-size="7.5" fill="#5B7F6E">Tracker</text>
+
+          <!-- Orchestration + Management -->
+          <rect x="400" y="165" width="160" height="65" rx="3" fill="#FFFCF5" stroke="#5B7F6E" stroke-width="1"/>
+          <text x="480" y="188" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#5B7F6E" font-weight="600">3. Orchestration</text>
+          <text x="480" y="218" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Auto config, resource alloc</text>
+
+          <rect x="580" y="165" width="140" height="65" rx="3" fill="#FFFCF5" stroke="#5B7F6E" stroke-width="1"/>
+          <text x="650" y="188" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#5B7F6E" font-weight="600">4. Management</text>
+          <text x="650" y="218" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Perf, Fault, Security</text>
+
+          <!-- Controller API -->
+          <rect x="400" y="245" width="320" height="45" rx="3" fill="#FDF8E8" stroke="#C9A84C" stroke-width="1"/>
+          <text x="560" y="265" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#8A6D1B" font-weight="600">5. Controller API (Java / REST)</text>
+          <text x="560" y="280" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#8A7565">Interface for app developers</text>
+
+          <!-- Core Controller -->
+          <rect x="40" y="320" width="340" height="70" rx="3" fill="#E8F0EC" stroke="#5B7F6E" stroke-width="1.5"/>
+          <text x="210" y="348" text-anchor="middle" font-family="Cormorant Garamond" font-size="14" font-weight="700" fill="#5B7F6E">6. Controller Core</text>
+          <text x="210" y="370" text-anchor="middle" font-family="Lora" font-size="9" fill="#2C1810">Global View · Routing · Forwarding Rules</text>
+          <text x="210" y="383" text-anchor="middle" font-family="JetBrains Mono" font-size="7.5" fill="#8A7565">OpenDaylight | ONOS</text>
+
+          <!-- SAL -->
+          <rect x="40" y="405" width="680" height="45" rx="3" fill="#FDF8E8" stroke="#C9A84C" stroke-width="1.2"/>
+          <text x="380" y="425" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8A6D1B" font-weight="600">7. Service Abstraction Layer (SAL)</text>
+          <text x="380" y="440" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Hides protocol complexity · Uniform interface for southbound protocols</text>
+
+          <!-- Protocol Plugins -->
+          <rect x="40" y="465" width="680" height="45" rx="3" fill="#FFFCF5" stroke="#5B7F6E" stroke-width="1"/>
+          <text x="380" y="480" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#5B7F6E" font-weight="600">8. Protocol Plug-ins</text>
+          <text x="120" y="500" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">OpenFlow</text>
+          <text x="280" y="500" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">BGP</text>
+          <text x="440" y="500" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">XMPP</text>
+          <text x="600" y="500" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Others</text>
+
+          <!-- Southbound -->
+          <rect x="40" y="525" width="680" height="30" rx="3" fill="#FDF8E8" stroke="#C9A84C" stroke-width="1"/>
+          <text x="380" y="545" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8A6D1B" font-weight="600">9. Southbound Protocols (OpenFlow primary)</text>
+
+          <!-- Network Elements -->
+          <rect x="60" y="605" width="120" height="60" rx="3" fill="#FFFCF5" stroke="#D4A853" stroke-width="1"/>
+          <text x="120" y="632" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8A6D1B">Switches</text>
+          <text x="120" y="650" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#8A7565">10. Net Elements</text>
+          <rect x="210" y="605" width="120" height="60" rx="3" fill="#FFFCF5" stroke="#D4A853" stroke-width="1"/>
+          <text x="270" y="632" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8A6D1B">Routers</text>
+          <text x="270" y="650" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#8A7565">10. Net Elements</text>
+          <rect x="360" y="605" width="130" height="60" rx="3" fill="#FFFCF5" stroke="#D4A853" stroke-width="1"/>
+          <text x="425" y="632" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#8A6D1B">Access Points</text>
+          <text x="425" y="650" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#8A7565">10. Net Elements</text>
+
+          <!-- Overlay Tunnels -->
+          <rect x="520" y="605" width="190" height="60" rx="3" fill="#FDF8E8" stroke="#D4A853" stroke-width="1"/>
+          <text x="615" y="625" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#8A6D1B" font-weight="600">11. Overlay Tunnels</text>
+          <text x="615" y="643" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#8A7565">VXLAN · NVGRE</text>
+          <text x="615" y="658" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#8A7565">Network Virtualization</text>
+        </svg>
+        <div class="diagram-caption">Figure 1.3 — Complete SDN controller internal architecture with all eleven numbered components.</div>
+      </div>
+
+      <!-- Component-by-component explanation -->
+      <div class="subsection">
+        <h4 class="subsection-title">1. Northbound APIs</h4>
+        <p>Northbound APIs serve as the communication interface between network applications and the SDN controller. They are typically implemented as <span class="term">RESTful APIs</span> (Representational State Transfer), which means applications interact with the controller using standard HTTP methods — GET to retrieve network state, POST to request services, PUT to modify configurations, and DELETE to remove policies. The significance of RESTful northbound APIs cannot be overstated: they allow any application that can speak HTTP to interact with the SDN controller, regardless of the programming language or platform the application uses. This openness is what makes SDN truly programmable.</p>
+
+        <p>For example, a traffic management application might send a POST request to the controller's API endpoint requesting that 10 Gbps of bandwidth be allocated for a video streaming service. The controller receives this request, computes which switches and links need to be configured, installs the appropriate forwarding rules, and returns a confirmation to the application. The application never needs to know which switches are involved, what protocol they speak, or how the rules were installed — the northbound API abstracts all of that away.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">2. Network Service Functions</h4>
+        <p>These are applications that run on top of the SDN controller and provide essential network services. They are not end-user applications but rather infrastructure-level services that the controller itself needs to function effectively.</p>
+
+        <p><span class="term">Slicing Manager:</span> The slicing manager divides the physical network into multiple virtual networks, called <em>slices</em>. Each slice can serve different users, departments, or applications with isolated resources and independent policies. For instance, a university might create one slice for research traffic (high bandwidth, low security) and another for administrative traffic (moderate bandwidth, high security). Network slicing is a foundational concept in 5G mobile networks as well, where different slices serve different service categories — enhanced mobile broadband, ultra-reliable low-latency communication, and massive machine-type communication.</p>
+
+        <p><span class="term">Topology Manager:</span> This component maintains a real-time map of the entire network topology. It tracks which switches exist, how they are interconnected through links, what the capacity and current utilization of each link is, and how the topology changes over time as devices are added, removed, or fail. Without an accurate topology map, the controller cannot compute valid forwarding paths. The topology manager typically discovers the network by instructing switches to send LLDP (Link Layer Discovery Protocol) packets and analyzing the results.</p>
+
+        <p><span class="term">Host Tracker:</span> The host tracker maintains information about all end hosts connected to the network — their IP addresses, MAC addresses, and which switch port they are attached to. When a new host sends its first packet, the switch forwards it to the controller (as a "packet-in" message in OpenFlow), and the host tracker records the host's location. This information is essential for the controller to install forwarding rules that direct traffic to the correct destination.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">3. Network Orchestration Function</h4>
+        <p>The orchestration function manages the overall coordination of network services and resources. It automates network configuration, allocates resources dynamically, and coordinates multiple network services to work together. For example, when a new server is added to a data center, the orchestrator automatically configures the surrounding switches with appropriate VLANs, access control lists, and QoS policies — without human intervention. Orchestration is what makes SDN networks truly dynamic rather than merely centralized.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">4. Management Function</h4>
+        <p>The management function handles the ongoing monitoring and administration of the network. Its responsibilities include performance monitoring (tracking throughput, latency, and packet loss on each link), fault management (detecting device failures and triggering recovery procedures), security management (auditing access control policies and detecting anomalous traffic patterns), and configuration management (maintaining backups of device configurations and managing updates). This function provides the operational backbone that keeps the network running reliably.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">5. Controller API (Java / REST)</h4>
+        <p>This is the programmatic interface that application developers use to interact with the SDN controller. It provides methods for programming network behavior, querying network state, and receiving event notifications. Many SDN controllers (like OpenDaylight) are written in Java and expose both Java-native APIs for applications running on the same platform and REST APIs for remote applications. This dual interface model allows high-performance local applications to use the Java API directly, while external tools and services interact through REST over HTTP.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">6. Controller Core</h4>
+        <p>The controller core is the central decision-making engine. It maintains the global network view, computes routing and forwarding decisions, and generates the specific instructions that are sent to network devices. When a new flow arrives at a switch and no matching rule exists, the switch forwards the first packet to the controller core, which determines the optimal path, installs forwarding rules on all switches along that path, and returns the result. Prominent open-source controller implementations include <span class="term">OpenDaylight</span> (Linux Foundation project, widely used in enterprise and carrier networks) and <span class="term">ONOS</span> (Open Network Operating System, designed for service providers with emphasis on high performance and scalability).</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">7. Service Abstraction Layer (SAL)</h4>
+        <p>The Service Abstraction Layer is one of the most architecturally important components of the SDN controller, yet it is also one of the most frequently misunderstood by students. SAL acts as a bridge between the controller core and the various southbound protocols used to communicate with network devices. Its purpose is to <em>hide the complexity of different protocols from the controller core and from applications</em>. Without SAL, the controller core would need to contain separate logic for speaking OpenFlow to switches, BGP to routers, XMPP to messaging systems, and so on — a maintenance nightmare that would make adding new protocols extremely difficult.</p>
+
+        <p>With SAL in place, the controller core issues generic commands like "install forwarding rule on device X" or "query statistics from device Y," and SAL translates these commands into the specific protocol messages required by each device. If device X speaks OpenFlow, SAL uses the OpenFlow plug-in. If device Y speaks BGP, SAL uses the BGP plug-in. The controller core does not need to know which protocol each device speaks — that is SAL's responsibility. This abstraction is what makes the controller extensible: adding support for a new protocol requires only a new plug-in, not changes to the core.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">8. Protocol Plug-ins</h4>
+        <p>Protocol plug-ins are the concrete implementations that allow the controller to speak specific networking protocols. The most important plug-in is <span class="term">OpenFlow</span>, which is the primary southbound protocol for controlling switches. However, real SDN deployments often need to communicate with legacy or specialized devices that speak other protocols, so additional plug-ins are provided for <span class="term">BGP</span> (Border Gateway Protocol, used for inter-domain routing), <span class="term">XMPP</span> (Extensible Messaging and Presence Protocol, used for messaging and configuration), and others. Each plug-in translates the abstract commands from SAL into the specific message format and transport mechanism required by its protocol.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">9. Southbound Protocols</h4>
+        <p>Southbound protocols connect the SDN controller to the network devices in the infrastructure layer. Their primary functions are to send forwarding rules to switches and to collect network statistics (throughput, packet counts, error counts). <span class="term">OpenFlow</span> is the most widely used southbound protocol and is the de facto standard for SDN. It defines a precise message format for the controller to install, modify, and delete flow entries in a switch's forwarding table, and for the switch to report events and statistics back to the controller.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">10. Network Elements</h4>
+        <p>These are the physical or virtual network devices that constitute the infrastructure layer — switches, routers, and access points. Their function is straightforward: forward packets according to the rules given by the controller. They do not run routing protocols, they do not make independent forwarding decisions, and they do not maintain a global view of the network. When they encounter a packet that does not match any existing rule, they forward it to the controller for instructions (a "packet-in" event in OpenFlow terminology).</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">11. Overlay Tunnels</h4>
+        <p>Overlay technologies create virtual networks on top of physical networks by encapsulating traffic in tunnels that run between endpoints. The two most common overlay protocols in SDN environments are <span class="term">VXLAN</span> (Virtual eXtensible LAN) and <span class="term">NVGRE</span> (Network Virtualization using Generic Routing Encapsulation). These technologies enable network virtualization — the creation of multiple isolated virtual networks that share the same physical infrastructure. They are heavily used in cloud data centers, where each tenant (customer) needs their own isolated network, but building separate physical networks for each tenant would be prohibitively expensive. VXLAN, for instance, encapsulates Layer 2 Ethernet frames within Layer 4 UDP packets, allowing virtual Layer 2 networks to span across Layer 3 physical boundaries.</p>
+      </div>
+
+      <div class="callout callout-exam">
+        <span class="callout-label">Exam Writing Strategy</span>
+        For a 15-mark question on "Explain the detailed SDN architecture," structure your answer in the same order as the numbered components above. Start with a brief introduction to the three-layer model, then systematically explain each component from 1 to 11. For each component, state: (a) what it is, (b) what it does, (c) how it connects to neighboring components, and (d) a concrete example. This gives you 4-5 marks per major component group and easily fills the required length.
+      </div>
+
+      <div class="exam-q">
+        <div class="exam-q-label">Likely Exam Question — 10 Marks</div>
+        <div class="exam-q-text">"Explain the role of the Service Abstraction Layer (SAL) in SDN architecture. Why is it important for controller extensibility?"</div>
+      </div>
+    </section>
+
+    <!-- 1.5 OPENFLOW -->
+    <section class="section" id="openflow">
+      <span class="section-num sdn-accent">Section 1.5</span>
+      <h3 class="section-title">OpenFlow Protocol in SDN</h3>
+
+      <p>OpenFlow is the protocol that gives teeth to the SDN vision. Without a standardized southbound interface, the separation of control and data planes would remain a theoretical exercise — each controller vendor would develop proprietary protocols to communicate with switches, and we would simply replace hardware vendor lock-in with software vendor lock-in. OpenFlow was created to prevent this outcome by defining an open, standardized protocol through which any SDN controller can program any compliant switch, regardless of the manufacturer.</p>
+
+      <p>The protocol was originally developed at Stanford University by Nick McKeown and his research group around 2008, as part of the Clean Slate program. The motivation was both practical and academic: researchers wanted to experiment with new routing algorithms and network protocols on real campus networks, but they could not modify the firmware on production switches. OpenFlow provided a way to add a small, safe "hook" into switches — a standardized interface that allowed an external controller to install forwarding rules — without requiring changes to the switch's core operating system. From this modest beginning, OpenFlow grew into the foundational protocol of the entire SDN movement.</p>
+
+      <div class="subsection">
+        <h4 class="subsection-title">How OpenFlow Works</h4>
+        <p>At its core, OpenFlow defines a communication channel between the controller and each switch. Over this channel, the controller can perform several key operations. First, it can install <span class="term">flow entries</span> into the switch's <span class="term">flow table</span>. A flow entry consists of a match pattern (which packets does this rule apply to?), a set of actions (what should be done with matching packets?), and counters (how many packets and bytes have matched this rule?). When a packet arrives at the switch, the switch searches the flow table for the highest-priority matching entry. If a match is found, the switch executes the specified actions — typically forwarding the packet out a specific port, but also possibly modifying the packet header, dropping the packet, or sending it to the controller.</p>
+
+        <p>If no matching entry exists in the flow table, the switch must decide what to do with the packet. In OpenFlow, the default behavior is to send the packet to the controller as a <span class="term">packet-in</span> message. The controller examines the packet, determines how it should be handled, installs the appropriate flow entry (or entries) on the switch, and then either tells the switch to forward the original packet or drops it. This is the "reactive" mode of operation, where flow entries are installed in response to new traffic. OpenFlow also supports a "proactive" mode, where the controller pre-populates flow entries before any traffic arrives, based on its knowledge of the network topology and policies.</p>
+      </div>
+
+      <!-- OpenFlow Flow Table Diagram -->
+      <div class="diagram-container">
+        <div class="diagram-label">Figure 1.4 — OpenFlow Flow Table Structure</div>
+        <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
+          <!-- Flow Table -->
+          <rect x="40" y="30" width="620" height="220" rx="4" fill="#FFFCF5" stroke="#C17050" stroke-width="1.5"/>
+          <text x="350" y="55" text-anchor="middle" font-family="Cormorant Garamond" font-size="16" font-weight="700" fill="#C17050">OpenFlow Flow Table</text>
+
+          <!-- Headers -->
+          <rect x="60" y="70" width="580" height="28" rx="2" fill="#C17050"/>
+          <text x="140" y="89" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white" font-weight="600">Match Fields</text>
+          <text x="340" y="89" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white" font-weight="600">Actions</text>
+          <text x="490" y="89" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white" font-weight="600">Counters</text>
+          <text x="610" y="89" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white" font-weight="600">Priority</text>
+
+          <!-- Row 1 -->
+          <rect x="60" y="100" width="580" height="32" rx="0" fill="#FDF0EA" stroke="#E8DDD0" stroke-width="0.5"/>
+          <text x="140" y="120" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#2C1810">Dst IP: 10.0.1.0/24</text>
+          <text x="340" y="120" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#2C1810">Forward: Port 3</text>
+          <text x="490" y="120" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#2C1810">Pkts: 45,230</text>
+          <text x="610" y="120" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#2C1810">100</text>
+
+          <!-- Row 2 -->
+          <rect x="60" y="134" width="580" height="32" rx="0" fill="#FFFCF5" stroke="#E8DDD0" stroke-width="0.5"/>
+          <text x="140" y="154" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#2C1810">Src IP: 10.0.2.5</text>
+          <text x="340" y="154" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#B85450">Drop</text>
+          <text x="490" y="154" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#2C1810">Pkts: 1,204</text>
+          <text x="610" y="154" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#2C1810">200</text>
+
+          <!-- Row 3 -->
+          <rect x="60" y="168" width="580" height="32" rx="0" fill="#FDF0EA" stroke="#E8DDD0" stroke-width="0.5"/>
+          <text x="140" y="188" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#2C1810">Dst Port: 80, TCP</text>
+          <text x="340" y="188" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#2C1810">Forward: Port 5</text>
+          <text x="490" y="188" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#2C1810">Pkts: 128,450</text>
+          <text x="610" y="188" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#2C1810">50</text>
+
+          <!-- Row 4 - Table Miss -->
+          <rect x="60" y="202" width="580" height="32" rx="0" fill="#FFF8F0" stroke="#C9A84C" stroke-width="1"/>
+          <text x="140" y="222" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#8A6D1B" font-weight="600">* (Any / Wildcard)</text>
+          <text x="340" y="222" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#8A6D1B" font-weight="600">Send to Controller</text>
+          <text x="490" y="222" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#8A6D1B">Pkts: 3,891</text>
+          <text x="610" y="222" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#8A6D1B">0</text>
+        </svg>
+        <div class="diagram-caption">Figure 1.4 — An OpenFlow flow table with match fields, actions, counters, and priority. The table-miss entry (priority 0, wildcard match) sends unmatched packets to the controller.</div>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">OpenFlow Message Types</h4>
+        <p>The OpenFlow protocol defines several categories of messages that flow between the controller and switches. Understanding these message types is essential for explaining how the controller-switch interaction works in examinations.</p>
+
+        <p><span class="term">Controller-to-Switch Messages:</span> These are initiated by the controller and include: <em>Flow-Mod</em> (modify a flow entry — add, delete, or modify), <em>Packet-Out</em> (send a packet out through a specific switch port), <em>Port-Mod</em> (modify the configuration of a switch port), and <em>Stats-Request</em> (query flow, port, or table statistics from the switch).</p>
+
+        <p><span class="term">Switch-to-Controller Messages (Asynchronous):</span> These are initiated by the switch without a prior request from the controller. The most important are: <em>Packet-In</em> (the switch forwards a packet to the controller because no matching flow entry exists, or because a flow entry explicitly instructs it to do so), <em>Flow-Removed</em> (a flow entry has been deleted, either because it timed out or because the controller requested it), and <em>Port-Status</em> (a change in the state of a switch port — link up, link down, etc.).</p>
+
+        <p><span class="term">Symmetric Messages:</span> These can be initiated by either side and include <em>Hello</em> (connection establishment), <em>Echo Request/Reply</em> (latency measurement and keepalive), and <em>Features Request/Reply</em> (query the capabilities of a switch).</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">OpenFlow Workflow — Step by Step</h4>
+        <ol class="step-list">
+          <li><strong>Connection Establishment:</strong> The switch connects to the controller over a TLS-secured TCP channel (typically on port 6653). Both sides exchange Hello messages to negotiate the OpenFlow version.</li>
+          <li><strong>Feature Discovery:</strong> The controller sends a Features Request to the switch, which replies with its capabilities — number of ports, supported actions, buffer sizes, and flow table specifications.</li>
+          <li><strong>Pipeline Configuration:</strong> The controller may pre-install flow entries (proactive mode) or wait for traffic to arrive (reactive mode). In proactive mode, the controller populates the switch's flow table based on its global view before any packets are processed.</li>
+          <li><strong>Packet Arrival:</strong> When a packet arrives at a switch port, the switch searches the flow table for the highest-priority matching entry. Match fields include ingress port, Ethernet source/destination, IP source/destination, TCP/UDP ports, and more.</li>
+          <li><strong>Match Found:</strong> If a matching entry exists, the switch executes the specified actions (forward, drop, modify, etc.) and updates the counters.</li>
+          <li><strong>No Match (Table-Miss):</strong> If no entry matches, the switch sends the packet (or a truncated version) to the controller in a Packet-In message.</li>
+          <li><strong>Controller Decision:</strong> The controller examines the packet, determines the appropriate forwarding path using its global network view, and installs Flow-Mod entries on all switches along the path.</li>
+          <li><strong>Packet-Out:</strong> The controller may also send a Packet-Out message to instruct the switch to forward the original packet out a specific port, so that the packet is not lost while the flow entries are being installed.</li>
+          <li><strong>Subsequent Packets:</strong> All subsequent packets in the same flow now match the installed entries and are forwarded at line rate without controller involvement.</li>
+        </ol>
+      </div>
+
+      <div class="callout callout-intuition">
+        <span class="callout-label">Intuitive Explanation</span>
+        Think of the OpenFlow workflow like visiting a new restaurant where you have never been before. Your first time, you ask the waiter (Packet-In to controller) what they recommend. The waiter thinks about it (controller computes path) and gives you a recommendation (Flow-Mod installed). But the waiter also writes down your preference on a card (flow table entry). The next time you visit, you don't need to ask — you just follow the card, and service is instant (line-rate forwarding). The controller does the heavy thinking once; the switch follows the rules millions of times.
+      </div>
+
+      <div class="pros-cons">
+        <div class="pros">
+          <h4>Advantages of OpenFlow</h4>
+          <ul>
+            <li>Open standard — vendor-neutral, prevents lock-in</li>
+            <li>Granular control over forwarding (match on multiple header fields)</li>
+            <li>Supports both proactive and reactive flow installation</li>
+            <li>Enables network-wide policy enforcement through centralized control</li>
+            <li>Allows experimentation with new protocols on production networks</li>
+            <li>Well-documented with multiple versions (1.0 through 1.5+)</li>
+          </ul>
+        </div>
+        <div class="cons">
+          <h4>Disadvantages of OpenFlow</h4>
+          <ul>
+            <li>Controller-switch latency can be significant for reactive flows</li>
+            <li>Flow table size is limited on hardware switches (TCAM is expensive)</li>
+            <li>Not all features are consistently implemented across vendors</li>
+            <li>Complexity increases with multi-table pipelines in later versions</li>
+            <li>Scalability — controller must handle Packet-In events for all new flows</li>
+            <li>Security concerns — TLS is optional in some implementations</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="confusion-box">
+        <div class="confusion-title"><i class="fas fa-exclamation-triangle"></i> Common Student Confusion</div>
+        <p>Students frequently confuse the OpenFlow <em>flow table</em> with a traditional routing table. They are fundamentally different. A routing table matches only on destination IP prefix and produces a next-hop output. A flow table can match on <em>any combination</em> of header fields (source IP, destination IP, protocol, source port, destination port, VLAN, etc.) and can specify <em>any action</em> (forward, drop, modify, enqueue, send to controller). Flow tables are far more expressive and flexible than routing tables — they are closer to ACLs (Access Control Lists) in their matching capability, but with forwarding actions rather than just permit/deny decisions.</p>
+      </div>
+
+      <div class="revision-card">
+        <h4 style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; margin-bottom:0.75rem;">OpenFlow Quick Revision</h4>
+        <ul>
+          <li>OpenFlow = southbound protocol between controller and switches</li>
+          <li>Flow entry = Match Fields + Actions + Counters + Priority</li>
+          <li>Packet-In = switch sends unmatched packet to controller</li>
+          <li>Flow-Mod = controller installs/modifies/deletes flow entry</li>
+          <li>Packet-Out = controller tells switch to send packet out a port</li>
+          <li>Table-miss entry (priority 0, wildcard match) = default action for unmatched packets</li>
+          <li>Proactive mode = pre-install entries; Reactive mode = install on first packet</li>
+          <li>Connection: TLS-secured TCP, port 6653</li>
+        </ul>
+      </div>
+
+      <div class="exam-q">
+        <div class="exam-q-label">Likely Exam Question — 15 Marks</div>
+        <div class="exam-q-text">"Explain the OpenFlow protocol in SDN. Describe the flow table structure, message types, and the step-by-step workflow when a new packet arrives at an OpenFlow switch."</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- PART II: DTN -->
+    <!-- ═══════════════════════════════════════ -->
+
+    <div class="part-header dtn" id="part-dtn">
+      <div class="part-label dtn-accent">Part II</div>
+      <h2 class="part-title">Delay Tolerant Networks</h2>
+    </div>
+
+    <!-- 2.1 DTN INTRO -->
+    <section class="section" id="dtn-intro">
+      <span class="section-num dtn-accent">Section 2.1</span>
+      <h3 class="section-title">Introduction to Delay-Tolerant Networks</h3>
+
+      <p>The Internet works remarkably well — when you have a continuous, low-latency, bidirectional connection between source and destination. Send a packet, receive an acknowledgment, send the next one. The entire TCP/IP protocol stack is predicated on the assumption that an end-to-end path exists between communicating parties, that round-trip times are measured in milliseconds, and that packet loss is an occasional anomaly rather than a routine condition. But what happens when these assumptions collapse? What happens when you are trying to send data from a Mars rover to Earth through a chain of satellites, and each link in the chain is available for only fifteen minutes per day? What happens when you are a disaster relief coordinator trying to coordinate supplies across a region where every cell tower has been destroyed and the only communication devices are mobile phones that occasionally come within Bluetooth range of each other?</p>
+
+      <p>These scenarios describe the domain of <span class="term">Delay-Tolerant Networks</span> (DTNs) — networks where the assumptions underlying the Internet's protocol stack simply do not hold. In DTNs, end-to-end connectivity cannot be guaranteed, round-trip times may be measured in minutes or hours rather than milliseconds, and the topology of the network changes unpredictably as nodes move, connect, and disconnect. Traditional Internet protocols fail catastrophically in these environments: TCP times out waiting for acknowledgments that will not arrive for hours, IP routing cannot compute paths through a network where links appear and disappear, and applications that assume synchronous request-response interaction simply hang.</p>
+
+      <div class="callout callout-dtn">
+        <span class="callout-label">Formal Definition</span>
+        A Delay-Tolerant Network (DTN) is an overlay network built on top of region-specific lower layers, designed to provide communication in environments where end-to-end connectivity cannot be assumed, latency may be extremely high, and links may be intermittently available. DTNs use store-carry-and-forward message switching rather than the packet-switching model of the Internet.
+      </div>
+
+      <p>DTNs were originally conceived to support the <span class="term">InterPlanetary Internet (IPN)</span> — a vision of extending Internet-like communication to space missions involving satellites, lunar bases, and eventually Mars colonies. In interplanetary communication, the speed-of-light delay between Earth and Mars ranges from 4 to 24 minutes depending on orbital positions, and direct line-of-sight may be blocked by celestial bodies for extended periods. The IPN researchers quickly realized that TCP/IP was fundamentally unsuitable for this environment, and they developed a new architectural approach that eventually became the DTN framework. Over time, it became clear that the same architecture applied equally well to terrestrial "challenged networks" — military ad-hoc networks, disaster response communication, rural connectivity in developing regions, vehicular networks, and wildlife tracking systems.</p>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Internet vs. DTN — A Fundamental Comparison</h4>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Aspect</th>
+                <th>Internet (TCP/IP)</th>
+                <th>Delay-Tolerant Network</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Communication Model</td><td>Packet switching</td><td>Store-and-forward message switching</td></tr>
+              <tr><td>Connectivity</td><td>Continuous, always-on</td><td>Intermittent, opportunistic</td></tr>
+              <tr><td>End-to-End Path</td><td>Assumed to exist</td><td>Cannot be assumed</td></tr>
+              <tr><td>Protocol Stack</td><td>TCP/IP on network layer</td><td>Not necessarily built on TCP/IP</td></tr>
+              <tr><td>Error Handling</td><td>End-to-end retransmission</td><td>Hop-to-hop retransmission (custody transfer)</td></tr>
+              <tr><td>Latency</td><td>Low (milliseconds)</td><td>High (seconds to hours)</td></tr>
+              <tr><td>Routing</td><td>Based on current topology</td><td>Based on contact schedules or predictions</td></tr>
+              <tr><td>Data Unit</td><td>Packets</td><td>Bundles (messages)</td></tr>
+              <tr><td>Error Recovery</td><td>Excessive traffic in case of errors</td><td>Hop-to-hop reliable transfer</td></tr>
+              <tr><td>Analogy</td><td>Telephone conversation</td><td>Postal mail system</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p>The most illuminating analogy is to think of the Internet as a telephone conversation — both parties must be present simultaneously, and communication is real-time. DTNs, by contrast, operate more like a postal mail system: you write a letter (bundle), hand it to a postman (next hop), who carries it physically to the next post office, where it is held until a delivery route becomes available. Each step of the journey is reliable (the postman gives you a receipt), but the overall delivery time is unpredictable and may be very long. This store-carry-and-forward mechanism is the defining characteristic of DTNs.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Where DTNs Are Used</h4>
+        <p>The professor's slides highlight several application domains where DTNs are essential. <strong>Space communication</strong> (satellites, Mars missions) is the original use case, where propagation delays are measured in minutes and line-of-sight is intermittent. <strong>Remote and rural areas</strong> with poor connectivity benefit from DTN's ability to operate with sporadic connections — a health clinic in a remote village can store patient data locally and transmit it when a satellite passes overhead once per day. <strong>Military networks</strong> operate in environments where infrastructure is destroyed or jammed, and soldiers must communicate through mobile ad-hoc networks with unreliable links. <strong>Disaster recovery</strong> scenarios involve collapsed communication infrastructure where first responders rely on DTN-enabled devices that form temporary networks through physical proximity. In each case, the common thread is that traditional Internet protocols simply cannot function.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Key Features of DTNs</h4>
+        <p>The professor's slides list several defining features of DTNs that distinguish them from conventional networks:</p>
+
+        <p><span class="term">Intermittent connectivity:</span> Links between nodes appear and disappear unpredictably. There is no guarantee that a path from source to destination exists at any given moment.</p>
+
+        <p><span class="term">Opportunistic contacts:</span> Some connections form spontaneously when two nodes come within communication range — for example, two mobile phones detecting each other via Bluetooth. These contacts are unplanned and unpredictable in both timing and duration.</p>
+
+        <p><span class="term">Scheduled contacts:</span> Some connections are predictable based on known schedules — for example, a satellite that passes over a ground station at known times each day. These scheduled contacts allow for more efficient routing planning.</p>
+
+        <p><span class="term">Non-conversational protocol:</span> DTN protocols do not assume a request-response interaction pattern. Sending a message does not require the receiver to be simultaneously present. This is fundamentally different from TCP's three-way handshake model.</p>
+
+        <p><span class="term">Security:</span> DTNs require security mechanisms at every hop, because messages pass through potentially untrusted intermediate nodes. Network routers participate in authentication, and each message carries a "postage stamp" signature from the sending node that is refreshed at each hop.</p>
+      </div>
+
+      <div class="exam-q">
+        <div class="exam-q-label">Likely Exam Question — 5 Marks</div>
+        <div class="exam-q-text">"How does a Delay-Tolerant Network differ from the conventional Internet? List and explain at least four key differences."</div>
+      </div>
+    </section>
+
+    <!-- 2.2 DTN ARCHITECTURE -->
+    <section class="section" id="dtn-arch">
+      <span class="section-num dtn-accent">Section 2.2</span>
+      <h3 class="section-title">DTN Architecture</h3>
+
+      <p>The DTN architecture is designed around the concept of <em>regions</em> — administratively and technologically distinct network domains that are connected by gateways. The Internet itself is a single region running TCP/IP. A satellite network might be another region running a specialized link-layer protocol. A Bluetooth-based mobile ad-hoc network might be a third region. The DTN architecture does not attempt to make all regions speak the same protocol — instead, it provides an overlay layer that sits <em>on top of</em> each region's native protocols, allowing bundles to traverse from one region to another through gateways that understand both the DTN overlay and the region-specific protocols below it.</p>
+
+      <!-- DTN Architecture Diagram -->
+      <div class="diagram-container">
+        <div class="diagram-label">Figure 2.1 — DTN Regional Architecture</div>
+        <svg viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg">
+          <!-- Region 1: Internet -->
+          <rect x="30" y="40" width="200" height="180" rx="6" fill="#FDF0EA" stroke="#C17050" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="130" y="65" text-anchor="middle" font-family="Cormorant Garamond" font-size="14" font-weight="700" fill="#C17050">Region: Internet</text>
+          <rect x="55" y="80" width="60" height="40" rx="2" fill="#FFFCF5" stroke="#C17050" stroke-width="1"/>
+          <text x="85" y="105" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Host</text>
+          <rect x="140" y="80" width="60" height="40" rx="2" fill="#FFFCF5" stroke="#C17050" stroke-width="1"/>
+          <text x="170" y="105" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Router</text>
+          <line x1="115" y1="100" x2="140" y2="100" stroke="#C17050" stroke-width="1" marker-end="url(#arrowDtn)"/>
+          <text x="130" y="145" text-anchor="middle" font-family="Lora" font-size="8" fill="#8A7565">TCP/IP</text>
+          <rect x="55" y="155" width="60" height="40" rx="2" fill="#FFFCF5" stroke="#C17050" stroke-width="1"/>
+          <text x="85" y="180" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Host</text>
+          <rect x="140" y="155" width="60" height="40" rx="2" fill="#FFFCF5" stroke="#C17050" stroke-width="1"/>
+          <text x="170" y="180" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Router</text>
+
+          <!-- Region 2: Space -->
+          <rect x="490" y="40" width="200" height="180" rx="6" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="590" y="65" text-anchor="middle" font-family="Cormorant Garamond" font-size="14" font-weight="700" fill="#5B7F6E">Region: Space</text>
+          <rect x="510" y="80" width="70" height="40" rx="2" fill="#FFFCF5" stroke="#5B7F6E" stroke-width="1"/>
+          <text x="545" y="105" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#5B7F6E">Satellite</text>
+          <rect x="600" y="80" width="70" height="40" rx="2" fill="#FFFCF5" stroke="#5B7F6E" stroke-width="1"/>
+          <text x="635" y="105" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#5B7F6E">Rover</text>
+          <text x="590" y="145" text-anchor="middle" font-family="Lora" font-size="8" fill="#8A7565">Space protocols</text>
+          <rect x="510" y="155" width="70" height="40" rx="2" fill="#FFFCF5" stroke="#5B7F6E" stroke-width="1"/>
+          <text x="545" y="180" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#5B7F6E">Gateway</text>
+
+          <!-- Region 3: Mobile -->
+          <rect x="260" y="270" width="200" height="80" rx="6" fill="#FBF6ED" stroke="#D4A853" stroke-width="1.5" stroke-dasharray="6,3"/>
+          <text x="360" y="295" text-anchor="middle" font-family="Cormorant Garamond" font-size="14" font-weight="700" fill="#8A6D1B">Region: Mobile</text>
+          <rect x="280" y="308" width="55" height="30" rx="2" fill="#FFFCF5" stroke="#D4A853" stroke-width="1"/>
+          <text x="307" y="328" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A6D1B">Phone 1</text>
+          <rect x="385" y="308" width="55" height="30" rx="2" fill="#FFFCF5" stroke="#D4A853" stroke-width="1"/>
+          <text x="412" y="328" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A6D1B">Phone 2</text>
+
+          <!-- Gateways connecting regions -->
+          <rect x="240" y="100" width="80" height="50" rx="3" fill="#E8E0D4" stroke="#8A7565" stroke-width="1.5"/>
+          <text x="280" y="122" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#2C1810" font-weight="600">Gateway</text>
+          <text x="280" y="140" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#8A7565">Internet↔Space</text>
+
+          <rect x="400" y="100" width="80" height="50" rx="3" fill="#E8E0D4" stroke="#8A7565" stroke-width="1.5"/>
+          <text x="440" y="122" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#2C1810" font-weight="600">Gateway</text>
+          <text x="440" y="140" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#8A7565">Space↔Mobile</text>
+
+          <!-- DTN Overlay -->
+          <rect x="20" y="10" width="680" height="240" rx="8" fill="none" stroke="#2C1810" stroke-width="2" stroke-dasharray="10,5"/>
+          <text x="360" y="26" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#2C1810" letter-spacing="3" font-weight="600">DTN OVERLAY — BUNDLE LAYER</text>
+
+          <!-- Lines -->
+          <line x1="200" y1="125" x2="240" y2="125" stroke="#8A7565" stroke-width="1.5"/>
+          <line x1="320" y1="125" x2="400" y2="125" stroke="#8A7565" stroke-width="1.5"/>
+          <line x1="480" y1="125" x2="510" y2="125" stroke="#8A7565" stroke-width="1.5"/>
+          <line x1="335" y1="270" x2="280" y2="150" stroke="#8A7565" stroke-width="1" stroke-dasharray="4,2"/>
+          <line x1="385" y1="270" x2="440" y2="150" stroke="#8A7565" stroke-width="1" stroke-dasharray="4,2"/>
+
+          <defs>
+            <marker id="arrowDtn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#C17050"/>
+            </marker>
+          </defs>
+        </svg>
+        <div class="diagram-caption">Figure 2.1 — DTN architecture as an overlay connecting heterogeneous regions through gateways. The Bundle Layer sits above each region's native protocols.</div>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Node Types in DTN</h4>
+        <p>The DTN architecture defines three types of nodes, each with a distinct role in the network. Understanding the difference between them is crucial for examinations because questions frequently ask about the role of gateways and how inter-region communication works.</p>
+
+        <p><span class="term">Host:</span> A host is an end-point in the DTN — it is the source or destination of bundles. Hosts operate within a single DTN region and do not forward bundles on behalf of other nodes. Examples include a sensor collecting weather data, a laptop in a remote clinic, or a Mars rover generating telemetry.</p>
+
+        <p><span class="term">Router:</span> A DTN router operates within a single region and forwards bundles between hosts and other routers. Unlike an IP router, a DTN router may need to store bundles for extended periods (hours or days) while waiting for the next contact opportunity. This storage requirement is a fundamental difference from Internet routers, which forward packets immediately and keep minimal buffering.</p>
+
+        <p><span class="term">Gateway:</span> A gateway connects two or more DTN regions. It is the most complex node type because it must understand the protocols and addressing schemes of each region it connects, and it must translate between them. For example, a gateway between the Internet region and the Space region must speak TCP/IP on one side and the space communication protocol on the other, while using the DTN Bundle Protocol as the common overlay that enables bundles to traverse both regions.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">DTN Addressing</h4>
+        <p>DTN uses a URI-based addressing scheme that differs fundamentally from IP addressing. Node names are based on <span class="term">URIs</span> (Uniform Resource Identifiers) and consist of a <em>region</em> identifier and an <em>entity</em> identifier within that region. The general format is:</p>
+
+        <div style="background:var(--card-alt); padding:1rem 1.5rem; border-radius:3px; margin:1rem 0; font-family:'JetBrains Mono',monospace; font-size:0.85rem; text-align:center; border:1px solid var(--border-light);">
+          dtn://<strong>region</strong>/<strong>node</strong>/<strong>application</strong>
+        </div>
+
+        <p>For example, the address <code>dtn://earth.sol.int/src.someclient.com</code> identifies an application running on a node called <code>src.someclient.com</code> within the <code>earth.sol.int</code> region. Similarly, <code>dtn://mars/base1/weatherApp</code> identifies a weather application on a base station on Mars. The region-based addressing allows bundles to be routed first to the correct region (via gateways) and then to the specific node within that region.</p>
+
+        <p>DTN supports four types of addressing: <span class="term">unicast</span> (one specific destination), <span class="term">anycast</span> (any one node matching a pattern), <span class="term">multicast</span> (all nodes matching a pattern), and <span class="term">broadcast</span> (all nodes in a region). The use of wildcards enables flexible addressing patterns — for example, <code>dtn://earth.sol.int/*.someclient.*</code> matches any entity containing "someclient" in the Earth region.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">DTN Security</h4>
+        <p>Security in DTNs presents unique challenges because bundles pass through multiple regions and potentially untrusted intermediate nodes. The DTN security model operates at the bundle layer and involves several mechanisms. Network routers participate in <span class="term">authentication</span>, verifying that bundles are legitimate and that the sender is authorized to use the network. <span class="term">Private and public certificates</span> are used for identity verification — each node holds a certificate that can be validated by other nodes. Each message contains a <span class="term">"postage stamp"</span> that carries a digital signature from the sending node, and a new signature is generated every time the message arrives at the next node. This hop-by-hop signature chain creates an auditable trail
+that allows detection of tampering or injection at any point in the delivery path. Unlike the Internet's end-to-end security model (exemplified by TLS), DTN security must operate hop-by-hop because the end-to-end principle itself breaks down when end-to-end connectivity cannot be assumed. A bundle may pass through a dozen intermediate nodes over the course of several days, and each node must be able to verify the bundle's integrity before accepting custody of it. The postage-stamp mechanism also enables accounting and resource management — nodes can track which bundles they have handled and attribute costs to the originating region, which is particularly important in inter-planetary communication where bandwidth is an extraordinarily scarce and expensive resource.</p>
+      </div>
+
+      <div class="exam-q">
+        <div class="exam-q-label">Likely Exam Question — 10 Marks</div>
+        <div class="exam-q-text">"Describe the DTN architecture with a neat diagram. Explain the different types of nodes, the addressing scheme, and the security model."</div>
+      </div>
+    </section>
+
+    <!-- 2.3 BUNDLE PROTOCOL -->
+    <section class="section" id="bundle">
+      <span class="section-num dtn-accent">Section 2.3</span>
+      <h3 class="section-title">Bundle Protocol</h3>
+
+      <p>The Bundle Protocol is to DTNs what IP is to the Internet — the foundational protocol that defines how data is packaged, addressed, and transported across the network. It sits at the bundle layer, which operates as an overlay above the transport layers of whatever regional networks the DTN spans. The protocol's primary data unit is called a <span class="term">bundle</span>, which is a self-contained message that carries not only the application data but also all the metadata needed to route it through a network where connections are intermittent and delivery may take hours or days. Understanding the Bundle Protocol in depth is essential for examinations because it is the single most examined topic in the DTN portion of the syllabus.</p>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Key Mechanisms of the Bundle Protocol</h4>
+
+        <p>The Bundle Protocol incorporates several mechanisms that have no direct equivalent in the Internet protocol stack, each designed to address the specific challenges of delay-tolerant communication.</p>
+
+        <p><span class="term">1. Custody Transfer:</span> This is perhaps the most important and most frequently examined concept in the Bundle Protocol. Custody transfer is a reliable handoff mechanism that shifts responsibility for a bundle from one node to the next as the bundle moves through the network. When a node forwards a bundle to the next hop, it can transfer custody — meaning the receiving node accepts legal responsibility for ensuring that the bundle is delivered to its destination (or to the next custodian). Once custody is accepted, the sending node is relieved of its obligation and can delete its copy. If the receiving node later fails to deliver the bundle, it — not the original sender — bears responsibility. This mechanism is crucial because it prevents the unbounded accumulation of bundles in the network. Without custody transfer, every node that has ever handled a bundle would need to keep a copy indefinitely, since it could never be certain that the bundle had reached its destination. With custody transfer, at any given moment only one node — the current custodian — is responsible for a particular bundle.</p>
+
+        <p>The custody transfer process involves explicit signaling: the receiving node sends a <span class="term">Custody ACK</span> (acknowledgment) back to the sending node to confirm that it has accepted custody. Only after receiving this ACK does the previous custodian delete its copy. If the ACK is not received within a timeout period, the previous custodian retains the bundle and may attempt to forward it again through a different path or at a different time. This hop-by-hop reliability model is fundamentally different from TCP's end-to-end acknowledgment, and it exists because end-to-end acknowledgments are impractical when the destination may not be reachable for hours.</p>
+
+        <p><span class="term">2. Bundle Prioritization:</span> Not all data is equally important, especially in resource-constrained DTN environments where bandwidth and storage are limited. The Bundle Protocol allows bundles to be assigned priority levels — typically classified as high, medium, and low. High-priority bundles, such as emergency alerts or critical telemetry data, are transmitted before lower-priority bundles when contact opportunities arise. When buffer space is limited and a node must discard some bundles to make room for new arrivals, lower-priority bundles are dropped first. This class-of-service mechanism ensures that the most important information gets through even when the network is congested or resources are scarce.</p>
+
+        <p><span class="term">3. Bundle Fragmentation:</span> Large bundles can be split into smaller fragments, which is essential in DTN environments for two reasons. First, network links often have maximum transmission unit (MTU) limits — a satellite link might only support messages up to a certain size, and a Bluetooth connection has even tighter constraints. Second, contact opportunities may be brief: if a satellite is overhead for only ten minutes and a bundle would take fifteen minutes to transmit at the available data rate, the entire bundle would be lost. Fragmentation allows the bundle to be split into pieces that can each be transmitted within the available contact window, and the fragments can be reassembled at the destination or at an intermediate custodian.</p>
+
+        <p><span class="term">4. Bundle Reassembly:</span> At the destination (or at an intermediate node that accepts custody of fragments), the individual fragments are reassembled into the original bundle. The Bundle Protocol ensures that reassembly produces the exact original data, even if fragments arrived out of order, through different paths, or at different times. This is analogous to IP fragmentation and reassembly, but operating at the bundle layer rather than the network layer, and with potentially much longer delays between fragment arrivals.</p>
+      </div>
+
+      <!-- Custody Transfer Flow Diagram -->
+      <div class="diagram-container">
+        <div class="diagram-label">Figure 2.2 — Custody Transfer Process in Bundle Protocol</div>
+        <svg viewBox="0 0 740 520" xmlns="http://www.w3.org/2000/svg">
+          <!-- Source -->
+          <rect x="20" y="200" width="120" height="70" rx="4" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1.5"/>
+          <text x="80" y="228" text-anchor="middle" font-family="Cormorant Garamond" font-size="12" font-weight="700" fill="#5B7F6E">Source</text>
+          <text x="80" y="248" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">(Ground Station)</text>
+
+          <!-- Node 1 -->
+          <rect x="200" y="200" width="120" height="70" rx="4" fill="#FDF0EA" stroke="#C17050" stroke-width="1.5"/>
+          <text x="260" y="228" text-anchor="middle" font-family="Cormorant Garamond" font-size="12" font-weight="700" fill="#C17050">Node 1</text>
+          <text x="260" y="248" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">(Satellite A)</text>
+
+          <!-- Node 2 -->
+          <rect x="400" y="200" width="120" height="70" rx="4" fill="#FBF6ED" stroke="#D4A853" stroke-width="1.5"/>
+          <text x="460" y="228" text-anchor="middle" font-family="Cormorant Garamond" font-size="12" font-weight="700" fill="#8A6D1B">Node 2</text>
+          <text x="460" y="248" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">(Satellite B)</text>
+
+          <!-- Destination -->
+          <rect x="600" y="200" width="120" height="70" rx="4" fill="#E8F0EC" stroke="#5B7F6E" stroke-width="1.5"/>
+          <text x="660" y="228" text-anchor="middle" font-family="Cormorant Garamond" font-size="12" font-weight="700" fill="#5B7F6E">Destination</text>
+          <text x="660" y="248" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">(Mars Base)</text>
+
+          <!-- Step arrows and labels -->
+          <!-- Step 1: Bundle Sent -->
+          <line x1="140" y1="220" x2="200" y2="220" stroke="#2C1810" stroke-width="1.2" marker-end="url(#arrowBlk)"/>
+          <text x="170" y="212" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#5B7F6E" font-weight="600">① Bundle</text>
+
+          <!-- Step 2: Custody Accepted Node 1 -->
+          <text x="260" y="290" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#C17050" font-weight="600">② Custody Accepted</text>
+
+          <!-- Step 3: ACK to Source -->
+          <line x1="200" y1="240" x2="140" y2="240" stroke="#5B7F6E" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#arrowGrn)"/>
+          <text x="170" y="258" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#5B7F6E" font-weight="600">③ Custody ACK</text>
+
+          <!-- Step 4: Forward to Node 2 -->
+          <line x1="320" y1="220" x2="400" y2="220" stroke="#2C1810" stroke-width="1.2" marker-end="url(#arrowBlk)"/>
+          <text x="360" y="212" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A6D1B" font-weight="600">④ Bundle</text>
+
+          <!-- Step 5: Custody Decision -->
+          <text x="460" y="290" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A6D1B" font-weight="600">⑤ Custody Decision</text>
+
+          <!-- Step 6-8: ACK back to Node 1 -->
+          <line x1="400" y1="240" x2="320" y2="240" stroke="#5B7F6E" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#arrowGrn)"/>
+          <text x="360" y="258" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#5B7F6E" font-weight="600">⑥⑦⑧ ACK</text>
+
+          <!-- Step 9: Node 1 deletes copy -->
+          <text x="260" y="310" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#C17050" font-weight="600">⑨ Node 1 deletes copy</text>
+
+          <!-- Step 10: Bundle to Destination -->
+          <line x1="520" y1="220" x2="600" y2="220" stroke="#2C1810" stroke-width="1.2" marker-end="url(#arrowBlk)"/>
+          <text x="560" y="212" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#5B7F6E" font-weight="600">⑩ Bundle</text>
+
+          <!-- Step 11-13: App ACK -->
+          <line x1="600" y1="240" x2="520" y2="240" stroke="#5B7F6E" stroke-width="1" stroke-dasharray="4,2" marker-end="url(#arrowGrn)"/>
+          <text x="560" y="258" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#5B7F6E" font-weight="600">⑪⑫⑬ App ACK</text>
+
+          <!-- Legend -->
+          <rect x="20" y="370" width="700" height="130" rx="4" fill="#FFFCF5" stroke="#E8DDD0" stroke-width="1"/>
+          <text x="370" y="395" text-anchor="middle" font-family="Cormorant Garamond" font-size="13" font-weight="700" fill="#2C1810">Custody Transfer — Step-by-Step Explanation</text>
+          <text x="40" y="418" font-family="Lora" font-size="9" fill="#2C1810">① Source sends bundle to Node 1.  ② Node 1 accepts custody and stores bundle.  ③ Node 1 sends Custody ACK to Source.</text>
+          <text x="40" y="438" font-family="Lora" font-size="9" fill="#2C1810">④ Node 1 forwards bundle to Node 2.  ⑤ Node 2 decides: accept custody or deny. ⑥⑦⑧ If accepted: Node 2 stores, sends ACK, Node 1 deletes.</text>
+          <text x="40" y="458" font-family="Lora" font-size="9" fill="#2C1810">⑨ Node 1 removes bundle after ACK.  ⑩ Final node sends bundle to destination.  ⑪ Destination sends application-layer ACK.</text>
+          <text x="40" y="478" font-family="Lora" font-size="9" fill="#2C1810">⑫ ACK travels back through custodians.  ⑬ Last custodian deletes bundle after confirmation of delivery.</text>
+
+          <defs>
+            <marker id="arrowBlk" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#2C1810"/>
+            </marker>
+            <marker id="arrowGrn" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#5B7F6E"/>
+            </marker>
+          </defs>
+        </svg>
+        <div class="diagram-caption">Figure 2.2 — Complete custody transfer flow showing how responsibility shifts from source through intermediate nodes to destination, with ACKs confirming each handoff.</div>
+      </div>
+
+      <div class="callout callout-intuition">
+        <span class="callout-label">Intuitive Analogy for Custody Transfer</span>
+        Imagine sending a valuable package through a series of couriers. Each courier signs a receipt when they accept the package — that signature is the custody ACK. Once Courier B signs the receipt, Courier A is no longer responsible. If the package is lost after that point, Courier B bears the liability, not Courier A or the original sender. This is exactly how custody transfer works in DTN: each node that accepts custody signs for the bundle and takes responsibility, while the previous custodian is freed from obligation. The chain of receipts creates an auditable trail of who was responsible at each stage.
+      </div>
+
+      <div class="confusion-box">
+        <div class="confusion-title"><i class="fas fa-exclamation-triangle"></i> Common Student Confusion — Custody Transfer vs. End-to-End ACK</div>
+        <p>Students frequently confuse custody transfer with end-to-end acknowledgment. They are fundamentally different. Custody transfer is a <em>hop-by-hop</em> reliability mechanism — it ensures that each individual link in the chain is reliable, but it does <em>not</em> guarantee that the bundle has reached its final destination. The Custody ACK merely confirms that the next node has taken responsibility; it says nothing about whether that node will successfully deliver the bundle further. End-to-end acknowledgment is a separate mechanism — the destination sends an application-layer ACK that confirms actual delivery. Both mechanisms operate independently: custody transfer ensures reliability at each hop, while application ACKs confirm end-to-end delivery. In exams, clearly distinguish between these two levels of acknowledgment.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Summary Vectors and Node Encounters</h4>
+        <p>When two DTN nodes come within communication range of each other (a "contact" or "encounter"), they need to efficiently determine which bundles to exchange. Sending all bundles to the other node would be wasteful if the other node already carries copies of some of them. To solve this problem, DTN nodes use <span class="term">summary vectors</span>. A summary vector is a compact list of bundle IDs that a node currently stores in its buffer. When two nodes encounter each other, they first exchange summary vectors, compare them to identify which bundles the other node lacks, and then transmit only the missing bundles. This mechanism dramatically reduces redundant transmissions and conserves the limited bandwidth that typically characterizes DTN contacts.</p>
+
+        <p>The summary vector approach is particularly important in flooding-based routing protocols like Epidemic Routing, where the goal is to ensure that every node carries a copy of every bundle. Without summary vectors, nodes would waste precious contact time retransmitting bundles that the other node already has. With summary vectors, the exchange is efficient: only genuinely novel bundles are transmitted.</p>
+      </div>
+
+      <div class="revision-card">
+        <h4 style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; margin-bottom:0.75rem;">Bundle Protocol — Quick Revision</h4>
+        <ul>
+          <li>Bundle = DTN's fundamental data unit (like a packet in IP, but self-contained with metadata)</li>
+          <li>Custody Transfer = hop-by-hop responsibility handoff with ACKs</li>
+          <li>Bundle Prioritization = class of service (high/medium/low)</li>
+          <li>Bundle Fragmentation = split large bundles for limited links or brief contacts</li>
+          <li>Bundle Reassembly = recombine fragments at destination</li>
+          <li>Summary Vector = list of bundle IDs a node carries; exchanged at encounter</li>
+          <li>Custody ACK ≠ End-to-end ACK (hop-by-hop vs. destination confirmation)</li>
+        </ul>
+      </div>
+
+      <div class="exam-q">
+        <div class="exam-q-label">Likely Exam Question — 15 Marks</div>
+        <div class="exam-q-text">"Explain the Bundle Protocol in DTN. Describe custody transfer, bundle prioritization, fragmentation, and reassembly with a suitable diagram showing the custody transfer process."</div>
+      </div>
+    </section>
+
+    <!-- 2.4 DTN ROUTING TAXONOMY -->
+    <section class="section" id="dtn-routing">
+      <span class="section-num dtn-accent">Section 2.4</span>
+      <h3 class="section-title">Routing in DTNs — Taxonomy and Design</h3>
+
+      <p>Routing in Delay-Tolerant Networks is a problem of a fundamentally different nature than routing in the Internet. In the Internet, routing protocols like OSPF and BGP assume that the network topology is relatively stable, that links exist continuously, and that a path from source to destination can be computed at any time. In DTNs, none of these assumptions hold. The topology changes constantly as nodes move and links appear and disappear. End-to-end paths may not exist at any given moment. The very concept of a "shortest path" becomes ambiguous when the network itself is intermittent — what does "shortest" mean when some links will not exist for another six hours?</p>
+
+      <p>DTN routing therefore uses the <span class="term">store-carry-and-forward</span> paradigm instead of the store-and-forward paradigm used in Internet routers. In store-carry-and-forward, a node receives a bundle, stores it in its buffer, carries it physically as the node moves (this is the "carry" phase, which has no equivalent in Internet routing), and forwards it to another node when a contact opportunity arises. The mobility of nodes is not a problem to be overcome — it is the fundamental mechanism by which bundles make progress toward their destination.</p>
+
+      <div class="callout callout-intuition">
+        <span class="callout-label">Intuitive Analogy</span>
+        Internet routing is like a postal service with fixed routes: trucks follow predetermined paths between fixed post offices. DTN routing is like giving a letter to a traveler who is heading in roughly the right direction: the traveler carries the letter, meets other travelers along the way, and passes the letter to someone who is heading closer to the destination. There are no fixed routes, no guaranteed schedules, and no certainty — only probabilities and opportunities.
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">DTN Routing Taxonomy</h4>
+
+        <p>The professor's slides present a taxonomy that classifies DTN routing protocols along two major dimensions: <span class="term">knowledge-based</span> classification (based on what the protocol knows about future contacts) and <span class="term">replication-based</span> classification (based on how many copies of a message are created).</p>
+
+        <!-- Taxonomy Diagram -->
+        <div class="diagram-container">
+          <div class="diagram-label">Figure 2.3 — DTN Routing Taxonomy</div>
+          <svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg">
+            <!-- Root -->
+            <rect x="270" y="15" width="180" height="40" rx="4" fill="#2C1810"/>
+            <text x="360" y="41" text-anchor="middle" font-family="Cormorant Garamond" font-size="14" font-weight="700" fill="#F7F2EA">DTN Routing</text>
+
+            <!-- Two branches -->
+            <line x1="320" y1="55" x2="180" y2="90" stroke="#2C1810" stroke-width="1.5"/>
+            <line x1="400" y1="55" x2="540" y2="90" stroke="#2C1810" stroke-width="1.5"/>
+
+            <!-- Knowledge-based -->
+            <rect x="80" y="90" width="200" height="40" rx="4" fill="#5B7F6E"/>
+            <text x="180" y="115" text-anchor="middle" font-family="Cormorant Garamond" font-size="13" font-weight="700" fill="white">Knowledge-Based</text>
+
+            <!-- Replication-based -->
+            <rect x="440" y="90" width="200" height="40" rx="4" fill="#C17050"/>
+            <text x="540" y="115" text-anchor="middle" font-family="Cormorant Garamond" font-size="13" font-weight="700" fill="white">Replication-Based</text>
+
+            <!-- Knowledge sub-branches -->
+            <line x1="130" y1="130" x2="90" y2="165" stroke="#5B7F6E" stroke-width="1"/>
+            <line x1="180" y1="130" x2="180" y2="165" stroke="#5B7F6E" stroke-width="1"/>
+            <line x1="230" y1="130" x2="280" y2="165" stroke="#5B7F6E" stroke-width="1"/>
+
+            <rect x="30" y="165" width="120" height="55" rx="3" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
+            <text x="90" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5B7F6E" font-weight="600">Scheduled</text>
+            <text x="90" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Contacts known</text>
+            <text x="90" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">in advance</text>
+
+            <rect x="165" y="165" width="120" height="55" rx="3" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
+            <text x="225" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5B7F6E" font-weight="600">Probabilistic</text>
+            <text x="225" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">History-based</text>
+            <text x="225" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">predictions</text>
+
+            <rect x="300" y="165" width="120" height="55" rx="3" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
+            <text x="360" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5B7F6E" font-weight="600">Context-aware</text>
+            <text x="360" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Social metrics</text>
+            <text x="360" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">centrality</text>
+
+            <!-- Replication sub-branches -->
+            <line x1="490" y1="130" x2="440" y2="165" stroke="#C17050" stroke-width="1"/>
+            <line x1="540" y1="130" x2="540" y2="165" stroke="#C17050" stroke-width="1"/>
+            <line x1="590" y1="130" x2="650" y2="165" stroke="#C17050" stroke-width="1"/>
+
+            <rect x="380" y="165" width="120" height="55" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+            <text x="440" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">Flooding</text>
+            <text x="440" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Unlimited copies</text>
+            <text x="440" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Epidemic, MaxProp</text>
+
+            <rect x="510" y="165" width="120" height="55" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+            <text x="570" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">Controlled</text>
+            <text x="570" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Limited copies</text>
+            <text x="570" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Spray-and-Wait</text>
+
+            <rect x="640" y="165" width="70" height="55" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+            <text x="675" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">Fwd</text>
+            <text x="675" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Single copy</text>
+            <text x="675" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">only</text>
+
+            <!-- Protocol examples at bottom -->
+            <rect x="30" y="260" width="680" height="120" rx="4" fill="#FFFCF5" stroke="#E8DDD0" stroke-width="1"/>
+            <text x="370" y="285" text-anchor="middle" font-family="Cormorant Garamond" font-size="13" font-weight="700" fill="#2C1810">Protocol Examples by Category</text>
+
+            <rect x="50" y="300" width="150" height="60" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+            <text x="125" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" fill="#C17050" font-weight="600">Flooding-Based</text>
+            <text x="125" y="340" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Epidemic · MaxProp · RAPID</text>
+
+            <rect x="220" y="300" width="150" height="60" rx="3" fill="#FBF6ED" stroke="#D4A853" stroke-width="1"/>
+            <text x="295" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" fill="#8A6D1B" font-weight="600">Quota/Controlled</text>
+            <text x="295" y="340" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Spray-and-Wait · EBR</text>
+
+            <rect x="390" y="300" width="150" height="60" rx="3" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
+            <text x="465" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" fill="#5B7F6E" font-weight="600">Probabilistic</text>
+            <text x="465" y="340" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">PRoPHET</text>
+
+            <rect x="560" y="300" width="130" height="60" rx="3" fill="#FFF8F0" stroke="#B85450" stroke-width="1"/>
+            <text x="625" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" fill="#B85450" font-weight="600">Forwarding</text>
+            <text x="625" y="340" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Single-copy routing</text>
+          </svg>
+          <div class="diagram-caption">Figure 2.3 — DTN routing taxonomy showing the two major classification dimensions and representative protocols.</div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Knowledge-Based Classification</h4>
+
+        <p><span class="term">Scheduled Contacts:</span> In some DTN environments, contact opportunities are known in advance because they follow predictable schedules. The classic example is satellite communication: a low-Earth orbit satellite passes over a ground station at precisely known times, and the duration and bandwidth of each contact can be calculated from orbital mechanics. When contact schedules are known, routing can be formulated as a constrained optimization problem — the routing algorithm computes the best sequence of contacts that will deliver a bundle from source to destination with minimum delay. This is analogous to planning a journey using a bus schedule: you know exactly when each bus arrives and departs, and you can plan your route accordingly.</p>
+
+        <p><span class="term">Probabilistic / Predictable Contacts:</span> When contacts cannot be scheduled but follow statistical patterns, routing protocols can use historical encounter data to estimate the likelihood of future contacts. For example, if Node A and Node B have encountered each other frequently in the past, the protocol estimates a high probability of future encounters and may choose Node B as a relay for bundles destined for nodes that B frequently meets. PRoPHET is the canonical example of this approach, maintaining a "delivery predictability" metric for each destination that is updated based on encounter history.</p>
+
+        <p><span class="term">Context-Aware / Social Routing:</span> This approach uses additional contextual information — particularly social metrics like node centrality (how well-connected a node is within the network), community membership (which group of nodes a node interacts with most frequently), and similarity (whether two nodes share common contacts) — to make routing decisions. The intuition is that socially central nodes (analogous to popular people in a social network) are more likely to encounter many other nodes and therefore make effective relay points for bundles. Context-aware routing is particularly useful in human-carried device networks, where social behavior patterns create predictable contact structures.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Replication-Based Classification</h4>
+
+        <p><span class="term">Flooding-Based (Unlimited Replication):</span> These protocols spread copies of a bundle to every node they encounter, without strict limits on the number of replicas. The philosophy is simple: the more copies exist in the network, the higher the probability that at least one copy will reach the destination. Epidemic Routing is the purest example — every node shares every bundle with every other node it meets. The advantage is maximum delivery probability and minimum latency; the disadvantage is catastrophic resource consumption — every node's buffer fills with copies of every bundle, and contact bandwidth is wasted on redundant transmissions. MaxProp and RAPID refine this approach by prioritizing which bundles to transmit or drop based on delivery likelihood, but they remain fundamentally flooding-based.</p>
+
+        <p><span class="term">Controlled Flooding / Quota-Based (Limited Replication):</span> These protocols limit the number of replicas to balance delivery probability with resource efficiency. Spray-and-Wait is the most straightforward example: exactly L copies of each bundle are created (the "spray" phase), and once all L copies have been distributed to L different relay nodes, each relay simply waits until it encounters the destination directly (the "wait" phase). By controlling L, the protocol designer can tune the tradeoff between delivery probability and resource consumption. PRoPHET also falls into this general category: it replicates bundles selectively — only to nodes with a higher delivery predictability for the destination — which implicitly limits the number of copies without a hard quota.</p>
+
+        <p><span class="term">Forwarding-Based (Single Copy):</span> These protocols maintain only a single copy of each bundle and forward it to a "better" node — one that is more likely to deliver the bundle to its destination. The advantage is minimal resource consumption (one copy, one buffer slot per bundle); the disadvantage is that if the single relay node fails, loses the bundle, or takes a suboptimal path, the bundle may never be delivered. Forwarding-based protocols are suitable only for DTN environments where some reliable prediction of node mobility is possible, because without prediction, there is no basis for deciding which node is "better."</p>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Copies per Bundle</th>
+              <th>Delivery Probability</th>
+              <th>Resource Usage</th>
+              <th>Example Protocols</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Flooding-Based</td><td>Unlimited</td><td>Highest</td><td>Very High</td><td>Epidemic, MaxProp, RAPID</td></tr>
+            <tr><td>Controlled Flooding</td><td>Limited (quota L)</td><td>Moderate-High</td><td>Moderate</td><td>Spray-and-Wait, PRoPHET, EBR</td></tr>
+            <tr><td>Forwarding-Based</td><td>Single (1)</td><td>Lowest</td><td>Lowest</td><td>Single-copy schemes</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mnemonic-box">
+        <span class="mnemonic-label">Memory Anchor</span>
+        <p><strong>"Flood the network, Spray the copies, Forward the one"</strong> — Flooding = unlimited copies everywhere; Spray = limited copies carefully; Forward = single copy to a better node. As you move from flooding to forwarding, delivery probability decreases but resource efficiency increases.</p>
+      </div>
+
+      <div class="exam-q">
+        <div class="exam-q-label">Likely Exam Question — 10 Marks</div>
+        <div class="exam-q-text">"Classify DTN routing protocols based on replication strategy. Compare flooding-based, quota-based, and forwarding-based approaches with examples."</div>
+      </div>
+    </section>
+
+    <!-- 2.5 REPLICATION-BASED ROUTING PROTOCOLS -->
+    <section class="section" id="replication">
+      <span class="section-num dtn-accent">Section 2.5</span>
+      <h3 class="section-title">Replication-Based Routing Protocols</h3>
+
+      <p>Having established the taxonomy, we now examine the specific replication-based routing protocols identified in the syllabus in detail. Each protocol embodies a different philosophy about how to manage the fundamental tradeoff between delivery probability and resource consumption, and understanding these differences at a granular level is essential for both descriptive exam answers and analytical comparison questions.</p>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Epidemic Routing</h4>
+        <p>Epidemic Routing is the simplest and most aggressive DTN routing protocol. Its operation is straightforward: whenever two nodes come within communication range, they exchange summary vectors to identify which bundles the other node lacks, and then transmit all missing bundles. The result is that every bundle eventually spreads to every node in the network — exactly like a virus spreading through a population, which is why the protocol is named "Epidemic."</p>
+
+        <p>The algorithm operates in two phases during each node encounter. In the <em>summary exchange phase</em>, each node sends its summary vector — the list of bundle IDs it currently carries. In the <em>bundle transfer phase</em>, each node identifies which bundles from the other node's summary vector it does not already have, requests those bundles, and receives them. This process is symmetric: both nodes may receive new bundles from each other during a single encounter.</p>
+
+        <p>The theoretical appeal of Epidemic Routing is compelling: if any node in the network ever encounters the destination, the bundle will be delivered. Under ideal conditions (infinite buffer space, infinite bandwidth, unlimited contact duration), Epidemic Routing achieves the optimal delivery ratio and minimum latency of any DTN routing protocol. The practical reality, however, is devastating. Real DTN nodes have limited buffer space, and when buffers fill (as they rapidly do under Epidemic Routing), the oldest bundles must be dropped — potentially including bundles that were the only copy of a message. Real contacts have limited bandwidth, and spending that bandwidth on redundant copies of already-widespread bundles means that unique, critical bundles may never be transmitted. Real nodes have limited energy, and the continuous transmission of bundles drains batteries rapidly. In practice, Epidemic Routing performs well only in small networks with light traffic loads, and even then only as a benchmark against which more efficient protocols are measured.</p>
+
+        <div class="pros-cons">
+          <div class="pros">
+            <h4>Advantages of Epidemic Routing</h4>
+            <ul>
+              <li>Highest delivery probability under ideal conditions</li>
+              <li>Minimum delivery latency (bundles spread fastest)</li>
+              <li>Simple to implement — no prediction or history needed</li>
+              <li>Robust to topology changes (every path is explored)</li>
+              <li>Serves as upper-bound benchmark for other protocols</li>
+            </ul>
+          </div>
+          <div class="cons">
+            <h4>Disadvantages of Epidemic Routing</h4>
+            <ul>
+              <li>Catastrophic buffer consumption — every node carries every bundle</li>
+              <li>Extreme bandwidth waste — most transmissions are redundant</li>
+              <li>High energy consumption from constant transmission</li>
+              <li>Buffer overflow leads to bundle dropping and lost messages</li>
+              <li>Does not scale to large networks or heavy traffic</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">MaxProp</h4>
+        <p>MaxProp addresses the primary weakness of Epidemic Routing — its indiscriminate flooding — by introducing a prioritization mechanism for both transmission and deletion decisions. When two nodes encounter each other and the contact duration is insufficient to transmit all bundles in their buffers, MaxProp must decide which bundles to send first. Similarly, when a node's buffer is full and a new bundle arrives, MaxProp must decide which existing bundle to drop. Both decisions are guided by a priority score that is computed based on the likelihood of a future delivery path.</p>
+
+        <p>The priority computation in MaxProp works as follows. Each node maintains a vector of encounter probabilities with every other node in the network. When two nodes meet, they exchange their encounter vectors and update them based on the meeting. The probability of a bundle reaching its destination via a particular path is estimated by multiplying the encounter probabilities along that path. Bundles with a lower estimated delivery probability are given higher priority for transmission (because they are less likely to reach the destination through other means) and lower priority for deletion (because losing them is more costly). MaxProp also uses acknowledgments to remove delivered bundles from buffers, and it prioritizes bundles that have been forwarded fewer times (on the reasoning that bundles with many copies are more likely to reach the destination without additional help).</p>
+
+        <p>In practical terms, MaxProp performs significantly better than pure Epidemic Routing in resource-constrained environments because it makes intelligent decisions about which bundles deserve bandwidth and buffer space. However, it retains the fundamental flooding philosophy — it still replicates bundles broadly — and its overhead is only marginally lower than Epidemic's in dense networks.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">RAPID</h4>
+        <p>RAPID (Resource Allocation Protocol for Intentional DTN routing) takes a fundamentally different approach to the prioritization problem. Instead of heuristic priority scores, RAPID explicitly treats DTN routing as a <em>resource allocation problem</em>. The protocol defines a specific metric — such as average delivery delay, maximum delivery delay, or delivery probability — and then replicates packets in a way that directly optimizes that metric.</p>
+
+        <p>When two nodes encounter each other, RAPID performs three steps. First, it <em>estimates</em> the utility of replicating each bundle in its buffer — the expected improvement in the optimization metric if an additional copy is created. Second, it <em>sorts</em> bundles by their utility values. Third, it <em>transmits</em> bundles in order of decreasing utility, starting with the bundle that would benefit most from replication, until the contact ends or all bundles have been transmitted.</p>
+
+        <p>The key innovation of RAPID is that the utility function is directly tied to the performance metric the network operator cares about. If the goal is to minimize average delay, RAPID replicates the bundle with the highest expected remaining delay. If the goal is to maximize delivery probability, RAPID replicates the bundle with the lowest current delivery probability. This intentional, metric-driven approach makes RAPID more principled than MaxProp's heuristic prioritization, though it also requires more computational overhead and more accurate network state estimation.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Spray-and-Wait</h4>
+        <p>Spray-and-Wait is the most important quota-based protocol for examination purposes, and it is frequently the subject of detailed questions because of its elegant two-phase design. The protocol operates in exactly two phases:</p>
+
+        <p><span class="term">Spray Phase:</span> The source node creates exactly L copies of the bundle (where L is a protocol parameter chosen by the network designer). As the source node encounters other nodes, it distributes these copies — one copy per encountered node — until all L copies have been distributed. The key constraint is that the total number of copies in the network never exceeds L. If L = 6, then at most six nodes (including the source) will ever carry a copy of the bundle.</p>
+
+        <p><span class="term">Wait Phase:</span> Once a relay node has received its single copy during the spray phase, it does not forward it to any other intermediate node. Instead, it simply waits until it encounters the destination node directly, at which point it delivers the bundle. The relay does not spread the bundle further — it holds its copy and waits for a direct encounter with the destination.</p>
+
+        <p>The simplicity of Spray-and-Wait is deceptive. By controlling L, the protocol provides a clean tradeoff between delivery performance and resource consumption. With L = 1, the protocol degenerates to direct delivery (the source waits to meet the destination itself). With L equal to the total number of nodes, the protocol approximates Epidemic Routing. For intermediate values, Spray-and-Wait achieves delivery ratios close to Epidemic Routing but with dramatically lower resource consumption — often an order of magnitude fewer transmissions per delivered bundle.</p>
+
+        <p>A variant called <span class="term">Spray-and-Focus</span> relaxes the wait phase by allowing relay nodes to forward their copy to another node that is "closer" to the destination according to some utility metric, rather than waiting for a direct encounter. This improves delivery performance without significantly increasing resource consumption.</p>
+
+        <!-- Spray-and-Wait Diagram -->
+        <div class="diagram-container">
+          <div class="diagram-label">Figure 2.4 — Spray-and-Wait Protocol Operation (L=4)</div>
+          <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg">
+            <!-- Source -->
+            <rect x="20" y="120" width="100" height="55" rx="4" fill="#C17050"/>
+            <text x="70" y="148" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white" font-weight="600">SOURCE</text>
+            <text x="70" y="164" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="white">L=4 copies</text>
+
+            <!-- Spray Phase Label -->
+            <rect x="155" y="10" width="130" height="28" rx="14" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+            <text x="220" y="29" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">SPRAY PHASE</text>
+
+            <!-- Relay nodes from spray -->
+            <rect x="175" y="60" width="90" height="50" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+            <text x="220" y="83" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Relay 1</text>
+            <text x="220" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A7565">1 copy</text>
+
+            <rect x="175" y="130" width="90" height="50" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+            <text x="220" y="153" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Relay 2</text>
+            <text x="220" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A7565">1 copy</text>
+
+            <rect x="175" y="200" width="90" height="50" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+            <text x="220" y="223" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Relay 3</text>
+            <text x="220" y="240" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A7565">1 copy</text>
+
+            <!-- Source keeps 1 copy -->
+            <text x="70" y="200" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">Keeps 1 copy</text>
+
+            <!-- Arrows from source to relays -->
+            <line x1="120" y1="140" x2="175" y2="85" stroke="#C17050" stroke-width="1.2" marker-end="url(#arrowS2)"/>
+            <line x1="120" y1="148" x2="175" y2="155" stroke="#C17050" stroke-width="1.2" marker-end="url(#arrowS2)"/>
+            <line x1="120" y1="155" x2="175" y2="225" stroke="#C17050" stroke-width="1.2" marker-end="url(#arrowS2)"/>
+
+            <!-- Wait Phase Label -->
+            <rect x="380" y="10" width="130" height="28" rx="14" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
+            <text x="445" y="29" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5B7F6E" font-weight="600">WAIT PHASE</text>
+
+            <!-- Destination -->
+            <rect x="560" y="120" width="120" height="55" rx="4" fill="#5B7F6E"/>
+            <text x="620" y="148" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white" font-weight="600">DESTINATION</text>
+            <text x="620" y="164" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="white">Receives bundle</text>
+
+            <!-- Wait arrows - each relay waits for direct encounter -->
+            <line x1="265" y1="85" x2="560" y2="138" stroke="#5B7F6E" stroke-width="1.2" stroke-dasharray="6,3"/>
+            <text x="410" y="100" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5B7F6E" font-style="italic">Wait for direct encounter</text>
+            <line x1="265" y1="155" x2="560" y2="148" stroke="#5B7F6E" stroke-width="1.2" stroke-dasharray="6,3"/>
+            <line x1="265" y1="225" x2="560" y2="158" stroke="#5B7F6E" stroke-width="1.2" stroke-dasharray="6,3"/>
+            <line x1="120" y1="175" x2="560" y2="145" stroke="#5B7F6E" stroke-width="1" stroke-dasharray="6,3"/>
+
+            <text x="350" y="280" text-anchor="middle" font-family="Lora" font-size="9" fill="#8A7565" font-style="italic">Each relay holds its copy until it meets the destination directly — no further forwarding to intermediaries</text>
+
+            <defs>
+              <marker id="arrowS2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 0 L 10 5 L 0 10 z" fill="#C17050"/>
+              </marker>
+            </defs>
+          </svg>
+          <div class="diagram-caption">Figure 2.4 — Spray-and-Wait with L=4. Source distributes 4 copies during the spray phase; each relay waits for a direct encounter with the destination.</div>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">PRoPHET (Probabilistic Routing Protocol using History of Encounters and Transitivity)</h4>
+        <p>PRoPHET occupies a unique position in the DTN routing landscape because it combines elements of both replication-based and knowledge-based approaches. It maintains a <span class="term">delivery predictability</span> metric for each known destination — a value between 0 and 1 that represents the probability that the current node will encounter that destination in the future. When two nodes meet, they exchange their delivery predictability tables, and bundles are replicated only to nodes that have a higher delivery predictability for the bundle's destination than the current holder.</p>
+
+        <p>The delivery predictability metric is updated using three rules. The <em>encounter rule</em> states that whenever two nodes meet, their mutual delivery predictability increases — if A meets B, then P(A,B) increases because A now has evidence that it can reach B. The <em>aging rule</em> states that delivery predictability decreases over time if nodes do not meet — P(A,B) decays exponentially, reflecting the decreasing confidence that A will encounter B again. The <em>transitivity rule</em> captures the intuition that if A frequently meets B, and B frequently meets C, then A has an indirect path to C through B — so P(A,C) should increase based on P(A,B) × P(B,C). This transitive property allows PRoPHET to discover multi-hop delivery opportunities without explicit path computation.</p>
+
+        <p>The key advantage of PRoPHET over Epidemic Routing is that it avoids wasting resources on nodes that are unlikely to help deliver a bundle. A bundle is only replicated to a node that has a higher delivery predictability for the destination, which means the replication is always "useful" in a probabilistic sense. This selective replication dramatically reduces the number of copies in the network compared to Epidemic Routing, while maintaining comparable delivery ratios in many realistic scenarios. However, PRoPHET requires state maintenance (the predictability tables must be stored and updated) and computational overhead (the transitive updates), and its performance depends on the accuracy of the predictability estimates — in highly unpredictable environments, the history-based predictions may be no better than random guessing.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Encounter-Based Routing (EBR)</h4>
+        <p>EBR takes a different approach to quota-based replication by using the <em>rate of node encounters</em> as the metric for deciding how many copies of a bundle to give to each relay. Nodes that encounter many other nodes (high encounter rate) are better connected to the network and therefore more likely to deliver bundles to their destinations. EBR allocates more copies to these well-connected nodes and fewer copies to poorly-connected nodes.</p>
+
+        <p>When Node A encounters Node B, EBR calculates the number of copies to give B based on B's encounter rate relative to A's encounter rate. If B encounters twice as many nodes as A, B receives a proportionally larger share of the remaining copies. This adaptive allocation ensures that copies flow toward the most mobile and well-connected nodes, which statistically have the highest probability of encountering the destination. EBR thus avoids the rigid fixed-copy allocation of Spray-and-Wait while still maintaining a bound on the total number of replicas.</p>
+      </div>
+
+      <!-- Comprehensive Comparison Table -->
+      <div class="subsection">
+        <h4 class="subsection-title">Comprehensive Protocol Comparison</h4>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Protocol</th>
+                <th>Category</th>
+                <th>Copies</th>
+                <th>Decision Basis</th>
+                <th>Buffer Usage</th>
+                <th>Delivery Prob.</th>
+                <th>Complexity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Epidemic</td><td>Flooding</td><td>Unlimited</td><td>None (blind flood)</td><td>Very High</td><td>Highest</td><td>Low</td></tr>
+              <tr><td>MaxProp</td><td>Flooding</td><td>Unlimited</td><td>Delivery likelihood priority</td><td>High</td><td>High</td><td>Medium</td></tr>
+              <tr><td>RAPID</td><td>Flooding</td><td>Unlimited</td><td>Utility optimization</td><td>High</td><td>High</td><td>High</td></tr>
+              <tr><td>Spray-and-Wait</td><td>Quota</td><td>Fixed (L)</td><td>Random spray, then wait</td><td>Moderate</td><td>Moderate</td><td>Low</td></tr>
+              <tr><td>PRoPHET</td><td>Quota / Probabilistic</td><td>Selective</td><td>Delivery predictability</td><td>Moderate</td><td>Moderate-High</td><td>Medium</td></tr>
+              <tr><td>EBR</td><td>Quota / Encounter</td><td>Adaptive</td><td>Encounter rate</td><td>Moderate</td><td>Moderate-High</td><td>Medium</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Recent Advancements</h4>
+        <p>The professor's slides briefly mention two recent developments in DTN routing that represent the cutting edge of the field. These are likely to appear as short-answer or viva questions rather than full-length descriptive questions, but understanding them demonstrates depth of knowledge.</p>
+
+        <p><span class="term">Enhanced Message Replication Technique (EMRT):</span> EMRT dynamically adjusts the number of replicas based on real-time network conditions, including node energy levels, buffer availability, and remaining message Time-To-Live (TTL). Unlike Spray-and-Wait's fixed L parameter, EMRT recognizes that the optimal number of copies depends on the current state of the network — more copies are beneficial when energy and buffer space are abundant, but fewer copies are appropriate when resources are scarce. This adaptive approach aims to achieve the delivery performance of aggressive replication during favorable conditions while avoiding resource exhaustion during unfavorable periods.</p>
+
+        <p><span class="term">Replication-Based Locking (RBL):</span> RBL introduces a "locking" mechanism to reduce redundant transmissions. When a node determines that a particular bundle has been sufficiently replicated in its neighborhood (based on encounter history or explicit notifications), it "locks" the bundle, preventing further replication of that bundle by nodes in the locked region. This prevents the common scenario in flooding-based protocols where multiple nodes waste bandwidth transmitting the same bundle to the same encounter. RBL thus reduces network congestion without significantly impacting delivery probability, because the locked bundles have already achieved sufficient replication for likely delivery.</p>
+      </div>
+
+      <div class="confusion-box">
+        <div class="confusion-title"><i class="fas fa-exclamation-triangle"></i> Common Student Confusion — MaxProp vs. RAPID</div>
+        <p>Students often struggle to distinguish MaxProp from RAPID because both prioritize bundles for transmission and both address the same basic problem (Epidemic Routing's indiscriminate flooding). The key difference lies in <em>how</em> they compute priorities. MaxProp uses a heuristic scoring system based on encounter probabilities and forwarding counts — it is a rule-based approach that approximates good decisions. RAPID explicitly formulates routing as an optimization problem: it defines a specific metric (e.g., average delay) and computes the utility of replicating each bundle as the expected improvement in that metric. RAPID is more principled and potentially more optimal, but also more computationally expensive. Think of MaxProp as an experienced driver who knows the roads, and RAPID as a GPS that calculates the mathematically optimal route.</p>
+      </div>
+
+      <div class="revision-card">
+        <h4 style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; margin-bottom:0.75rem;">Replication Protocols — Quick Revision</h4>
+        <ul>
+          <li>Epidemic = flood everything to everyone (simple but wasteful)</li>
+          <li>MaxProp = flood with priority (heuristic scoring based on delivery likelihood)</li>
+          <li>RAPID = flood with utility optimization (metric-driven resource allocation)</li>
+          <li>Spray-and-Wait = spray L copies, then wait for direct delivery</li>
+          <li>PRoPHET = replicate only to nodes with higher delivery predictability</li>
+          <li>EBR = allocate copies based on encounter rate (well-connected nodes get more)</li>
+          <li>EMRT = adaptive replica count based on energy/buffer/TTL</li>
+          <li>RBL = lock bundles to prevent redundant replication</li>
+        </ul>
+      </div>
+
+      <div class="exam-q">
+        <div class="exam-q-label">Likely Exam Question — 15 Marks</div>
+        <div class="exam-q-text">"Explain the different replication-based routing protocols in DTN. Compare Epidemic Routing, Spray-and-Wait, and PRoPHET in terms of delivery probability, resource consumption, and complexity. Draw diagrams to illustrate Spray-and-Wait operation."</div>
+      </div>
+    </section>
+
+    <!-- ═══════════════════════════════════════ -->
+    <!-- EXAM PREPARATION SECTION -->
+    <!-- ═══════════════════════════════════════ -->
+
+    <div class="part-header" id="revision" style="border-top-color:var(--accent-gold);">
+      <div class="part-label gold-accent">Exam Preparation</div>
+      <h2 class="part-title">Revision &amp; Exam Strategy</h2>
+    </div>
+
+    <!-- QUICK REVISION -->
+    <section class="section">
+      <span class="section-num gold-accent">R1</span>
+      <h3 class="section-title">Night-Before Quick Revision Sheet</h3>
+
+      <div class="revision-card" style="border-color:var(--accent-sdn);">
+        <h4 style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; margin-bottom:0.75rem; color:var(--accent-sdn);">SDN — Ultra-Condensed</h4>
+        <ul>
+          <li>SDN = separate control plane (decides) from data plane (forwards)</li>
+          <li>3 layers: Application → Control → Infrastructure</li>
+          <li>Northbound API = App ↔ Controller (REST)</li>
+          <li>Southbound API = Controller ↔ Switches (OpenFlow)</li>
+          <li>Controller components: Slicing Mgr, Topology Mgr, Host Tracker, Orchestration, Management, SAL, Protocol Plug-ins</li>
+          <li>SAL = hides protocol complexity from controller core; enables extensibility</li>
+          <li>OpenFlow: flow table = match fields + actions + counters + priority</li>
+          <li>Packet-In = switch sends unmatched packet to controller</li>
+          <li>Flow-Mod = controller installs/modifies flow entry</li>
+          <li>Proactive = pre-install; Reactive = install on first packet</li>
+          <li>Overlay tunnels: VXLAN, NVGRE for network virtualization</li>
+          <li>Controllers: OpenDaylight, ONOS</li>
+        </ul>
+      </div>
+
+      <div class="revision-card" style="border-color:var(--accent-dtn);">
+        <h4 style="font-family:'Cormorant Garamond',serif; font-size:1.1rem; margin-bottom:0.75rem; color:var(--accent-dtn);">DTN — Ultra-Condensed</h4>
+        <ul>
+          <li>DTN = overlay network for intermittent, high-latency, partitioned networks</li>
+          <li>Originally for InterPlanetary Internet (IPN)</li>
+          <li>Internet = packet switching; DTN = store-carry-and-forward</li>
+          <li>Node types: Host, Router (within region), Gateway (between regions)</li>
+          <li>Addressing: dtn://region/node/application (URI-based)</li>
+          <li>Security: hop-by-hop authentication, postage-stamp signatures</li>
+          <li>Bundle Protocol: bundles with custody transfer, prioritization, fragmentation, reassembly</li>
+          <li>Custody Transfer = hop-by-hop responsibility shift with ACK</li>
+          <li>Custody ACK ≠ End-to-end ACK</li>
+          <li>Summary Vector = list of bundle IDs for efficient encounter exchange</li>
+          <li>Routing: Knowledge-based (scheduled/probabilistic/context) + Replication-based (flooding/quota/forwarding)</li>
+          <li>Epidemic = flood all; Spray-and-Wait = L copies then wait; PRoPHET = delivery predictability</li>
+          <li>MaxProp = priority flooding; RAPID = utility optimization; EBR = encounter-rate quota</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- EXPECTED EXAM QUESTIONS -->
+    <section class="section" id="exam-questions">
+      <span class="section-num gold-accent">R2</span>
+      <h3 class="section-title">Expected University Examination Questions</h3>
+
+      <div class="tab-group">
+        <div class="tab-headers">
+          <div class="tab-header active" data-tab="sdn-questions">SDN Questions</div>
+          <div class="tab-header" data-tab="dtn-questions">DTN Questions</div>
+          <div class="tab-header" data-tab="compare-questions">Comparison Questions</div>
+        </div>
+        <div class="tab-panel active" id="sdn-questions">
+          <div class="exam-q"><div class="exam-q-label">2 Marks</div><div class="exam-q-text">Define Software-Defined Networking.</div></div>
+          <div class="exam-q"><div class="exam-q-label">2 Marks</div><div class="exam-q-text">What is the difference between control plane and data plane?</div></div>
+          <div class="exam-q"><div class="exam-q-label">2 Marks</div><div class="exam-q-text">What is the role of the Service Abstraction Layer in SDN?</div></div>
+          <div class="exam-q"><div class="exam-q-label">5 Marks</div><div class="exam-q-text">Explain the three-layer architecture of SDN with a neat diagram.</div></div>
+          <div class="exam-q"><div class="exam-q-label">5 Marks</div><div class="exam-q-text">What is the OpenFlow protocol? Explain the flow table structure.</div></div>
+          <div class="exam-q"><div class="exam-q-label">10 Marks</div><div class="exam-q-text">Explain the detailed SDN architecture including all controller components. What is the role of each component?</div></div>
+          <div class="exam-q"><div class="exam-q-label">10 Marks</div><div class="exam-q-text">Describe the OpenFlow protocol in detail. Explain message types and the packet-in/flow-mod workflow with a diagram.</div></div>
+          <div class="exam-q"><div class="exam-q-label">15 Marks</div><div class="exam-q-text">Compare traditional networking with SDN. Explain the SDN architecture, OpenFlow protocol, and discuss the advantages and disadvantages of centralized control.</div></div>
+        </div>
+        <div class="tab-panel" id="dtn-questions">
+          <div class="exam-q"><div class="exam-q-label">2 Marks</div><div class="exam-q-text">What is a Delay-Tolerant Network?</div></div>
+          <div class="exam-q"><div class="exam-q-label">2 Marks</div><div class="exam-q-text">Define custody transfer in DTN.</div></div>
+          <div class="exam-q"><div class="exam-q-label">2 Marks</div><div class="exam-q-text">What is a summary vector?</div></div>
+          <div class="exam-q"><div class="exam-q-label">5 Marks</div><div class="exam-q-text">Explain the Bundle Protocol and its key mechanisms.</div></div>
+          <div class="exam-q"><div class="exam-q-label">5 Marks</div><div class="exam-q-text">Compare the Internet and DTN architectures.</div></div>
+          <div class="exam-q"><div class="exam-q-label">10 Marks</div><div class="exam-q-text">Explain the DTN architecture with a diagram. Describe the types of nodes and addressing scheme.</div></div>
+          <div class="exam-q"><div class="exam-q-label">10 Marks</div><div class="exam-q-text">Explain Epidemic Routing and Spray-and-Wait protocol. Compare their performance.</div></div>
+          <div class="exam-q"><div class="exam-q-label">15 Marks</div><div class="exam-q-text">Classify DTN routing protocols. Explain any three replication-based routing protocols in detail with diagrams.</div></div>
+        </div>
+        <div class="tab-panel" id="compare-questions">
+          <div class="exam-q"><div class="exam-q-label">5 Marks</div><div class="exam-q-text">Compare centralized and distributed control planes.</div></div>
+          <div class="exam-q"><div class="exam-q-label">5 Marks</div><div class="exam-q-text">Difference between Northbound API and Southbound API in SDN.</div></div>
+          <div class="exam-q"><div class="exam-q-label">5 Marks</div><div class="exam-q-text">Difference between Internet and DTN communication models.</div></div>
+          <div class="exam-q"><div class="exam-q-label">10 Marks</div><div class="exam-q-text">Compare Epidemic Routing, Spray-and-Wait, and PRoPHET protocols.</div></div>
+          <div class="exam-q"><div class="exam-q-label">10 Marks</div><div class="exam-q-text">Compare traditional networking with SDN. What problems does SDN solve?</div></div>
+          <div class="exam-q"><div class="exam-q-label">5 Marks</div><div class="exam-q-text">Difference between custody ACK and end-to-end ACK in DTN.</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIVA QUESTIONS -->
+    <section class="section" id="viva">
+      <span class="section-num gold-accent">R3</span>
+      <h3 class="section-title">Viva Voce Questions</h3>
+
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <span>SDN Viva Questions</span>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <ol style="padding-left:1.5rem; font-size:0.9rem; line-height:2;">
+            <li>What is the fundamental difference between traditional networking and SDN?</li>
+            <li>Why is the control plane separated from the data plane in SDN?</li>
+            <li>What problem does the Service Abstraction Layer solve?</li>
+            <li>Name two open-source SDN controllers and their use cases.</li>
+            <li>What happens when a switch receives a packet that does not match any flow entry?</li>
+            <li>What is the difference between proactive and reactive flow installation?</li>
+            <li>Why is OpenFlow important for SDN? What would happen without it?</li>
+            <li>What is network slicing? Give a real-world example.</li>
+            <li>Explain the role of VXLAN in SDN environments.</li>
+            <li>What are the security risks of having a centralized controller?</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="collapsible-header" onclick="toggleCollapsible(this)" style="margin-top:0.75rem;">
+        <span>DTN Viva Questions</span>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <ol style="padding-left:1.5rem; font-size:0.9rem; line-height:2;">
+            <li>Why does TCP fail in delay-tolerant network environments?</li>
+            <li>What is store-carry-and-forward? How is it different from store-and-forward?</li>
+            <li>Explain custody transfer in simple terms.</li>
+            <li>What is the difference between a DTN router and a DTN gateway?</li>
+            <li>How does DTN addressing differ from IP addressing?</li>
+            <li>Why does DTN use hop-by-hop security instead of end-to-end?</li>
+            <li>What is a summary vector and why is it needed?</li>
+            <li>In Spray-and-Wait, what happens during the wait phase?</li>
+            <li>How does PRoPHET decide whether to replicate a bundle?</li>
+            <li>What is the transitivity rule in PRoPHET?</li>
+            <li>Why is Epidemic Routing not practical for large networks?</li>
+            <li>What is the difference between MaxProp and RAPID?</li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANSWER STRUCTURING -->
+    <section class="section" id="answer-structure">
+      <span class="section-num gold-accent">R4</span>
+      <h3 class="section-title">How to Structure Descriptive Exam Answers</h3>
+
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <span>10-Mark Answer Template: SDN Architecture</span>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner" style="font-size:0.9rem; line-height:1.8;">
+          <p><strong>Introduction (2 marks):</strong> Define SDN. State the core principle — separation of control and data planes. Mention why it was needed (vendor lock-in, slow innovation, manual configuration).</p>
+          <p><strong>Three-Layer Architecture (3 marks):</strong> Draw the diagram. Explain Application Layer, Control Layer, Infrastructure Layer. Label Northbound and Southbound APIs.</p>
+          <p><strong>Controller Components (3 marks):</strong> Describe any 4-5 key components: Slicing Manager, Topology Manager, Host Tracker, SAL, Protocol Plug-ins. Explain each in 2-3 sentences.</p>
+          <p><strong>Conclusion (2 marks):</strong> Summarize advantages (programmability, centralized view, open interfaces) and mention real-world controllers (OpenDaylight, ONOS).</p>
+        </div>
+      </div>
+
+      <div class="collapsible-header" onclick="toggleCollapsible(this)" style="margin-top:0.75rem;">
+        <span>15-Mark Answer Template: DTN Routing Protocols</span>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner" style="font-size:0.9rem; line-height:1.8;">
+          <p><strong>Introduction (2 marks):</strong> Define DTN. Explain why routing is challenging (intermittent connectivity, no end-to-end path). Introduce store-carry-and-forward.</p>
+          <p><strong>Taxonomy (3 marks):</strong> Draw the classification diagram. Explain knowledge-based vs. replication-based. List sub-categories with examples.</p>
+          <p><strong>Epidemic Routing (3 marks):</strong> Explain algorithm (summary vector exchange → bundle transfer). State advantages (highest delivery) and disadvantages (resource waste). Mention it's a benchmark protocol.</p>
+          <p><strong>Spray-and-Wait (3 marks):</strong> Explain Spray phase (distribute L copies) and Wait phase (wait for direct encounter). Draw the diagram. Discuss how L controls the tradeoff.</p>
+          <p><strong>PRoPHET (2 marks):</strong> Explain delivery predictability. Describe three update rules (encounter, aging, transitivity). Compare with Epidemic (selective replication).</p>
+          <p><strong>Comparison Table (2 marks):</strong> Present a comparison of the three protocols on delivery probability, resource consumption, and complexity.</p>
+        </div>
+      </div>
+
+      <div class="collapsible-header" onclick="toggleCollapsible(this)" style="margin-top:0.75rem;">
+        <span>5-Mark Answer Template: Custody Transfer</span>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner" style="font-size:0.9rem; line-height:1.8;">
+          <p><strong>Definition (1 mark):</strong> Custody transfer is a hop-by-hop reliability mechanism in the Bundle Protocol where a node accepts responsibility for delivering a bundle further.</p>
+          <p><strong>Process (2 marks):</strong> Node A sends bundle to Node B. Node B accepts custody and sends Custody ACK. Node A deletes its copy. Node B is now responsible.</p>
+          <p><strong>Significance (1 mark):</strong> Prevents unbounded accumulation of bundles; ensures at least one node is always responsible for delivery.</p>
+          <p><strong>Distinction (1 mark):</strong> Different from end-to-end ACK. Custody ACK confirms hop-level handoff, not final delivery.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- KEY COMPARISONS FOR EXAM -->
+    <section class="section" id="key-comparisons">
+      <span class="section-num gold-accent">R5</span>
+      <h3 class="section-title">Key Comparisons for Quick Reference</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>Compare</th><th>Aspect A</th><th>Aspect B</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Control Plane vs. Data Plane</td><td>Decides HOW packets should be routed (runs OSPF, BGP)</td><td>ACTUALLY forwards packets based on rules (at line rate)</td></tr>
+            <tr><td>Northbound API vs. Southbound API</td><td>App ↔ Controller (typically REST/HTTP)</td><td>Controller ↔ Switch (typically OpenFlow)</td></tr>
+            <tr><td>Traditional vs. SDN</td><td>Distributed control, per-device config, vendor-locked</td><td>Centralized control, programmable, open interfaces</td></tr>
+            <tr><td>Internet vs. DTN</td><td>Packet switching, continuous connectivity, TCP/IP</td><td>Store-carry-forward, intermittent, Bundle Protocol</td></tr>
+            <tr><td>Custody ACK vs. End-to-End ACK</td><td>Hop-by-hop, confirms custody handoff only</td><td>Destination confirms final delivery</td></tr>
+            <tr><td>Router vs. Gateway (DTN)</td><td>Forwards bundles within a single region</td><td>Connects multiple DTN regions, translates protocols</td></tr>
+            <tr><td>Epidemic vs. Spray-and-Wait</td><td>Unlimited copies, maximum delivery, high overhead</td><td>L copies only, moderate delivery, controlled overhead</td></tr>
+            <tr><td>PRoPHET vs. Epidemic</td><td>Selective replication (higher predictability only)</td><td>Blind replication (all bundles to all nodes)</td></tr>
+            <tr><td>MaxProp vs. RAPID</td><td>Heuristic priority scoring</td><td>Explicit utility optimization for target metric</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="mnemonic-box">
+        <span class="mnemonic-label">Master Mnemonic for Unit 4</span>
+        <p><strong>SDN:</strong> "ACSI" = <strong>A</strong>pplication layer, <strong>C</strong>ontrol layer, <strong>S</strong>outhbound (OpenFlow), <strong>I</strong>nfrastructure layer</p>
+        <p><strong>DTN:</strong> "SCaF" = <strong>S</strong>tore-<strong>Ca</strong>rry-and-<strong>F</strong>orward</p>
+        <p><strong>Bundle Protocol:</strong> "CPFR" = <strong>C</strong>ustody transfer, <strong>P</strong>rioritization, <strong>F</strong>ragmentation, <strong>R</strong>eassembly</p>
+        <p><strong>Replication Protocols:</strong> "EMR SPE" = <strong>E</strong>pidemic, <strong>M</strong>axProp, <strong>R</strong>APID, <strong>S</strong>pray-and-Wait, <strong>P</strong>RoPHET, <strong>E</strong>BR</p>
+        <p><strong>DTN Node Types:</strong> "HRG" = <strong>H</strong>ost, <strong>R</strong>outer, <strong>G</strong>ateway</p>
+      </div>
+    </section>
+
+    <!-- DIAGRAM DRAWING TIPS -->
+    <section class="section">
+      <span class="section-num gold-accent">R6</span>
+      <h3 class="section-title">Exam Diagram Drawing Guide</h3>
+
+      <div class="callout callout-exam">
+        <span class="callout-label">Professor's Expectation</span>
+        <p>In Indian university exams, diagrams carry 3-5 marks independently. A well-drawn, well-labeled diagram can elevate a 7-mark answer to a 10-mark answer. Never skip the diagram. Even if your explanation is incomplete, a correct diagram with labels demonstrates understanding.</p>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">SDN Architecture Diagram — What to Draw</h4>
+        <ol class="step-list">
+          <li>Draw three horizontal rectangles stacked vertically: Application Layer (top), Control Layer (middle), Infrastructure Layer (bottom)</li>
+          <li>Label each layer clearly</li>
+          <li>Draw a line between Application and Control labeled "Northbound API (REST)"</li>
+          <li>Draw a line between Control and Infrastructure labeled "Southbound API (OpenFlow)"</li>
+          <li>Inside Application: write "Monitoring, Traffic Engg, Security, Load Balancing"</li>
+          <li>Inside Control: write "SDN Controller — Global View, Routing, Policy"</li>
+          <li>Inside Infrastructure: write "Switches, Routers, Access Points"</li>
+          <li>Add a small note: "Controllers: OpenDaylight, ONOS"</li>
+        </ol>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">DTN Custody Transfer Diagram — What to Draw</h4>
+        <ol class="step-list">
+          <li>Draw 4 boxes in a horizontal line: Source → Node 1 → Node 2 → Destination</li>
+          <li>Draw forward arrows (solid) between them, labeled "Bundle"</li>
+          <li>Draw backward arrows (dashed) between them, labeled "Custody ACK"</li>
+          <li>Mark Node 1 accepting custody with a note "Custody Accepted"</li>
+          <li>Mark Node 2's custody decision with "Accept / Deny"</li>
+          <li>Add a note: "Node 1 deletes copy after ACK from Node 2"</li>
+          <li>Add final note: "Destination sends App ACK (end-to-end)"</li>
+        </ol>
+      </div>
+
+      <div class="subsection">
+        <h4 class="subsection-title">Spray-and-Wait Diagram — What to Draw</h4>
+        <ol class="step-list">
+          <li>Draw Source box with "L copies" written inside</li>
+          <li>Draw 3-4 relay boxes radiating from Source (spray phase)</li>
+          <li>Label arrows "1 copy each" from Source to relays</li>
+          <li>Draw a Destination box on the right</li>
+          <li>Draw dashed arrows from each relay to Destination labeled "Wait for direct encounter"</li>
+          <li>Clearly label "SPRAY PHASE" on the left and "WAIT PHASE" on the right</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer style="margin-top:4rem; padding:2.5rem 0; border-top:2px solid var(--border); text-align:center;">
+      <p style="font-family:'Cormorant Garamond',serif; font-size:1.2rem; color:var(--heading); margin-bottom:0.5rem;">End of Unit 4 Study Document</p>
+      <p style="font-size:0.82rem; color:var(--muted); line-height:1.7;">Software Defined Networking &amp; Delay Tolerant Networks<br>Prepared for Indian University Examinations — Computer Networks II<br>Covering SDN Architecture, OpenFlow Protocol, DTN Architecture, Bundle Protocol, and DTN Routing</p>
+      <p style="font-size:0.72rem; color:var(--border); margin-top:1rem; letter-spacing:0.1em;">CRAFTED WITH METICULOUS CARE</p>
+    </footer>
+
+  </div><!-- /content -->
+</div><!-- /main -->
+
+<!-- BACK TO TOP -->
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// Sidebar toggle for mobile
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
+
+// Collapsible sections
+function toggleCollapsible(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('open');
+}
+
+// Tab functionality
+document.querySelectorAll('.tab-header').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const group = tab.closest('.tab-group');
+    group.querySelectorAll('.tab-header').forEach(t => t.classList.remove('active'));
+    group.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    const panelId = tab.getAttribute('data-tab');
+    document.getElementById(panelId).classList.add('active');
+  });
+});
+
+// Back to top button visibility
+window.addEventListener('scroll', () => {
+  const btn = document.getElementById('backTop');
+  if (window.scrollY > 600) {
+    btn.style.display = 'flex';
+  } else {
+    btn.style.display = 'none';
+  }
+});
+
+// Active sidebar link highlighting
+const sections = document.querySelectorAll('.section, .part-header');
+const sidebarLinks = document.querySelectorAll('.sidebar a');
+
+const observerOpts = { rootMargin: '-20% 0px -60% 0px' };
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      sidebarLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + id) {
+          link.classList.add('active');
+        }
+      });
+    }
+  });
+}, observerOpts);
+
+sections.forEach(section => {
+  if (section.id) observer.observe(section);
+});
+
+// Close sidebar on link click (mobile)
+sidebarLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    if (window.innerWidth <= 768) {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+  });
+});
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// Animate elements on scroll
+const animateObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('animate-in');
+      animateObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.diagram-container, .revision-card, .callout').forEach(el => {
+  animateObserver.observe(el);
+});
+
+// Toast notification helper
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2500);
+}
+
+// Keyboard navigation: press 'r' for revision section
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'r' && !e.ctrlKey && !e.altKey && !e.metaKey) {
+    const activeEl = document.activeElement;
+    if (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA') return;
+    document.getElementById('revision').scrollIntoView({ behavior: 'smooth' });
+    showToast('Jumped to Quick Revision');
+  }
+});
+</script>
+
+</body>
+</html>
