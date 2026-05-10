@@ -1,0 +1,2186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit 5 — Code Optimization & Compiler Development | TCS-601</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #F4EDE3;
+            --surface: #FBF8F2;
+            --surface-alt: #EDE6D8;
+            --accent: #C8553D;
+            --accent-light: #E8785F;
+            --gold: #D4A843;
+            --gold-light: #F0D68A;
+            --sage: #6B8F71;
+            --sage-light: #A3C4A8;
+            --navy: #3B4F5E;
+            --text: #2A1F14;
+            --text-muted: #7A6F62;
+            --border: #D6C9B3;
+            --border-light: #E8DFD0;
+            --code-bg: #2D2319;
+            --code-text: #E8DCC8;
+            --exam-tip-bg: #FFF8E7;
+            --exam-tip-border: #D4A843;
+            --viva-bg: #F0F4EE;
+            --viva-border: #6B8F71;
+            --memory-bg: #FDF0ED;
+            --memory-border: #C8553D;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 17px;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Source Serif 4', Georgia, serif;
+            line-height: 1.75;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            opacity: 0.3;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* ===== NAVIGATION ===== */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--surface);
+            border-right: 2px solid var(--border);
+            overflow-y: auto;
+            z-index: 100;
+            padding: 2rem 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 0.3rem;
+            letter-spacing: 0.02em;
+        }
+
+        .sidebar-subtitle {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar a {
+            display: block;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 0.8rem;
+            padding: 0.35rem 0.6rem;
+            border-left: 2px solid transparent;
+            transition: all 0.2s ease;
+            margin-bottom: 0.1rem;
+        }
+
+        .sidebar a:hover,
+        .sidebar a.active {
+            color: var(--accent);
+            border-left-color: var(--accent);
+            background: var(--memory-bg);
+        }
+
+        .sidebar a.indent {
+            padding-left: 1.2rem;
+            font-size: 0.75rem;
+        }
+
+        .sidebar .nav-group-label {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-top: 1.2rem;
+            margin-bottom: 0.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .sidebar-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 200;
+            background: var(--accent);
+            color: white;
+            border: none;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main {
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+
+        .hero {
+            background: linear-gradient(135deg, var(--accent) 0%, #A04030 50%, var(--navy) 100%);
+            color: #FBF8F2;
+            padding: 4rem 3rem 3.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            border: 2px solid rgba(255,255,255,0.08);
+            border-radius: 50%;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            bottom: -30%;
+            left: 20%;
+            width: 250px;
+            height: 250px;
+            border: 2px solid rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+
+        .hero-label {
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.25em;
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            line-height: 1.15;
+            margin-bottom: 0.8rem;
+            max-width: 700px;
+        }
+
+        .hero-description {
+            font-size: 1.05rem;
+            opacity: 0.85;
+            max-width: 600px;
+            line-height: 1.7;
+        }
+
+        .hero-meta {
+            margin-top: 1.5rem;
+            display: flex;
+            gap: 2rem;
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .content-area {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 3rem 2.5rem 6rem;
+        }
+
+        /* ===== TYPOGRAPHY ===== */
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+            margin-top: 4rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.6rem;
+            border-bottom: 2px solid var(--accent);
+            line-height: 1.25;
+        }
+
+        h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-top: 2.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: var(--navy);
+            margin-top: 2rem;
+            margin-bottom: 0.6rem;
+        }
+
+        p {
+            margin-bottom: 1.2rem;
+            text-align: justify;
+            hyphens: auto;
+        }
+
+        .dropcap::first-letter {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.8rem;
+            float: left;
+            line-height: 0.8;
+            margin-right: 0.15em;
+            margin-top: 0.08em;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        strong {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .section-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            margin-bottom: 0.3rem;
+            display: block;
+        }
+
+        /* ===== SPECIAL BOXES ===== */
+        .box {
+            border-radius: 6px;
+            padding: 1.5rem 1.8rem;
+            margin: 1.8rem 0;
+            position: relative;
+        }
+
+        .box-label {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .box-label::before {
+            content: '';
+            width: 18px;
+            height: 2px;
+            display: inline-block;
+        }
+
+        .exam-tip {
+            background: var(--exam-tip-bg);
+            border-left: 4px solid var(--exam-tip-border);
+            border-top: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-light);
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .exam-tip .box-label {
+            color: var(--gold);
+        }
+
+        .exam-tip .box-label::before {
+            background: var(--gold);
+        }
+
+        .viva-box {
+            background: var(--viva-bg);
+            border-left: 4px solid var(--viva-border);
+            border-top: 1px solid #d0ddd2;
+            border-right: 1px solid #d0ddd2;
+            border-bottom: 1px solid #d0ddd2;
+        }
+
+        .viva-box .box-label {
+            color: var(--sage);
+        }
+
+        .viva-box .box-label::before {
+            background: var(--sage);
+        }
+
+        .memory-box {
+            background: var(--memory-bg);
+            border-left: 4px solid var(--memory-border);
+            border-top: 1px solid #e8d0ca;
+            border-right: 1px solid #e8d0ca;
+            border-bottom: 1px solid #e8d0ca;
+        }
+
+        .memory-box .box-label {
+            color: var(--accent);
+        }
+
+        .memory-box .box-label::before {
+            background: var(--accent);
+        }
+
+        /* ===== COLLAPSIBLE ===== */
+        details {
+            margin: 1.2rem 0;
+        }
+
+        details summary {
+            cursor: pointer;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--navy);
+            padding: 0.7rem 1rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            transition: background 0.2s ease;
+        }
+
+        details summary:hover {
+            background: var(--surface-alt);
+        }
+
+        details summary::before {
+            content: '▸';
+            font-size: 0.85rem;
+            transition: transform 0.2s ease;
+        }
+
+        details[open] summary::before {
+            transform: rotate(90deg);
+        }
+
+        details summary::-webkit-details-marker {
+            display: none;
+        }
+
+        details .detail-content {
+            padding: 1rem 1.2rem;
+            border: 1px solid var(--border);
+            border-top: none;
+            border-radius: 0 0 4px 4px;
+            background: var(--surface);
+        }
+
+        /* ===== CODE BLOCKS ===== */
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.82rem;
+            line-height: 1.6;
+            padding: 1.5rem 1.8rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            border: 1px solid #3D3225;
+            position: relative;
+        }
+
+        pre .code-label {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: var(--accent);
+            color: #fff;
+            font-size: 0.65rem;
+            padding: 0.2rem 0.7rem;
+            border-radius: 0 6px 0 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-family: 'Source Serif 4', serif;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            background: var(--surface-alt);
+            padding: 0.1em 0.35em;
+            border-radius: 3px;
+            color: var(--accent);
+        }
+
+        pre code {
+            background: none;
+            padding: 0;
+            color: inherit;
+        }
+
+        .kw { color: #E8785F; }
+        .cm { color: #7A7570; font-style: italic; }
+        .num { color: #D4A843; }
+        .str { color: #A3C4A8; }
+        .fn { color: #E8DCC8; font-weight: 500; }
+        .var { color: #C8A8E8; }
+        .op { color: #E8785F; }
+
+        /* ===== TABLES ===== */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.8rem 0;
+            font-size: 0.9rem;
+        }
+
+        thead {
+            background: var(--accent);
+            color: #FBF8F2;
+        }
+
+        th {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            padding: 0.8rem 1rem;
+            text-align: left;
+            font-size: 0.85rem;
+            letter-spacing: 0.03em;
+        }
+
+        td {
+            padding: 0.7rem 1rem;
+            border-bottom: 1px solid var(--border-light);
+            vertical-align: top;
+        }
+
+        tbody tr:nth-child(even) {
+            background: var(--surface);
+        }
+
+        tbody tr:hover {
+            background: var(--exam-tip-bg);
+        }
+
+        /* ===== DIAGRAM CONTAINER ===== */
+        .diagram-container {
+            margin: 2rem 0;
+            background: var(--surface);
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .diagram-container .diagram-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 1rem;
+        }
+
+        .diagram-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .diagram-caption {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-style: italic;
+            margin-top: 0.8rem;
+        }
+
+        /* ===== PULL QUOTE ===== */
+        .pull-quote {
+            border-left: 3px solid var(--gold);
+            margin: 2rem 0;
+            padding: 1rem 1.5rem;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            font-style: italic;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* ===== STEP BY STEP ===== */
+        .step-list {
+            counter-reset: step-counter;
+            list-style: none;
+            margin: 1.5rem 0;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            padding: 0.8rem 0 0.8rem 3rem;
+            position: relative;
+            margin-bottom: 0.5rem;
+            border-left: 1px solid var(--border);
+            margin-left: 1rem;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: -12px;
+            top: 0.65rem;
+            width: 24px;
+            height: 24px;
+            background: var(--accent);
+            color: #FBF8F2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* ===== REVISION CARD ===== */
+        .revision-card {
+            background: var(--surface);
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            margin: 1.5rem 0;
+        }
+
+        .revision-card h4 {
+            color: var(--accent);
+            margin-top: 0;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .revision-card ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .revision-card ul li {
+            padding: 0.3rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            font-size: 0.9rem;
+        }
+
+        .revision-card ul li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* ===== DECORATIVE DIVIDER ===== */
+        .divider {
+            text-align: center;
+            margin: 3rem 0;
+            color: var(--border);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.5em;
+        }
+
+        /* ===== TWO COLUMN ===== */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .col-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1.2rem 1.5rem;
+        }
+
+        .col-card h4 {
+            margin-top: 0;
+            font-size: 1rem;
+        }
+
+        /* ===== SCROLL TOP BUTTON ===== */
+        .scroll-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 44px;
+            height: 44px;
+            background: var(--accent);
+            color: #FBF8F2;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: 50;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+        }
+
+        .scroll-top:hover {
+            transform: translateY(-3px);
+        }
+
+        /* ===== PRINT STYLES ===== */
+        @media print {
+            .sidebar, .sidebar-toggle, .scroll-top { display: none !important; }
+            .main { margin-left: 0; }
+            .hero { padding: 2rem; }
+            .hero h1 { font-size: 2rem; }
+            body::before { display: none; }
+            details[open] .detail-content { display: block; }
+            .content-area { max-width: 100%; padding: 1rem; }
+            h2 { page-break-before: always; }
+            h2:first-of-type { page-break-before: avoid; }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+                box-shadow: 4px 0 20px rgba(0,0,0,0.15);
+            }
+            .sidebar-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .main {
+                margin-left: 0;
+            }
+            .hero {
+                padding: 4rem 1.5rem 2.5rem;
+            }
+            .hero h1 {
+                font-size: 2rem;
+            }
+            .content-area {
+                padding: 2rem 1.2rem 4rem;
+            }
+            .two-col {
+                grid-template-columns: 1fr;
+            }
+            html { font-size: 16px; }
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in {
+            opacity: 0;
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* ===== INLINE ANNOTATION ===== */
+        .annotation {
+            display: inline;
+            background: var(--gold-light);
+            padding: 0.05em 0.3em;
+            border-radius: 2px;
+            font-size: 0.88em;
+        }
+
+        /* ===== ANSWER STRUCTURE BOX ===== */
+        .answer-structure {
+            background: linear-gradient(135deg, var(--surface) 0%, var(--exam-tip-bg) 100%);
+            border: 2px dashed var(--gold);
+            border-radius: 8px;
+            padding: 1.5rem 2rem;
+            margin: 1.8rem 0;
+        }
+
+        .answer-structure h4 {
+            color: var(--gold);
+            margin-top: 0;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .answer-structure ol {
+            padding-left: 1.5rem;
+        }
+
+        .answer-structure ol li {
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+        }
+
+        /* ===== COMPARISON ARROWS ===== */
+        .vs-label {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            font-family: 'Playfair Display', serif;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin: 0 0.3rem;
+            vertical-align: middle;
+        }
+    </style>
+</head>
+<body>
+    <!-- SIDEBAR NAVIGATION -->
+    <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-title">Unit V</div>
+        <div class="sidebar-subtitle">TCS-601 · Compiler Design</div>
+
+        <div class="nav-group-label">Code Optimization</div>
+        <a href="#introduction">Introduction</a>
+        <a href="#sources" class="indent">Principal Sources</a>
+        <a href="#classification" class="indent">Classification</a>
+        <a href="#peephole">Peephole Optimization</a>
+        <a href="#basic-blocks">Basic Block Optimization</a>
+        <a href="#constant-folding" class="indent">Constant Folding</a>
+        <a href="#constant-propagation" class="indent">Constant Propagation</a>
+        <a href="#copy-propagation" class="indent">Copy Propagation</a>
+        <a href="#dead-code" class="indent">Dead Code Elimination</a>
+        <a href="#cse" class="indent">Common Sub-expression</a>
+        <a href="#strength" class="indent">Strength Reduction</a>
+        <a href="#loops">Loops in Flow Graphs</a>
+        <a href="#loop-invariant" class="indent">Code Motion</a>
+        <a href="#loop-unrolling" class="indent">Unrolling &amp; Jamming</a>
+        <a href="#worked-examples">Worked Examples</a>
+
+        <div class="nav-group-label">Compiler Development</div>
+        <a href="#planning">Planning a Compiler</a>
+        <a href="#approaches">Development Approaches</a>
+        <a href="#environment">Development Environment</a>
+        <a href="#testing">Testing &amp; Maintenance</a>
+        <a href="#frontend-opt">Front-end Optimization</a>
+
+        <div class="nav-group-label">Exam Resources</div>
+        <a href="#revision">Quick Revision Sheet</a>
+        <a href="#likely-questions">Most Likely Questions</a>
+        <a href="#answer-writing">Answer Writing Guide</a>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+        <!-- HERO -->
+        <header class="hero">
+            <div class="hero-label">Compiler Design · TCS-601</div>
+            <h1>Unit V: Code Optimization &amp; Compiler Development</h1>
+            <p class="hero-description">A comprehensive intellectual guide to transforming intermediate code into efficient machine code — and the engineering discipline of building compilers that last.</p>
+            <div class="hero-meta">
+                <span>8 PYQs Covered</span>
+                <span>14 Major Topics</span>
+                <span>8 Diagrams</span>
+            </div>
+        </header>
+
+        <div class="content-area">
+
+            <!-- ============================================================ -->
+            <!-- PART I: CODE OPTIMIZATION -->
+            <!-- ============================================================ -->
+
+            <h2 id="introduction"><span class="section-number">5.1 · Part I</span>Introduction to Code Optimization</h2>
+
+            <p class="dropcap">Imagine you have written a perfectly correct English paragraph that conveys your idea, but upon rereading, you notice that you repeated the same phrase three times, used ten words where four would suffice, and included a sentence that contributes nothing to your argument. You edit ruthlessly — not to change what you said, but to say it better, faster, and with greater economy. Code optimization in a compiler performs precisely this editorial function, except it operates on three-address code or intermediate representations rather than prose, and the "readers" whose experience it improves are the CPU and the memory subsystem of the target machine.</p>
+
+            <p>Code optimization is the phase of compilation that attempts to improve the intermediate code produced by the code generator so that the resulting target code runs faster, occupies less memory, or consumes less energy — without altering the observable semantics of the program. The phrase "without altering the observable semantics" deserves emphasis, because it defines the boundary within which all optimization must operate. An optimization that makes a program faster but changes its output is not an optimization at all — it is a bug. The compiler must therefore maintain a precise equivalence between the original program's behavior and the optimized program's behavior, which is to say that every input that produced a particular output before optimization must produce exactly the same output afterward. This semantic preservation requirement is what makes optimization both intellectually fascinating and practically difficult, because the compiler must reason deeply about the program's structure, data flow, and control flow to determine which transformations are safe and which are not.</p>
+
+            <p>The need for optimization arises from a fundamental tension in modern computing: programmers write code for human comprehension, expressing algorithms in abstractions that map naturally onto the problem domain, while processors execute code at the level of registers, memory addresses, and instruction pipelines. The gap between these two levels of abstraction is enormous, and without optimization, the translation from high-level abstractions to machine instructions tends to produce code that is correct but wasteful. A naive translation of <code>a = b + c</code> might involve loading <code>b</code> from memory into a register, loading <code>c</code> from memory into another register, performing the addition, and storing the result back to the memory location of <code>a</code> — even if <code>b</code> was already in a register from a previous computation, even if <code>a</code> and <code>b</code> refer to the same memory location, and even if the value of <code>b + c</code> was computed three lines earlier and could simply be reused. Optimization is the compiler's attempt to close this gap intelligently.</p>
+
+            <div class="pull-quote">
+                "Optimization is not about making code clever — it is about making code honest, stripping away the accidental inefficiencies that arise from the translation between human abstraction and machine reality."
+            </div>
+
+            <p>It is worth noting that code optimization is not always about speed. In embedded systems and mobile devices, the primary constraint may be code size — the compiled program must fit within a fixed amount of ROM or flash memory. In data centers and battery-powered devices, the primary concern may be energy efficiency, where every unnecessary memory access or redundant computation translates directly into watts consumed and heat generated. The compiler's optimization phase must therefore be sensitive to the target platform's constraints, and a well-designed compiler will offer different optimization levels or profiles that prioritize different metrics. The <code>-O0</code>, <code>-O1</code>, <code>-O2</code>, and <code>-O3</code> flags familiar to users of GCC and Clang represent exactly this kind of graduated optimization strategy, where each level enables progressively more aggressive (and potentially more time-consuming) transformations.</p>
+
+            <p>From an examination perspective, the student must understand not only the definitions and mechanisms of individual optimization techniques but also the broader architectural context: where optimization fits in the compiler pipeline, what intermediate representations it operates on, and why certain optimizations must be performed before others. The following sections will develop these ideas with the depth and rigor required for both understanding and exam reproduction.</p>
+
+            <!-- DIAGRAM: Code Optimization Pipeline -->
+            <div class="diagram-container">
+                <div class="diagram-title">Figure 5.1 — Position of Optimization in the Compiler Pipeline</div>
+                <svg viewBox="0 0 800 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Compiler pipeline showing optimization phase">
+                    <!-- Source -->
+                    <rect x="10" y="60" width="120" height="50" rx="4" fill="#C8553D" stroke="#A04030" stroke-width="1.5"/>
+                    <text x="70" y="82" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="12" font-weight="600">Source Code</text>
+                    <text x="70" y="98" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9" opacity="0.8">(.c, .java)</text>
+
+                    <!-- Arrow -->
+                    <line x1="130" y1="85" x2="170" y2="85" stroke="#D6C9B3" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                    <!-- Lexical -->
+                    <rect x="170" y="60" width="100" height="50" rx="4" fill="#3B4F5E" stroke="#2D3D4A" stroke-width="1.5"/>
+                    <text x="220" y="82" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="11" font-weight="600">Lexical</text>
+                    <text x="220" y="98" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9" opacity="0.8">Analysis</text>
+
+                    <!-- Arrow -->
+                    <line x1="270" y1="85" x2="300" y2="85" stroke="#D6C9B3" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                    <!-- Syntax/Semantic -->
+                    <rect x="300" y="60" width="100" height="50" rx="4" fill="#3B4F5E" stroke="#2D3D4A" stroke-width="1.5"/>
+                    <text x="350" y="82" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="11" font-weight="600">Syntax &amp;</text>
+                    <text x="350" y="98" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9" opacity="0.8">Semantic</text>
+
+                    <!-- Arrow -->
+                    <line x1="400" y1="85" x2="430" y2="85" stroke="#D6C9B3" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                    <!-- IR Generation -->
+                    <rect x="430" y="60" width="100" height="50" rx="4" fill="#6B8F71" stroke="#567A5C" stroke-width="1.5"/>
+                    <text x="480" y="82" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="11" font-weight="600">IR</text>
+                    <text x="480" y="98" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9" opacity="0.8">Generation</text>
+
+                    <!-- Arrow to OPTIMIZATION -->
+                    <line x1="530" y1="85" x2="555" y2="85" stroke="#D4A843" stroke-width="2.5" marker-end="url(#arrowhead-gold)"/>
+
+                    <!-- OPTIMIZATION (highlighted) -->
+                    <rect x="555" y="45" width="120" height="80" rx="6" fill="#D4A843" stroke="#B8922A" stroke-width="2.5"/>
+                    <text x="615" y="78" text-anchor="middle" fill="#2A1F14" font-family="Playfair Display, serif" font-size="13" font-weight="700">OPTIMIZE</text>
+                    <text x="615" y="98" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Machine-</text>
+                    <text x="615" y="112" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Independent</text>
+
+                    <!-- Arrow from optimization -->
+                    <line x1="675" y1="85" x2="700" y2="85" stroke="#D6C9B3" stroke-width="2" marker-end="url(#arrowhead)"/>
+
+                    <!-- Code Generation -->
+                    <rect x="700" y="60" width="90" height="50" rx="4" fill="#C8553D" stroke="#A04030" stroke-width="1.5"/>
+                    <text x="745" y="82" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="11" font-weight="600">Target</text>
+                    <text x="745" y="98" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9" opacity="0.8">Code</text>
+
+                    <!-- Annotation: Machine-Dependent Opt -->
+                    <rect x="670" y="135" width="130" height="28" rx="3" fill="none" stroke="#A04030" stroke-width="1.5" stroke-dasharray="5,3"/>
+                    <text x="735" y="153" text-anchor="middle" fill="#A04030" font-family="Source Serif 4, serif" font-size="9" font-style="italic">Machine-Dependent Opt</text>
+                    <line x1="735" y1="135" x2="735" y2="110" stroke="#A04030" stroke-width="1" stroke-dasharray="3,2"/>
+
+                    <!-- Markers -->
+                    <defs>
+                        <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                            <polygon points="0 0, 8 3, 0 6" fill="#D6C9B3"/>
+                        </marker>
+                        <marker id="arrowhead-gold" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                            <polygon points="0 0, 8 3, 0 6" fill="#D4A843"/>
+                        </marker>
+                    </defs>
+                </svg>
+                <div class="diagram-caption">The optimization phase sits between IR generation and target code generation, operating primarily on intermediate representations. Machine-dependent optimizations occur during or after code generation.</div>
+            </div>
+
+
+            <!-- PRINCIPAL SOURCES OF OPTIMIZATION -->
+            <h3 id="sources">The Principal Sources of Optimization</h3>
+
+            <p>Before a compiler can optimize code, it must first understand where inefficiency originates. The principal sources of optimization opportunity are the places where the gap between the programmer's high-level abstractions and the processor's low-level execution model produces waste — and these sources, once enumerated, form a remarkably coherent taxonomy that guides the design of nearly every optimization technique in the compiler's arsenal.</p>
+
+            <p>The first and perhaps most pervasive source is <strong>redundant computation</strong>. When a programmer writes an expression like <code>a * b + c</code> inside a loop, and neither <code>a</code> nor <code>b</code> changes across iterations, the product <code>a * b</code> is recomputed on every iteration even though it yields the same value each time. This redundancy arises naturally because the programmer thinks in terms of the formula's structure rather than the execution's temporal pattern, and the compiler must detect that <code>a * b</code> is a loop-invariant expression and hoist it outside the loop. More broadly, any expression whose operands have not been modified since the last evaluation of that expression constitutes a common sub-expression whose recomputation can be eliminated.</p>
+
+            <p>The second source is <strong>unnecessary data movement</strong>. Copy statements of the form <code>x = y</code>, register loads and stores, and the spilling of values to memory all represent data movement that may or may not be necessary. Copy propagation can eliminate intermediate copy statements, register allocation can minimize loads and stores, and careful instruction scheduling can reorder operations to reduce pipeline stalls caused by data dependencies. The compiler must track the flow of values through the program — which definitions reach which uses — to identify and eliminate unnecessary transfers.</p>
+
+            <p>The third source is <strong>inefficient control flow</strong>. Programs frequently contain unreachable code (dead code), conditional branches whose outcomes are determinable at compile time, sequences of jumps that can be collapsed into single jumps, and loops whose iteration counts are known constants. Each of these represents a control flow inefficiency that the compiler can detect and eliminate through dead code elimination, constant folding, jump threading, and loop unrolling respectively.</p>
+
+            <p>The fourth source is <strong>strength mismatches</strong> between the operations expressed in the source code and the cheapest operations available on the target machine. Multiplication by a power of two can be replaced by a left shift; division by a constant can be replaced by multiplication by its reciprocal; array indexing with induction variables can be replaced by pointer arithmetic with simple increments. These strength reductions exploit the specific instruction set of the target machine and are therefore machine-dependent optimizations.</p>
+
+            <p>The fifth source, and one that is often underappreciated in introductory treatments, is <strong>poor register utilization</strong>. Modern processors can access registers in a single clock cycle, while accessing main memory may require hundreds of cycles. If the compiler keeps frequently used values in registers and minimizes the number of register-to-memory transfers, the resulting code can be orders of magnitude faster than code that repeatedly loads and stores the same values. Register allocation, which maps an unbounded number of symbolic registers onto a finite set of physical registers, is therefore one of the most impactful optimizations a compiler can perform.</p>
+
+            <div class="memory-box box">
+                <div class="box-label">Memory Anchor</div>
+                <p style="margin-bottom:0">Think of a librarian reorganizing a messy shelf. The books (computations) are all there and in the right order (correctness preserved), but the librarian moves the most-frequently-asked-for books to eye level (registers), removes duplicate copies (common sub-expression elimination), takes out books nobody has borrowed in years (dead code elimination), and reorganizes the shelf so you don't have to walk back and forth unnecessarily (reducing data movement). Optimization is editorial organization, not rewriting the book.</p>
+            </div>
+
+
+            <!-- CLASSIFICATION -->
+            <h3 id="classification">Classification of Code Optimizations</h3>
+
+            <p>Code optimizations can be classified along several dimensions, and understanding these classifications is essential both for answering exam questions that ask for a "discussion of types" and for developing a coherent mental model of how a modern optimizing compiler is organized. The two most important classification axes are the scope of the optimization (local versus global versus interprocedural) and the degree to which it depends on the target machine (machine-independent versus machine-dependent).</p>
+
+            <p><strong>Machine-independent optimizations</strong> operate on the intermediate representation without any knowledge of the target machine's instruction set, register file, or memory hierarchy. Constant folding, constant propagation, dead code elimination, common sub-expression elimination, copy propagation, loop-invariant code motion, and strength reduction at the algebraic level are all machine-independent. They transform the intermediate code into a more efficient form that is equally valid for any target machine. <strong>Machine-dependent optimizations</strong>, by contrast, exploit specific features of the target architecture: the number and type of available registers, the cost of individual instructions, the presence of specialized instructions (such as multiply-accumulate or SIMD operations), the pipeline depth, and the cache hierarchy. Register allocation, instruction scheduling, branch delay slot filling, and peephole optimization based on machine idioms are all machine-dependent.</p>
+
+            <p>With respect to scope, <strong>local optimizations</strong> are confined to a single basic block — a straight-line sequence of code with no branches in or out except at the boundaries. Within a basic block, the compiler can apply constant folding, dead code elimination, and common sub-expression elimination with relative ease because the sequential nature of the block guarantees that the order of operations is fully known. <strong>Global (or regional) optimizations</strong> operate across an entire procedure's control flow graph, which means the compiler must reason about the effects of branches, loops, and merges on the availability and liveness of values. Loop-invariant code motion, global common sub-expression elimination, and global data flow analysis for liveness and reaching definitions all fall into this category. <strong>Interprocedural optimizations</strong> extend the scope across procedure boundaries, enabling techniques like procedure inlining, interprocedural constant propagation, and alias analysis across function calls. These are the most powerful but also the most expensive optimizations to perform.</p>
+
+            <!-- SVG: Classification Diagram -->
+         <div class="diagram-container" style="max-width: 800px; margin: auto; padding: 20px; background-color: #FBF8F2;">
+    <div class="diagram-title" style="text-align: center; font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #4A3B2C; margin-bottom: 20px;">
+        FIGURE 5.2 — CLASSIFICATION OF CODE OPTIMIZATION TECHNIQUES
+    </div>
+    <svg viewBox="0 0 800 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Classification tree of code optimizations">
+        <rect x="300" y="10" width="200" height="40" rx="5" fill="#C8553D" stroke="#A04030" stroke-width="1.5"/>
+        <text x="400" y="35" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="14" font-weight="700">Code Optimization</text>
+
+        <line x1="400" y1="50" x2="210" y2="85" stroke="#D6C9B3" stroke-width="2"/>
+        <line x1="400" y1="50" x2="600" y2="85" stroke="#D6C9B3" stroke-width="2"/>
+
+        <rect x="110" y="85" width="200" height="38" rx="5" fill="#6B8F71" stroke="#567A5C" stroke-width="1.5"/>
+        <text x="210" y="109" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="13" font-weight="600">Machine-Independent</text>
+
+        <rect x="500" y="85" width="200" height="38" rx="5" fill="#3B4F5E" stroke="#2D3D4A" stroke-width="1.5"/>
+        <text x="600" y="109" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="13" font-weight="600">Machine-Dependent</text>
+
+        <line x1="210" y1="123" x2="80" y2="155" stroke="#D6C9B3" stroke-width="1.5"/>
+        <line x1="210" y1="123" x2="210" y2="155" stroke="#D6C9B3" stroke-width="1.5"/>
+        <line x1="210" y1="123" x2="340" y2="155" stroke="#D6C9B3" stroke-width="1.5"/>
+
+        <rect x="15" y="155" width="130" height="34" rx="4" fill="#A3C4A8" stroke="#6B8F71" stroke-width="1"/>
+        <text x="80" y="176" text-anchor="middle" fill="#2A1F14" font-family="Playfair Display, serif" font-size="11" font-weight="600">Local (Basic Block)</text>
+
+        <rect x="160" y="155" width="100" height="34" rx="4" fill="#A3C4A8" stroke="#6B8F71" stroke-width="1"/>
+        <text x="210" y="176" text-anchor="middle" fill="#2A1F14" font-family="Playfair Display, serif" font-size="11" font-weight="600">Global (Loop)</text>
+
+        <rect x="275" y="155" width="130" height="34" rx="4" fill="#A3C4A8" stroke="#6B8F71" stroke-width="1"/>
+        <text x="340" y="176" text-anchor="middle" fill="#2A1F14" font-family="Playfair Display, serif" font-size="11" font-weight="600">Interprocedural</text>
+
+        <rect x="5" y="200" width="72" height="28" rx="3" fill="#F0F4EE" stroke="#A3C4A8" stroke-width="1"/>
+        <text x="41" y="218" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Const. Folding</text>
+        
+        <rect x="83" y="200" width="72" height="28" rx="3" fill="#F0F4EE" stroke="#A3C4A8" stroke-width="1"/>
+        <text x="119" y="218" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Dead Code Elim.</text>
+
+        <rect x="25" y="235" width="110" height="28" rx="3" fill="#F0F4EE" stroke="#A3C4A8" stroke-width="1"/>
+        <text x="80" y="253" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Copy Propagation</text>
+
+        <rect x="10" y="270" width="140" height="28" rx="3" fill="#F0F4EE" stroke="#A3C4A8" stroke-width="1"/>
+        <text x="80" y="288" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Common Sub-expr Elim.</text>
+
+        <rect x="160" y="200" width="100" height="28" rx="3" fill="#F0F4EE" stroke="#A3C4A8" stroke-width="1"/>
+        <text x="210" y="218" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Loop Invariant</text>
+        <rect x="160" y="235" width="100" height="28" rx="3" fill="#F0F4EE" stroke="#A3C4A8" stroke-width="1"/>
+        <text x="210" y="253" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Strength Red.</text>
+        <rect x="160" y="270" width="100" height="28" rx="3" fill="#F0F4EE" stroke="#A3C4A8" stroke-width="1"/>
+        <text x="210" y="288" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Loop Unrolling</text>
+
+        <rect x="285" y="200" width="110" height="28" rx="3" fill="#F0F4EE" stroke="#A3C4A8" stroke-width="1"/>
+        <text x="340" y="218" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9.5">Inlining</text>
+        <rect x="285" y="235" width="110" height="28" rx="3" fill="#F0F4EE" stroke="#A3C4A8" stroke-width="1"/>
+        <text x="340" y="253" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9.5">Alias Analysis</text>
+
+        <line x1="600" y1="123" x2="530" y2="155" stroke="#D6C9B3" stroke-width="1.5"/>
+        <line x1="600" y1="123" x2="670" y2="155" stroke="#D6C9B3" stroke-width="1.5"/>
+
+        <rect x="470" y="155" width="120" height="34" rx="4" fill="#8FA9BC" stroke="#3B4F5E" stroke-width="1"/>
+        <text x="530" y="176" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="11" font-weight="600">Peephole Opt.</text>
+
+        <rect x="610" y="155" width="120" height="34" rx="4" fill="#8FA9BC" stroke="#3B4F5E" stroke-width="1"/>
+        <text x="670" y="176" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="11" font-weight="600">Target-Specific</text>
+
+        <rect x="465" y="200" width="130" height="28" rx="3" fill="#E8EEF3" stroke="#8FA9BC" stroke-width="1"/>
+        <text x="530" y="218" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Redundant Instr Elim.</text>
+        <rect x="465" y="235" width="130" height="28" rx="3" fill="#E8EEF3" stroke="#8FA9BC" stroke-width="1"/>
+        <text x="530" y="253" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Flow-of-Control Opt.</text>
+
+        <rect x="610" y="200" width="120" height="28" rx="3" fill="#E8EEF3" stroke="#8FA9BC" stroke-width="1"/>
+        <text x="670" y="218" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Reg Allocation</text>
+        <rect x="610" y="235" width="120" height="28" rx="3" fill="#E8EEF3" stroke="#8FA9BC" stroke-width="1"/>
+        <text x="670" y="253" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Instr Scheduling</text>
+        <rect x="610" y="270" width="120" height="28" rx="3" fill="#E8EEF3" stroke="#8FA9BC" stroke-width="1"/>
+        <text x="670" y="288" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Machine Idioms</text>
+    </svg>
+    <div class="diagram-caption" style="margin-top: 15px; font-family: 'Source Serif 4', serif; font-size: 14px; color: #4A3B2C; line-height: 1.5; font-style: italic; text-align: center;">
+        Code optimizations are classified by scope (local, global, interprocedural) and by machine dependence. Machine-independent optimizations operate on the IR; machine-dependent ones exploit target-specific features.
+    </div>
+</div>
+
+
+
+            <!-- ============================================================ -->
+            <!-- PEEPHOLE OPTIMIZATION -->
+            <!-- ============================================================ -->
+
+            <div class="divider">· · ·</div>
+
+            <h2 id="peephole"><span class="section-number">5.1.2</span>Peephole Optimization</h2>
+
+            <p class="dropcap">Peephole optimization is one of the most intuitively appealing ideas in the entire compiler optimization repertoire, and its appeal lies in its elegant simplicity. The basic notion is this: rather than attempting to analyze and transform the entire program at once — which requires complex data flow analysis, control flow graph construction, and iterative fixed-point computation — the optimizer instead examines a small, sliding window of consecutive instructions (the "peephole") and applies a set of local rewrite rules that replace inefficient instruction sequences with more efficient equivalents. The peephole typically spans between two and five consecutive instructions, though the exact window size is a design choice that balances the power of the optimizer against the cost of pattern matching.</p>
+
+            <p>The technique was originally proposed by William McKeeman in 1965 and has since become a standard component of virtually every production compiler, from GCC and LLVM to the JIT compilers embedded in modern JavaScript engines and Java Virtual Machines. Its enduring popularity stems from several properties: it is conceptually simple to implement, it can be applied at various stages of compilation (on three-address code, on assembly language, or even on the final machine code), it composes well with other optimizations, and it catches a wide variety of inefficiencies that more sophisticated global analyses might miss or be too expensive to detect.</p>
+
+            <p>The defining characteristics of peephole optimization are worth enumerating carefully, as examination questions frequently ask for them explicitly. First, peephole optimization operates on a <strong>small window</strong> of adjacent instructions, which means it does not require the construction of a control flow graph or the computation of data flow sets. Second, it is typically applied as a <strong>post-pass</strong>, after other optimizations have been performed, to clean up residual inefficiencies that the larger optimizations left behind — though it can also be applied iteratively, with multiple passes over the code, each pass catching different patterns. Third, the rewrite rules are <strong>pattern-based</strong>: the optimizer looks for specific instruction sequences and replaces them with predefined alternatives. Fourth, peephole optimization can be either <strong>machine-independent</strong> (operating on intermediate code) or <strong>machine-dependent</strong> (exploiting features of the target instruction set).</p>
+
+            <h4>Machine-Independent Peephole Techniques</h4>
+
+            <p>Machine-independent peephole optimizations operate on the intermediate representation and do not require knowledge of the target machine's instruction set. The most common techniques include redundant instruction elimination, unreachable code elimination, flow-of-control optimization, and algebraic simplification.</p>
+
+            <p><strong>Redundant load and store elimination</strong> detects sequences where a value is stored to a memory location and then immediately loaded back into the same register without any intervening modification of that memory location. The sequence <code>STORE R1, X; LOAD R2, X</code> can be replaced by <code>STORE R1, X; MOVE R2, R1</code> (or the load can be eliminated entirely if R1 is not needed afterward), since the value in memory location X is guaranteed to be the same as the value just stored in R1. This optimization is particularly effective after register allocation, where the naive translation from symbolic registers to physical registers often introduces redundant memory traffic.</p>
+
+            <p><strong>Flow-of-control optimization</strong> eliminates unnecessary jumps. If a jump instruction transfers control to the immediately following instruction, the jump can be removed entirely. If a sequence of jumps leads to a final unconditional jump (a "jump chain"), the intermediate jumps can be collapsed so that the original jump targets the final destination directly. If a conditional branch always evaluates to the same value (because the condition involves constants), the branch can be replaced by an unconditional jump or eliminated altogether. These optimizations simplify the control flow of the program and may enable further optimizations by making basic blocks contiguous in memory.</p>
+
+            <p><strong>Algebraic simplification</strong> applies mathematical identities to simplify expressions. Adding zero, multiplying by one, multiplying by zero, raising to the power of one, and double negation are all algebraic identities that a peephole optimizer can exploit. For example, <code>x = y * 1</code> can be replaced by <code>x = y</code>, and <code>x = x + 0</code> can be eliminated entirely. While these seem trivial, they frequently arise as artifacts of macro expansion, template instantiation, and the application of other optimizations that generate intermediate expressions involving identity constants.</p>
+
+            <h4>Machine-Dependent Peephole Techniques</h4>
+
+            <p>Machine-dependent peephole optimizations exploit specific features of the target architecture and are therefore only applicable when generating code for a particular machine. The most important category is <strong>machine idioms</strong>: certain instruction sequences that the hardware can execute more efficiently in an alternative form. For example, on many architectures, multiplying a register by a power of two is more efficiently performed as a left shift than as a multiplication instruction. The peephole optimizer can detect <code>MUL R1, R1, 8</code> and replace it with <code>SHL R1, R1, 3</code>. Similarly, incrementing a register by one is often more efficient when performed with an <code>INC</code> instruction rather than an <code>ADD</code> instruction, because <code>INC</code> is shorter (fewer bytes) and may execute faster on certain microarchitectures.</p>
+
+            <p><strong>Branch and jump optimization</strong> on specific hardware often involves filling branch delay slots (on architectures like MIPS that expose pipeline hazards to the compiler), converting conditional branches to conditional moves when the target supports them, and reordering instructions to avoid pipeline stalls. On x86 architectures, the peephole optimizer might replace <code>CMP R1, 0; BEQ label</code> with <code>TEST R1, R1; JZ label</code>, which is shorter and may decode faster.</p>
+
+            <p><strong>Addressing mode exploitation</strong> is another machine-dependent optimization: the optimizer detects loads and stores that can be combined with arithmetic operations into single instructions using auto-increment or auto-decrement addressing modes, or that can use shorter addressing modes to reduce code size. For example, on x86, <code>MOV EAX, [EBP + offset]</code> might be shorter if the offset fits in a signed byte rather than requiring a full 32-bit displacement.</p>
+
+            <!-- SVG: Peephole Window Illustration -->
+            <div class="diagram-container">
+                <div class="diagram-title">Figure 5.3 — Peephole Optimization: The Sliding Window</div>
+                <svg viewBox="0 0 750 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Peephole optimization sliding window over instruction sequence">
+                    <!-- Instruction boxes -->
+                    <rect x="20" y="80" width="100" height="40" rx="3" fill="#EDE6D8" stroke="#D6C9B3" stroke-width="1"/>
+                    <text x="70" y="105" text-anchor="middle" fill="#7A6F62" font-family="JetBrains Mono, monospace" font-size="10">LOAD R1, X</text>
+
+                    <rect x="130" y="80" width="100" height="40" rx="3" fill="#D4A843" stroke="#B8922A" stroke-width="2"/>
+                    <text x="180" y="105" text-anchor="middle" fill="#2A1F14" font-family="JetBrains Mono, monospace" font-size="10" font-weight="500">LOAD R2, Y</text>
+
+                    <rect x="240" y="80" width="100" height="40" rx="3" fill="#D4A843" stroke="#B8922A" stroke-width="2"/>
+                    <text x="290" y="105" text-anchor="middle" fill="#2A1F14" font-family="JetBrains Mono, monospace" font-size="10" font-weight="500">ADD R1, R2</text>
+
+                    <rect x="350" y="80" width="100" height="40" rx="3" fill="#D4A843" stroke="#B8922A" stroke-width="2"/>
+                    <text x="400" y="105" text-anchor="middle" fill="#2A1F14" font-family="JetBrains Mono, monospace" font-size="10" font-weight="500">STORE R1, Z</text>
+
+                    <rect x="460" y="80" width="100" height="40" rx="3" fill="#D4A843" stroke="#B8922A" stroke-width="2"/>
+                    <text x="510" y="105" text-anchor="middle" fill="#2A1F14" font-family="JetBrains Mono, monospace" font-size="10" font-weight="500">LOAD R3, Z</text>
+
+                    <rect x="570" y="80" width="100" height="40" rx="3" fill="#EDE6D8" stroke="#D6C9B3" stroke-width="1"/>
+                    <text x="620" y="105" text-anchor="middle" fill="#7A6F62" font-family="JetBrains Mono, monospace" font-size="10">MUL R3, 4</text>
+
+                    <!-- Window bracket -->
+                    <rect x="125" y="70" width="445" height="60" rx="6" fill="none" stroke="#C8553D" stroke-width="2.5" stroke-dasharray="6,3"/>
+                    <text x="347" y="55" text-anchor="middle" fill="#C8553D" font-family="Playfair Display, serif" font-size="12" font-weight="600">Peephole Window (size = 4)</text>
+
+                    <!-- After optimization -->
+                    <text x="375" y="165" text-anchor="middle" fill="#7A6F62" font-family="Playfair Display, serif" font-size="11" font-style="italic">After Optimization:</text>
+
+                    <rect x="130" y="180" width="100" height="40" rx="3" fill="#EDE6D8" stroke="#D6C9B3" stroke-width="1"/>
+                    <text x="180" y="205" text-anchor="middle" fill="#7A6F62" font-family="JetBrains Mono, monospace" font-size="10">LOAD R2, Y</text>
+
+                    <rect x="240" y="180" width="100" height="40" rx="3" fill="#EDE6D8" stroke="#D6C9B3" stroke-width="1"/>
+                    <text x="290" y="205" text-anchor="middle" fill="#7A6F62" font-family="JetBrains Mono, monospace" font-size="10">ADD R1, R2</text>
+
+                    <rect x="350" y="180" width="100" height="40" rx="3" fill="#6B8F71" stroke="#567A5C" stroke-width="1.5"/>
+                    <text x="400" y="205" text-anchor="middle" fill="#FBF8F2" font-family="JetBrains Mono, monospace" font-size="10">MOVE R3, R1</text>
+
+                    <rect x="460" y="180" width="100" height="40" rx="3" fill="#EDE6D8" stroke="#D6C9B3" stroke-width="1"/>
+                    <text x="510" y="205" text-anchor="middle" fill="#7A6F62" font-family="JetBrains Mono, monospace" font-size="10">MUL R3, 4</text>
+
+                    <text x="400" y="235" text-anchor="middle" fill="#C8553D" font-family="Source Serif 4, serif" font-size="10" font-style="italic">STORE + LOAD → MOVE (redundant load after store eliminated)</text>
+                </svg>
+                <div class="diagram-caption">The peephole window slides over the instruction sequence. When a STORE is followed by a LOAD from the same location with no intervening write, the LOAD is replaced by a MOVE from the register that was stored.</div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Characteristic</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Window Size</td><td>Typically 2–5 instructions; a sliding window moves over the code</td></tr>
+                    <tr><td>Pattern-Based</td><td>Looks for specific instruction sequences and replaces with better equivalents</td></tr>
+                    <tr><td>Iterative</td><td>Multiple passes may be needed; one pass may create opportunities for the next</td></tr>
+                    <tr><td>Local Scope</td><td>Does not require global data flow analysis or CFG construction</td></tr>
+                    <tr><td>Post-Pass</td><td>Typically applied after other optimizations to clean up residual inefficiencies</td></tr>
+                    <tr><td>Machine-Independent or Dependent</td><td>Can operate on IR or on machine code</td></tr>
+                    <tr><td>Low Compile-Time Cost</td><td>Pattern matching is fast; no expensive fixed-point iteration</td></tr>
+                </tbody>
+            </table>
+
+            <div class="exam-tip box">
+                <div class="box-label">Exam Tip — 5-Mark Question Pattern</div>
+                <p style="margin-bottom:0">When asked "What is peephole optimization? Discuss its characteristics," structure your answer as: (1) Definition in one sentence, (2) The analogy of a sliding window, (3) List 6–7 characteristics with one-line explanations, (4) Give 3–4 examples of machine-independent techniques and 2–3 machine-dependent techniques, (5) Conclude with why it is used as a post-pass. This will comfortably earn full marks.</p>
+            </div>
+
+
+            <!-- ============================================================ -->
+            <!-- OPTIMIZATION OF BASIC BLOCKS -->
+            <!-- ============================================================ -->
+
+            <div class="divider">· · ·</div>
+
+            <h2 id="basic-blocks"><span class="section-number">5.1.3</span>Optimization of Basic Blocks</h2>
+
+            <p class="dropcap">A basic block is the fundamental unit of local optimization in a compiler, and understanding its definition precisely is essential before any optimization technique can be meaningfully discussed. A basic block is a maximal sequence of consecutive three-address instructions such that control enters the block only at its first instruction (the leader) and leaves the block only at its last instruction, without halting or branching except at the end. In other words, once execution enters a basic block, every instruction in the block is executed exactly once, in order, with no possibility of jumping into the middle of the block from outside or jumping out of the middle of the block to somewhere else. This property — guaranteed sequential execution — is what makes basic blocks tractable for optimization: the compiler knows the exact order in which instructions execute and can therefore reason about data dependencies, redundancy, and liveness with confidence.</p>
+
+            <p>The algorithm for identifying basic blocks from a sequence of three-address code is straightforward. First, identify the <strong>leaders</strong>: the first instruction of the program is a leader; any instruction that is the target of a conditional or unconditional jump is a leader; and any instruction that immediately follows a conditional or unconditional jump is a leader. Then, each basic block consists of a leader and all instructions up to (but not including) the next leader or the end of the program. Once the code is partitioned into basic blocks, the compiler can apply local optimizations independently to each block, knowing that the transformations within one block cannot affect the correctness of any other block (assuming the blocks are independent in terms of their observable side effects).</p>
+
+            <p>Within a basic block, several powerful optimizations can be performed. The most important of these are constant folding, constant propagation, copy propagation, common sub-expression elimination, dead code elimination, and algebraic simplification. Each of these exploits the sequential nature of the basic block to detect and eliminate inefficiencies that would be difficult or impossible to detect in the presence of arbitrary control flow. The following subsections examine each technique in detail.</p>
+
+            <!-- DAG Representation -->
+            <div class="diagram-container">
+                <div class="diagram-title">Figure 5.4 — Basic Block and Its DAG Representation</div>
+                <svg viewBox="0 0 720 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="DAG representation of a basic block">
+                    <!-- Original Code -->
+                    <text x="140" y="25" text-anchor="middle" fill="#2A1F14" font-family="Playfair Display, serif" font-size="13" font-weight="600">Basic Block</text>
+                    <rect x="20" y="38" width="240" height="170" rx="4" fill="#FDF8F2" stroke="#D6C9B3" stroke-width="1.5"/>
+                    <text x="40" y="65" fill="#7A6F62" font-family="JetBrains Mono, monospace" font-size="11">1. a = b + c</text>
+                    <text x="40" y="88" fill="#7A6F62" font-family="JetBrains Mono, monospace" font-size="11">2. d = b + c</text>
+                    <text x="40" y="111" fill="#7A6F62" font-family="JetBrains Mono, monospace" font-size="11">3. e = a - d</text>
+                    <text x="40" y="134" fill="#7A6F62" font-family="JetBrains Mono, monospace" font-size="11">4. f = e + 1</text>
+                    <text x="40" y="157" fill="#7A6F62" font-family="JetBrains Mono, monospace" font-size="11">5. g = a * 2</text>
+                    <text x="40" y="180" fill="#7A6F62" font-family="JetBrains Mono, monospace" font-size="11">6. b = g + f</text>
+
+                    <!-- Arrow -->
+                    <line x1="280" y1="120" x2="340" y2="120" stroke="#C8553D" stroke-width="2" marker-end="url(#arrowhead-red)"/>
+                    <text x="310" y="112" text-anchor="middle" fill="#C8553D" font-family="Source Serif 4, serif" font-size="10" font-style="italic">DAG</text>
+
+                    <!-- DAG -->
+                    <text x="530" y="25" text-anchor="middle" fill="#2A1F14" font-family="Playfair Display, serif" font-size="13" font-weight="600">DAG Representation</text>
+
+                    <!-- Leaf nodes (b, c, 1, 2) -->
+                    <circle cx="440" cy="260" r="20" fill="#A3C4A8" stroke="#6B8F71" stroke-width="1.5"/>
+                    <text x="440" y="265" text-anchor="middle" fill="#2A1F14" font-family="JetBrains Mono, monospace" font-size="12" font-weight="500">b</text>
+
+                    <circle cx="540" cy="260" r="20" fill="#A3C4A8" stroke="#6B8F71" stroke-width="1.5"/>
+                    <text x="540" y="265" text-anchor="middle" fill="#2A1F14" font-family="JetBrains Mono, monospace" font-size="12" font-weight="500">c</text>
+
+                    <circle cx="620" cy="240" r="18" fill="#EDE6D8" stroke="#D6C9B3" stroke-width="1"/>
+                    <text x="620" y="245" text-anchor="middle" fill="#7A6F62" font-family="JetBrains Mono, monospace" font-size="11">1</text>
+
+                    <circle cx="670" cy="240" r="18" fill="#EDE6D8" stroke="#D6C9B3" stroke-width="1"/>
+                    <text x="670" y="245" text-anchor="middle" fill="#7A6F62" font-family="JetBrains Mono, monospace" font-size="11">2</text>
+
+                    <!-- Level 2: b+c (shared by a and d) -->
+                    <rect x="468" y="185" width="60" height="30" rx="14" fill="#D4A843" stroke="#B8922A" stroke-width="1.5"/>
+                    <text x="498" y="205" text-anchor="middle" fill="#2A1F14" font-family="JetBrains Mono, monospace" font-size="11" font-weight="500">+</text>
+                    <!-- Labels on node -->
+                    <text x="532" y="192" fill="#C8553D" font-family="JetBrains Mono, monospace" font-size="9">a, d</text>
+
+                    <line x1="455" y1="240" x2="480" y2="215" stroke="#D6C9B3" stroke-width="1.2"/>
+                    <line x1="540" y1="245" x2="515" y2="215" stroke="#D6C9B3" stroke-width="1.2"/>
+
+                    <!-- Level 3: a - d (e) -->
+                    <rect x="380" y="120" width="60" height="30" rx="14" fill="#C8553D" stroke="#A04030" stroke-width="1.5"/>
+                    <text x="410" y="140" text-anchor="middle" fill="#FBF8F2" font-family="JetBrains Mono, monospace" font-size="11" font-weight="500">−</text>
+                    <text x="410" y="115" text-anchor="middle" fill="#C8553D" font-family="JetBrains Mono, monospace" font-size="9">e</text>
+
+                    <line x1="480" y1="190" x2="425" y2="150" stroke="#D6C9B3" stroke-width="1.2"/>
+                    <line x1="510" y1="190" x2="395" y2="150" stroke="#D6C9B3" stroke-width="1.2"/>
+
+                    <!-- e + 1 (f) -->
+                    <rect x="470" y="120" width="60" height="30" rx="14" fill="#C8553D" stroke="#A04030" stroke-width="1.5"/>
+                    <text x="500" y="140" text-anchor="middle" fill="#FBF8F2" font-family="JetBrains Mono, monospace" font-size="11" font-weight="500">+</text>
+                    <text x="535" y="125" fill="#C8553D" font-family="JetBrains Mono, monospace" font-size="9">f</text>
+
+                    <line x1="410" y1="125" x2="475" y2="135" stroke="#D6C9B3" stroke-width="1.2"/>
+                    <line x1="620" y1="225" x2="520" y2="150" stroke="#D6C9B3" stroke-width="1.2"/>
+
+                    <!-- a * 2 (g) -->
+                    <rect x="560" y="140" width="60" height="30" rx="14" fill="#3B4F5E" stroke="#2D3D4A" stroke-width="1.5"/>
+                    <text x="590" y="160" text-anchor="middle" fill="#FBF8F2" font-family="JetBrains Mono, monospace" font-size="11" font-weight="500">×</text>
+                    <text x="590" y="135" text-anchor="middle" fill="#3B4F5E" font-family="JetBrains Mono, monospace" font-size="9">g</text>
+
+                    <line x1="498" y1="190" x2="570" y2="170" stroke="#D6C9B3" stroke-width="1.2"/>
+                    <line x1="670" y1="225" x2="610" y2="170" stroke="#D6C9B3" stroke-width="1.2"/>
+
+                    <!-- g + f (b - final) -->
+                    <rect x="490" y="60" width="60" height="30" rx="14" fill="#6B8F71" stroke="#567A5C" stroke-width="1.5"/>
+                    <text x="520" y="80" text-anchor="middle" fill="#FBF8F2" font-family="JetBrains Mono, monospace" font-size="11" font-weight="500">+</text>
+                    <text x="520" y="55" text-anchor="middle" fill="#6B8F71" font-family="JetBrains Mono, monospace" font-size="9">b(new)</text>
+
+                    <line x1="505" y1="120" x2="515" y2="90" stroke="#D6C9B3" stroke-width="1.2"/>
+                    <line x1="590" y1="140" x2="530" y2="90" stroke="#D6C9B3" stroke-width="1.2"/>
+
+                    <!-- Arrow marker -->
+                    <defs>
+                        <marker id="arrowhead-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                            <polygon points="0 0, 8 3, 0 6" fill="#C8553D"/>
+                        </marker>
+                    </defs>
+                </svg>
+                <div class="diagram-caption">A basic block and its DAG representation. Notice that nodes for <code>a</code> and <code>d</code> share the same <code>b+c</code> node — this reveals the common sub-expression <code>b+c</code> that can be computed once.</div>
+            </div>
+
+
+            <!-- CONSTANT FOLDING -->
+            <h3 id="constant-folding">Constant Folding</h3>
+
+            <p>Constant folding is the optimization of evaluating constant expressions at compile time rather than at runtime, and it is perhaps the most elementary optimization a compiler can perform — yet its impact is far from trivial. When the compiler encounters an expression whose operands are all compile-time constants, it can compute the value of the expression during compilation and replace the expression with its computed result. This eliminates the corresponding computation from the runtime code entirely, saving both execution time and the code space occupied by the instructions that would have performed the computation.</p>
+
+            <p>The canonical example is straightforward: the assignment <code>x = 3 + 4</code> need not generate an addition instruction at runtime, because the compiler can compute <code>3 + 4 = 7</code> and emit <code>x = 7</code> instead. But the practical importance of constant folding extends well beyond such trivial cases. In real programs, constant expressions arise frequently from macro expansion (where macros may define symbolic constants that combine arithmetically), from template instantiation in C++ and generics in Java (where type parameters may generate constant expressions), from configuration files and build systems that inject compile-time constants, and from the application of other optimization techniques such as constant propagation, which tends to expose new constant expressions that constant folding can then evaluate.</p>
+
+            <p>Constant folding must handle several subtleties correctly. First, the compiler must respect the semantics of the source language's type system: the expression <code>3 / 4</code> in C (where both operands are integers) evaluates to <code>0</code> by integer division, while in a language that promotes to floating-point, it might evaluate to <code>0.75</code>. Second, the compiler must handle overflow, underflow, and floating-point precision correctly: if the language defines specific behavior for overflow (as Java does, with two's-complement wraparound), the compiler must replicate that behavior at compile time. Third, constant folding can be applied not only to arithmetic and logical expressions but also to comparisons (<code>3 < 5</code> folds to <code>true</code>), string concatenation (<code>"hel" + "lo"</code> folds to <code>"hello"</code>), and even certain library function calls whose arguments are constants (sometimes called <strong>built-in function folding</strong> or <strong>pure function evaluation</strong>).</p>
+
+            <pre><code><span class="cm">// Before Constant Folding</span>
+t1 = 3.14 * 2
+t2 = t1 + 10
+t3 = 14 / 7
+x = t2 * t3
+
+<span class="cm">// After Constant Folding</span>
+x = 61.64</code></pre>
+
+            <div class="memory-box box">
+                <div class="box-label">Memory Anchor</div>
+                <p style="margin-bottom:0">Constant folding is like a student who, when told "calculate 3 + 4 on your exam," writes 7 directly rather than drawing the addition algorithm. The compiler is doing the arithmetic so the processor doesn't have to. Any expression where all values are known at compile time is a candidate.</p>
+            </div>
+
+
+            <!-- CONSTANT PROPAGATION -->
+            <h3 id="constant-propagation">Constant Propagation</h3>
+
+            <p>Constant propagation is the optimization that tracks the flow of constant values through the program and replaces variables with their known constant values wherever possible, thereby enabling further optimizations — most notably constant folding — to take effect. The technique operates by maintaining a table that maps each variable to either a constant value or the special marker "non-constant" (often represented as the symbol ⊤, pronounced "top," from lattice theory). When the compiler encounters an assignment of the form <code>x = c</code> where <code>c</code> is a constant, it records that <code>x</code> has the value <code>c</code>. When the compiler encounters a use of <code>x</code> in a subsequent expression, it substitutes the constant value of <code>x</code> into the expression, potentially enabling constant folding. When the compiler encounters an assignment of the form <code>x = y</code> where <code>y</code> is not a constant (or where <code>y</code> is a variable whose value is non-constant), it marks <code>x</code> as non-constant.</p>
+
+            <p>The interaction between constant propagation and constant folding is synergistic and worth understanding clearly, because it is a common source of exam questions. Consider the following sequence:</p>
+
+            <pre><code><span class="cm">// Before Constant Propagation + Folding</span>
+x = 5
+y = x + 3
+z = y * 2
+
+<span class="cm">// Step 1: Constant propagation replaces x with 5</span>
+y = 5 + 3
+z = y * 2
+
+<span class="cm">// Step 2: Constant folding evaluates 5 + 3</span>
+y = 8
+z = y * 2
+
+<span class="cm">// Step 3: Constant propagation replaces y with 8</span>
+z = 8 * 2
+
+<span class="cm">// Step 4: Constant folding evaluates 8 * 2</span>
+z = 16</code></pre>
+
+            <p>Without constant propagation, the value of <code>x</code> would remain in its assigned register, and the addition <code>x + 3</code> would be performed at runtime. Constant propagation reveals that the addition involves two constants, enabling constant folding to eliminate it. This chain reaction — propagation exposing opportunities for folding, which in turn propagates new constants — is one of the most elegant aspects of compiler optimization and illustrates why optimization passes are often applied iteratively until no further improvements are found.</p>
+
+            <p>A subtle but important complication arises when the same variable is assigned different values along different control flow paths. If variable <code>x</code> is assigned <code>5</code> on one branch of a conditional and <code>10</code> on another branch, the compiler cannot propagate either value through the merge point without additional analysis. In the general case, the compiler uses a lattice-based framework where the meet of two different constant values at a merge point yields the non-constant value ⊤, meaning that <code>x</code> must be treated as unknown after the merge. This is formalized in the theory of <strong>data flow analysis</strong>, where constant propagation is computed using a forward data flow problem with a semi-lattice domain {c1, c2, ..., ⊤} for each variable. The analysis converges because the lattice has finite height and the transfer functions are monotone.</p>
+
+            <!-- COPY PROPAGATION -->
+            <h3 id="copy-propagation">Copy Propagation</h3>
+
+            <p>Copy propagation is the optimization that eliminates unnecessary copy statements by replacing uses of the target variable with the source variable, provided that the source variable has not been redefined between the copy statement and the use. A copy statement has the form <code>x = y</code>, and its effect is to assign the current value of <code>y</code> to <code>x</code>. After this assignment, wherever <code>x</code> is subsequently used, the compiler can substitute <code>y</code> in its place, provided that <code>y</code> has not been assigned a new value in the interim. If the substitution is successful, the original copy statement may become dead code (if <code>x</code> is no longer used) and can be eliminated by dead code elimination.</p>
+
+            <p>Consider the following example, which illustrates the interaction between copy propagation and dead code elimination:</p>
+
+            <pre><code><span class="cm">// Before Copy Propagation</span>
+a = b
+c = a + d
+e = a * 2
+
+<span class="cm">// After Copy Propagation (replace a with b)</span>
+a = b          <span class="cm">// may become dead if 'a' is no longer used</span>
+c = b + d
+e = b * 2</code></pre>
+
+            <p>Copy propagation is particularly useful as a cleanup pass after other optimizations. For example, constant propagation often generates copy statements when a variable is assigned a constant and that constant is then propagated through the program; after the propagation, the original assignment may be a copy that can be eliminated. Similarly, common sub-expression elimination generates temporary variables to hold shared results, and copy propagation can often eliminate these temporaries by forwarding them directly to their uses. The synergy between copy propagation, constant propagation, and dead code elimination is a recurring theme in compiler optimization, and understanding how these three techniques reinforce each other is essential for answering comparison and analysis questions in examinations.</p>
+
+            <p>Copy propagation has a limitation that is worth noting: it cannot propagate across a definition. If <code>x = y</code> is followed by <code>y = z</code> before any use of <code>x</code>, then <code>x</code> still holds the old value of <code>y</code>, and substituting <code>y</code> for <code>x</code> would be incorrect because <code>y</code> has been redefined. The compiler must therefore check that the source variable is not redefined between the copy statement and each use of the target variable before performing the substitution. This is a simple check within a single basic block but requires reaching-definition analysis when performed globally across the control flow graph.</p>
+
+
+            <!-- DEAD CODE ELIMINATION -->
+            <h3 id="dead-code">Dead Code Elimination</h3>
+
+            <p>Dead code elimination removes computations whose results are never used, and while the concept is simple, its practical impact on code quality can be substantial — particularly after other optimizations have been applied, which tend to create dead code as a side effect of their transformations. A statement of the form <code>x = y + z</code> is dead (and therefore eliminable) if the value of <code>x</code> is never subsequently read before being redefined or before the program terminates. The key concept underlying dead code elimination is <strong>liveness</strong>: a variable is live at a given point in the program if its current value may be read along some execution path from that point; a variable is dead (i.e., not live) if there is no execution path from that point that reads its value before redefining it.</p>
+
+            <p>The compiler computes liveness information using a <strong>backward data flow analysis</strong>. Starting from the end of each basic block (where no variables are live, assuming we are not considering interprocedural liveness), the analysis works backward through the block, maintaining a set of live variables. At each instruction <code>x = y op z</code>, the analysis (1) removes <code>x</code> from the live set (because this instruction defines <code>x</code>, overwriting any previous value), and (2) adds <code>y</code> and <code>z</code> to the live set (because this instruction uses their values). After the analysis is complete, any instruction that defines a variable that is not in the live-out set of its basic block is dead and can be eliminated.</p>
+
+            <pre><code><span class="cm">// Before Dead Code Elimination</span>
+x = a + b    <span class="cm">// x is used below — LIVE</span>
+y = c * d    <span class="cm">// y is never used — DEAD</span>
+z = x - a    <span class="cm">// z is used below — LIVE</span>
+w = e + f    <span class="cm">// w is never used — DEAD</span>
+p = z + 1    <span class="cm">// p is used below — LIVE</span>
+
+<span class="cm">// After Dead Code Elimination</span>
+x = a + b
+z = x - a
+p = z + 1</code></pre>
+
+            <p>Dead code elimination is especially valuable in the context of template-heavy C++ code and generic Java code, where template expansion and generic instantiation often produce large amounts of code that is never executed in any particular instantiation. It is also essential after loop unrolling and loop jamming, which replicate code and may leave behind computations that are no longer needed. In some compilers, aggressive dead code elimination is combined with control dependence analysis to eliminate not only dead computations but also entire conditional branches whose outcomes do not affect the program's observable behavior — a technique sometimes called <strong>dead control flow elimination</strong>.</p>
+
+            <div class="exam-tip box">
+                <div class="box-label">Exam Tip — Common Confusion</div>
+                <p style="margin-bottom:0">Students often confuse "dead code" with "unreachable code." Dead code is code that computes a value that is never used (the code executes but its result is discarded). Unreachable code is code that can never be reached by any execution path (the code never executes at all). Both can be eliminated, but they are detected by different analyses: dead code by liveness analysis (backward), unreachable code by reachability analysis (forward).</p>
+            </div>
+
+
+            <!-- COMMON SUB-EXPRESSION ELIMINATION -->
+            <h3 id="cse">Common Sub-expression Elimination</h3>
+
+            <p>Common sub-expression elimination (CSE) is the optimization that detects expressions that have been previously computed with the same operands and, if those operands have not been modified in the interim, reuses the previously computed result rather than recomputing the expression. An expression <code>x op y</code> is a <strong>common sub-expression</strong> at a given program point if there exists an earlier evaluation of <code>x op y</code> at a point where the values of <code>x</code> and <code>y</code> are the same as at the current point. Within a single basic block, this condition is straightforward to check: scan the block from top to bottom, maintaining a table of available expressions (each entry recording the expression and the temporary variable that holds its result); when an expression is encountered that is already in the table and neither operand has been assigned since the entry was created, the expression is a common sub-expression and can be replaced with a reference to the stored result.</p>
+
+            <pre><code><span class="cm">// Before Common Sub-expression Elimination</span>
+a = b + c
+d = b + c       <span class="cm">// b + c was just computed — common sub-expression</span>
+e = a - d
+
+<span class="cm">// After Common Sub-expression Elimination</span>
+a = b + c
+d = a           <span class="cm">// reuse the result of b + c</span>
+e = a - d</code></pre>
+
+            <p>The mechanism by which CSE operates within a basic block can be elegantly understood through the DAG (Directed Acyclic Graph) representation of the block. When the compiler constructs a DAG for a basic block, each node represents a computation (an operator applied to its operands), and the children of each node are the nodes that produce its operand values. If the same computation appears twice in the block with the same operands, the DAG construction naturally produces a single shared node for both occurrences, because the DAG is constructed by looking up existing nodes before creating new ones. This DAG-level sharing directly corresponds to common sub-expression elimination: the second occurrence of the expression is replaced by a reference to the shared node, which maps to the temporary variable that holds the result of the first computation.</p>
+
+            <p>The global version of CSE, which operates across basic blocks and through the control flow graph, is significantly more complex because the compiler must determine whether an expression computed in one basic block is still available (its operands have not been modified) at the point of use in another basic block. This requires <strong>available expression analysis</strong>, a forward data flow analysis that computes, for each point in the program, the set of expressions that have been computed on every path reaching that point with the same operand values. If an expression is in the available set at a program point, and the expression is used at that point, the computation can be eliminated and the result reused.</p>
+
+            <p>CSE interacts powerfully with copy propagation and dead code elimination. After CSE replaces a common sub-expression with a reference to a temporary variable, copy propagation may be able to forward that temporary to its uses, and dead code elimination can remove any instructions that became dead as a result. This three-way synergy is one of the reasons why modern compilers apply optimization passes in a specific order and often iterate multiple passes until a fixed point is reached.</p>
+
+
+            <!-- STRENGTH REDUCTION -->
+            <h3 id="strength">Strength Reduction</h3>
+
+            <p>Strength reduction replaces expensive operations with cheaper operations that produce the same result, and it is one of the optimizations where the target machine's instruction set plays a decisive role in determining what constitutes a valid transformation. The name comes from the idea of reducing the "strength" of an operation: multiplication is "stronger" (more expensive) than addition, exponentiation is "stronger" than multiplication, and floating-point division is "stronger" than floating-point multiplication. If a cheaper operation can be found that computes the same value, the compiler substitutes it.</p>
+
+            <p>The most common applications of strength reduction are: replacing multiplication by a power of two with a left shift (<code>x * 8</code> becomes <code>x &lt;&lt; 3</code>), replacing division by a power of two with a right shift (<code>x / 4</code> becomes <code>x &gt;&gt; 2</code>, noting that this is only valid for non-negative integers), replacing exponentiation with repeated multiplication (<code>x ** 3</code> becomes <code>x * x * x</code>), and replacing multiplication within a loop by an induction variable with addition. This last form — strength reduction of induction variables — is among the most impactful and is discussed in detail in the section on loops.</p>
+
+            <pre><code><span class="cm">// Before Strength Reduction</span>
+x = i * 4
+y = j * 8
+z = a / 2
+
+<span class="cm">// After Strength Reduction</span>
+x = i &lt;&lt; 2
+y = j &lt;&lt; 3
+z = a &gt;&gt; 1</code></pre>
+
+            <p>An important subtlety is that strength reduction is only valid when the semantics of the cheaper operation match those of the original operation precisely. Replacing signed integer multiplication with a left shift is only valid when the multiplication does not overflow (or when the overflow behavior of shift and multiplication are defined identically by the language). Replacing floating-point division by a power of two with a subtraction from the exponent is only valid when special values (NaN, infinity, denormalized numbers) are handled correctly. The compiler must therefore verify these conditions before applying the transformation, and a conservative compiler may choose to apply strength reduction only when it can prove that the conditions are met, leaving potentially profitable but unprovable transformations for the programmer to handle through careful source-level optimization or compiler hints.</p>
+
+
+            <!-- ============================================================ -->
+            <!-- LOOPS IN FLOW GRAPHS -->
+            <!-- ============================================================ -->
+
+            <div class="divider">· · ·</div>
+
+            <h2 id="loops"><span class="section-number">5.1.4</span>Loops in Flow Graphs</h2>
+
+            <p class="dropcap">Loops are the single most important source of runtime execution time in virtually every real-world program. Empirical studies consistently show that programs spend the vast majority of their execution time inside loops — often 90% or more — and therefore optimizations that improve the efficiency of loop execution have a disproportionate impact on overall program performance. A compiler that optimizes loops well can produce code that runs many times faster than a compiler that optimizes loops poorly or not at all, even if both compilers produce equally efficient code for non-loop constructs. This is why the study of loop optimization occupies a central place in the theory and practice of compiler design.</p>
+
+            <p>Before the compiler can optimize loops, it must first identify them in the control flow graph. A loop in a flow graph is defined with reference to the concept of <strong>dominators</strong>. A node <code>d</code> dominates a node <code>n</code> (written <code>d dom n</code>) if every path from the entry node of the flow graph to <code>n</code> passes through <code>d</code>. The entry node dominates every other node. A node always dominates itself. A <strong>back edge</strong> is a directed edge <code>n → d</code> in the flow graph where <code>d</code> dominates <code>n</code> — that is, the target of the edge dominates the source. Every back edge defines a <strong>natural loop</strong>: the natural loop of the back edge <code>n → d</code> is the set of nodes that can reach <code>n</code> without going through <code>d</code>, together with <code>d</code> itself. The node <code>d</code> is called the <strong>loop header</strong>, and it has the property that it dominates every node in the loop — meaning that every entry into the loop must pass through the header.</p>
+
+            <!-- SVG: Control Flow Graph with Loop -->
+            <div class="diagram-container">
+                <div class="diagram-title">Figure 5.5 — Control Flow Graph with a Natural Loop</div>
+                <svg viewBox="0 0 600 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Control flow graph showing a natural loop structure">
+                    <!-- Entry -->
+                    <rect x="240" y="10" width="120" height="36" rx="4" fill="#6B8F71" stroke="#567A5C" stroke-width="1.5"/>
+                    <text x="300" y="33" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="12" font-weight="600">B1 (Entry)</text>
+
+                    <line x1="300" y1="46" x2="300" y2="70" stroke="#D6C9B3" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+                    <!-- Loop Header B2 -->
+                    <rect x="220" y="70" width="160" height="40" rx="4" fill="#D4A843" stroke="#B8922A" stroke-width="2.5"/>
+                    <text x="300" y="95" text-anchor="middle" fill="#2A1F14" font-family="Playfair Display, serif" font-size="12" font-weight="700">B2 (Header)</text>
+
+                    <!-- Label: "header" -->
+                    <text x="395" y="92" fill="#D4A843" font-family="Source Serif 4, serif" font-size="10" font-style="italic">← header</text>
+
+                    <line x1="300" y1="110" x2="300" y2="140" stroke="#D6C9B3" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+                    <!-- B3 Loop Body -->
+                    <rect x="220" y="140" width="160" height="40" rx="4" fill="#C8553D" stroke="#A04030" stroke-width="2"/>
+                    <text x="300" y="165" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="12" font-weight="600">B3 (Loop Body)</text>
+
+                    <line x1="300" y1="180" x2="300" y2="210" stroke="#D6C9B3" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+                    <!-- B4 (condition) -->
+                    <rect x="220" y="210" width="160" height="40" rx="4" fill="#C8553D" stroke="#A04030" stroke-width="2"/>
+                    <text x="300" y="235" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="12" font-weight="600">B4 (Condition)</text>
+
+                    <!-- Branch: true back to B2 -->
+                    <path d="M 220 230 L 170 230 L 170 90 L 220 90" fill="none" stroke="#C8553D" stroke-width="2" marker-end="url(#arrow-red)" stroke-dasharray="none"/>
+
+                    <!-- Back-edge label -->
+                    <rect x="100" y="148" width="70" height="22" rx="3" fill="#FBF8F2" stroke="#C8553D" stroke-width="1"/>
+                    <text x="135" y="163" text-anchor="middle" fill="#C8553D" font-family="Playfair Display, serif" font-size="10" font-weight="600">Back Edge</text>
+
+                    <!-- Loop shading -->
+                    <ellipse cx="300" cy="165" rx="120" ry="110" fill="#C8553D" opacity="0.05" stroke="#C8553D" stroke-width="1" stroke-dasharray="6,4"/>
+
+                    <!-- Loop label -->
+                    <text x="165" y="290" fill="#C8553D" font-family="Playfair Display, serif" font-size="11" font-style="italic">Natural Loop</text>
+
+                    <!-- Branch: false to B5 -->
+                    <line x1="300" y1="250" x2="300" y2="290" stroke="#D6C9B3" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+                    <text x="320" y="275" fill="#6B8F71" font-family="Source Serif 4, serif" font-size="10">false</text>
+                    <text x="320" y="198" fill="#6B8F71" font-family="Source Serif 4, serif" font-size="10">true</text>
+
+                    <!-- B5 Exit -->
+                    <rect x="240" y="290" width="120" height="36" rx="4" fill="#3B4F5E" stroke="#2D3D4A" stroke-width="1.5"/>
+                    <text x="300" y="313" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="12" font-weight="600">B5 (Exit)</text>
+
+                    <!-- Preheader annotation -->
+                    <rect x="420" y="55" width="90" height="25" rx="3" fill="none" stroke="#6B8F71" stroke-width="1.5" stroke-dasharray="4,3"/>
+                    <text x="465" y="72" text-anchor="middle" fill="#6B8F71" font-family="Source Serif 4, serif" font-size="10" font-style="italic">preheader</text>
+                    <line x1="420" y1="68" x2="380" y2="80" stroke="#6B8F71" stroke-width="1" stroke-dasharray="3,2"/>
+
+                    <!-- Dominator annotation -->
+                    <text x="490" y="92" fill="#B8922A" font-family="Source Serif 4, serif" font-size="10" font-style="italic">B2 dominates</text>
+                    <text x="490" y="105" fill="#B8922A" font-family="Source Serif 4, serif" font-size="10" font-style="italic">B3, B4, B5</text>
+
+                    <!-- Markers -->
+                    <defs>
+                        <marker id="arrow-gray" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                            <polygon points="0 0, 8 3, 0 6" fill="#D6C9B3"/>
+                        </marker>
+                        <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+                            <polygon points="0 0, 8 3, 0 6" fill="#C8553D"/>
+                        </marker>
+                    </defs>
+                </svg>
+                <div class="diagram-caption">A control flow graph with a natural loop. The back edge from B4 to B2 defines the loop. B2 (the header) dominates all nodes in the loop. A preheader can be inserted before B2 for loop-invariant code motion.</div>
+            </div>
+
+            <p>An important structural addition for optimization is the <strong>preheader</strong>, a new basic block that the compiler inserts immediately before the loop header. The preheader serves as the single entry point into the loop: all edges that previously went directly to the header from outside the loop are redirected to the preheader, and a single unconditional edge connects the preheader to the header. The preheader is essential for loop-invariant code motion, because it provides a safe location outside the loop where computations can be moved without changing the program's semantics. If a computation is moved into the preheader, it will be executed once before the loop begins and its result will be available throughout the loop's execution.</p>
+
+
+            <!-- LOOP INVARIANT CODE MOTION -->
+            <h3 id="loop-invariant">Loop Invariant Code Motion</h3>
+
+            <p>Loop invariant code motion (also called loop-invariant code hoisting or simply code motion) is the optimization that identifies computations inside a loop whose results do not change across iterations — because their operands are either constants, variables defined outside the loop, or variables whose definitions within the loop do not affect the computation — and moves these computations to the loop's preheader, where they are executed once before the loop begins rather than once on every iteration. The speedup from this optimization is directly proportional to the number of loop iterations: if a loop executes 1000 times, moving a single invariant computation out of the loop eliminates 999 redundant evaluations.</p>
+
+            <p>An expression <code>x op y</code> inside a loop is loop-invariant if and only if for each operand (x and y), at least one of the following conditions holds: (1) the operand is a constant, (2) the operand is defined outside the loop, or (3) the operand has a single definition inside the loop and that definition is itself loop-invariant. The third condition enables the compiler to identify chains of invariant computations: if <code>a = b + c</code> is invariant (because <code>b</code> and <code>c</code> are defined outside the loop), and <code>d = a * 2</code> appears later in the loop, then <code>d = a * 2</code> is also invariant (because <code>a</code> has a single invariant definition), and both can be moved to the preheader.</p>
+
+            <p>The transformation must satisfy several safety conditions before the code motion is performed. First, the computation must dominate all loop exits — that is, it must be guaranteed to execute on every iteration that reaches a loop exit. If the computation is inside a conditional branch that may not be taken on some iterations, moving it to the preheader would execute it even when the original loop would not have, potentially wasting time or causing a fault (for example, if the computation involves a division that could divide by zero on certain paths). Second, the operands of the computation must not be redefined by any statement that dominates the computation within the loop, unless the redefinition assigns the same value (which the compiler can sometimes prove through symbolic analysis). Third, the memory locations accessed by the computation must not be modified by any other statement in the loop (this condition is relevant when the operands are not simple variables but array elements or dereferenced pointers, aliasing analysis is required).</p>
+
+            <pre><code><span class="cm">// Before Loop Invariant Code Motion</span>
+for (i = 0; i &lt; n; i++) {
+    x = a * b;      <span class="cm">// a and b don't change in loop — invariant</span>
+    y = x + c;      <span class="cm">// x is invariant, c doesn't change — invariant</span>
+    z = A[i] + y;   <span class="cm">// A[i] changes each iteration — NOT invariant</span>
+}
+
+<span class="cm">// After Loop Invariant Code Motion</span>
+t1 = a * b;         <span class="cm">// moved to preheader</span>
+t2 = t1 + c;        <span class="cm">// moved to preheader</span>
+for (i = 0; i &lt; n; i++) {
+    z = A[i] + t2;  <span class="cm">// only variant computation remains</span>
+}</code></pre>
+
+            <div class="exam-tip box">
+                <div class="box-label">Exam Tip — Safety Conditions for Code Motion</div>
+                <p style="margin-bottom:0">When writing about loop invariant code motion in exams, always mention the safety conditions: (1) The expression must not be in a conditional that may not execute on some iterations, (2) operands must not be redefined in the loop, and (3) the computation must not have side effects that change semantics if hoisted. These conditions distinguish a knowledgeable answer from a superficial one, and professors look for them specifically.</p>
+            </div>
+
+
+            <!-- LOOP UNROLLING AND JAMMING -->
+            <h3 id="loop-unrolling">Loop Unrolling and Loop Jamming</h3>
+
+            <p><strong>Loop unrolling</strong> is an optimization that replicates the body of a loop multiple times within a single iteration, thereby reducing the number of iterations and, correspondingly, the overhead of the loop control instructions (incrementing the induction variable, testing the condition, and branching back to the top of the loop). If a loop body is unrolled by a factor of 4, each iteration of the unrolled loop performs the work of four original iterations, and the loop executes only one-fourth as many times. The loop control overhead — which includes the comparison, the branch, and the induction variable increment — is reduced by a factor of 4, while the computation within the loop body (which is the "useful work") remains proportionally the same.</p>
+
+            <p>Consider a loop that sums the elements of an array:</p>
+
+            <pre><code><span class="cm">// Original Loop</span>
+for (i = 0; i &lt; 100; i++) {
+    sum = sum + A[i];
+}
+
+<span class="cm">// After Loop Unrolling (factor 4)</span>
+for (i = 0; i &lt; 100; i += 4) {
+    sum = sum + A[i];
+    sum = sum + A[i+1];
+    sum = sum + A[i+2];
+    sum = sum + A[i+3];
+}
+<span class="cm">// Handle remaining iterations (100 mod 4 = 0 in this case)</span></code></pre>
+
+            <p>Loop unrolling has several secondary benefits beyond reducing loop control overhead. First, it exposes more instruction-level parallelism: the four additions in the unrolled body can potentially be executed in parallel on a superscalar processor with multiple arithmetic units. Second, it enables further optimizations that were not visible in the original code: for example, the compiler might recognize that the four additions can be partially accumulated using SIMD (Single Instruction, Multiple Data) instructions. Third, it can improve cache performance by increasing the ratio of useful computation to loop overhead, which keeps the processor busier between cache misses.</p>
+
+            <p>The downside of loop unrolling is increased code size: the unrolled loop body is larger than the original, which increases instruction cache pressure and may reduce the effectiveness of instruction caching for large unroll factors. The optimal unroll factor depends on the target machine's resources (number of registers, instruction cache size, available instruction-level parallelism) and is typically chosen by the compiler based on architecture-specific heuristics.</p>
+
+            <p><strong>Loop jamming</strong> (also called loop fusion) is the optimization that combines two or more adjacent loops with the same iteration space (same loop bounds, same iteration variable, same stride) into a single loop. The benefit is that the loop control overhead is incurred only once instead of twice, and — more importantly — the fused loop may enable further optimizations (such as common sub-expression elimination across the two original loop bodies) that were not possible when the loops were separate. For example:</p>
+
+            <pre><code><span class="cm">// Before Loop Jamming</span>
+for (i = 0; i &lt; n; i++) {
+    A[i] = B[i] + C[i];
+}
+for (i = 0; i &lt; n; i++) {
+    D[i] = A[i] * 2;
+}
+
+<span class="cm">// After Loop Jamming</span>
+for (i = 0; i &lt; n; i++) {
+    A[i] = B[i] + C[i];
+    D[i] = A[i] * 2;
+}</code></pre>
+
+            <p>Loop jamming is only safe if the two loops have identical iteration spaces and if the second loop does not depend on values computed by the first loop that would be available at a different time if the loops were fused. In the example above, the second loop uses <code>A[i]</code> on the same iteration that the first loop sets it, which is safe because the first statement in the fused body sets <code>A[i]</code> before the second statement reads it. However, if the second loop accessed <code>A[i+1]</code> (a value that would not yet be computed in the fused loop on iteration <code>i</code>), the jamming would be invalid. The compiler must therefore perform a dependence analysis before fusing loops.</p>
+
+            <div class="two-col">
+                <div class="col-card">
+                    <h4>Loop Unrolling</h4>
+                    <ul style="list-style:none; padding:0; font-size:0.9rem;">
+                        <li style="padding:0.25rem 0;">Replicates loop body multiple times</li>
+                        <li style="padding:0.25rem 0;">Reduces loop control overhead</li>
+                        <li style="padding:0.25rem 0;">Increases code size</li>
+                        <li style="padding:0.25rem 0;">Exposes instruction-level parallelism</li>
+                        <li style="padding:0.25rem 0;">May enable SIMD optimization</li>
+                        <li style="padding:0.25rem 0;">Trade-off: code size vs. speed</li>
+                    </ul>
+                </div>
+                <div class="col-card">
+                    <h4>Loop Jamming (Fusion)</h4>
+                    <ul style="list-style:none; padding:0; font-size:0.9rem;">
+                        <li style="padding:0.25rem 0;">Merges adjacent loops into one</li>
+                        <li style="padding:0.25rem 0;">Reduces loop control overhead</li>
+                        <li style="padding:0.25rem 0;">Decreases code size</li>
+                        <li style="padding:0.25rem 0;">Enables cross-body optimizations</li>
+                        <li style="padding:0.25rem 0;">Improves data locality</li>
+                        <li style="padding:0.25rem 0;">Requires same iteration space</li>
+                    </ul>
+                </div>
+            </div>
+
+
+            <!-- STRENGTH REDUCTION IN LOOPS -->
+            <h4>Strength Reduction of Induction Variables</h4>
+
+            <p>A particularly powerful form of strength reduction applies to induction variables in loops. An induction variable is a variable whose value changes by a constant amount on each iteration of the loop — the canonical example being the loop index variable <code>i</code> in a <code>for</code> loop, which is incremented by 1 on each iteration. When a function of an induction variable (such as <code>4*i</code>) appears inside a loop, and multiplication is more expensive than addition, the compiler can replace the multiplication with an addition by maintaining a new variable that tracks the value of <code>4*i</code> incrementally:</p>
+
+            <pre><code><span class="cm">// Before Strength Reduction of Induction Variable</span>
+for (i = 0; i &lt; n; i++) {
+    A[4*i] = B[i];    <span class="cm">// 4*i is recomputed each iteration</span>
+}
+
+<span class="cm">// After Strength Reduction</span>
+t = 0;                <span class="cm">// t tracks 4*i</span>
+for (i = 0; i &lt; n; i++) {
+    A[t] = B[i];      <span class="cm">// use t instead of 4*i</span>
+    t = t + 4;         <span class="cm">// add 4 each iteration instead of multiplying</span>
+}</code></pre>
+
+            <p>This transformation replaces a multiplication on every iteration with an addition on every iteration, and since addition is typically faster than multiplication (especially on architectures without hardware multiply), the result is a net speedup. This form of strength reduction is especially important for array indexing, where the computation of the effective address involves the induction variable multiplied by the element size — a computation that the compiler can replace with pointer increments.</p>
+
+
+            <!-- ============================================================ -->
+            <!-- WORKED EXAMPLES FROM PYQs -->
+            <!-- ============================================================ -->
+
+            <div class="divider">· · ·</div>
+
+            <h2 id="worked-examples"><span class="section-number">5.1.5</span>Worked Examples from Previous Year Questions</h2>
+
+            <p class="dropcap">The following worked examples demonstrate the application of the optimization techniques discussed above to the specific code snippets that have appeared in previous year question papers. Understanding how to perform these optimizations step by step is essential for answering the corresponding exam questions with confidence and precision, and each example is presented with sufficient detail that the student can reproduce the analysis in an examination setting.</p>
+
+            <h3>PYQ Example 1: Dot Product Loop</h3>
+
+            <p>The first snippet computes the dot product of two arrays <code>A</code> and <code>B</code>, each of size 20:</p>
+
+            <pre><code><span class="cm">// Original Code</span>
+p = 0;
+i = 1;
+do {
+    p = p + A[i] * B[i];
+    i = i + 1;
+} while (i &lt;= 20);</code></pre>
+
+            <p>The three-address code for the loop body (before optimization) might look like this:</p>
+
+            <pre><code><span class="cm">// Three-address code (before optimization)</span>
+    p = 0
+    i = 1
+L1: t1 = i * 4               <span class="cm">// byte offset for A (assuming 4-byte elements)</span>
+    t2 = A[t1]                <span class="cm">// load A[i]</span>
+    t3 = i * 4               <span class="cm">// byte offset for B — COMMON SUB-EXPRESSION</span>
+    t4 = B[t3]                <span class="cm">// load B[i]</span>
+    t5 = t2 * t4             <span class="cm">// A[i] * B[i]</span>
+    p  = p + t5              <span class="cm">// accumulate</span>
+    i  = i + 1
+    if i &lt;= 20 goto L1</code></pre>
+
+            <p>The optimizations applicable here are:</p>
+
+            <p><strong>Common Sub-expression Elimination:</strong> The expression <code>i * 4</code> is computed twice — once for <code>A[i]</code> and once for <code>B[i]</code>. The second computation <code>t3 = i * 4</code> is a common sub-expression and can be replaced with <code>t3 = t1</code>.</p>
+
+            <p><strong>Strength Reduction of Induction Variables:</strong> The expression <code>i * 4</code> (used to compute array offsets) changes by 4 on each iteration (since <code>i</code> changes by 1). We can introduce a new variable <code>offset</code> that starts at 4 and is incremented by 4 each iteration, replacing the multiplication with an addition.</p>
+
+            <p><strong>Dead Code Elimination:</strong> After copy propagation of <code>t3 = t1</code>, the original assignment to <code>t3</code> may be eliminated if <code>t1</code> is used directly.</p>
+
+            <pre><code><span class="cm">// Three-address code (after optimization)</span>
+    p = 0
+    i = 1
+    offset = 4                <span class="cm">// strength-reduced: tracks i*4</span>
+L1: t2 = A[offset]            <span class="cm">// load A[i]</span>
+    t4 = B[offset]            <span class="cm">// load B[i] (reused offset)</span>
+    t5 = t2 * t4
+    p  = p + t5
+    i  = i + 1
+    offset = offset + 4       <span class="cm">// strength reduction: add instead of multiply</span>
+    if i &lt;= 20 goto L1</code></pre>
+
+            <p>The optimized code eliminates one multiplication per iteration (the redundant <code>i * 4</code>) and replaces the remaining multiplication with an addition (<code>offset + 4</code>), yielding a net reduction of two multiplications per iteration.</p>
+
+            <h3>PYQ Example 2: Loop with Invariant Computation</h3>
+
+            <pre><code><span class="cm">// Original Code</span>
+for (i = 1; i &lt;= 100; i++) {
+    X = a * b + i;
+}</code></pre>
+
+            <p>The expression <code>a * b</code> is loop-invariant because neither <code>a</code> nor <code>b</code> is modified inside the loop. The compiler should hoist this computation to the preheader:</p>
+
+            <pre><code><span class="cm">// After Loop Invariant Code Motion</span>
+t1 = a * b;                  <span class="cm">// moved to preheader</span>
+for (i = 1; i &lt;= 100; i++) {
+    X = t1 + i;
+}</code></pre>
+
+            <p>Further analysis reveals that the loop body simply computes <code>X = t1 + i</code>, which means <code>X</code> takes the values <code>t1+1, t1+2, ..., t1+100</code> across the iterations. Since <code>X</code> is assigned on every iteration and only the final value (<code>t1 + 100</code>) survives after the loop (the previous assignments are overwritten), the entire loop could potentially be replaced by <code>X = t1 + 100</code> — though this optimization requires proving that the loop executes all 100 iterations (i.e., that <code>1 &lt;= 100</code>, which is trivially true for constants) and that no other side effects depend on intermediate values of <code>X</code>. If <code>X</code> is never used after the loop, the entire loop is dead code and can be eliminated entirely (this is called <strong>dead loop elimination</strong>).</p>
+
+            <div class="answer-structure">
+                <h4>How to Structure a 10-Mark Answer on This PYQ</h4>
+                <ol>
+                    <li>Write the original three-address code for the snippet (2 marks)</li>
+                    <li>Identify <code>a*b</code> as loop-invariant and explain why (1 mark)</li>
+                    <li>Show the code after loop-invariant code motion with explanation (2 marks)</li>
+                    <li>Identify additional optimizations: strength reduction on <code>t1 + i</code>, dead code if <code>X</code> is unused (2 marks)</li>
+                    <li>Show the final optimized code (2 marks)</li>
+                    <li>Discuss safety conditions for code motion (1 mark)</li>
+                </ol>
+            </div>
+
+            <h3>PYQ Example 3: Quicksort Fragment Optimization</h3>
+
+            <p>The Quicksort fragment from the PYQ is a realistic piece of code that presents multiple optimization opportunities. Rather than exhaustively optimizing every line, the examination answer should identify and explain the most impactful optimizations:</p>
+
+            <pre><code><span class="cm">// Original Quicksort Fragment</span>
+void quicksort(m, n) int m, n; {
+    int i, j, v, x;
+    if (n &lt;= m) return;
+    i = m - 1;
+    j = n;
+    v = a[n];
+    while (1) {
+        do i = i + 1; while (a[i] &lt; v);
+        do j = j - 1; while (a[j] &gt; v);
+        if (i &gt;= j) break;
+        x = a[i];
+        a[i] = a[j];
+        a[j] = x;
+    }
+    x = a[i];
+    a[i] = a[n];
+    a[n] = x;
+    quicksort(m, j);
+    quicksort(i + 1, n);
+}</code></pre>
+
+            <p>Key optimizations applicable to this code include:</p>
+
+            <p><strong>Strength Reduction in Array Access:</strong> The accesses <code>a[i]</code> and <code>a[j]</code> inside the inner loops involve computing <code>base + i * sizeof(int)</code> and <code>base + j * sizeof(int)</code> on every iteration. By maintaining pointers that are incremented and decremented alongside <code>i</code> and <code>j</code>, the compiler can replace the multiplication-based addressing with pointer arithmetic (addition/subtraction).</p>
+
+            <p><strong>Loop Invariant Code Motion:</strong> The assignment <code>v = a[n]</code> is a loop invariant with respect to the inner while loops — the value of <code>v</code> (the pivot) does not change during the partitioning phase. While it is already outside the inner loops in this code, the compiler should verify this and ensure it remains in a register throughout the inner loop execution.</p>
+
+            <p><strong>Register Allocation:</strong> The variables <code>i</code>, <code>j</code>, <code>v</code>, and <code>x</code> are all live during the inner loops and should be allocated to registers to avoid repeated memory loads and stores. The expression <code>a[i]</code> should be computed once per iteration and kept in a register rather than being loaded from memory twice (once for the comparison and once for the swap).</p>
+
+            <p><strong>Copy Propagation and Dead Code:</strong> The pattern <code>x = a[i]; a[i] = a[j]; a[j] = x;</code> involves a temporary variable <code>x</code> that serves as a swap buffer. After copy propagation, the loads and stores can be optimized to minimize memory traffic, potentially using register-to-register moves where the values are already in registers.</p>
+
+
+            <!-- ============================================================ -->
+            <!-- PART II: COMPILER DEVELOPMENT -->
+            <!-- ============================================================ -->
+
+            <div class="divider">· · ·</div>
+
+            <h2 id="planning"><span class="section-number">5.2 · Part II</span>Planning a Compiler</h2>
+
+            <p class="dropcap">The construction of a compiler is one of the most intellectually demanding projects in computer science, and the planning phase is where the success or failure of the entire endeavor is often determined. A compiler is not merely a translator from one language to another — it is a complex software system that must perform lexical analysis, syntax analysis, semantic analysis, intermediate code generation, code optimization, and target code generation, each of which is itself a substantial engineering challenge, and all of which must interact correctly and efficiently. The planning phase determines the architecture of the compiler, the tools and techniques to be used, the division of labor among team members, the schedule and milestones, and the testing strategy that will ensure the compiler's correctness.</p>
+
+            <p>The first step in planning a compiler is <strong>requirements analysis</strong>, which involves specifying precisely what the compiler must do. This includes the source language (which subset of the language will be supported, what extensions will be provided, what dialect will be targeted), the target machine (which architecture, which operating system, which ABI — Application Binary Interface — will be used), the compilation model (ahead-of-time compilation, just-in-time compilation, interpretation, or some hybrid), the optimization level (which optimizations will be implemented, what compilation speed is acceptable), and the diagnostic quality (what error messages will be generated, how informative will warnings be, how will the compiler handle incomplete or erroneous programs).</p>
+
+            <p>The second step is <strong>language specification</strong>, which involves writing or obtaining a precise, unambiguous specification of the source language. This specification defines the lexical structure (what tokens are valid), the syntactic structure (what grammar governs the arrangement of tokens), and the semantic rules (what programs are well-typed, what the meaning of each construct is, what runtime behavior is guaranteed). For existing languages, this specification may already exist in the form of a reference manual or an ISO standard (such as the C11 standard ISO/IEC 9899:2011 or the Java Language Specification). For new languages, the specification must be written as part of the compiler project, and the quality of this specification directly determines the quality of the compiler — an ambiguous specification leads to inconsistent implementations.</p>
+
+            <p>The third step is <strong>target machine specification</strong>, which involves characterizing the instruction set, register file, memory model, calling conventions, and exception handling mechanisms of the target machine. This information is essential for the code generator and for machine-dependent optimizations. The fourth step is <strong>project planning</strong>, which involves dividing the compiler into modules (typically corresponding to the phases of compilation), assigning team members to each module, establishing interfaces between modules (so that different modules can be developed independently), setting milestones and deadlines, and identifying risks and mitigation strategies.</p>
+
+            <div class="pull-quote">
+                "The hardest part of building a compiler is not the parsing or the code generation — it is the thousand small decisions about how to handle the edge cases that the language specification does not fully address."
+            </div>
+
+
+            <!-- APPROACHES TO COMPILER DEVELOPMENT -->
+            <h2 id="approaches"><span class="section-number">5.2.1</span>Approaches to Compiler Development</h2>
+
+            <p class="dropcap">There are three principal approaches to compiler development, and the choice among them has profound implications for the compiler's architecture, the development process, and the quality of the resulting system. These three approaches — the monolithic approach, the modular approach, and the incremental approach — represent fundamentally different philosophies about how to organize a large, complex software system, and understanding their tradeoffs is essential both for examination questions and for practical compiler engineering.</p>
+
+            <h3>The Monolithic Approach</h3>
+
+            <p>The monolithic approach treats the compiler as a single, undivided program in which all phases — lexical analysis, syntax analysis, semantic analysis, intermediate code generation, optimization, and code generation — are implemented as a single cohesive unit, often sharing global data structures and communicating through shared memory rather than well-defined interfaces. In the earliest compilers (from the 1950s and 1960s), this was the dominant approach, partly because the theory of compiler construction was still developing and partly because the limited memory and processing power of early computers made it impractical to maintain separate data structures for each phase. The monolithic compiler would read the source program, perform all analyses and transformations in a single pass (or a small number of passes), and emit the target code — with each phase tightly coupled to the others and all phases sharing the same symbol table, syntax tree, and intermediate representation.</p>
+
+            <p>The advantages of the monolithic approach are simplicity of design (there is no need to design inter-phase interfaces), potentially faster compilation (because data does not need to be serialized and deserialized between phases), and lower memory overhead (because shared data structures are reused across phases). The disadvantages, however, are substantial: the code is difficult to understand, test, maintain, and extend; changes to one phase often have unexpected effects on other phases; it is difficult to parallelize or distribute the compilation process; and the compiler is tightly coupled to a specific source language and target machine, making it difficult to retarget or adapt. In modern practice, the monolithic approach is rarely used for production compilers, though it may still appear in specialized contexts such as bootstrapping compilers or embedded compilers with extreme memory constraints.</p>
+
+            <h3>The Modular Approach</h3>
+
+            <p>The modular approach decomposes the compiler into a collection of independent modules, each responsible for a single phase of compilation, communicating through well-defined interfaces (typically intermediate representations that are written to and read from files or shared data structures with clearly specified formats). Each module can be developed, tested, and maintained independently, and modules can be combined in different ways to create compilers for different source languages or target machines. The modular approach is the dominant paradigm in modern compiler design and is exemplified by compilers such as GCC (GNU Compiler Collection) and LLVM, both of which are organized as a series of independent passes that communicate through intermediate representations.</p>
+
+            <p>In GCC, the compilation process is divided into a front end (which performs lexical, syntactic, and semantic analysis and produces GENERIC, a language-independent intermediate representation), a middle end (which performs optimization on the GIMPLE and RTL intermediate representations), and a back end (which generates target machine code from the optimized RTL). Each of these components can be modified or replaced independently: adding support for a new source language requires writing a new front end that produces GENERIC; adding support for a new target machine requires writing a new back end that translates RTL to the target instruction set; and adding a new optimization requires modifying only the middle end. This separation of concerns is the key architectural advantage of the modular approach.</p>
+
+            <p>In LLVM, the architecture is organized around a three-phase design with a common intermediate representation (LLVM IR) that serves as the contract between the front end, the optimizer, and the back end. Any front end that produces valid LLVM IR can take advantage of all existing optimizations, and any back end that consumes LLVM IR can generate code for its target machine. This design has led to an ecosystem where multiple front ends (Clang for C/C++, rustc for Rust, swiftc for Swift, flang for Fortran) share a common optimization and code generation infrastructure, dramatically reducing the total engineering effort required to support new languages.</p>
+
+            <h3>The Incremental Approach</h3>
+
+            <p>The incremental approach is designed for interactive compilation environments where the programmer expects rapid feedback — such as integrated development environments (IDEs), read-eval-print loops (REPLs), and live-coding environments. In the incremental approach, the compiler maintains a persistent internal representation of the program and, when the programmer modifies the source code, recompiles only the parts of the program that are affected by the change, rather than recompiling the entire program from scratch. This requires the compiler to track dependencies between different parts of the program (for example, changing a function's signature requires recompiling all callers of that function) and to update the internal representation incrementally.</p>
+
+            <p>The advantages of the incremental approach are fast turnaround (the programmer sees the results of changes almost immediately), support for interactive development (the compiler can provide real-time error checking, code completion, and refactoring support), and efficient use of computational resources (only the changed parts of the program are recompiled). The disadvantages include increased implementation complexity (the compiler must maintain dependency information and support partial recompilation), potential for inconsistencies (if the dependency tracking is incomplete, the compiler might use stale information), and difficulty in applying global optimizations (because the optimization state of the unchanged parts of the program is fixed and cannot be reconsidered in light of the changes).</p>
+
+            <!-- SVG: Three Approaches Comparison -->
+            <div class="diagram-container">
+                <div class="diagram-title">Figure 5.6 — Comparison of Compiler Development Approaches</div>
+                <svg viewBox="0 0 780 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Comparison diagram of monolithic, modular, and incremental compiler approaches">
+                    <!-- Monolithic -->
+                    <text x="130" y="25" text-anchor="middle" fill="#2A1F14" font-family="Playfair Display, serif" font-size="13" font-weight="700">Monolithic</text>
+                    <rect x="30" y="40" width="200" height="180" rx="6" fill="#C8553D" stroke="#A04030" stroke-width="2" opacity="0.9"/>
+                    <text x="130" y="80" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="10">Lexical Analysis</text>
+                    <text x="130" y="100" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="10">Syntax Analysis</text>
+                    <text x="130" y="120" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="10">Semantic Analysis</text>
+                    <text x="130" y="140" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="10">Code Generation</text>
+                    <text x="130" y="160" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="10">Optimization</text>
+                    <text x="130" y="195" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="11" font-weight="600">Single Unit</text>
+                    <text x="130" y="250" text-anchor="middle" fill="#A04030" font-family="Source Serif 4, serif" font-size="10" font-style="italic">Fast but hard to</text>
+                    <text x="130" y="265" text-anchor="middle" fill="#A04030" font-family="Source Serif 4, serif" font-size="10" font-style="italic">maintain &amp; extend</text>
+
+                    <!-- Modular -->
+                    <text x="390" y="25" text-anchor="middle" fill="#2A1F14" font-family="Playfair Display, serif" font-size="13" font-weight="700">Modular</text>
+                    <rect x="310" y="40" width="70" height="80" rx="4" fill="#6B8F71" stroke="#567A5C" stroke-width="1.5"/>
+                    <text x="345" y="70" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9">Front</text>
+                    <text x="345" y="85" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9">End</text>
+
+                    <line x1="380" y1="80" x2="400" y2="80" stroke="#D6C9B3" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+                    <rect x="400" y="40" width="70" height="80" rx="4" fill="#D4A843" stroke="#B8922A" stroke-width="1.5"/>
+                    <text x="435" y="70" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">Middle</text>
+                    <text x="435" y="85" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">(Opt)</text>
+
+                    <line x1="470" y1="80" x2="490" y2="80" stroke="#D6C9B3" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+                    <rect x="490" y="40" width="70" height="80" rx="4" fill="#3B4F5E" stroke="#2D3D4A" stroke-width="1.5"/>
+                    <text x="525" y="70" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9">Back</text>
+                    <text x="525" y="85" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9">End</text>
+
+                    <!-- IR labels -->
+                    <text x="393" y="138" fill="#6B8F71" font-family="JetBrains Mono, monospace" font-size="8">IR₁</text>
+                    <text x="483" y="138" fill="#D4A843" font-family="JetBrains Mono, monospace" font-size="8">IR₂</text>
+
+                    <!-- Replaceable arrows -->
+                    <rect x="310" y="150" width="250" height="35" rx="3" fill="none" stroke="#D6C9B3" stroke-width="1" stroke-dasharray="4,3"/>
+                    <text x="435" y="172" text-anchor="middle" fill="#7A6F62" font-family="Source Serif 4, serif" font-size="9">Replace any module independently</text>
+
+                    <text x="435" y="250" text-anchor="middle" fill="#567A5C" font-family="Source Serif 4, serif" font-size="10" font-style="italic">Clean interfaces, reusable</text>
+                    <text x="435" y="265" text-anchor="middle" fill="#567A5C" font-family="Source Serif 4, serif" font-size="10" font-style="italic">GCC / LLVM architecture</text>
+
+                    <!-- Incremental -->
+                    <text x="650" y="25" text-anchor="middle" fill="#2A1F14" font-family="Playfair Display, serif" font-size="13" font-weight="700">Incremental</text>
+
+                    <rect x="590" y="40" width="120" height="50" rx="4" fill="#3B4F5E" stroke="#2D3D4A" stroke-width="1.5"/>
+                    <text x="650" y="60" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9">Persistent State</text>
+                    <text x="650" y="76" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9">(Symbol Table + IR)</text>
+
+                    <line x1="650" y1="90" x2="650" y2="108" stroke="#D6C9B3" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+                    <rect x="590" y="108" width="120" height="35" rx="4" fill="#C8553D" stroke="#A04030" stroke-width="1.5"/>
+                    <text x="650" y="130" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9">Recompile Δ only</text>
+
+                    <!-- Change arrow -->
+                    <line x1="590" y1="55" x2="570" y2="55" stroke="#C8553D" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+                    <text x="558" y="52" text-anchor="end" fill="#C8553D" font-family="Source Serif 4, serif" font-size="8">edit</text>
+
+                    <!-- Feedback loop -->
+                    <path d="M 620 143 C 620 175, 590 175, 590 160 C 590 148, 610 148, 620 143" fill="none" stroke="#3B4F5E" stroke-width="1" marker-end="url(#arrow-gray)"/>
+                    <text x="595" y="180" fill="#3B4F5E" font-family="Source Serif 4, serif" font-size="8" font-style="italic">dependency</text>
+                    <text x="595" y="192" fill="#3B4F5E" font-family="Source Serif 4, serif" font-size="8" font-style="italic">tracking</text>
+
+                    <text x="650" y="250" text-anchor="middle" fill="#2D3D4A" font-family="Source Serif 4, serif" font-size="10" font-style="italic">Fast feedback for</text>
+                    <text x="650" y="265" text-anchor="middle" fill="#2D3D4A" font-family="Source Serif 4, serif" font-size="10" font-style="italic">IDEs / REPLs</text>
+                </svg>
+                <div class="diagram-caption">The three approaches to compiler development: monolithic (single unit), modular (independent phases with IR interfaces), and incremental (persistent state with partial recompilation).</div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Criterion</th>
+                        <th>Monolithic</th>
+                        <th>Modular</th>
+                        <th>Incremental</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Architecture</td>
+                        <td>Single integrated unit</td>
+                        <td>Separate phases with IR interfaces</td>
+                        <td>Persistent state, partial recompilation</td>
+                    </tr>
+                    <tr>
+                        <td>Maintainability</td>
+                        <td>Poor — tightly coupled</td>
+                        <td>Excellent — each module independent</td>
+                        <td>Good — but dependency tracking is complex</td>
+                    </tr>
+                    <tr>
+                        <td>Retargetability</td>
+                        <td>Difficult — entire compiler must change</td>
+                        <td>Easy — replace back end only</td>
+                        <td>Moderate — depends on architecture</td>
+                    </tr>
+                    <tr>
+                        <td>Compilation Speed</td>
+                        <td>Fast — no inter-phase overhead</td>
+                        <td>Moderate — IR serialization cost</td>
+                        <td>Fastest for small changes</td>
+                    </tr>
+                    <tr>
+                        <td>Optimization Quality</td>
+                        <td>Good — full program visible</td>
+                        <td>Excellent — specialized optimizer</td>
+                        <td>Limited — global opt. harder</td>
+                    </tr>
+                    <tr>
+                        <td>Testing</td>
+                        <td>Difficult — cannot isolate phases</td>
+                        <td>Easy — test each module separately</td>
+                        <td>Moderate — must test incremental behavior</td>
+                    </tr>
+                    <tr>
+                        <td>Best Suited For</td>
+                        <td>Small/embedded compilers</td>
+                        <td>Production compilers (GCC, LLVM)</td>
+                        <td>IDEs, REPLs, live environments</td>
+                    </tr>
+                    <tr>
+                        <td>Example</td>
+                        <td>Early FORTRAN compilers</td>
+                        <td>GCC, LLVM, Roslyn</td>
+                        <td>Eclipse JDT, IntelliJ, GHCi</td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <!-- COMPILER DEVELOPMENT ENVIRONMENT -->
+            <h2 id="environment"><span class="section-number">5.2.2</span>The Compiler Development Environment</h2>
+
+            <p class="dropcap">Building a compiler from scratch is a formidable undertaking, but no modern compiler project starts from zero. The compiler development environment encompasses the collection of tools, libraries, frameworks, and infrastructure that support the various phases of compiler construction, and selecting the right tools can mean the difference between a project that takes two person-years and one that takes ten. The choice of development approach — monolithic, modular, or incremental — directly influences which tools are most appropriate, because each approach imposes different requirements on the interfaces between phases, the data structures that represent the program, and the testing and debugging strategies that are employed.</p>
+
+            <p><strong>Parser generators</strong> are among the most mature and widely used tools in the compiler development environment. A parser generator takes a grammar specification (typically in BNF or EBNF notation) as input and produces a parser (a program that recognizes the grammar and constructs a parse tree) as output. The most prominent parser generators are <strong>Yacc</strong> (Yet Another Compiler Compiler) and its GNU successor <strong>Bison</strong>, which generate bottom-up (LR) parsers, and <strong>Lex</strong> (and its GNU successor <strong>Flex</strong>), which generate lexical analyzers (scanners) from regular expression specifications. Together, Lex and Yacc form the classical toolchain for building the front end of a compiler: Lex produces a scanner from a set of regular expression rules, and Yacc produces a parser from a context-free grammar, and the two are combined to implement lexical and syntactic analysis.</p>
+
+            <p>More modern alternatives include <strong>ANTLR</strong> (ANother Tool for Language Recognition), which generates top-down (LL) parsers with support for semantic predicates, error recovery, and tree construction, and is widely used in both academia and industry. ANTLR's ability to handle a broader class of grammars (including left-recursive grammars through automatic rewriting) and its rich ecosystem of language targets (Java, C++, Python, JavaScript, Go, and others) have made it the parser generator of choice for many new language implementations.</p>
+
+            <p><strong>Compiler frameworks and backends</strong> provide reusable infrastructure for the middle and back ends of a compiler. LLVM provides a collection of modular compiler components including an intermediate representation (LLVM IR), a suite of optimization passes, and code generators for multiple target architectures. Using LLVM, a compiler writer need only implement a front end that translates the source language into LLVM IR, and can then leverage LLVM's existing optimization and code generation infrastructure. This dramatically reduces the effort required to build a high-quality compiler. Similarly, GCC provides its own intermediate representations (GIMPLE and RTL) and optimization framework, though its architecture is somewhat less modular than LLVM's.</p>
+
+            <p><strong>Debugging and profiling tools</strong> are essential for compiler development because bugs in a compiler are notoriously difficult to diagnose: a bug in the optimizer may cause incorrect code to be generated for certain input programs but not others, and the symptoms (incorrect program output, segfaults, performance regressions) may be far removed from the root cause. Tools such as GDB for debugging the compiler itself, Valgrind for detecting memory errors, and custom tools for visualizing intermediate representations and control flow graphs are invaluable. Many compiler projects also build custom debugging aids, such as flags that dump the intermediate representation at each stage of compilation (<code>-fdump-tree-all</code> in GCC, <code>-mllvm -print-after-all</code> in LLVM), making it possible to inspect the code before and after each optimization pass.</p>
+
+            <p><strong>Testing infrastructure</strong> for compilers includes test suites of source programs that exercise various language features and optimization techniques, regression test suites that ensure previously fixed bugs do not reappear, and comparison testing (also called differential testing) in which the output of the compiler under development is compared against the output of a known-correct reference compiler for the same input programs. The LLVM project maintains a comprehensive test suite using the <strong>LIT</strong> (LLVM Integrated Tester) framework, and GCC uses the <strong>DejaGnu</strong> testing framework. Spec test suites for language conformance (such as the C++ conformance test suite) are also critical for ensuring that the compiler correctly implements the language specification.</p>
+
+            <!-- SVG: Compiler Development Environment -->
+            <div class="diagram-container">
+                <div class="diagram-title">Figure 5.7 — The Compiler Development Environment</div>
+                <svg viewBox="0 0 750 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagram showing tools and components of the compiler development environment">
+                    <!-- Central compiler box -->
+                    <rect x="265" y="130" width="220" height="80" rx="8" fill="#C8553D" stroke="#A04030" stroke-width="2.5"/>
+                    <text x="375" y="162" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="14" font-weight="700">Compiler</text>
+                    <text x="375" y="185" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="10" opacity="0.85">Under Development</text>
+
+                    <!-- Parser Generators -->
+                    <rect x="30" y="30" width="160" height="55" rx="5" fill="#6B8F71" stroke="#567A5C" stroke-width="1.5"/>
+                    <text x="110" y="55" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="11" font-weight="600">Parser Generators</text>
+                    <text x="110" y="72" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9" opacity="0.8">Lex/Yacc, ANTLR, Bison</text>
+                    <line x1="150" y1="85" x2="280" y2="140" stroke="#6B8F71" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+                    <!-- Compiler Frameworks -->
+                    <rect x="560" y="30" width="160" height="55" rx="5" fill="#3B4F5E" stroke="#2D3D4A" stroke-width="1.5"/>
+                    <text x="640" y="55" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="11" font-weight="600">Compiler Frameworks</text>
+                    <text x="640" y="72" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9" opacity="0.8">LLVM, GCC, MLIR</text>
+                    <line x1="600" y1="85" x2="470" y2="140" stroke="#3B4F5E" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+                    <!-- Debugging Tools -->
+                    <rect x="30" y="260" width="160" height="55" rx="5" fill="#D4A843" stroke="#B8922A" stroke-width="1.5"/>
+                    <text x="110" y="285" text-anchor="middle" fill="#2A1F14" font-family="Playfair Display, serif" font-size="11" font-weight="600">Debugging Tools</text>
+                    <text x="110" y="302" text-anchor="middle" fill="#2A1F14" font-family="Source Serif 4, serif" font-size="9">GDB, Valgrind, IR dumpers</text>
+                    <line x1="150" y1="260" x2="290" y2="210" stroke="#D4A843" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+                    <!-- Testing -->
+                    <rect x="560" y="260" width="160" height="55" rx="5" fill="#8FA9BC" stroke="#3B4F5E" stroke-width="1.5"/>
+                    <text x="640" y="285" text-anchor="middle" fill="#FBF8F2" font-family="Playfair Display, serif" font-size="11" font-weight="600">Testing Infra</text>
+                    <text x="640" y="302" text-anchor="middle" fill="#FBF8F2" font-family="Source Serif 4, serif" font-size="9">LIT, DejaGnu, Spec Tests</text>
+                    <line x1="600" y1="260" x2="460" y2="210" stroke="#8FA9BC" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+                    <!-- Assembler/Linker -->
+                    <rect x="330" y="10" width="90" height="45" rx="4" fill="#EDE6D8" stroke="#D6C9B3" stroke-width="1.5"/>
+                    <text x="375" y="30" text-anchor="middle" fill="#2A1F14" font-family="Playfair Display, serif" font-size="10" font-weight="600">Assembler</text>
+                    <text x="375" y="45" text-anchor="middle" fill="#7A6F62" font-family="Source Serif 4, serif" font-size="9">&amp; Linker</text>
+                    <line x1="375" y1="55" x2="375" y2="130" stroke="#D6C9B3" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+
+                    <!-- Version Control -->
+                    <rect x="330" y="290" width="90" height="45" rx="4" fill="#EDE6D8" stroke="#D6C9B3" stroke-width="1.5"/>
+                    <text x="375" y="310" text-anchor="middle" fill="#2A1F14" font-family="Playfair Display, serif" font-size="10" font-weight="600">VCS</text>
+                    <text x="375" y="325" text-anchor="middle" fill="#7A6F62" font-family="Source Serif 4, serif" font-size="9">Git, CI/CD</text>
+                    <line x1="375" y1="290" x2="375" y2="210" stroke="#D6C9B3" stroke-width="1.5" marker-end="url(#arrow-gray)"/>
+                </svg>
+                <div class="diagram-caption">The compiler development ecosystem includes parser generators, compiler frameworks, debugging tools, testing infrastructure, assemblers/linkers, and version control systems — all supporting the compiler under development.</div>
+            </div>
+
+
+            <!-- TESTING AND MAINTENANCE -->
+            <h2 id="testing"><span class="section-number">5.2.3</span>Testing and Maintenance</h2>
+
+            <p class="dropcap">Testing a compiler is qualitatively different from testing most other software systems, because a compiler is a program that processes other programs — and the space of possible input programs is, for all practical purposes, infinite. A banking application can be tested against a finite (though large) set of transactions and business rules; a compiler must correctly translate every valid program in its source language, including programs that have never been written before, and must produce correct target code for every combination of language features, optimization flags, and target architectures. This makes comprehensive testing impossible in principle, and the testing strategy must therefore be designed to maximize confidence in the compiler's correctness given finite resources.</p>
+
+            <p>The primary testing strategy for compilers is <strong>test suite testing</strong>, in which a curated collection of source programs (the test suite) is compiled and the results are compared against expected outcomes. The test suite should include programs that exercise every language feature, every optimization pass, every error diagnostic, and every edge case that the developers can think of. Well-designed test suites are organized by feature (so that a failure in a specific test immediately identifies the affected feature), by difficulty (from trivial programs that test basic functionality to complex programs that stress-test interactions between features), and by regression (previously failing tests that verify fixed bugs do not reappear).</p>
+
+            <p><strong>Regression testing</strong> is the practice of running the entire test suite after every change to the compiler's source code, and it is arguably the single most important quality assurance practice in compiler development. Because the compiler is a complex system with many interacting phases, a change intended to fix one bug or add one optimization may inadvertently break something else — and without regression testing, such breakage may go undetected until a user encounters incorrect code in a production setting. Modern compiler projects run their regression test suites automatically through continuous integration (CI) systems that trigger a full test run for every proposed code change.</p>
+
+            <p><strong>Differential testing</strong> (also called comparison testing) involves compiling the same source program with multiple compilers (or with the same compiler at different optimization levels) and comparing the outputs. If two compilers that implement the same language specification produce different outputs for the same input program, at least one of them must be incorrect. This technique is remarkably effective at finding bugs because it requires no oracle — the comparison itself serves as the correctness check. The <strong>C-Smith</strong> tool, developed by researchers at the University of Utah, generates random C programs and compiles them with multiple compilers, comparing the outputs to find compiler bugs. C-Smith has found hundreds of bugs in GCC, LLVM, and commercial compilers, demonstrating the power of random differential testing.</p>
+
+            <p><strong>Maintenance</strong> of a compiler is an ongoing activity that includes fixing bugs reported by users, adapting the compiler to new versions of the source language standard (e.g., C11 to C17 to C23), retargeting the compiler to new hardware architectures, adding new optimization passes, and improving the quality of error messages. Compiler maintenance is particularly challenging because changes must preserve backward compatibility (existing programs that compiled correctly before must continue to compile correctly) and because the compiler's behavior must conform to the language specification, which may itself evolve over time.</p>
+
+
+            <!-- FRONT-END OPTIMIZATION -->
+            <h2 id="frontend-opt"><span class="section-number">5.2.4</span>Front-end Optimization in Compilers</h2>
+
+            <p class="dropcap">When we speak of optimization, we usually think of the middle end — the phase that operates on intermediate representations to improve code quality. But there is a growing recognition that meaningful optimizations can and should be performed during the front end as well, at the stages of lexical analysis, syntactic analysis, and semantic analysis. These front-end optimizations do not improve the runtime performance of the generated code in the same way that middle-end optimizations do; rather, they improve the quality of the intermediate representation that the front end produces, which in turn enables more effective middle-end optimization. They also improve compilation speed by reducing the amount of work that the middle and back ends must perform.</p>
+
+            <h4>Lexical Analysis Optimization</h4>
+
+            <p>At the lexical analysis stage, the primary optimization opportunity lies in the efficiency of the scanner itself — how quickly it can convert the source character stream into a sequence of tokens. For large programs, lexical analysis can account for a significant fraction of total compilation time (sometimes 20–30%), so making the scanner fast has a direct impact on compilation speed. Techniques include using <strong>table-driven scanners</strong> (which trade memory for speed by precomputing state transition tables for the finite automaton that recognizes tokens), <strong>direct-coded scanners</strong> (which encode the automaton's transitions as nested switch statements, avoiding the overhead of table lookups), and <strong>hand-optimized character classification</strong> (which uses bit-vector techniques to quickly classify characters into categories such as letter, digit, whitespace, and operator).</p>
+
+            <p>Another lexical optimization is <strong>keyword recognition</strong>. Rather than treating keywords (such as <code>if</code>, <code>while</code>, <code>return</code>) as ordinary identifiers that must be looked up in a hash table to determine whether they are keywords, the scanner can use a perfect hash function or a trie-based lookup that recognizes keywords in a single step. This eliminates the overhead of hash table construction and lookup for the most frequently occurring tokens in the program.</p>
+
+            <h4>Syntactic Analysis Optimization</h4>
+
+            <p>At the syntactic analysis stage, the parser converts the token stream into a parse tree or abstract syntax tree (AST). The primary optimization concern is the efficiency of the parsing algorithm itself and the quality of the AST that is produced. For LR parsers generated by tools like Yacc/Bison, the parsing tables may be very large for complex grammars, and techniques such as <strong>table compression</strong> (exploiting the sparsity of the LR tables to reduce their memory footprint) and <strong>grammar factoring</strong> (rewriting the grammar to reduce the number of states in the LR automaton) can significantly reduce both the size of the parser and its execution time.</p>
+
+            <p>A more substantive optimization at the syntactic level is <strong>AST simplification</strong>, in which the parser constructs a simplified AST that eliminates redundant intermediate nodes, collapses unnecessary nesting, and represents the program's structure in a form that is more amenable to subsequent analysis. For example, a parser for a language with nested expressions might produce a deeply nested AST for an expression like <code>a + b + c + d</code>, but an optimized parser might flatten this into a single addition node with four operands, reflecting the associativity of addition and reducing the depth of the tree. This simplification reduces the work that semantic analysis must perform and can improve the quality of error messages (because the AST more directly represents the programmer's intent).</p>
+
+            <h4>Semantic Analysis Optimization</h4>
+
+            <p>Semantic analysis is the front-end phase that performs type checking, scope resolution, overload resolution, and other analyses that require understanding the meaning of the program. At this stage, the primary optimization opportunity is <strong>early folding and simplification</strong>. The semantic analyzer can evaluate constant expressions as it encounters them (performing constant folding at the semantic level rather than waiting for the middle end), resolve symbolic constants to their values, simplify boolean expressions involving compile-time-known conditions, and eliminate dead branches of conditional compilation (such as <code>#if</code> preprocessor directives in C/C++).</p>
+
+            <p>Another important semantic-level optimization is <strong>type-based specialization</strong>, particularly relevant for languages with generics or templates. When the semantic analyzer instantiates a generic function for specific type arguments, it can perform type-specific optimizations at that point — for example, recognizing that a generic comparison function instantiated for integer types can use the native integer comparison instruction rather than a generic comparison routine. In C++, template instantiation often generates substantial amounts of code, and semantic-level optimizations such as template memoization (caching the results of previous instantiations to avoid redundant computation) and partial evaluation (evaluating template metaprograms at compile time) can significantly reduce both compilation time and code size.</p>
+
+            <p>The prioritization of these front-end optimizations depends on the compiler's goals. For a compiler that prioritizes <strong>compilation speed</strong> (such as an IDE's background compiler), lexical and syntactic optimizations that reduce the time spent in scanning and parsing are most valuable. For a compiler that prioritizes <strong>code quality</strong> (such as an optimizing compiler for production builds), semantic-level optimizations that produce a higher-quality IR for the middle end are most valuable. A well-designed compiler will implement all three levels of front-end optimization and allow the user to select the appropriate optimization profile through compiler flags or configuration options.</p>
+
+
+            <!-- ============================================================ -->
+            <!-- EXAM RESOURCES -->
+            <!-- ============================================================ -->
+
+            <div class="divider">· · ·</div>
+
+            <h2 id="revision"><span class="section-number">Exam Resources</span>Quick Revision Sheet</h2>
+
+            <div class="revision-card">
+                <h4>Code Optimization — Key Definitions</h4>
+                <ul>
+                    <li><strong>Code Optimization:</strong> Improving IR to produce faster/smaller target code without changing program behavior</li>
+                    <li><strong>Basic Block:</strong> Maximal sequence with single entry (leader) and single exit (end)</li>
+                    <li><strong>Leader:</strong> First instruction, target of any jump, or instruction after any jump</li>
+                    <li><strong>Peephole Optimization:</strong> Sliding window of 2–5 instructions; pattern-based rewriting</li>
+                    <li><strong>Constant Folding:</strong> Evaluate constant expressions at compile time</li>
+                    <li><strong>Constant Propagation:</strong> Replace variables with known constant values</li>
+                    <li><strong>Copy Propagation:</strong> Replace <code>x</code> with <code>y</code> after <code>x = y</code></li>
+                    <li><strong>Dead Code Elimination:</strong> Remove computations whose results are never used</li>
+                    <li><strong>CSE:</strong> Reuse previously computed expressions with same operands</li>
+                    <li><strong>Strength Reduction:</strong> Replace expensive ops with cheaper equivalents (<code>*4 → &lt;&lt;2</code>)</li>
+                    <li><strong>Loop Invariant Code Motion:</strong> Hoist invariant computations to preheader</li>
+                    <li><strong>Loop Unrolling:</strong> Replicate loop body to reduce control overhead</li>
+                    <li><strong>Loop Jamming:</strong> Merge adjacent loops with same iteration space</li>
+                    <li><strong>Dominator:</strong> A dominates B if every path to B passes through A</li>
+                    <li><strong>Back Edge:</strong> Edge n → d where d dominates n; defines a natural loop</li>
+                    <li><strong>Preheader:</strong> New block before loop header; safe place for hoisted code</li>
+                </ul>
+            </div>
+
+            <div class="revision-card">
+                <h4>Compiler Development — Key Definitions</h4>
+                <ul>
+                    <li><strong>Monolithic:</strong> Single unit; fast but hard to maintain; early compilers</li>
+                    <li><strong>Modular:</strong> Separate phases with IR interfaces; GCC, LLVM</li>
+                    <li><strong>Incremental:</strong> Persistent state, partial recompilation; IDEs</li>
+                    <li><strong>Parser Generators:</strong> Lex/Yacc, Bison, Flex, ANTLR</li>
+                    <li><strong>Compiler Frameworks:</strong> LLVM IR, GCC GIMPLE/RTL</li>
+                    <li><strong>Regression Testing:</strong> Run full test suite after every change</li>
+                    <li><strong>Differential Testing:</strong> Compare outputs of multiple compilers</li>
+                    <li><strong>Front-end Optimization:</strong> Scanner efficiency, AST simplification, early folding</li>
+                </ul>
+            </div>
+
+            <div class="exam-tip box">
+                <div class="box-label">Exam Night — Last 30 Minutes</div>
+                <p>Focus on: (1) Definitions of all 10 optimization techniques — write them in one line each. (2) The three compiler development approaches — memorize the comparison table. (3) The worked examples — be able to perform constant folding, constant propagation, CSE, and strength reduction on any given code snippet. (4) Safety conditions for loop-invariant code motion. (5) Peephole optimization characteristics. These five areas cover approximately 80% of the marks in Unit 5.</p>
+            </div>
+
+            <h2 id="likely-questions">Most Likely Exam Questions</h2>
+
+            <details>
+                <summary>Q1: Explain code optimization with five techniques (Constant Folding, CPE, Strength Reduction, DCE, Copy Propagation) — 10 Marks</summary>
+                <div class="detail-content">
+                    <p><strong>Structure:</strong> (1) Define code optimization in 2–3 sentences. (2) State that optimizations can be machine-independent or machine-dependent. (3) For each of the five techniques: give a one-line definition, explain the mechanism in 3–4 sentences, provide a before/after code example, and state one advantage. (4) Discuss how these techniques interact (CPE → Copy Prop → DCE chain). (5) Conclude with the importance of preserving semantics.</p>
+                    <p><strong>Expected length:</strong> 600–800 words. Allocate approximately 120–140 words per technique.</p>
+                </div>
+            </details>
+
+            <details>
+                <summary>Q2: What is peephole optimization? Characteristics + machine-dependent/independent techniques — 10 Marks</summary>
+                <div class="detail-content">
+                    <p><strong>Structure:</strong> (1) Define peephole optimization with the sliding window analogy. (2) List and explain 6–7 characteristics (small window, pattern-based, iterative, local scope, post-pass, low cost, machine-dependent or independent). (3) Explain 3–4 machine-independent techniques (redundant instruction elimination, unreachable code elimination, flow-of-control optimization, algebraic simplification). (4) Explain 2–3 machine-dependent techniques (machine idioms, branch optimization, addressing mode exploitation). (5) Give examples for each category.</p>
+                    <p><strong>Expected length:</strong> 700–900 words.</p>
+                </div>
+            </details>
+
+            <details>
+                <summary>Q3: Short notes — Loop jamming/unrolling, CSE elimination, Loop invariant code motion — 10 Marks</summary>
+                <div class="detail-content">
+                    <p><strong>Structure:</strong> Treat each as a separate mini-essay. For each: (1) Definition, (2) Mechanism, (3) Example, (4) Advantages, (5) Limitations/Safety conditions. For loop jamming: mention same iteration space requirement. For loop unrolling: mention code size tradeoff. For CSE: mention DAG representation. For code motion: mention preheader and dominance.</p>
+                    <p><strong>Expected length:</strong> ~250–300 words per topic, total ~800–1000 words.</p>
+                </div>
+            </details>
+
+            <details>
+                <summary>Q4: Compare monolithic, modular, and incremental approaches — 10 Marks</summary>
+                <div class="detail-content">
+                    <p><strong>Structure:</strong> (1) Briefly define each approach. (2) For each: explain the architecture, give an example, and list 3–4 advantages and 3–4 disadvantages. (3) Include a comparison table with at least 6 criteria. (4) Discuss how the choice influences tool selection. (5) Conclude with which approach is best suited for which context.</p>
+                    <p><strong>Expected length:</strong> 600–800 words plus the comparison table.</p>
+                </div>
+            </details>
+
+            <details>
+                <summary>Q5: Apply optimizations to the given code snippets — 5–10 Marks</summary>
+                <div class="detail-content">
+                    <p><strong>Structure:</strong> (1) Write the three-address code for the snippet. (2) Identify each optimization opportunity and state which technique applies. (3) Show the code after each optimization (step by step). (4) Show the final optimized code. (5) Explain what was saved (e.g., "2 multiplications per iteration eliminated").</p>
+                    <p><strong>Key:</strong> Always show intermediate steps — professors give partial marks for identification even if the final code is wrong.</p>
+                </div>
+            </details>
+
+
+            <h2 id="answer-writing">Answer Writing Guide for Long-Form Questions</h2>
+
+            <div class="answer-structure">
+                <h4>Template: How to Write a 15-Mark Answer</h4>
+                <ol>
+                    <li><strong>Opening Definition</strong> (1–2 marks): Define the concept precisely in 2–3 sentences. Use standard textbook language.</li>
+                    <li><strong>Contextual Motivation</strong> (1 mark): Explain why this concept exists — what problem does it solve?</li>
+                    <li><strong>Detailed Explanation</strong> (5–6 marks): Explain the mechanism step by step. Use an algorithm, pseudocode, or numbered steps. Include all sub-cases and conditions.</li>
+                    <li><strong>Diagram</strong> (2 marks): Draw a clear, labeled diagram. Use boxes, arrows, and annotations. Spend 30 seconds making it neat.</li>
+                    <li><strong>Example</strong> (2–3 marks): Provide a concrete code example with before/after. Walk through the transformation step by step.</li>
+                    <li><strong>Advantages/Disadvantages</strong> (1–2 marks): List 3–4 of each, or discuss tradeoffs.</li>
+                    <li><strong>Conclusion/Connection</strong> (1 mark): Connect to related concepts. Mention how this technique interacts with others.</li>
+                </ol>
+            </div>
+
+            <div class="memory-box box">
+                <div class="box-label">Memory Anchor — The Synergy Chain</div>
+                <p>Remember the optimization chain as a relay race: <strong>Constant Propagation</strong> hands off to <strong>Constant Folding</strong>, which hands off to <strong>Copy Propagation</strong>, which hands off to <strong>Dead Code Elimination</strong>. Each technique creates opportunities for the next. This is why compilers run multiple passes and iterate until no further improvements are found (a fixed point). If you understand this chain, you understand how the five basic optimizations work together — and this is exactly what professors want to see in a 10-mark answer.</p>
+            </div>
+
+            <div class="viva-box box">
+                <div class="box-label">Viva Voce — Frequently Asked Questions</div>
+                <p><strong>Q: What is the difference between local and global optimization?</strong><br>
+                A: Local optimization operates within a single basic block; global optimization operates across the entire control flow graph of a procedure.</p>
+                <p><strong>Q: Why is loop optimization the most important?</strong><br>
+                A: Programs spend 90%+ of execution time in loops, so optimizing loops has the highest impact on overall performance.</p>
+                <p><strong>Q: Can optimization change program semantics?</strong><br>
+                A: No — optimization must preserve the observable behavior of the program. This is the fundamental correctness requirement.</p>
+                <p><strong>Q: What is a natural loop vs. an inner loop?</strong><br>
+                A: A natural loop is defined by a single back edge. An inner loop is a natural loop that contains no other natural loops. The innermost loop is where optimization has the greatest impact.</p>
+                <p><strong>Q: Why do we need a preheader?</strong><br>
+                A: The preheader provides a safe location outside the loop where loop-invariant code can be moved. It ensures the hoisted code executes exactly once before the loop begins.</p>
+                <p><strong>Q: What is the difference between machine-dependent and machine-independent optimization?</strong><br>
+                A: Machine-independent optimizations operate on the IR without knowledge of the target machine. Machine-dependent optimizations exploit features of the target instruction set (register count, instruction costs, addressing modes).</p>
+            </div>
+
+            <div class="divider">· · ·</div>
+
+            <p style="text-align: center; color: var(--text-muted); font-family: 'Playfair Display', serif; font-size: 0.9rem; font-style: italic; margin-top: 2rem;">End of Unit V Study Guide</p>
+            <p style="text-align: center; color: var(--border); font-size: 0.8rem; letter-spacing: 0.15em; text-transform: uppercase;">TCS-601 · Compiler Design</p>
+
+        </div><!-- /content-area -->
+    </div><!-- /main -->
+
+    <!-- SCROLL TO TOP -->
+    <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">↑</button>
+
+    <script>
+        // Sidebar toggle
+        const sidebar = document.getElementById('sidebar');
+        const toggle = document.getElementById('sidebarToggle');
+        toggle.addEventListener('click', () => {
+            sidebar.classList.toggle('open');
+        });
+
+        // Close sidebar on link click (mobile)
+        sidebar.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (window.innerWidth <= 900) {
+                    sidebar.classList.remove('open');
+                }
+            });
+        });
+
+        // Active nav highlighting
+        const sections = document.querySelectorAll('h2[id], h3[id]');
+        const navLinks = document.querySelectorAll('.sidebar a');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const id = entry.target.getAttribute('id');
+                    navLinks.forEach(link => {
+                        link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+                    });
+                }
+            });
+        }, { rootMargin: '-20% 0px -70% 0px' });
+
+        sections.forEach(section => observer.observe(section));
+
+        // Scroll to top button
+        const scrollTopBtn = document.getElementById('scrollTop');
+        window.addEventListener('scroll', () => {
+            scrollTopBtn.classList.toggle('visible', window.scrollY > 600);
+        });
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // Close sidebar when clicking outside (mobile)
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 900 &&
+                !sidebar.contains(e.target) &&
+                !toggle.contains(e.target) &&
+                sidebar.classList.contains('open')) {
+                sidebar.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,2084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Compiler Design TCS-601 — Unit 1: Introduction &amp; Lexical Analysis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;0,700;1,400&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf6ef;
+  --bg-alt: #f0ebe3;
+  --surface: #ffffff;
+  --accent-warm: #c4553a;
+  --accent-teal: #3a7c8c;
+  --accent-gold: #c8a84e;
+  --accent-green: #5a8f5a;
+  --accent-plum: #7a4a6a;
+  --text: #2b1d12;
+  --text-muted: #7a6b5b;
+  --text-light: #a09080;
+  --border: #d4c9b8;
+  --border-light: #e8e0d4;
+  --code-bg: #2b2520;
+  --code-text: #e8ddd0;
+  --shadow: rgba(43, 29, 18, 0.08);
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Source Serif 4', 'Georgia', serif;
+  --font-mono: 'DM Mono', 'Courier New', monospace;
+  --font-heading: 'Playfair Display', Georgia, serif;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 18px; }
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.75;
+  position: relative;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+h1, h2, h3, h4, h5, h6 { font-family: var(--font-display); font-weight: 700; line-height: 1.25; }
+p { margin-bottom: 1.2em; }
+a { color: var(--accent-teal); text-decoration: underline; text-underline-offset: 3px; }
+a:hover { color: var(--accent-warm); }
+
+/* Layout */
+.page-wrapper { max-width: 900px; margin: 0 auto; padding: 0 2rem; }
+.full-bleed { max-width: 100%; margin: 0 -2rem; padding: 2rem; }
+
+/* Navigation */
+.top-nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(250, 246, 239, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 2rem;
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.05em;
+}
+.top-nav .nav-brand { font-weight: 500; color: var(--accent-warm); text-transform: uppercase; }
+.top-nav .nav-links { display: flex; gap: 1.5rem; }
+.top-nav .nav-links a { color: var(--text-muted); text-decoration: none; }
+.top-nav .nav-links a:hover { color: var(--accent-warm); }
+.print-btn {
+  background: var(--accent-warm); color: white; border: none;
+  padding: 0.3rem 0.8rem; border-radius: 3px; cursor: pointer;
+  font-family: var(--font-mono); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em;
+}
+.print-btn:hover { background: #a3402a; }
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 5rem 1rem 3rem;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 3rem;
+  position: relative;
+}
+.hero::after {
+  content: ''; position: absolute; bottom: -1px; left: 50%; transform: translateX(-50%);
+  width: 60px; height: 3px; background: var(--accent-warm);
+}
+.hero .course-code {
+  font-family: var(--font-mono); font-size: 0.7rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--text-muted); margin-bottom: 1rem;
+}
+.hero h1 {
+  font-family: var(--font-heading); font-size: 3rem; font-weight: 800;
+  color: var(--text); margin-bottom: 0.5rem; letter-spacing: -0.02em;
+}
+.hero .subtitle {
+  font-family: var(--font-display); font-size: 1.4rem; font-weight: 400;
+  font-style: italic; color: var(--text-muted); margin-bottom: 1.5rem;
+}
+.hero .meta-line {
+  font-family: var(--font-mono); font-size: 0.65rem;
+  color: var(--text-light); letter-spacing: 0.1em; text-transform: uppercase;
+}
+
+/* Decorative dividers */
+.divider {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1rem; margin: 3rem 0; color: var(--border); font-size: 1.2rem;
+}
+.divider::before, .divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+/* Section styling */
+.section-number {
+  font-family: var(--font-mono); font-size: 0.65rem;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--accent-warm); margin-bottom: 0.5rem; display: block;
+}
+.section-title {
+  font-family: var(--font-heading); font-size: 2.2rem;
+  color: var(--text); margin-bottom: 0.3rem; font-weight: 800;
+}
+.section-subtitle {
+  font-family: var(--font-display); font-size: 1.15rem;
+  font-style: italic; color: var(--text-muted); margin-bottom: 2rem;
+}
+.content-section { margin-bottom: 4rem; }
+
+/* Cards */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2rem;
+  margin: 1.5rem 0;
+  box-shadow: 0 2px 8px var(--shadow);
+  position: relative;
+}
+.card-accent-left {
+  border-left: 4px solid var(--accent-warm);
+}
+.card-teal { border-left-color: var(--accent-teal); }
+.card-gold { border-left-color: var(--accent-gold); }
+.card-green { border-left-color: var(--accent-green); }
+.card-plum { border-left-color: var(--accent-plum); }
+.card-title {
+  font-family: var(--font-display); font-size: 1.3rem; font-weight: 700;
+  margin-bottom: 1rem; color: var(--text);
+}
+
+/* Definition box */
+.def-box {
+  background: linear-gradient(135deg, #f8f3ea, #faf6ef);
+  border: 2px solid var(--accent-gold);
+  border-radius: 4px;
+  padding: 1.5rem 2rem;
+  margin: 1.5rem 0;
+  position: relative;
+}
+.def-box::before {
+  content: 'Definition';
+  position: absolute; top: -0.6rem; left: 1.5rem;
+  background: var(--accent-gold); color: white;
+  font-family: var(--font-mono); font-size: 0.6rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.15rem 0.6rem; border-radius: 2px;
+}
+
+/* Exam tip box */
+.exam-tip {
+  background: linear-gradient(135deg, #fef5f0, #faf6ef);
+  border: 2px solid var(--accent-warm);
+  border-radius: 4px;
+  padding: 1.5rem 2rem;
+  margin: 1.5rem 0;
+  position: relative;
+}
+.exam-tip::before {
+  content: 'Exam Tip';
+  position: absolute; top: -0.6rem; left: 1.5rem;
+  background: var(--accent-warm); color: white;
+  font-family: var(--font-mono); font-size: 0.6rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.15rem 0.6rem; border-radius: 2px;
+}
+
+/* Confusion box */
+.confusion-box {
+  background: linear-gradient(135deg, #f0f4f8, #faf6ef);
+  border: 2px solid var(--accent-teal);
+  border-radius: 4px;
+  padding: 1.5rem 2rem;
+  margin: 1.5rem 0;
+  position: relative;
+}
+.confusion-box::before {
+  content: 'Common Confusion';
+  position: absolute; top: -0.6rem; left: 1.5rem;
+  background: var(--accent-teal); color: white;
+  font-family: var(--font-mono); font-size: 0.6rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.15rem 0.6rem; border-radius: 2px;
+}
+
+/* Memory anchor box */
+.memory-box {
+  background: linear-gradient(135deg, #f5f0f8, #faf6ef);
+  border: 2px solid var(--accent-plum);
+  border-radius: 4px;
+  padding: 1.5rem 2rem;
+  margin: 1.5rem 0;
+  position: relative;
+}
+.memory-box::before {
+  content: 'Memory Anchor';
+  position: absolute; top: -0.6rem; left: 1.5rem;
+  background: var(--accent-plum); color: white;
+  font-family: var(--font-mono); font-size: 0.6rem;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0.15rem 0.6rem; border-radius: 2px;
+}
+
+/* Pull quote */
+.pull-quote {
+  font-family: var(--font-display); font-size: 1.4rem;
+  font-style: italic; color: var(--accent-warm);
+  border-left: 3px solid var(--accent-warm);
+  padding: 0.5rem 0 0.5rem 1.5rem;
+  margin: 2rem 0;
+}
+
+/* Tables */
+.styled-table {
+  width: 100%; border-collapse: collapse;
+  margin: 1.5rem 0; font-size: 0.85rem;
+}
+.styled-table th {
+  background: var(--accent-warm); color: white;
+  font-family: var(--font-mono); font-size: 0.7rem;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.8rem 1rem; text-align: left;
+}
+.styled-table td {
+  padding: 0.7rem 1rem; border-bottom: 1px solid var(--border-light);
+  vertical-align: top;
+}
+.styled-table tr:nth-child(even) td { background: rgba(244, 240, 232, 0.5); }
+.styled-table tr:hover td { background: rgba(196, 85, 58, 0.04); }
+
+/* Code */
+pre {
+  background: var(--code-bg); color: var(--code-text);
+  padding: 1.5rem; border-radius: 4px;
+  font-family: var(--font-mono); font-size: 0.78rem;
+  line-height: 1.6; overflow-x: auto;
+  margin: 1.5rem 0; border: 1px solid rgba(255,255,255,0.05);
+}
+code {
+  font-family: var(--font-mono); font-size: 0.82em;
+  background: rgba(58, 124, 140, 0.08); padding: 0.15em 0.35em;
+  border-radius: 2px;
+}
+pre code { background: none; padding: 0; }
+
+/* SVG diagrams */
+.diagram-container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+  box-shadow: 0 2px 8px var(--shadow);
+  text-align: center;
+  overflow-x: auto;
+}
+.diagram-container svg { max-width: 100%; height: auto; }
+.diagram-caption {
+  font-family: var(--font-mono); font-size: 0.7rem;
+  color: var(--text-muted); text-align: center;
+  margin-top: 1rem; letter-spacing: 0.05em;
+}
+
+/* Collapsible */
+details {
+  margin: 1rem 0; border: 1px solid var(--border);
+  border-radius: 4px; background: var(--surface);
+}
+details summary {
+  padding: 0.8rem 1.2rem; cursor: pointer;
+  font-family: var(--font-display); font-weight: 600;
+  font-size: 1.05rem; color: var(--text);
+  background: var(--bg-alt); border-radius: 4px;
+  list-style: none; position: relative;
+  transition: background 0.2s;
+}
+details summary::-webkit-details-marker { display: none; }
+details summary::before {
+  content: '\\25B6'; display: inline-block;
+  margin-right: 0.8rem; font-size: 0.65rem;
+  color: var(--accent-warm); transition: transform 0.2s;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details summary:hover { background: #ece7df; }
+details .detail-content { padding: 1.2rem 1.5rem; }
+
+/* Sidenote */
+.sidenote {
+  font-family: var(--font-mono); font-size: 0.7rem;
+  color: var(--text-muted); background: var(--bg-alt);
+  padding: 0.8rem 1rem; border-radius: 3px;
+  margin: 1rem 0; border-left: 3px solid var(--border);
+}
+
+/* Key concept highlight */
+.key-concept {
+  background: rgba(200, 168, 78, 0.12);
+  border-left: 3px solid var(--accent-gold);
+  padding: 0.8rem 1.2rem; margin: 1rem 0;
+  font-style: italic;
+}
+
+/* Steps list */
+.step-list { counter-reset: step; list-style: none; padding: 0; }
+.step-list li {
+  counter-increment: step; padding: 0.8rem 0 0.8rem 3rem;
+  position: relative; border-left: 2px solid var(--border-light);
+  margin-left: 1rem;
+}
+.step-list li::before {
+  content: counter(step);
+  position: absolute; left: -0.8rem; top: 0.65rem;
+  width: 1.6rem; height: 1.6rem;
+  background: var(--accent-warm); color: white;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono); font-size: 0.7rem; font-weight: 500;
+}
+.step-list li:last-child { border-left-color: transparent; }
+
+/* Flow list */
+.flow-list {
+  display: flex; flex-wrap: wrap; gap: 0.5rem;
+  align-items: center; margin: 1rem 0;
+}
+.flow-item {
+  background: var(--accent-teal); color: white;
+  padding: 0.4rem 1rem; border-radius: 3px;
+  font-family: var(--font-mono); font-size: 0.75rem;
+}
+.flow-arrow { color: var(--text-muted); font-size: 1.2rem; }
+
+/* Revision card grid */
+.revision-grid {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1rem; margin: 1.5rem 0;
+}
+.revision-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-top: 3px solid var(--accent-warm);
+  padding: 1.2rem; border-radius: 4px;
+}
+.revision-card h4 {
+  font-family: var(--font-display); font-size: 1.1rem;
+  margin-bottom: 0.5rem; color: var(--accent-warm);
+}
+
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-in {
+  opacity: 0; animation: fadeUp 0.6s ease forwards;
+}
+.animate-in:nth-child(2) { animation-delay: 0.1s; }
+.animate-in:nth-child(3) { animation-delay: 0.2s; }
+.animate-in:nth-child(4) { animation-delay: 0.3s; }
+
+/* Back to top */
+.back-to-top {
+  position: fixed; bottom: 2rem; right: 2rem;
+  width: 40px; height: 40px; border-radius: 50%;
+  background: var(--accent-warm); color: white;
+  border: none; cursor: pointer; display: none;
+  align-items: center; justify-content: center;
+  font-size: 1.2rem; z-index: 50;
+  box-shadow: 0 2px 10px rgba(196,85,58,0.3);
+  transition: transform 0.2s;
+}
+.back-to-top:hover { transform: scale(1.1); }
+
+/* Token table special */
+.token-example { font-family: var(--font-mono); font-size: 0.8rem; }
+
+/* Print */
+@media print {
+  body::before { display: none; }
+  .top-nav, .back-to-top, .print-btn { display: none; }
+  .page-wrapper { max-width: 100%; }
+  details[open] .detail-content { display: block; }
+  .card, .def-box, .exam-tip, .confusion-box, .memory-box {
+    break-inside: avoid;
+  }
+  body { font-size: 12pt; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  html { font-size: 16px; }
+  .hero h1 { font-size: 2rem; }
+  .section-title { font-size: 1.6rem; }
+  .page-wrapper { padding: 0 1rem; }
+  .top-nav .nav-links { display: none; }
+  .revision-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="top-nav">
+  <span class="nav-brand">TCS-601 &middot; Unit 1</span>
+  <div class="nav-links">
+    <a href="#sec-intro">Intro</a>
+    <a href="#sec-phases">Phases</a>
+    <a href="#sec-lexical">Lexical</a>
+    <a href="#sec-tokens">Tokens</a>
+    <a href="#sec-lex">LEX</a>
+    <a href="#sec-exam">Exam Prep</a>
+  </div>
+  <button class="print-btn" onclick="window.print()">Print</button>
+</nav>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="course-code">TCS-601 &middot; Compiler Design &middot; Unit 1</div>
+  <h1>Introduction &amp; Lexical Analysis</h1>
+  <p class="subtitle">From Source Code to Tokens &mdash; The First Steps of Compilation</p>
+  <p class="meta-line">Phases of a Compiler &middot; Lexical Analysis &middot; Input Buffering &middot; Token Specification &amp; Recognition &middot; LEX</p>
+</header>
+
+<div class="page-wrapper">
+
+<!-- ============================================================ -->
+<!-- TABLE OF CONTENTS -->
+<!-- ============================================================ -->
+<nav class="card card-accent-left" id="toc" style="margin-bottom:3rem;">
+  <div class="card-title">Table of Contents</div>
+  <ol style="columns:2; column-gap:2rem; font-size:0.88rem; padding-left:1.2rem;">
+    <li style="margin-bottom:0.4rem;"><a href="#sec-intro">What Is a Compiler?</a></li>
+    <li style="margin-bottom:0.4rem;"><a href="#sec-analysis">Analysis of a Source Program</a></li>
+    <li style="margin-bottom:0.4rem;"><a href="#sec-phases">The Phases of a Compiler</a></li>
+    <li style="margin-bottom:0.4rem;"><a href="#sec-walkthrough">Detailed Walkthrough: Compilation in Action</a></li>
+    <li style="margin-bottom:0.4rem;"><a href="#sec-frontend-backend">Front-End vs. Back-End</a></li>
+    <li style="margin-bottom:0.4rem;"><a href="#sec-cousins">Cousins of the Compiler</a></li>
+    <li style="margin-bottom:0.4rem;"><a href="#sec-grouping">Grouping of Phases &amp; Passes</a></li>
+    <li style="margin-bottom:0.4rem;"><a href="#sec-tools">Compiler Construction Tools</a></li>
+    <li style="margin-bottom:0.4rem;"><a href="#sec-lexical">Lexical Analysis: The First Gate</a></li>
+    <li style="margin-bottom:0.4rem;"><a href="#sec-buffering">Input Buffering</a></li>
+    <li style="margin-bottom:0.4rem;"><a href="#sec-tokens">Specification &amp; Recognition of Tokens</a></li>
+    <li style="margin-bottom:0.4rem;"><a href="#sec-lex">The LEX Compiler</a></li>
+    <li style="margin-bottom:0.4rem;"><a href="#sec-exam">Exam Mastery &amp; Revision</a></li>
+  </ol>
+</nav>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 1: WHAT IS A COMPILER? -->
+<!-- ============================================================ -->
+<section class="content-section" id="sec-intro">
+  <span class="section-number">Section 1</span>
+  <h2 class="section-title">What Is a Compiler?</h2>
+  <p class="section-subtitle">Understanding the bridge between human thought and machine execution</p>
+
+  <p>At its most fundamental level, a <strong>compiler</strong> is a program that reads a program written in one language — the <em>source language</em> — and translates it into an equivalent program in another language — the <em>target language</em>. In the vast majority of practical cases that a computer science student will encounter, the source language is a high-level programming language such as C, Java, or Pascal, and the target language is a low-level language such as assembly code or machine code that a particular processor can directly execute. This definition, while correct, barely scratches the surface of what makes compilers one of the most intellectually rich and practically significant areas in all of computer science. The act of compilation is not a simple word-for-word substitution; it is a profound transformation that must preserve the meaning, the semantics, of the original program while restructuring it entirely into a form that a fundamentally different kind of entity — a digital circuit — can interpret.</p>
+
+  <p>The reason compilers exist at all is rooted in a basic ergonomic reality: human beings think in terms of abstractions, structures, variables, loops, and mathematical expressions, whereas computers operate on binary voltage patterns that correspond to instructions in a processor's instruction set. Writing machine code by hand is not merely tedious; it is error-prone to the point of impossibility for any program of meaningful complexity. The compiler serves as an indispensable translator in this gap, allowing the programmer to express intent in a notation that is close to natural mathematical and logical reasoning, and then systematically converting that intent into precise mechanical steps. Without compilers, the entire edifice of modern software — operating systems, web browsers, mobile applications, scientific simulations — would simply not exist.</p>
+
+  <div class="def-box">
+    <p><strong>Formal Definition:</strong> A compiler is a program that reads a source program written in a high-level language and translates it into a functionally equivalent target program, typically in assembly language or machine language, while reporting any errors detected during the translation process.</p>
+  </div>
+
+  <p>It is important, especially at the university level, to distinguish a compiler from an <strong>interpreter</strong>. While both process high-level language programs, they do so in fundamentally different ways. A compiler translates the <em>entire</em> source program into a target program before execution begins; the target program then runs independently. An interpreter, by contrast, processes the source program line by line or statement by statement, executing each instruction as it goes, without ever producing a standalone target program. The practical consequences are significant: compiled programs generally run faster because the translation overhead is paid once, upfront, and the resulting machine code executes natively on the hardware. Interpreted programs, on the other hand, offer greater flexibility for debugging and interactive development, since there is no separate compilation step. Many modern systems, such as Java, use a hybrid approach — compiling to an intermediate bytecode and then interpreting or just-in-time compiling that bytecode.</p>
+
+  <div class="memory-box">
+    <p><strong>Analogy:</strong> Think of a compiler as a professional translator who takes an entire novel written in French and produces a complete English edition. The reader then reads the English book independently. An interpreter, by contrast, is like a live translator sitting between two people in a conversation, converting each sentence as it is spoken. The compiled version takes longer to prepare but reads faster; the interpreted version starts immediately but proceeds more slowly.</p>
+  </div>
+
+  <div class="exam-tip">
+    <p>In exams, when asked to define a compiler, always mention: (1) it translates source language to target language, (2) it preserves the semantics (meaning) of the source, (3) it reports errors, and (4) the target is typically assembly or machine code. Mentioning the compiler-vs-interpreter distinction earns additional marks in 5-mark and 10-mark questions.</p>
+  </div>
+</section>
+
+<div class="divider">&#10043;</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: ANALYSIS OF SOURCE PROGRAM -->
+<!-- ============================================================ -->
+<section class="content-section" id="sec-analysis">
+  <span class="section-number">Section 2</span>
+  <h2 class="section-title">Analysis of a Source Program</h2>
+  <p class="section-subtitle">Deconstructing a program at multiple levels of abstraction</p>
+
+  <p>When a compiler encounters a source program, it does not simply read it as a flat stream of characters. Instead, it decomposes the program through a sequence of increasingly abstract analyses, each of which uncovers a different layer of structure. Understanding these layers of analysis is essential to understanding why a compiler is divided into the phases that it is, and each layer corresponds to a different kind of question the compiler asks about the program.</p>
+
+  <p>The first level of analysis is <strong>lexical analysis</strong>, where the compiler examines the raw character stream and groups characters into meaningful units called <em>tokens</em>. Consider the statement <code>position := initial + rate * 60</code>. At the character level, this is just a sequence of twenty-seven characters (including spaces). Lexical analysis recognizes that <code>position</code> is an identifier, that <code>:=</code> is an assignment operator, that <code>initial</code> is another identifier, that <code>+</code> is an arithmetic operator, that <code>rate</code> is an identifier, that <code>*</code> is a multiplication operator, and that <code>60</code> is a numeric literal. The spaces between tokens are generally discarded as whitespace, which serves only to delimit tokens. This process of chunking characters into tokens is analogous to how a reader of English text groups individual letters into words, ignoring the spaces between them.</p>
+
+  <p>The second level is <strong>syntax analysis</strong> (or parsing), where the compiler examines the sequence of tokens and determines whether they form a grammatically valid statement according to the rules of the programming language. The parser organizes tokens into a hierarchical structure — typically a parse tree or an abstract syntax tree — that reflects the syntactic structure of the program. For our example, the parser would determine that the statement is an assignment statement, that the right-hand side is an arithmetic expression involving addition and multiplication, and that multiplication has higher precedence than addition, so the tree groups <code>rate * 60</code> before adding <code>initial</code>.</p>
+
+  <p>The third level is <strong>semantic analysis</strong>, where the compiler checks whether the syntactically valid statement is also <em>meaningful</em>. This involves checking type compatibility (you cannot multiply a string by an integer), verifying that all variables have been declared, ensuring that function calls have the correct number and types of arguments, and performing other contextual checks that cannot be captured by syntax rules alone. Semantic analysis uses information stored in a <strong>symbol table</strong>, which is a data structure that records information about every identifier in the program — its type, scope, memory location, and other attributes.</p>
+
+  <div class="key-concept">
+    <p>The three levels of analysis — lexical, syntactic, and semantic — correspond to three fundamentally different kinds of questions: <em>What are the words?</em> (lexical), <em>Is the sentence grammatical?</em> (syntactic), and <em>Does the sentence make sense?</em> (semantic). This layered approach mirrors how natural language understanding works and is one of the great organizing principles of compiler design.</p>
+  </div>
+</section>
+
+<div class="divider">&#10043;</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: PHASES OF A COMPILER -->
+<!-- ============================================================ -->
+<section class="content-section" id="sec-phases">
+  <span class="section-number">Section 3</span>
+  <h2 class="section-title">The Phases of a Compiler</h2>
+  <p class="section-subtitle">Six transformations from source to target, orchestrated by symbol table and error handler</p>
+
+  <p>A compiler is not a monolithic block of code; it is organized into a series of <strong>phases</strong>, each of which transforms the program from one representation to another, progressively moving it closer to the target language. The classical model of a compiler, as presented in the Dragon Book (Aho, Lam, Sethi, Ullman), identifies six main phases plus two essential supporting components: the <strong>symbol table manager</strong> and the <strong>error handler</strong>. Understanding each phase, its input, its output, and the specific transformation it performs is absolutely central to answering exam questions in compiler design, and it is the kind of knowledge that rewards deep understanding rather than rote memorization.</p>
+
+  <!-- Main Compiler Phases Diagram -->
+  <div class="diagram-container">
+    <svg viewBox="0 0 1100 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Phases of a Compiler diagram showing the six main phases in a horizontal pipeline with symbol table and error handler below">
+      <defs>
+        <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto" fill="#2b1d12">
+          <polygon points="0 0, 10 3.5, 0 7"/>
+        </marker>
+        <marker id="arrow-teal" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto" fill="#3a7c8c">
+          <polygon points="0 0, 10 3.5, 0 7"/>
+        </marker>
+        <marker id="arrow-warm" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto" fill="#c4553a">
+          <polygon points="0 0, 10 3.5, 0 7"/>
+        </marker>
+      </defs>
+
+      <!-- Source Program -->
+      <rect x="15" y="190" width="110" height="60" rx="6" fill="#c4553a" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="70" y="216" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="12" font-weight="600">Source</text>
+      <text x="70" y="234" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="12" font-weight="600">Program</text>
+
+      <!-- Arrow: Source → Lexical -->
+      <line x1="125" y1="220" x2="155" y2="220" stroke="#2b1d12" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Phase 1: Lexical Analysis -->
+      <rect x="160" y="170" width="120" height="80" rx="6" fill="#3a7c8c" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="220" y="202" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="11.5" font-weight="600">Lexical</text>
+      <text x="220" y="218" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="11.5" font-weight="600">Analysis</text>
+      <text x="220" y="238" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="DM Mono, monospace" font-size="9">(Scanner)</text>
+
+      <!-- Arrow: Lexical → Syntax -->
+      <line x1="280" y1="210" x2="310" y2="210" stroke="#2b1d12" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Phase 2: Syntax Analysis -->
+      <rect x="315" y="170" width="120" height="80" rx="6" fill="#3a7c8c" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="375" y="202" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="11.5" font-weight="600">Syntax</text>
+      <text x="375" y="218" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="11.5" font-weight="600">Analysis</text>
+      <text x="375" y="238" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="DM Mono, monospace" font-size="9">(Parser)</text>
+
+      <!-- Arrow: Syntax → Semantic -->
+      <line x1="435" y1="210" x2="465" y2="210" stroke="#2b1d12" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Phase 3: Semantic Analysis -->
+      <rect x="470" y="170" width="120" height="80" rx="6" fill="#3a7c8c" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="530" y="202" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="11.5" font-weight="600">Semantic</text>
+      <text x="530" y="218" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="11.5" font-weight="600">Analysis</text>
+
+      <!-- Arrow: Semantic → Intermediate -->
+      <line x1="590" y1="210" x2="620" y2="210" stroke="#2b1d12" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Phase 4: Intermediate Code Gen -->
+      <rect x="625" y="170" width="140" height="80" rx="6" fill="#5a8f5a" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="695" y="198" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="11" font-weight="600">Intermediate</text>
+      <text x="695" y="214" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="11" font-weight="600">Code</text>
+      <text x="695" y="230" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="11" font-weight="600">Generation</text>
+
+      <!-- Arrow: Intermediate → Optimizer -->
+      <line x1="765" y1="210" x2="795" y2="210" stroke="#2b1d12" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Phase 5: Code Optimization -->
+      <rect x="800" y="170" width="120" height="80" rx="6" fill="#5a8f5a" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="860" y="202" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="11.5" font-weight="600">Code</text>
+      <text x="860" y="218" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="11.5" font-weight="600">Optimization</text>
+
+      <!-- Arrow: Optimizer → Code Gen -->
+      <line x1="920" y1="210" x2="950" y2="210" stroke="#2b1d12" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Phase 6: Code Generation -->
+      <rect x="955" y="185" width="120" height="50" rx="6" fill="#c8a84e" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="1015" y="206" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="11.5" font-weight="600">Code</text>
+      <text x="1015" y="222" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="11.5" font-weight="600">Generation</text>
+
+      <!-- Front-end bracket -->
+      <line x1="160" y1="150" x2="590" y2="150" stroke="#3a7c8c" stroke-width="2"/>
+      <line x1="160" y1="145" x2="160" y2="155" stroke="#3a7c8c" stroke-width="2"/>
+      <line x1="590" y1="145" x2="590" y2="155" stroke="#3a7c8c" stroke-width="2"/>
+      <text x="375" y="143" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="11" font-weight="500">FRONT END</text>
+
+      <!-- Back-end bracket -->
+      <line x1="625" y1="150" x2="860" y2="150" stroke="#5a8f5a" stroke-width="2"/>
+      <line x1="625" y1="145" x2="625" y2="155" stroke="#5a8f5a" stroke-width="2"/>
+      <line x1="860" y1="145" x2="860" y2="155" stroke="#5a8f5a" stroke-width="2"/>
+      <text x="742" y="143" text-anchor="middle" fill="#5a8f5a" font-family="DM Mono, monospace" font-size="11" font-weight="500">BACK END</text>
+
+      <!-- Symbol Table (center bottom) -->
+      <rect x="380" y="340" width="180" height="60" rx="6" fill="#c8a84e" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="470" y="366" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="13" font-weight="600">Symbol Table</text>
+      <text x="470" y="384" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="DM Mono, monospace" font-size="9">Manager</text>
+
+      <!-- Dashed lines from phases to symbol table -->
+      <line x1="220" y1="250" x2="220" y2="290" stroke="#c8a84e" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="220" y1="290" x2="430" y2="290" stroke="#c8a84e" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="430" y1="290" x2="430" y2="340" stroke="#c8a84e" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <line x1="375" y1="250" x2="375" y2="310" stroke="#c8a84e" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="375" y1="310" x2="470" y2="310" stroke="#c8a84e" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="470" y1="310" x2="470" y2="340" stroke="#c8a84e" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <line x1="530" y1="250" x2="530" y2="310" stroke="#c8a84e" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="510" y1="310" x2="530" y2="310" stroke="#c8a84e" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="510" y1="310" x2="510" y2="340" stroke="#c8a84e" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <!-- Error Handler -->
+      <rect x="650" y="340" width="180" height="60" rx="6" fill="#c4553a" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="740" y="366" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="13" font-weight="600">Error Handler</text>
+      <text x="740" y="384" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="DM Mono, monospace" font-size="9">&amp; Error Reporting</text>
+
+      <!-- Dashed lines from phases to error handler -->
+      <line x1="220" y1="290" x2="700" y2="290" stroke="#c4553a" stroke-width="1" stroke-dasharray="4,3"/>
+      <line x1="700" y1="290" x2="700" y2="340" stroke="#c4553a" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <!-- Labels for inter-phase representations -->
+      <text x="140" y="260" font-family="DM Mono, monospace" font-size="8" fill="#7a6b5b" text-anchor="middle">char stream</text>
+      <text x="295" y="260" font-family="DM Mono, monospace" font-size="8" fill="#7a6b5b" text-anchor="middle">tokens</text>
+      <text x="450" y="260" font-family="DM Mono, monospace" font-size="8" fill="#7a6b5b" text-anchor="middle">parse tree</text>
+      <text x="605" y="260" font-family="DM Mono, monospace" font-size="8" fill="#7a6b5b" text-anchor="middle">annotated tree</text>
+      <text x="780" y="260" font-family="DM Mono, monospace" font-size="8" fill="#7a6b5b" text-anchor="middle">IR code</text>
+      <text x="940" y="260" font-family="DM Mono, monospace" font-size="8" fill="#7a6b5b" text-anchor="middle">opt. code</text>
+
+      <!-- Memory image label -->
+      <text x="1015" y="255" font-family="DM Mono, monospace" font-size="8" fill="#7a6b5b" text-anchor="middle">target code</text>
+    </svg>
+    <p class="diagram-caption">Fig 1. &mdash; The classical six-phase compiler architecture, showing the pipeline from source to target code, with the Symbol Table Manager and Error Handler as shared components. The bracket annotations show which phases compose the front end (analysis) and back end (synthesis).</p>
+  </div>
+
+  <!-- Phase 1: Lexical Analysis -->
+  <div class="card card-teal">
+    <h3 class="card-title">Phase 1 &mdash; Lexical Analysis (Scanning)</h3>
+    <p>The very first phase of compilation is <strong>lexical analysis</strong>, performed by the <strong>lexical analyzer</strong>, also called the <strong>scanner</strong>. This phase reads the raw character stream of the source program and groups characters into meaningful sequences called <strong>lexemes</strong>, producing a stream of <strong>tokens</strong> as output. Each token is a pair consisting of a <strong>token name</strong> (an abstract symbol representing the kind of lexical unit) and an optional <strong>attribute value</strong> (pointing to the relevant entry in the symbol table). Whitespace characters — spaces, tabs, newlines — are typically consumed and discarded by the scanner, since they serve only to separate lexemes and carry no semantic content in most programming languages (though in languages like Python, indentation does carry meaning, handled at later stages).</p>
+
+    <p>Consider the statement <code>position := initial + rate * 60</code>. The lexical analyzer produces the following token stream, which it passes to the next phase:</p>
+
+    <table class="styled-table">
+      <thead><tr><th>Lexeme</th><th>Token Name</th><th>Attribute Value</th></tr></thead>
+      <tbody>
+        <tr><td><code>position</code></td><td><code>&lt;id, 1&gt;</code></td><td>Symbol table entry 1</td></tr>
+        <tr><td><code>:=</code></td><td><code>&lt;assign&gt;</code></td><td>&mdash;</td></tr>
+        <tr><td><code>initial</code></td><td><code>&lt;id, 2&gt;</code></td><td>Symbol table entry 2</td></tr>
+        <tr><td><code>+</code></td><td><code>&lt;+&gt;</code></td><td>&mdash;</td></tr>
+        <tr><td><code>rate</code></td><td><code>&lt;id, 3&gt;</code></td><td>Symbol table entry 3</td></tr>
+        <tr><td><code>*</code></td><td><code>&lt;*&gt;</code></td><td>&mdash;</td></tr>
+        <tr><td><code>60</code></td><td><code>&lt;num, 4&gt;</code></td><td>Symbol table entry 4 (value: 60)</td></tr>
+      </tbody>
+    </table>
+
+    <p>The symbol table entries are populated during this phase. The lexical analyzer inserts each new identifier it encounters into the symbol table (if it is not already there) and passes a pointer to the entry as the token's attribute. For numeric literals, the actual numeric value may be stored. This is the compiler's first interaction with the symbol table, and it is far from the last — every subsequent phase will read from and write to this central data structure.</p>
+  </div>
+
+  <!-- Phase 2: Syntax Analysis -->
+  <div class="card card-accent-left">
+    <h3 class="card-title">Phase 2 &mdash; Syntax Analysis (Parsing)</h3>
+    <p>The <strong>syntax analyzer</strong>, or <strong>parser</strong>, receives the token stream from the lexical analyzer and organizes it into a hierarchical structure that reflects the grammatical structure of the source language. The most common representation is a <strong>parse tree</strong> (also called a <strong>syntax tree</strong>), in which the interior nodes represent syntactic constructs (such as "assignment statement" or "arithmetic expression") and the leaf nodes represent tokens. The parser checks whether the token sequence conforms to the grammar rules of the language — if the tokens form a sentence that can be derived from the start symbol of the grammar, the program is syntactically valid; otherwise, a <strong>syntax error</strong> is reported.</p>
+
+    <p>For our running example <code>position := initial + rate * 60</code>, the parser would construct a tree where the root is labeled "assignment," the left child is the identifier <code>position</code>, and the right child is an expression tree with <code>+</code> at its top, <code>initial</code> as its left operand, and <code>*</code> as its right operand's root, with <code>rate</code> and <code>60</code> as the multiplicand and multiplier. This tree structure captures the fact that multiplication binds more tightly than addition — a fact that was not explicitly present in the flat token stream but is part of the language's grammatical rules.</p>
+  </div>
+
+  <!-- Phase 3: Semantic Analysis -->
+  <div class="card card-teal">
+    <h3 class="card-title">Phase 3 &mdash; Semantic Analysis</h3>
+    <p><strong>Semantic analysis</strong> uses the syntactic structure produced by the parser and the information in the symbol table to check the source program for semantic consistency with the language definition. The most important task performed during this phase is <strong>type checking</strong>. The semantic analyzer examines each operator and its operands to verify that the types are compatible. If <code>rate</code> is declared as a floating-point number and <code>60</code> is an integer literal, the semantic analyzer may insert an implicit type conversion (a "coercion") from integer to float before the multiplication. If an operation involves fundamentally incompatible types — such as multiplying a string by a boolean — the semantic analyzer reports a <strong>type error</strong>.</p>
+
+    <p>A key data structure produced by semantic analysis is the <strong>annotated syntax tree</strong>, which is the parse tree augmented with type information at each node. The semantic analyzer may also perform other checks: verifying that every variable is declared before use, ensuring that function arguments match parameter types, checking that break statements appear only inside loops, and so on. The output of this phase is a fully validated, type-annotated intermediate representation ready for code generation.</p>
+  </div>
+
+  <!-- Phase 4: Intermediate Code Generation -->
+  <div class="card card-green">
+    <h3 class="card-title">Phase 4 &mdash; Intermediate Code Generation</h3>
+    <p>After semantic analysis, the compiler generates an explicit <strong>intermediate representation</strong> (IR) of the source program. This representation is designed to be easy to produce from the annotated syntax tree and easy to translate into the target machine code. It is deliberately independent of any specific machine architecture, which makes the compiler more portable and modular. The most common form of intermediate representation is <strong>three-address code</strong>, in which each instruction has at most one operator on the right-hand side and exactly one assignment on the left-hand side.</p>
+
+    <p>For our example <code>position := initial + rate * 60</code>, the three-address code would be:</p>
+<pre>t1 := int_to_real(60)
+t2 := rate * t1
+t3 := initial + t2
+position := t3</pre>
+    <p>Here, <code>t1</code>, <code>t2</code>, <code>t3</code> are compiler-generated temporary variables that hold intermediate results. The instruction <code>int_to_real(60)</code> represents the type conversion inserted by the semantic analyzer. Each instruction is simple enough that it can be implemented with a small number of machine instructions, making it an ideal bridge between the high-level source and the low-level target.</p>
+  </div>
+
+  <!-- Phase 5: Code Optimization -->
+  <div class="card card-green">
+    <h3 class="card-title">Phase 5 &mdash; Code Optimization</h3>
+    <p>The <strong>code optimization</strong> phase attempts to improve the intermediate code so that the resulting target code runs faster, uses less memory, or consumes less power, while preserving the exact meaning of the original program. This is one of the most mathematically sophisticated and practically impactful phases of compilation, and in industrial compilers (such as GCC or LLVM), the optimizer is by far the largest and most complex component.</p>
+
+    <p>Optimizations can be broadly classified into <strong>machine-independent optimizations</strong> (which operate on the intermediate code without knowledge of the target machine) and <strong>machine-dependent optimizations</strong> (which exploit specific features of the target hardware). Common machine-independent optimizations include <strong>constant folding</strong> (evaluating constant expressions at compile time), <strong>dead code elimination</strong> (removing code whose results are never used), <strong>common subexpression elimination</strong> (recomputing a previously computed expression only if its operands have changed), and <strong>loop optimization</strong> (moving invariant computations out of loops).</p>
+
+    <p>For our example, a simple optimization might observe that if <code>rate</code> and <code>initial</code> are constants known at compile time, the entire expression could be evaluated by the compiler and the result assigned directly — a process called <strong>constant propagation and folding</strong>. Even in the general case, the optimizer might reorder operations or eliminate unnecessary temporaries to produce more efficient code.</p>
+  </div>
+
+  <!-- Phase 6: Code Generation -->
+  <div class="card card-gold">
+    <h3 class="card-title">Phase 6 &mdash; Code Generation</h3>
+    <p>The final phase is <strong>code generation</strong>, which takes the optimized intermediate representation and translates it into the target language, typically assembly language or relocatable machine code for a specific processor architecture. This phase involves <strong>instruction selection</strong> (choosing which machine instructions to use for each IR operation), <strong>register allocation</strong> (deciding which variables and temporaries should reside in the limited number of processor registers at each point in the program), and <strong>instruction scheduling</strong> (ordering instructions to exploit the pipelining and parallelism of the target processor).</p>
+
+    <p>For a hypothetical machine with registers <code>R1</code>, <code>R2</code>, etc., the code for our example might look like:</p>
+<pre>MOVF  rate, R1     ; Load rate into R1
+MULF  #60.0, R1    ; Multiply R1 by 60.0
+ADDF  initial, R1  ; Add initial to R1
+MOVF  R1, position ; Store R1 into position</pre>
+    <p>The code generator must make decisions about memory layout, addressing modes, and instruction formats that are specific to the target architecture. A well-designed compiler separates these machine-dependent decisions from the earlier phases, making it possible to <strong>retarget</strong> the compiler to a new machine by replacing only the code generator (and, partially, the optimizer).</p>
+  </div>
+
+  <!-- Symbol Table Manager -->
+  <div class="card card-gold" style="border-left-width:6px;">
+    <h3 class="card-title">The Symbol Table Manager</h3>
+    <p>The <strong>symbol table</strong> is a data structure — typically a hash table or a set of linked hash tables — that stores information about every identifier (variable, function, type, constant, label) appearing in the source program. For each identifier, the symbol table records its name, type, scope (the region of the program in which it is visible), memory location, and any other attributes relevant to compilation. The symbol table is consulted and updated by virtually every phase: the lexical analyzer inserts new identifiers, the parser may record structural information, the semantic analyzer records type information, and the code generator records memory addresses and register assignments.</p>
+
+    <p>Scope management is a particularly important aspect of symbol table design. In languages with nested scopes (like C or Pascal), the compiler must maintain a <strong>scope stack</strong> so that when a new block (such as a function body) begins, a new scope is pushed onto the stack, and when the block ends, the scope is popped. An identifier lookup searches the scopes from the innermost outward, so that local declarations shadow enclosing ones. This mechanism is what makes it legal to declare a variable <code>x</code> inside a function even though <code>x</code> is also declared in the global scope — the local <code>x</code> "shadows" the global one within the function.</p>
+  </div>
+
+  <!-- Error Handler -->
+  <div class="card card-accent-left" style="border-left-color:var(--accent-warm); border-left-width:6px;">
+    <h3 class="card-title">The Error Handler</h3>
+    <p>Every phase of the compiler can detect errors. The <strong>error handler</strong> is the component responsible for reporting these errors in a way that is helpful to the programmer, and, where possible, for enabling the compiler to recover from errors and continue processing the remainder of the source program. A compiler that halts at the first error is of little practical use; a good compiler should detect and report as many errors as possible in a single run.</p>
+
+    <p>Errors detected by the <strong>lexical analyzer</strong> include illegal characters (such as <code>@</code> in a language that does not use it) and malformed tokens (such as a floating-point number with two decimal points). Errors detected by the <strong>parser</strong> include missing semicolons, unbalanced parentheses, and invalid statement structures. Errors detected by the <strong>semantic analyzer</strong> include type mismatches, undeclared variables, and incorrect function call signatures. At each phase, the error handler uses a different strategy for <strong>error recovery</strong>: panic mode (skip input until a synchronizing token is found), phrase-level recovery (insert or delete tokens to repair the parse), or error productions (augment the grammar with rules for common mistakes).</p>
+  </div>
+</section>
+
+<div class="divider">&#10043;</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: DETAILED WALKTHROUGH -->
+<!-- ============================================================ -->
+<section class="content-section" id="sec-walkthrough">
+  <span class="section-number">Section 4</span>
+  <h2 class="section-title">Compilation in Action</h2>
+  <p class="section-subtitle">Tracing <code>a = b + c * 70</code> through every phase</p>
+
+  <p>One of the most frequently asked questions in compiler design examinations is to trace a given statement through all the phases of the compiler. This type of question can appear as a 10-mark or 15-mark question, and the student who can write a detailed, step-by-step walkthrough with diagrams and intermediate representations will score exceptionally well. Let us trace the statement <code>a = b + c * 70</code> through each phase in complete detail.</p>
+
+  <div class="card card-teal">
+    <h4>Step 1 &mdash; Lexical Analysis (Scanning)</h4>
+    <p>The lexical analyzer reads the character stream <code>a = b + c * 70</code> and produces a sequence of tokens. It recognizes each lexeme, determines its token type, and either inserts it into the symbol table (for identifiers) or stores its value (for numeric literals). The resulting token stream is:</p>
+    <table class="styled-table">
+      <thead><tr><th>Token #</th><th>Lexeme</th><th>Token Name</th><th>Attribute</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td><code>a</code></td><td><code>&lt;id, 1&gt;</code></td><td>Entry 1 in symbol table</td></tr>
+        <tr><td>2</td><td><code>=</code></td><td><code>&lt;assign&gt;</code></td><td>&mdash;</td></tr>
+        <tr><td>3</td><td><code>b</code></td><td><code>&lt;id, 2&gt;</code></td><td>Entry 2 in symbol table</td></tr>
+        <tr><td>4</td><td><code>+</code></td><td><code>&lt;+&gt;</code></td><td>&mdash;</td></tr>
+        <tr><td>5</td><td><code>c</code></td><td><code>&lt;id, 3&gt;</code></td><td>Entry 3 in symbol table</td></tr>
+        <tr><td>6</td><td><code>*</code></td><td><code>&lt;*&gt;</code></td><td>&mdash;</td></tr>
+        <tr><td>7</td><td><code>70</code></td><td><code>&lt;num, 4&gt;</code></td><td>Value 70 stored</td></tr>
+      </tbody>
+    </table>
+    <p>The symbol table at this point contains entries for <code>a</code>, <code>b</code>, <code>c</code>, and the literal <code>70</code>. Whitespace characters have been consumed and discarded.</p>
+  </div>
+
+  <div class="card card-accent-left">
+    <h4>Step 2 &mdash; Syntax Analysis (Parsing)</h4>
+    <p>The parser receives the token stream and determines that it is a valid assignment statement whose right-hand side is an arithmetic expression. Using the grammar rules of the language, it constructs a parse tree. Because multiplication (<code>*</code>) has higher precedence than addition (<code>+</code), the tree groups <code>c * 70</code> as a subexpression under the <code>+</code> node. The parse tree structure is:</p>
+
+    <div class="diagram-container" style="max-width:500px;">
+      <svg viewBox="0 0 460 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Parse tree for a = b + c * 70">
+        <!-- Assignment node -->
+        <circle cx="230" cy="30" r="22" fill="#3a7c8c" stroke="#2b1d12" stroke-width="1.5"/>
+        <text x="230" y="35" text-anchor="middle" fill="white" font-family="DM Mono, monospace" font-size="11">assign</text>
+        <!-- lines from assign to id(a) and + -->
+        <line x1="230" y1="52" x2="100" y2="95" stroke="#2b1d12" stroke-width="1.2"/>
+        <line x1="230" y1="52" x2="360" y2="95" stroke="#2b1d12" stroke-width="1.2"/>
+        <!-- id(a) -->
+        <circle cx="100" cy="115" r="20" fill="#c8a84e" stroke="#2b1d12" stroke-width="1.5"/>
+        <text x="100" y="120" text-anchor="middle" fill="white" font-family="DM Mono, monospace" font-size="12" font-weight="600">id₁</text>
+        <!-- + -->
+        <circle cx="360" cy="115" r="20" fill="#5a8f5a" stroke="#2b1d12" stroke-width="1.5"/>
+        <text x="360" y="120" text-anchor="middle" fill="white" font-family="DM Mono, monospace" font-size="14" font-weight="600">+</text>
+        <!-- lines from + to id(b) and * -->
+        <line x1="360" y1="135" x2="260" y2="175" stroke="#2b1d12" stroke-width="1.2"/>
+        <line x1="360" y1="135" x2="440" y2="175" stroke="#2b1d12" stroke-width="1.2"/>
+        <!-- id(b) -->
+        <circle cx="260" cy="195" r="20" fill="#c8a84e" stroke="#2b1d12" stroke-width="1.5"/>
+        <text x="260" y="200" text-anchor="middle" fill="white" font-family="DM Mono, monospace" font-size="12" font-weight="600">id₂</text>
+        <!-- * -->
+        <circle cx="440" cy="195" r="20" fill="#5a8f5a" stroke="#2b1d12" stroke-width="1.5"/>
+        <text x="440" y="200" text-anchor="middle" fill="white" font-family="DM Mono, monospace" font-size="14" font-weight="600">×</text>
+        <!-- lines from * to id(c) and num(70) -->
+        <line x1="440" y1="215" x2="375" y2="245" stroke="#2b1d12" stroke-width="1.2"/>
+        <line x1="440" y1="215" x2="500" y2="245" stroke="transparent"/>
+        <line x1="440" y1="215" x2="440" y2="245" stroke="#2b1d12" stroke-width="1.2"/>
+        <!-- id(c) -->
+        <circle cx="375" cy="255" r="20" fill="#c8a84e" stroke="#2b1d12" stroke-width="1.5"/>
+        <text x="375" y="260" text-anchor="middle" fill="white" font-family="DM Mono, monospace" font-size="12" font-weight="600">id₃</text>
+        <!-- num(70) -->
+        <circle cx="440" cy="255" r="20" fill="#c4553a" stroke="#2b1d12" stroke-width="1.5"/>
+        <text x="440" y="259" text-anchor="middle" fill="white" font-family="DM Mono, monospace" font-size="10" font-weight="600">70</text>
+        <!-- Labels -->
+        <text x="100" y="155" text-anchor="middle" fill="#7a6b5b" font-family="DM Mono, monospace" font-size="9">a</text>
+        <text x="260" y="230" text-anchor="middle" fill="#7a6b5b" font-family="DM Mono, monospace" font-size="9">b</text>
+        <text x="375" y="285" text-anchor="middle" fill="#7a6b5b" font-family="DM Mono, monospace" font-size="9">c</text>
+      </svg>
+      <p class="diagram-caption">Fig 2. &mdash; Parse tree for <code>a = b + c * 70</code>. The tree hierarchy correctly reflects that <code>*</code> binds more tightly than <code>+</code>.</p>
+    </div>
+  </div>
+
+  <div class="card card-teal">
+    <h4>Step 3 &mdash; Semantic Analysis</h4>
+    <p>The semantic analyzer walks the parse tree, performing type checks. Assuming <code>a</code>, <code>b</code>, and <code>c</code> are all of type <code>integer</code>, and <code>70</code> is an integer literal, the types are compatible throughout. No type conversion is needed. If, however, <code>c</code> were of type <code>float</code>, the semantic analyzer would insert a conversion from <code>int</code> to <code>float</code> before the multiplication. The output is an annotated parse tree where each node carries type information.</p>
+  </div>
+
+  <div class="card card-green">
+    <h4>Step 4 &mdash; Intermediate Code Generation</h4>
+    <p>The intermediate code generator traverses the annotated tree and produces three-address code. Each three-address instruction has at most one operator:</p>
+<pre>t1 := c * 70
+t2 := b + t1
+a  := t2</pre>
+    <p>Here <code>t1</code> and <code>t2</code> are compiler-generated temporaries. Note that the order of operations (multiply before add) is preserved by the structure of the instructions. This representation is machine-independent and serves as the input to the optimizer.</p>
+  </div>
+
+  <div class="card card-green">
+    <h4>Step 5 &mdash; Code Optimization</h4>
+    <p>The optimizer examines the intermediate code for possible improvements. In this simple example, if the values of <code>b</code> and <code>c</code> are not known at compile time, there is limited opportunity for optimization. However, the optimizer might determine that <code>t2</code> is used only once (as the source for the assignment to <code>a</code>), so it can eliminate the temporary and directly assign the result to <code>a</code>:</p>
+<pre>t1 := c * 70
+a  := b + t1</pre>
+    <p>This is an example of <strong>copy propagation</strong> and <strong>dead code elimination</strong> working together. In more complex programs, the optimizer performs far more sophisticated transformations.</p>
+  </div>
+
+  <div class="card card-gold">
+    <h4>Step 6 &mdash; Code Generation</h4>
+    <p>The code generator translates the optimized intermediate code into target machine instructions. For a hypothetical machine with registers <code>R1</code> and <code>R2</code>:</p>
+<pre>MOV  c, R1        ; Load c into R1
+MUL  #70, R1      ; R1 = c * 70
+MOV  b, R2        ; Load b into R2
+ADD  R1, R2       ; R2 = b + (c * 70)
+MOV  R2, a        ; Store result in a</pre>
+    <p>The code generator selected registers for the two operands, chose appropriate machine instructions, and ensured that the final result was stored back in the memory location associated with identifier <code>a</code>.</p>
+  </div>
+
+  <div class="exam-tip">
+    <p><strong>For 10-mark and 15-mark exam questions:</strong> Always show all six phases with intermediate outputs. Draw the parse tree. Write the three-address code. Write the optimized code. Write the target assembly code. Mention the symbol table and error handler. This level of completeness demonstrates mastery and earns full marks.</p>
+  </div>
+</section>
+
+<div class="divider">&#10043;</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: FRONT-END VS BACK-END -->
+<!-- ============================================================ -->
+<section class="content-section" id="sec-frontend-backend">
+  <span class="section-number">Section 5</span>
+  <h2 class="section-title">Front-End vs. Back-End</h2>
+  <p class="section-subtitle">The architectural division that makes compilers portable</p>
+
+  <p>The six phases of a compiler are commonly divided into two major groups. The <strong>front end</strong> comprises lexical analysis, syntax analysis, semantic analysis, and intermediate code generation — the four phases that deal with the source language. The <strong>back end</strong> comprises code optimization and code generation — the phases that deal with the target machine. This division is not merely organizational; it reflects a deep architectural insight that enables one of the most powerful ideas in compiler engineering: the ability to build a single front end for a language and combine it with multiple back ends for different machines, or conversely, to build a single back end for a machine and combine it with front ends for different languages. This is how the GNU Compiler Collection (GCC) supports dozens of source languages and dozens of target architectures with a combinatorial number of compilers, rather than requiring a separate, monolithic compiler for each language-machine pair.</p>
+
+  <table class="styled-table">
+    <thead>
+      <tr><th>Aspect</th><th>Front End</th><th>Back End</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><strong>Phases</strong></td><td>Lexical, Syntax, Semantic Analysis, Intermediate Code Generation</td><td>Code Optimization, Code Generation</td></tr>
+      <tr><td><strong>Input</strong></td><td>Source program (character stream)</td><td>Intermediate representation (IR)</td></tr>
+      <tr><td><strong>Output</strong></td><td>Intermediate representation</td><td>Target machine code</td></tr>
+      <tr><td><strong>Depends on</strong></td><td>Source language grammar and semantics</td><td>Target machine architecture</td></tr>
+      <tr><td><strong>Key tasks</strong></td><td>Tokenization, parsing, type checking, IR generation</td><td>Register allocation, instruction selection, scheduling</td></tr>
+      <tr><td><strong>Error detection</strong></td><td>Lexical, syntax, semantic errors</td><td>Few new errors (code quality issues)</td></tr>
+      <tr><td><strong>Portability role</strong></td><td>Change front end to support new language</td><td>Change back end to target new machine</td></tr>
+    </tbody>
+  </table>
+
+  <div class="key-concept">
+    <p>The front end is responsible for <em>analysis</em> — understanding the source program. The back end is responsible for <em>synthesis</em> — generating the target program. The intermediate representation serves as the contract between the two, the common language that decouples them.</p>
+  </div>
+
+  <p>A modular compiler designed for easy swapping of front-end and back-end components typically defines a clean, well-documented intermediate representation as the interface between the two halves. The LLVM project is the modern exemplar of this design philosophy: LLVM IR (Intermediate Representation) serves as the universal contract. Any language that compiles to LLVM IR can immediately benefit from LLVM's powerful optimizer and its many back ends (x86, ARM, RISC-V, WebAssembly, and more). This architectural insight — the separation of analysis from synthesis via a well-defined intermediate form — is arguably the single most important engineering principle in compiler design.</p>
+</section>
+
+<div class="divider">&#10043;</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: COUSINS OF THE COMPILER -->
+<!-- ============================================================ -->
+<section class="content-section" id="sec-cousins">
+  <span class="section-number">Section 6</span>
+  <h2 class="section-title">Cousins of the Compiler</h2>
+  <p class="section-subtitle">The ecosystem of translation and transformation tools</p>
+
+  <p>A compiler does not operate in isolation. It exists within a broader ecosystem of tools that collectively transform a high-level program into a running executable. These tools — <strong>preprocessors</strong>, <strong>assemblers</strong>, <strong>linkers</strong>, and <strong>loaders</strong> — are sometimes called the "cousins" of the compiler because they perform related but distinct translation and transformation tasks. Understanding these cousins is essential for a complete picture of how a program goes from source code on disk to executing instructions in a processor's memory.</p>
+
+  <div class="card card-teal">
+    <h4 class="card-title">Preprocessor</h4>
+    <p>The <strong>preprocessor</strong> is a program that processes the source program before the compiler proper begins its work. In C and C++, the preprocessor handles directives that begin with <code>#</code>, such as <code>#include</code> (which textual includes the contents of header files), <code>#define</code> (which defines macros — text-substitution abbreviations), and <code>#ifdef</code> / <code>#endif</code> (which conditionally include or exclude sections of code based on compile-time flags). The output of the preprocessor is a "translation unit" — a fully expanded, self-contained version of the source file — which is then fed to the compiler. The preprocessor operates purely on text; it has no understanding of the programming language's syntax or semantics. Modern languages like Java and Rust have largely moved away from textual preprocessors in favor of more structured module and macro systems.</p>
+  </div>
+
+  <div class="card card-accent-left">
+    <h4 class="card-title">Assembler</h4>
+    <p>The <strong>assembler</strong> translates the assembly language output of the compiler's code generation phase into <strong>relocatable machine code</strong> — a binary object file containing machine instructions in the format expected by the target processor, but with addresses that are not yet final. Assembly language is a human-readable representation of machine code, with one assembly instruction corresponding to one machine instruction (usually). The assembler replaces symbolic operation codes (like <code>MOV</code>, <code>ADD</code>) with their binary encodings, resolves local labels and offsets, and produces an object file (typically with a <code>.o</code> or <code>.obj</code> extension) that can be combined with other object files by the linker.</p>
+  </div>
+
+  <div class="card card-teal">
+    <h4 class="card-title">Linker (Link Editor)</h4>
+    <p>A large program is typically divided into multiple source files, each of which is compiled and assembled separately into its own object file. The <strong>linker</strong> (also called a <strong>link editor</strong>) combines these multiple object files and resolves <strong>external references</strong> — addresses of functions and variables defined in one file but referenced in another. The linker also incorporates code from <strong>libraries</strong> (collections of precompiled object files for standard functions like <code>printf</code> or <code>malloc</code>). The output of the linker is a single <strong>executable file</strong> (or a shared library) in which all addresses have been resolved and the program is ready to be loaded into memory. There are two types of linking: <strong>static linking</strong>, where library code is copied into the executable at link time, and <strong>dynamic linking</strong>, where references to shared libraries are resolved at load time or run time.</p>
+  </div>
+
+  <div class="card card-accent-left">
+    <h4 class="card-title">Loader</h4>
+    <p>The <strong>loader</strong> is the final stage before execution. It is part of the operating system and is responsible for reading the executable file from disk into main memory, setting up the address space for the program (including the stack, heap, and code segments), performing any remaining address relocation, and transferring control to the program's entry point (typically the <code>main</code> function in C). In modern operating systems with virtual memory, the loader does not necessarily load the entire program into physical memory at once; instead, it sets up the virtual address space and allows the demand paging mechanism of the OS to load pages of code and data as they are actually needed during execution.</p>
+  </div>
+
+  <div class="pull-quote">
+    "The journey from source code to running program is not a single leap but a carefully orchestrated sequence of transformations, each performed by a specialized tool — the preprocessor expands, the compiler translates, the assembler encodes, the linker combines, and the loader places."
+  </div>
+
+  <details>
+    <summary>Complete Compilation Pipeline (Sequence of Tools)</summary>
+    <div class="detail-content">
+      <div class="flow-list">
+        <span class="flow-item">Source (.c)</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-item">Preprocessor (cpp)</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-item">Expanded Source (.i)</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-item">Compiler (cc1)</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-item">Assembly (.s)</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-item">Assembler (as)</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-item">Object (.o)</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-item">Linker (ld)</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-item">Executable (a.out)</span>
+        <span class="flow-arrow">&rarr;</span>
+        <span class="flow-item">Loader &rarr; Execution</span>
+      </div>
+      <p style="margin-top:1rem;font-size:0.88rem;">This is the complete pipeline for a C program on a Unix-like system. Each stage produces an intermediate file that is consumed by the next stage. The names in parentheses (cpp, cc1, as, ld) are the actual tool names used in the GNU toolchain.</p>
+    </div>
+  </details>
+</section>
+
+<div class="divider">&#10043;</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: GROUPING OF PHASES & PASSES -->
+<!-- ============================================================ -->
+<section class="content-section" id="sec-grouping">
+  <span class="section-number">Section 7</span>
+  <h2 class="section-title">Grouping of Phases &amp; Passes</h2>
+  <p class="section-subtitle">Single-pass, multi-pass, and the art of bootstrapping</p>
+
+  <p>The six phases of a compiler can be grouped in various ways, and the concept of a <strong>pass</strong> is central to this discussion. A <strong>pass</strong> is a single traversal of the source program (or its intermediate representation) during which one or more phases are performed. A compiler that reads the source program only once, producing the target code as it goes, is called a <strong>single-pass compiler</strong>. A compiler that reads the source program (or intermediate files) multiple times is called a <strong>multi-pass compiler</strong>.</p>
+
+  <div class="card card-teal">
+    <h4 class="card-title">Single-Pass Compiler</h4>
+    <p>In a <strong>single-pass compiler</strong>, all phases are interleaved into a single traversal of the source program. The compiler reads the source from beginning to end exactly once, and as each construct is recognized, it is immediately translated into the target code. This design is efficient in terms of compilation speed because it avoids writing and reading intermediate files, and it requires less memory since the entire program need not be stored. However, single-pass compilers face severe limitations: they cannot handle language features that require knowledge of information that appears later in the source file. For example, in a language like Pascal (as originally designed by Wirth), all types and variables must be declared before they are used, which is specifically a design choice to enable single-pass compilation. A single-pass compiler cannot easily perform global optimizations, since it sees each part of the program only once.</p>
+    <p>The most famous example of a single-pass compiler is the original Pascal compiler, which Niklaus Wirth implemented in Pascal itself. The C language also has characteristics of a single-pass language, particularly in its header-file mechanism, where <code>#include</code> provides the compiler with declarations of functions and types that are defined in other files, enabling single-pass compilation of each translation unit.</p>
+  </div>
+
+  <div class="card card-accent-left">
+    <h4 class="card-title">Multi-Pass Compiler</h4>
+    <p>In a <strong>multi-pass compiler</strong>, the source program or its intermediate representations are read multiple times, with each pass performing one or more phases. For example, the first pass might perform lexical and syntax analysis to build a parse tree, the second pass might perform semantic analysis and intermediate code generation, and the third pass might perform code optimization and code generation. Each pass reads its input from an intermediate file produced by the previous pass and writes its output to an intermediate file for the next pass (or, in memory-efficient designs, the intermediate representations are held in memory).</p>
+    <p>Multi-pass compilers have several advantages: they can handle language features that require information from later in the source (such as forward references), they can perform more sophisticated optimizations (which require seeing the entire program), and they are more modular (each pass can be developed, tested, and maintained independently). The disadvantage is increased compilation time, since the program must be read and written multiple times, and more disk space is needed for intermediate files.</p>
+  </div>
+
+  <table class="styled-table">
+    <thead><tr><th>Criterion</th><th>Single-Pass</th><th>Multi-Pass</th></tr></thead>
+    <tbody>
+      <tr><td>Number of source reads</td><td>One</td><td>Multiple</td></tr>
+      <tr><td>Compilation speed</td><td>Faster (one traversal)</td><td>Slower (multiple traversals)</td></tr>
+      <tr><td>Memory usage</td><td>Lower</td><td>Higher (intermediate storage)</td></tr>
+      <tr><td>Forward references</td><td>Not supported (must pre-declare)</td><td>Supported</td></tr>
+      <tr><td>Optimization quality</td><td>Limited (local only)</td><td>Better (global optimizations possible)</td></tr>
+      <tr><td>Modularity</td><td>Less modular</td><td>Highly modular</td></tr>
+      <tr><td>Example</td><td>Original Pascal compiler</td><td>Most modern compilers (GCC, LLVM)</td></tr>
+    </tbody>
+  </table>
+
+  <details>
+    <summary>Factors That Decide the Number of Phases</summary>
+    <div class="detail-content">
+      <p>The number and grouping of phases in a compiler is determined by several factors:</p>
+      <ol style="padding-left:1.5rem;margin-top:0.5rem;">
+        <li style="margin-bottom:0.5rem;"><strong>Language complexity:</strong> Languages with complex grammars and semantics (like C++) require more phases than simpler languages.</li>
+        <li style="margin-bottom:0.5rem;"><strong>Target machine complexity:</strong> Complex architectures (with many instruction formats, addressing modes, and pipeline hazards) require more back-end phases.</li>
+        <li style="margin-bottom:0.5rem;"><strong>Optimization requirements:</strong> Aggressive optimization requires multiple passes and sophisticated analysis phases.</li>
+        <li style="margin-bottom:0.5rem;"><strong>Memory constraints:</strong> Limited memory may force the compiler to use multiple passes, writing intermediate results to disk.</li>
+        <li style="margin-bottom:0.5rem;"><strong>Compiler construction tools available:</strong> Tools like parser generators and scanner generators may influence the phase structure.</li>
+        <li style="margin-bottom:0.5rem;"><strong>Modularity and maintainability:</strong> A more decomposed design is easier to develop and maintain.</li>
+      </ol>
+    </div>
+  </details>
+
+  <div class="card card-gold">
+    <h4 class="card-title">Bootstrapping</h4>
+    <p><strong>Bootstrapping</strong> is the process of using a compiler written in its own source language to compile itself. This seems circular at first glance — how can you compile a compiler if you need the compiler to do the compilation? — but it resolves elegantly through a two-step process. Suppose we have a new language L for which we want to build a compiler C written in L itself. First, we write a small, simple compiler C₀ for L in some other language (such as assembly or an existing language) that is already available on the target machine. This initial compiler C₀ need not be fast or produce optimized code; it only needs to be correct. We then use C₀ to compile the full compiler C written in L, producing an executable C₁. Finally, we use C₁ to compile C again, producing C₂ — the final compiler, compiled by itself, which is both correct and (if C includes optimizations) produces optimized code.</p>
+
+    <p>The bootstrapping arrangement for three machines A, B, and C is a classic exam question. Suppose the compiler for language L is written in L itself and currently runs on machine A. We want to move it to machine B (a <strong>cross-compilation</strong> scenario). The process is:</p>
+    <ol style="padding-left:1.5rem;margin-top:0.5rem;">
+      <li style="margin-bottom:0.5rem;">Modify the compiler's source (written in L) to generate code for machine B instead of machine A.</li>
+      <li style="margin-bottom:0.5rem;">Compile this modified compiler using the existing compiler on machine A. The result is a compiler that runs on A but generates code for B.</li>
+      <li style="margin-bottom:0.5rem;">Run this cross-compiler on machine A, feeding it its own source code as input. The output is a compiler that runs on B and generates code for B.</li>
+      <li style="margin-bottom:0.5rem;">Transfer the resulting binary to machine B and run it. Now the compiler is native to B.</li>
+    </ol>
+    <p>This process can be extended to a third machine C by repeating the steps. Bootstrapping is a beautiful example of self-reference in computer science, and understanding it demonstrates a deep appreciation for what compilers are and how they are built.</p>
+  </div>
+
+  <div class="memory-box">
+    <p><strong>Recall trick for bootstrapping:</strong> Think of it as "pulling yourself up by your own bootstraps." You start with a small, simple compiler (the bootstrap) that is just good enough to compile the real compiler. The bootstrap compiler is like training wheels — you need it to get started, but once the real compiler is built, you can throw it away.</p>
+  </div>
+</section>
+
+<div class="divider">&#10043;</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: COMPILER CONSTRUCTION TOOLS -->
+<!-- ============================================================ -->
+<section class="content-section" id="sec-tools">
+  <span class="section-number">Section 8</span>
+  <h2 class="section-title">Compiler Construction Tools</h2>
+  <p class="section-subtitle">The specialized tools that automate parts of compiler building</p>
+
+  <p>Building a compiler from scratch is a massive undertaking, but fortunately, a rich ecosystem of <strong>compiler construction tools</strong> exists to automate many of the tedious and error-prone tasks involved. These tools generate compiler components from high-level specifications, freeing the compiler writer to focus on the creative and architectural aspects of the design. The main categories of compiler construction tools are:</p>
+
+  <table class="styled-table">
+    <thead><tr><th>Tool Category</th><th>Function</th><th>Examples</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Scanner Generators</strong></td><td>Generate lexical analyzers from regular expression specifications of tokens</td><td>LEX, Flex</td></tr>
+      <tr><td><strong>Parser Generators</strong></td><td>Generate syntax analyzers (parsers) from grammar specifications</td><td>YACC, Bison, ANTLR</td></tr>
+      <tr><td><strong>Syntax-Directed Translation Engines</strong></td><td>Generate code walkers that traverse parse trees and execute semantic actions</td><td>Attribute grammar systems</td></tr>
+      <tr><td><strong>Automatic Code Generators</strong></td><td>Generate code generators from machine descriptions</td><td>GNU Lightning, LCC's back end</td></tr>
+      <tr><td><strong>Data-Flow Analysis Engines</strong></td><td>Automate the framework for performing data-flow analyses needed for optimization</td><td>LLVM's analysis passes</td></tr>
+      <tr><td><strong>Compiler-Compiler Systems</strong></td><td>Integrated systems that combine scanner, parser, and code generation tools</td><td>JavaCC, Coco/R</td></tr>
+    </tbody>
+  </table>
+
+  <p>Scanner generators like LEX and Flex, which we shall study in detail in the next section, are among the most commonly used compiler construction tools. Parser generators like YACC (Yet Another Compiler Compiler) and Bison are their counterparts for the syntax analysis phase. Together, LEX and YACC can generate the entire front end of a compiler from concise specifications of the language's tokens and grammar, reducing what would be months of manual coding to a matter of days.</p>
+</section>
+
+<div class="divider">&#10043;</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 9: LEXICAL ANALYSIS — THE FIRST GATE -->
+<!-- ============================================================ -->
+<section class="content-section" id="sec-lexical">
+  <span class="section-number">Section 9</span>
+  <h2 class="section-title">Lexical Analysis: The First Gate</h2>
+  <p class="section-subtitle">Why the scanner is separated from the parser, and what it must accomplish</p>
+
+  <p>Having now surveyed the overall architecture of a compiler, we turn to a deep study of the first phase: <strong>lexical analysis</strong>. The lexical analyzer, or <strong>scanner</strong>, is the component that reads the raw character stream of the source program and produces a stream of tokens for the parser. It is the compiler's first point of contact with the source text, and its design has significant implications for the efficiency and correctness of the entire compilation process.</p>
+
+  <div class="card card-teal">
+    <h4 class="card-title">Why Separate Lexical Analysis from Parsing?</h4>
+    <p>A natural question arises: why not have the parser read characters directly? Why introduce an entire separate phase? The answer lies in several practical and theoretical considerations. First, <strong>simplicity of design</strong>: separating lexical analysis from parsing allows each phase to use the most appropriate mathematical model. Lexical analysis operates on the simple, flat structure of character sequences and is best described by <strong>regular expressions</strong> and <strong>finite automata</strong>. Parsing operates on the hierarchical, nested structure of grammatical constructs and requires <strong>context-free grammars</strong> and <strong>pushdown automata</strong>. Mixing these two levels of complexity in a single phase would make the resulting system far more complex and harder to understand.</p>
+    <p>Second, <strong>efficiency</strong>: the lexical analyzer processes the entire source program character by character, which is a very I/O-intensive operation. By grouping characters into tokens before passing them to the parser, the lexical analyzer reduces the number of units the parser must handle by a large factor — typically by a factor of ten or more. Since the parser's work is more computationally intensive per unit (it must maintain a stack and perform grammatical reductions), reducing the number of units it processes has a significant impact on overall compilation speed.</p>
+    <p>Third, <strong>portability</strong>: the only phase that deals with character-level details of the source language (such as the character encoding, the representation of newlines, and the handling of special characters) is the lexical analyzer. By isolating these platform-specific details in the scanner, the rest of the compiler can be made independent of the character set and encoding used by the source program.</p>
+  </div>
+
+  <div class="def-box">
+    <p><strong>Key Terminology:</strong></p>
+    <ul style="padding-left:1.2rem;margin-top:0.5rem;">
+      <li><strong>Token:</strong> A pair consisting of a <em>token name</em> (an abstract symbol representing a kind of lexical unit) and an optional <em>attribute value</em> (pointing to the symbol table entry for this particular instance).</li>
+      <li><strong>Lexeme:</strong> The actual character sequence in the source program that matches the pattern for a token. For example, <code>position</code> is a lexeme whose token is <code>&lt;id&gt;</code>.</li>
+      <li><strong>Pattern:</strong> The rule that describes which character sequences can form a particular token. For the token <code>&lt;id&gt;</code>, the pattern might be "a letter followed by zero or more letters or digits."</li>
+      <li><strong>Attribute:</strong> Additional information associated with a token, such as the pointer to the symbol table entry (for identifiers) or the actual numeric value (for number literals).</li>
+    </ul>
+  </div>
+
+  <div class="memory-box">
+    <p><strong>Analogy for Token, Lexeme, and Pattern:</strong> Think of the token name as the <em>category label</em> on a filing cabinet (e.g., "Identifier"), the pattern as the <em>rule</em> for what goes in that cabinet (e.g., "starts with a letter, followed by letters or digits"), and the lexeme as the specific <em>document</em> being filed (e.g., <code>position</code>). Different lexemes can match the same pattern and produce the same token name — <code>position</code>, <code>initial</code>, and <code>rate</code> are all different lexemes that produce the token <code>&lt;id&gt;</code> — but each has a different attribute value (pointing to a different symbol table entry).</p>
+  </div>
+
+  <div class="card card-accent-left">
+    <h4 class="card-title">Token Types in a Typical Language</h4>
+    <table class="styled-table">
+      <thead><tr><th>Token Name</th><th>Pattern (Informal)</th><th>Sample Lexemes</th></tr></thead>
+      <tbody>
+        <tr><td><code>&lt;id&gt;</code></td><td>letter (letter | digit)*</td><td><code>position</code>, <code>initial</code>, <code>rate</code></td></tr>
+        <tr><td><code>&lt;num&gt;</code></td><td>digit+ (. digit+)? (E (+|-)? digit+)?</td><td><code>60</code>, <code>3.14</code>, <code>1.0E-3</code></td></tr>
+        <tr><td><code>&lt;if&gt;</code></td><td>the keyword <code>if</code></td><td><code>if</code></td></tr>
+        <tr><td><code>&lt;rel&gt;</code></td><td><code>&lt;</code> | <code>&lt;=</code> | <code>=</code> | <code>&lt;&gt;</code> | <code>&gt;</code> | <code>&gt;=</code></td><td><code>&lt;</code>, <code>&lt;=</code>, <code>&gt;=</code></td></tr>
+        <tr><td><code>&lt;assign&gt;</code></td><td><code>:=</code></td><td><code>:=</code></td></tr>
+        <tr><td><code>&lt;+&gt;</code></td><td><code>+</code></td><td><code>+</code></td></tr>
+        <tr><td><code>&lt;*&gt;</code></td><td><code>*</code></td><td><code>*</code></td></tr>
+        <tr><td><code>&lt;;&gt;</code></td><td><code>;</code></td><td><code>;</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<div class="divider">&#10043;</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 10: INPUT BUFFERING -->
+<!-- ============================================================ -->
+<section class="content-section" id="sec-buffering">
+  <span class="section-number">Section 10</span>
+  <h2 class="section-title">Input Buffering</h2>
+  <p class="section-subtitle">How the scanner reads characters efficiently from the source file</p>
+
+  <p>The lexical analyzer must read characters from the source file one at a time as it identifies tokens. Since disk I/O is significantly slower than in-memory operations, reading one character at a time from the file system would be extremely inefficient. The solution is to use <strong>input buffering</strong>, where large blocks of characters are read from the file into memory buffers, and the scanner then reads characters from these buffers at memory speed. The design of the buffering scheme has a meaningful impact on the scanner's performance, and the evolution from a naive one-buffer scheme to the standard two-buffer scheme with sentinels is a beautiful example of engineering optimization in practice.</p>
+
+  <div class="card card-accent-left">
+    <h4 class="card-title">The One-Buffer Scheme</h4>
+    <p>The simplest buffering approach uses a single buffer of some fixed size. A block of characters is read from the source file into the buffer. A pointer (often called <code>forward</code>) scans through the buffer from left to right, and the lexical analyzer examines each character as it goes. When the buffer is exhausted, the next block is read from the file, overwriting the previous contents, and the <code>forward</code> pointer is reset to the beginning.</p>
+    <p>The critical problem with this scheme is the handling of <strong>lexemes that span buffer boundaries</strong>. Consider a buffer of 80 characters. If the 78th character is the beginning of a long identifier that extends into the 81st character, the identifier straddles the boundary between the current buffer and the next. When the buffer is refilled, the characters at the beginning of the identifier are lost. One could solve this by copying the unfinished lexeme to a separate buffer (a "lexeme buffer" or string table), but this copying adds overhead and complexity.</p>
+  </div>
+
+  <div class="card card-teal">
+    <h4 class="card-title">The Two-Buffer Scheme (Sentinel Technique)</h4>
+    <p>The standard solution, described in the Dragon Book, uses a single large buffer divided into two equal halves, each of size <code>N</code> characters. This is the <strong>two-buffer scheme</strong>. At any given time, one half is active (being scanned by the forward pointer), while the other half may be refilled from the file if needed. When the <code>forward</code> pointer reaches the end of one half, the next half is loaded with fresh characters from the source file, and the scanner continues seamlessly into the new half.</p>
+    <p>The scheme maintains two pointers: <code>lexemeBegin</code>, which marks the beginning of the current lexeme being recognized, and <code>forward</code>, which scans ahead one character at a time. When a complete lexeme has been identified, <code>lexemeBegin</code> is advanced past it to start recognizing the next lexeme. If <code>forward</code> needs to look ahead past the current lexeme (as is common in lookahead-based scanning), it may need to cross a buffer boundary. The two-buffer scheme ensures that the characters at the boundary are preserved in the other half, so no data is lost.</p>
+  </div>
+
+  <!-- Two-Buffer Scheme Diagram -->
+  <div class="diagram-container">
+    <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Two-buffer input scheme diagram showing two half-buffers with forward and lexemeBegin pointers">
+      <defs>
+        <marker id="arrow-down" markerWidth="8" markerHeight="8" refX="4" refY="8" orient="auto" fill="#c4553a">
+          <polygon points="0 0, 8 0, 4 8"/>
+        </marker>
+      </defs>
+
+      <!-- Buffer label -->
+      <text x="400" y="25" text-anchor="middle" fill="#2b1d12" font-family="Cormorant Garamond, serif" font-size="18" font-weight="700">Two-Buffer Input Scheme</text>
+
+      <!-- Left half -->
+      <rect x="50" y="50" width="320" height="80" fill="#f0ebe3" stroke="#2b1d12" stroke-width="2" rx="3"/>
+      <!-- Cells -->
+      <line x1="90" y1="50" x2="90" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+      <line x1="130" y1="50" x2="130" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+      <line x1="170" y1="50" x2="170" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+      <line x1="210" y1="50" x2="210" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+      <line x1="250" y1="50" x2="250" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+      <line x1="290" y1="50" x2="290" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+      <line x1="330" y1="50" x2="330" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+
+      <!-- Sample characters in left half -->
+      <text x="70" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14">p</text>
+      <text x="110" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14">o</text>
+      <text x="150" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14">s</text>
+      <text x="190" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14">i</text>
+      <text x="230" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14">t</text>
+      <text x="270" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14">i</text>
+      <text x="310" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14">o</text>
+      <text x="350" y="95" text-anchor="middle" fill="#c4553a" font-family="DM Mono, monospace" font-size="14" font-weight="600">eof</text>
+
+      <!-- Right half -->
+      <rect x="430" y="50" width="320" height="80" fill="#f0ebe3" stroke="#2b1d12" stroke-width="2" rx="3"/>
+      <line x1="470" y1="50" x2="470" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+      <line x1="510" y1="50" x2="510" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+      <line x1="550" y1="50" x2="550" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+      <line x1="590" y1="50" x2="590" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+      <line x1="630" y1="50" x2="630" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+      <line x1="670" y1="50" x2="670" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+      <line x1="710" y1="50" x2="710" y2="130" stroke="#d4c9b8" stroke-width="1"/>
+
+      <!-- Sample characters in right half -->
+      <text x="450" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14">n</text>
+      <text x="490" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14"> </text>
+      <text x="530" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14">:=</text>
+      <text x="570" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14"> </text>
+      <text x="610" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14">i</text>
+      <text x="650" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14">n</text>
+      <text x="690" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14">i</text>
+      <text x="730" y="95" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14">t</text>
+
+      <!-- Half labels -->
+      <text x="200" y="45" text-anchor="middle" fill="#7a6b5b" font-family="DM Mono, monospace" font-size="11">Half 1 (characters 0..N-1)</text>
+      <text x="590" y="45" text-anchor="middle" fill="#7a6b5b" font-family="DM Mono, monospace" font-size="11">Half 2 (characters N..2N-1)</text>
+
+      <!-- Sentinel markers at boundaries -->
+      <text x="350" y="45" text-anchor="middle" fill="#c4553a" font-family="DM Mono, monospace" font-size="10" font-weight="600">EOF</text>
+      <line x1="350" y1="48" x2="350" y2="50" stroke="#c4553a" stroke-width="1.5"/>
+      <text x="730" y="45" text-anchor="middle" fill="#c4553a" font-family="DM Mono, monospace" font-size="10" font-weight="600">EOF</text>
+      <line x1="730" y1="48" x2="730" y2="50" stroke="#c4553a" stroke-width="1.5"/>
+
+      <!-- lexemeBegin pointer -->
+      <line x1="70" y1="145" x2="70" y2="168" stroke="#c8a84e" stroke-width="2"/>
+      <polygon points="63,168 77,168 70,178" fill="#c8a84e"/>
+      <text x="70" y="195" text-anchor="middle" fill="#c8a84e" font-family="DM Mono, monospace" font-size="11" font-weight="600">lexemeBegin</text>
+
+      <!-- forward pointer -->
+      <line x1="230" y1="145" x2="230" y2="168" stroke="#c4553a" stroke-width="2"/>
+      <polygon points="223,168 237,168 230,178" fill="#c4553a"/>
+      <text x="230" y="195" text-anchor="middle" fill="#c4553a" font-family="DM Mono, monospace" font-size="11" font-weight="600">forward</text>
+
+      <!-- Explanation text -->
+      <text x="400" y="230" text-anchor="middle" fill="#7a6b5b" font-family="Source Serif 4, serif" font-size="13">When forward reaches the end of a half, the other half is</text>
+      <text x="400" y="248" text-anchor="middle" fill="#7a6b5b" font-family="Source Serif 4, serif" font-size="13">refilled from the source file. EOF markers serve as sentinels</text>
+      <text x="400" y="266" text-anchor="middle" fill="#7a6b5b" font-family="Source Serif 4, serif" font-size="13">to detect end-of-buffer without extra boundary checks.</text>
+    </svg>
+    <p class="diagram-caption">Fig 3. &mdash; The two-buffer input scheme. The buffer is divided into two halves. The <code>lexemeBegin</code> pointer marks the start of the current lexeme, while <code>forward</code> scans ahead. EOF sentinel characters at the end of each half allow the scanner to detect end-of-buffer without an explicit comparison at every step.</p>
+  </div>
+
+  <div class="card card-green">
+    <h4 class="card-title">The Sentinel Technique</h4>
+    <p>A subtle but important optimization in the two-buffer scheme is the use of <strong>sentinel characters</strong>. In a naive implementation, the scanner must check at every step whether the <code>forward</code> pointer has reached the end of the current buffer half. This means every character read requires two comparisons: one to check for the specific condition being tested (e.g., "is this a digit?") and one to check whether the end of the buffer has been reached. Since the end-of-buffer check happens for <em>every</em> character, even though the end of the buffer is reached relatively rarely, this adds a constant overhead of roughly 50% to the scanning process.</p>
+
+    <p>The sentinel technique eliminates the end-of-buffer check for most characters by placing a special <strong>sentinel character</strong> — typically the <code>eof</code> character — at the very end of each buffer half (at positions <code>N-1</code> and <code>2N-1</code>). Since <code>eof</code> cannot appear in valid source code, the scanner can treat it as a character that will never match any token pattern. Thus, the scanner only needs to check for end-of-buffer when it encounters the sentinel — which is exactly once per buffer half, rather than once per character. This seemingly small optimization can make a meaningful difference in the performance of a compiler that processes millions of characters in a large source file.</p>
+  </div>
+
+  <div class="card card-accent-left">
+    <h4 class="card-title">Algorithm: Lookahead with Sentinels</h4>
+    <pre>// Two-buffer scheme with sentinel
+initialize:
+  read N characters into buffer[0..N-1]
+  set buffer[N-1] = eof    // sentinel
+  read N characters into buffer[N..2N-1]
+  set buffer[2N-1] = eof   // sentinel
+  lexemeBegin = 0
+  forward = 0
+
+scan:
+  loop:
+    if forward == N:              // reached end of half 1
+      reload half 2 from file
+      forward = 0                 // switch to half 2
+    else if forward == 2*N:       // reached end of half 2
+      reload half 1 from file
+      forward = N                 // switch to half 1
+
+    c = buffer[forward]
+    if c == eof and (forward == N-1 or forward == 2*N-1):
+      // true end of file (sentinel)
+      handle end-of-file
+    else:
+      process character c
+      forward = forward + 1</pre>
+    <p style="font-size:0.88rem;margin-top:0.8rem;">The key insight is that the sentinel at position <code>N-1</code> or <code>2N-1</code> causes the scanner to enter the buffer-switching code naturally, without an explicit comparison at every character. A real sentinel (one placed because the file actually ended) is distinguished from a boundary sentinel by its position.</p>
+  </div>
+
+  <details>
+    <summary>Will a Three-Buffer Scheme Further Improve Performance?</summary>
+    <div class="detail-content">
+      <p>This is an insightful question that appears in some exams. The two-buffer scheme is already highly efficient because it overlaps computation (scanning the current half) with I/O (reading the next half from the file). In practice, the bottleneck is usually the I/O operation. A three-buffer scheme would allow <strong>double-buffering of I/O</strong>: while the scanner processes one buffer, the system could be reading the next two buffers ahead. In theory, this could hide I/O latency more effectively, particularly on systems with slow disk access. However, the additional memory overhead (50% more buffer space) and the added complexity of managing three buffers rarely justify the marginal improvement in practice. Modern operating systems already provide their own I/O buffering and prefetching, which achieves a similar effect transparently. The two-buffer scheme remains the standard design because it achieves an excellent balance of simplicity, efficiency, and correctness.</p>
+    </div>
+  </details>
+</section>
+
+<div class="divider">&#10043;</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 11: SPECIFICATION & RECOGNITION OF TOKENS -->
+<!-- ============================================================ -->
+<section class="content-section" id="sec-tokens">
+  <span class="section-number">Section 11</span>
+  <h2 class="section-title">Specification &amp; Recognition of Tokens</h2>
+  <p class="section-subtitle">Regular expressions, transition diagrams, and the formal machinery of scanning</p>
+
+  <p>The two fundamental questions in lexical analysis are: <em>What are the valid tokens?</em> (specification) and <em>How do we identify them in the character stream?</em> (recognition). Token specification uses the mathematical formalism of <strong>regular expressions</strong>, while token recognition uses the computational model of <strong>finite automata</strong>, typically represented as <strong>transition diagrams</strong>. The beautiful correspondence between regular expressions and finite automata — that every regular expression can be converted to a finite automaton and vice versa — is what makes lexical analysis both theoretically well-founded and practically efficient.</p>
+
+  <!-- Regular Expressions -->
+  <div class="card card-teal">
+    <h3 class="card-title">Regular Expressions</h3>
+    <p>A <strong>regular expression</strong> is a notation for describing a set of strings (a language) using a compact algebraic syntax. Regular expressions are built from three fundamental operations:</p>
+
+    <ol class="step-list">
+      <li>
+        <strong>Union (alternation):</strong> Written <code>r | s</code> (or <code>r + s</code> in some notations), it matches any string that matches <code>r</code> <em>or</em> <code>s</code>. For example, <code>a | b</code> matches the single character <code>a</code> or the single character <code>b</code>.
+      </li>
+      <li>
+        <strong>Concatenation:</strong> Written <code>rs</code> (with no operator symbol), it matches any string that consists of a string matching <code>r</code> followed immediately by a string matching <code>s</code>. For example, <code>ab</code> matches exactly the two-character string <code>ab</code>.
+      </li>
+      <li>
+        <strong>Closure (Kleene star):</strong> Written <code>r*</code>, it matches zero or more occurrences of any string matching <code>r</code>. For example, <code>a*</code> matches <code>&epsilon;</code> (the empty string), <code>a</code>, <code>aa</code>, <code>aaa</code>, and so on, ad infinitum.
+      </li>
+    </ol>
+
+    <p>There are also derived operations that are convenient shorthands. The <strong>positive closure</strong> <code>r+</code> matches one or more occurrences of strings matching <code>r</code> (so <code>r+</code> = <code>rr*</code>). The <strong>option</strong> <code>r?</code> matches zero or one occurrence (so <code>r?</code> = <code>r | &epsilon;</code>). <strong>Character classes</strong> such as <code>[a-z]</code> are shorthands for unions: <code>[a-z]</code> = <code>a | b | c | ... | z</code>.</p>
+
+    <p>The <strong>precedence</strong> of operators in regular expressions is: Kleene star (<code>*</code>) binds tightest, then concatenation, then union (<code>|</code>). Parentheses can be used to override precedence, just as in arithmetic. So <code>a | bc*</code> means <code>a | (b(c*))</code> — it matches either <code>a</code>, or <code>b</code> followed by zero or more <code>c</code>'s.</p>
+
+    <table class="styled-table">
+      <thead><tr><th>Regular Expression</th><th>Language Described</th><th>Sample Matches</th></tr></thead>
+      <tbody>
+        <tr><td><code>a | b</code></td><td>{a, b}</td><td><code>a</code>, <code>b</code></td></tr>
+        <tr><td><code>(a | b)(a | b)</code></td><td>{aa, ab, ba, bb}</td><td><code>aa</code>, <code>ab</code>, <code>ba</code>, <code>bb</code></td></tr>
+        <tr><td><code>a*</code></td><td>{&epsilon;, a, aa, aaa, ...}</td><td><code>&epsilon;</code>, <code>a</code>, <code>aaa</code></td></tr>
+        <tr><td><code>(a | b)*</code></td><td>All strings of a's and b's</td><td><code>abba</code>, <code>baba</code>, <code>&epsilon;</code></td></tr>
+        <tr><td><code>a(a | b)*b</code></td><td>Strings starting with a and ending with b</td><td><code>ab</code>, <code>aab</code>, <code>abb</code></td></tr>
+        <tr><td><code>letter(letter|digit)*</code></td><td>Identifiers</td><td><code>rate</code>, <code>x1</code>, <code>sumnum</code></td></tr>
+        <tr><td><code>digit+(.digit+)?(E(+|-)?digit+)?</code></td><td>Unsigned numbers</td><td><code>60</code>, <code>3.14</code>, <code>1.0E-3</code></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card card-accent-left">
+    <h3 class="card-title">Regular Definitions</h3>
+    <p>For convenience and readability, we can give names to regular expressions and use those names in subsequent expressions. A <strong>regular definition</strong> is a sequence of definitions of the form:</p>
+<pre>d1 &rarr; r1
+d2 &rarr; r2
+...
+dn &rarr; rn</pre>
+    <p>where each <code>d<sub>i</sub></code> is a distinct name, and each <code>r<sub>i</sub></code> is a regular expression over the alphabet and the previously defined names <code>d<sub>1</sub></code> through <code>d<sub>i-1</sub></code>. For example, for a typical programming language:</p>
+<pre>letter   &rarr; [A-Za-z_]
+digit    &rarr; [0-9]
+digits   &rarr; digit+
+id       &rarr; letter (letter | digit)*
+num      &rarr; digits (. digits)? (E (+|-)? digits)?</pre>
+    <p>This notation allows us to specify complex token patterns in a modular, readable way, and it directly mirrors how tools like LEX accept their input specifications.</p>
+  </div>
+
+  <!-- Transition Diagrams -->
+  <div class="card card-teal">
+    <h3 class="card-title">Transition Diagrams (Finite Automata)</h3>
+    <p>A <strong>transition diagram</strong> is a directed graph in which each node (or <strong>state</strong>) represents a condition during the scanning process, and each edge (or <strong>transition</strong>) represents the action taken when a particular character is read. The scanner begins in a designated <strong>start state</strong> and reads characters one at a time, following transitions according to the characters read. If the scanner reaches an <strong>accepting state</strong> (drawn as a double circle), it has successfully recognized a token. If no valid transition exists for the current character, the scanner either reports an error or, in the case of a lookahead-based scanner, retracts the <code>forward</code> pointer and returns the token matched so far.</p>
+
+    <p>Transition diagrams are the operational model of the scanner — they tell us exactly what the scanner does at each step, character by character. Every regular expression can be converted to a transition diagram (this is the basis of tools like LEX), and every transition diagram corresponds to a regular expression. Let us now examine the transition diagrams for three important token types.</p>
+  </div>
+
+  <!-- Transition Diagram: Identifiers -->
+  <div class="diagram-container">
+    <svg viewBox="0 0 550 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Transition diagram for recognizing identifiers">
+      <text x="275" y="25" text-anchor="middle" fill="#2b1d12" font-family="Cormorant Garamond, serif" font-size="18" font-weight="700">Identifier Recognition</text>
+      <text x="275" y="45" text-anchor="middle" fill="#7a6b5b" font-family="Source Serif 4, serif" font-size="13">Pattern: letter (letter | digit)*</text>
+
+      <!-- Start arrow -->
+      <line x1="60" y1="110" x2="118" y2="110" stroke="#2b1d12" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="60" y="105" fill="#7a6b5b" font-family="DM Mono, monospace" font-size="11">start</text>
+
+      <!-- State 0 -->
+      <circle cx="140" cy="110" r="25" fill="#f0ebe3" stroke="#2b1d12" stroke-width="2"/>
+      <text x="140" y="115" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="16" font-weight="600">0</text>
+
+      <!-- Transition: 0 --letter--> 1 -->
+      <line x1="165" y1="110" x2="295" y2="110" stroke="#3a7c8c" stroke-width="2" marker-end="url(#arrow-teal)"/>
+      <text x="230" y="100" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="13" font-weight="600">letter</text>
+
+      <!-- State 1 (accepting - double circle) -->
+      <circle cx="325" cy="110" r="25" fill="#f0ebe3" stroke="#2b1d12" stroke-width="2"/>
+      <circle cx="325" cy="110" r="20" fill="#f0ebe3" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="325" y="115" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="16" font-weight="600">1</text>
+      <text x="325" y="150" text-anchor="middle" fill="#5a8f5a" font-family="DM Mono, monospace" font-size="10" font-weight="600">accept</text>
+
+      <!-- Self-loop: 1 --letter/digit--> 1 -->
+      <path d="M 325,85 C 325,50 410,50 410,85" fill="none" stroke="#c8a84e" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="395" y="60" text-anchor="middle" fill="#c8a84e" font-family="DM Mono, monospace" font-size="12" font-weight="600">letter | digit</text>
+      <path d="M 410,88 C 410,60 330,60 330,85" fill="none" stroke="#c8a84e" stroke-width="2"/>
+
+      <!-- other transition (to return) -->
+      <line x1="325" y1="135" x2="325" y2="175" stroke="#c4553a" stroke-width="1.5" marker-end="url(#arrow-warm)"/>
+      <text x="360" y="160" fill="#c4553a" font-family="DM Mono, monospace" font-size="11">other</text>
+      <text x="325" y="190" text-anchor="middle" fill="#c4553a" font-family="DM Mono, monospace" font-size="10" font-weight="600">return(id, entry)</text>
+    </svg>
+    <p class="diagram-caption">Fig 4. &mdash; Transition diagram for identifier recognition. State 0 is the start state. When a letter is read, the scanner moves to accepting state 1. From state 1, any letter or digit causes a self-loop (the identifier continues). Any other character signals the end of the identifier; the scanner returns the token <code>&lt;id&gt;</code> along with the symbol table entry for this lexeme.</p>
+  </div>
+
+  <!-- Transition Diagram: Relational Operators -->
+  <div class="diagram-container">
+    <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Transition diagram for recognizing relational operators">
+      <text x="350" y="25" text-anchor="middle" fill="#2b1d12" font-family="Cormorant Garamond, serif" font-size="18" font-weight="700">Relational Operator Recognition</text>
+      <text x="350" y="45" text-anchor="middle" fill="#7a6b5b" font-family="Source Serif 4, serif" font-size="13">Recognizes: &lt;, &lt;=, &lt;&gt;, &gt;, &gt;=, =</text>
+
+      <!-- Start arrow -->
+      <line x1="50" y1="150" x2="108" y2="150" stroke="#2b1d12" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="50" y="145" fill="#7a6b5b" font-family="DM Mono, monospace" font-size="11">start</text>
+
+      <!-- State 0 -->
+      <circle cx="130" cy="150" r="25" fill="#f0ebe3" stroke="#2b1d12" stroke-width="2"/>
+      <text x="130" y="155" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="16" font-weight="600">0</text>
+
+      <!-- 0 --'<'--> 1 -->
+      <line x1="155" y1="145" x2="248" y2="95" stroke="#3a7c8c" stroke-width="2" marker-end="url(#arrow-teal)"/>
+      <text x="190" y="110" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14" font-weight="600">&lt;</text>
+
+      <!-- 0 --'>'--> 2 -->
+      <line x1="155" y1="155" x2="248" y2="205" stroke="#c8a84e" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="190" y="190" text-anchor="middle" fill="#c8a84e" font-family="DM Mono, monospace" font-size="14" font-weight="600">&gt;</text>
+
+      <!-- 0 --'='--> 5 -->
+      <line x1="150" y1="170" x2="180" y2="270" stroke="#5a8f5a" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="150" y="230" text-anchor="middle" fill="#5a8f5a" font-family="DM Mono, monospace" font-size="14" font-weight="600">=</text>
+
+      <!-- State 1 (after '<') -->
+      <circle cx="275" cy="85" r="25" fill="#f0ebe3" stroke="#2b1d12" stroke-width="2"/>
+      <text x="275" y="90" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="16" font-weight="600">1</text>
+
+      <!-- 1 --'='--> 3 (LE) -->
+      <line x1="300" y1="80" x2="395" y2="60" stroke="#3a7c8c" stroke-width="2" marker-end="url(#arrow-teal)"/>
+      <text x="345" y="62" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="14" font-weight="600">=</text>
+
+      <!-- 1 --'>'--> 4 (NE) -->
+      <line x1="300" y1="90" x2="395" y2="120" stroke="#c8a84e" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="345" y="115" text-anchor="middle" fill="#c8a84e" font-family="DM Mono, monospace" font-size="14" font-weight="600">&gt;</text>
+
+      <!-- 1 --other--> return LT -->
+      <line x1="275" y1="110" x2="275" y2="148" stroke="#c4553a" stroke-width="1.5" marker-end="url(#arrow-warm)"/>
+      <text x="305" y="135" fill="#c4553a" font-family="DM Mono, monospace" font-size="10">other (retract)</text>
+
+      <!-- State 2 (after '>') -->
+      <circle cx="275" cy="215" r="25" fill="#f0ebe3" stroke="#2b1d12" stroke-width="2"/>
+      <text x="275" y="220" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="16" font-weight="600">2</text>
+
+      <!-- 2 --'='--> 6 (GE) -->
+      <line x1="300" y1="220" x2="395" y2="240" stroke="#5a8f5a" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="345" y="240" text-anchor="middle" fill="#5a8f5a" font-family="DM Mono, monospace" font-size="14" font-weight="600">=</text>
+
+      <!-- 2 --other--> return GT -->
+      <line x1="275" y1="240" x2="275" y2="278" stroke="#c4553a" stroke-width="1.5" marker-end="url(#arrow-warm)"/>
+      <text x="305" y="265" fill="#c4553a" font-family="DM Mono, monospace" font-size="10">other (retract)</text>
+
+      <!-- State 3 (accepting: LE) -->
+      <circle cx="425" cy="55" r="25" fill="#e8e0d4" stroke="#2b1d12" stroke-width="2"/>
+      <circle cx="425" cy="55" r="20" fill="#e8e0d4" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="425" y="60" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="14" font-weight="600">3</text>
+      <text x="425" y="32" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="11" font-weight="600">return LE</text>
+
+      <!-- State 4 (accepting: NE) -->
+      <circle cx="425" cy="120" r="25" fill="#e8e0d4" stroke="#2b1d12" stroke-width="2"/>
+      <circle cx="425" cy="120" r="20" fill="#e8e0d4" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="425" y="125" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="14" font-weight="600">4</text>
+      <text x="475" y="120" fill="#c8a84e" font-family="DM Mono, monospace" font-size="11" font-weight="600">return NE</text>
+
+      <!-- State 5 (accepting: EQ) -->
+      <circle cx="210" cy="275" r="25" fill="#e8e0d4" stroke="#2b1d12" stroke-width="2"/>
+      <circle cx="210" cy="275" r="20" fill="#e8e0d4" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="210" y="280" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="14" font-weight="600">5</text>
+      <text x="210" y="310" text-anchor="middle" fill="#5a8f5a" font-family="DM Mono, monospace" font-size="11" font-weight="600">return EQ</text>
+
+      <!-- State 6 (accepting: GE) -->
+      <circle cx="425" cy="240" r="25" fill="#e8e0d4" stroke="#2b1d12" stroke-width="2"/>
+      <circle cx="425" cy="240" r="20" fill="#e8e0d4" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="425" y="245" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="14" font-weight="600">6</text>
+      <text x="475" y="240" fill="#5a8f5a" font-family="DM Mono, monospace" font-size="11" font-weight="600">return GE</text>
+
+      <!-- LT return label -->
+      <text x="220" y="158" text-anchor="end" fill="#c4553a" font-family="DM Mono, monospace" font-size="10">return LT</text>
+
+      <!-- GT return label -->
+      <text x="220" y="288" text-anchor="end" fill="#c4553a" font-family="DM Mono, monospace" font-size="10">return GT</text>
+    </svg>
+    <p class="diagram-caption">Fig 5. &mdash; Transition diagram for relational operators. State 0 is the start state. The operator <code>&lt;</code> leads to state 1, which can transition to <code>LE</code> (on <code>=</code>), <code>NE</code> (on <code>&gt;</code>), or <code>LT</code> (on any other character, with retraction). Similarly, <code>&gt;</code> leads to state 2, which can accept <code>GE</code> or retract to <code>GT</code>. The <code>=</code> operator immediately accepts <code>EQ</code>.</p>
+  </div>
+
+  <!-- Transition Diagram: Unsigned Numbers -->
+  <div class="diagram-container">
+    <svg viewBox="0 0 780 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Transition diagram for recognizing unsigned numbers">
+      <text x="390" y="25" text-anchor="middle" fill="#2b1d12" font-family="Cormorant Garamond, serif" font-size="18" font-weight="700">Unsigned Number Recognition</text>
+      <text x="390" y="45" text-anchor="middle" fill="#7a6b5b" font-family="Source Serif 4, serif" font-size="13">Pattern: digits (. digits)? (E (+|-)? digits)?</text>
+
+      <!-- Start arrow -->
+      <line x1="30" y1="140" x2="78" y2="140" stroke="#2b1d12" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- State 0 -->
+      <circle cx="100" cy="140" r="24" fill="#f0ebe3" stroke="#2b1d12" stroke-width="2"/>
+      <text x="100" y="145" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="15" font-weight="600">0</text>
+
+      <!-- 0 --digit--> 1 -->
+      <line x1="124" y1="135" x2="196" y2="100" stroke="#3a7c8c" stroke-width="2" marker-end="url(#arrow-teal)"/>
+      <text x="165" y="110" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="13" font-weight="600">digit</text>
+
+      <!-- State 1 (accepting) -->
+      <circle cx="225" cy="95" r="24" fill="#e8e0d4" stroke="#2b1d12" stroke-width="2"/>
+      <circle cx="225" cy="95" r="19" fill="#e8e0d4" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="225" y="100" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="15" font-weight="600">1</text>
+
+      <!-- 1 self-loop: digit -->
+      <path d="M 225,71 C 225,45 290,45 290,71" fill="none" stroke="#5a8f5a" stroke-width="2" marker-end="url(#arrow)"/>
+      <path d="M 290,75 C 290,55 230,55 230,71" fill="none" stroke="#5a8f5a" stroke-width="2"/>
+      <text x="275" y="53" text-anchor="middle" fill="#5a8f5a" font-family="DM Mono, monospace" font-size="12" font-weight="600">digit</text>
+
+      <!-- 1 --'.'--> 2 -->
+      <line x1="249" y1="95" x2="336" y2="95" stroke="#c8a84e" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="292" y="85" text-anchor="middle" fill="#c8a84e" font-family="DM Mono, monospace" font-size="14" font-weight="600">.</text>
+
+      <!-- State 2 -->
+      <circle cx="365" cy="95" r="24" fill="#f0ebe3" stroke="#2b1d12" stroke-width="2"/>
+      <text x="365" y="100" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="15" font-weight="600">2</text>
+
+      <!-- 2 --digit--> 3 -->
+      <line x1="389" y1="95" x2="456" y2="95" stroke="#3a7c8c" stroke-width="2" marker-end="url(#arrow-teal)"/>
+      <text x="422" y="85" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="13" font-weight="600">digit</text>
+
+      <!-- State 3 (accepting) -->
+      <circle cx="485" cy="95" r="24" fill="#e8e0d4" stroke="#2b1d12" stroke-width="2"/>
+      <circle cx="485" cy="95" r="19" fill="#e8e0d4" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="485" y="100" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="15" font-weight="600">3</text>
+
+      <!-- 3 self-loop: digit -->
+      <path d="M 485,71 C 485,45 550,45 550,71" fill="none" stroke="#5a8f5a" stroke-width="2" marker-end="url(#arrow)"/>
+      <path d="M 550,75 C 550,55 490,55 490,71" fill="none" stroke="#5a8f5a" stroke-width="2"/>
+      <text x="535" y="53" text-anchor="middle" fill="#5a8f5a" font-family="DM Mono, monospace" font-size="12" font-weight="600">digit</text>
+
+      <!-- 1 --E/e--> 4 (also from 3) -->
+      <line x1="225" y1="119" x2="225" y2="178" stroke="#7a4a6a" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="200" y="155" text-anchor="middle" fill="#7a4a6a" font-family="DM Mono, monospace" font-size="13" font-weight="600">E/e</text>
+
+      <!-- 3 --E/e--> 4 -->
+      <line x1="485" y1="119" x2="485" y2="178" stroke="#7a4a6a" stroke-width="2" marker-end="url(#arrow)"/>
+      <text x="500" y="155" text-anchor="middle" fill="#7a4a6a" font-family="DM Mono, monospace" font-size="13" font-weight="600">E/e</text>
+
+      <!-- State 4 -->
+      <circle cx="355" cy="200" r="24" fill="#f0ebe3" stroke="#2b1d12" stroke-width="2"/>
+      <text x="355" y="205" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="15" font-weight="600">4</text>
+
+      <!-- 4 --digit--> 6 -->
+      <line x1="379" y1="200" x2="565" y2="200" stroke="#3a7c8c" stroke-width="2" marker-end="url(#arrow-teal)"/>
+      <text x="472" y="190" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="13" font-weight="600">digit</text>
+
+      <!-- 4 --+/- --> 5 -->
+      <line x1="340" y1="224" x2="310" y2="262" stroke="#c4553a" stroke-width="2" marker-end="url(#arrow-warm)"/>
+      <text x="310" y="255" text-anchor="middle" fill="#c4553a" font-family="DM Mono, monospace" font-size="13" font-weight="600">+/-</text>
+
+      <!-- State 5 -->
+      <circle cx="285" cy="260" r="24" fill="#f0ebe3" stroke="#2b1d12" stroke-width="2"/>
+      <text x="285" y="265" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="15" font-weight="600">5</text>
+
+      <!-- 5 --digit--> 6 -->
+      <line x1="309" y1="260" x2="541" y2="220" stroke="#3a7c8c" stroke-width="2" marker-end="url(#arrow-teal)"/>
+      <text x="420" y="250" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="13" font-weight="600">digit</text>
+
+      <!-- State 6 (accepting) -->
+      <circle cx="595" cy="200" r="24" fill="#e8e0d4" stroke="#2b1d12" stroke-width="2"/>
+      <circle cx="595" cy="200" r="19" fill="#e8e0d4" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="595" y="205" text-anchor="middle" fill="#2b1d12" font-family="DM Mono, monospace" font-size="15" font-weight="600">6</text>
+
+      <!-- 6 self-loop: digit -->
+      <path d="M 595,176 C 595,150 660,150 660,176" fill="none" stroke="#5a8f5a" stroke-width="2" marker-end="url(#arrow)"/>
+      <path d="M 660,180 C 660,160 600,160 600,176" fill="none" stroke="#5a8f5a" stroke-width="2"/>
+      <text x="645" y="158" text-anchor="middle" fill="#5a8f5a" font-family="DM Mono, monospace" font-size="12" font-weight="600">digit</text>
+
+      <!-- Accept labels -->
+      <text x="225" y="130" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="9" font-weight="600">integer</text>
+      <text x="485" y="130" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="9" font-weight="600">fraction</text>
+      <text x="595" y="235" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="9" font-weight="600">scientific</text>
+    </svg>
+    <p class="diagram-caption">Fig 6. &mdash; Transition diagram for unsigned numbers. The scanner starts in state 0. After reading digits (state 1, accepting as integer), it can optionally see a decimal point (state 2) followed by more digits (state 3, accepting as fraction). From either state 1 or 3, an <code>E</code> or <code>e</code> leads to the exponent part (states 4-6). The exponent may optionally include a sign (<code>+</code> or <code>-</code>) at state 5. State 6 accepts the complete scientific notation number.</p>
+  </div>
+
+  <div class="card card-gold">
+    <h4 class="card-title">Lexeme Identification Example</h4>
+    <p>Given the following C function, let us identify every lexeme, its token, and its pattern:</p>
+<pre>void sumnum(int i, int j) {
+    int k = 6;
+    return i + j;
+}</pre>
+
+    <table class="styled-table">
+      <thead><tr><th>Lexeme</th><th>Token</th><th>Pattern</th></tr></thead>
+      <tbody>
+        <tr><td><code>void</code></td><td><code>&lt;keyword, void&gt;</code></td><td>the keyword "void"</td></tr>
+        <tr><td><code>sumnum</code></td><td><code>&lt;id, 1&gt;</code></td><td>letter (letter | digit)*</td></tr>
+        <tr><td><code>(</code></td><td><code>&lt;lparen&gt;</code></td><td>the character "("</td></tr>
+        <tr><td><code>int</code></td><td><code>&lt;keyword, int&gt;</code></td><td>the keyword "int"</td></tr>
+        <tr><td><code>i</code></td><td><code>&lt;id, 2&gt;</code></td><td>letter (letter | digit)*</td></tr>
+        <tr><td><code>,</code></td><td><code>&lt;comma&gt;</code></td><td>the character ","</td></tr>
+        <tr><td><code>int</code></td><td><code>&lt;keyword, int&gt;</code></td><td>the keyword "int"</td></tr>
+        <tr><td><code>j</code></td><td><code>&lt;id, 3&gt;</code></td><td>letter (letter | digit)*</td></tr>
+        <tr><td><code>)</code></td><td><code>&lt;rparen&gt;</code></td><td>the character ")"</td></tr>
+        <tr><td><code>{</code></td><td><code>&lt;lbrace&gt;</code></td><td>the character "{"</td></tr>
+        <tr><td><code>int</code></td><td><code>&lt;keyword, int&gt;</code></td><td>the keyword "int"</td></tr>
+        <tr><td><code>k</code></td><td><code>&lt;id, 4&gt;</code></td><td>letter (letter | digit)*</td></tr>
+        <tr><td><code>=</code></td><td><code>&lt;assign&gt;</code></td><td>the character "="</td></tr>
+        <tr><td><code>6</code></td><td><code>&lt;num, 5&gt;</code></td><td>digit+</td></tr>
+        <tr><td><code>;</code></td><td><code>&lt;semicolon&gt;</code></td><td>the character ";"</td></tr>
+        <tr><td><code>return</code></td><td><code>&lt;keyword, return&gt;</code></td><td>the keyword "return"</td></tr>
+        <tr><td><code>i</code></td><td><code>&lt;id, 2&gt;</code></td><td>letter (letter | digit)*</td></tr>
+        <tr><td><code>+</code></td><td><code>&lt;+&gt;</code></td><td>the character "+"</td></tr>
+        <tr><td><code>j</code></td><td><code>&lt;id, 3&gt;</code></td><td>letter (letter | digit)*</td></tr>
+        <tr><td><code>;</code></td><td><code>&lt;semicolon&gt;</code></td><td>the character ";"</td></tr>
+        <tr><td><code>}</code></td><td><code>&lt;rbrace&gt;</code></td><td>the character "}"</td></tr>
+      </tbody>
+    </table>
+    <p style="font-size:0.88rem;margin-top:0.5rem;">Note that the same lexeme <code>i</code> appears twice and maps to the same token and the same symbol table entry (entry 2). Keywords like <code>void</code>, <code>int</code>, and <code>return</code> are typically recognized either by reserving them in the symbol table before scanning begins or by checking whether an identifier matches a keyword table after recognition.</p>
+  </div>
+
+  <div class="confusion-box">
+    <p><strong>Keywords vs. Identifiers:</strong> A common confusion is how the scanner distinguishes keywords (like <code>if</code>, <code>while</code>, <code>int</code>) from identifiers, since a keyword like <code>if</code> also matches the pattern for identifiers (<code>letter(letter|digit)*</code>). There are two standard approaches: (1) <strong>Reserved words in symbol table:</strong> insert all keywords into the symbol table during initialization, and when the scanner recognizes an identifier, it checks whether the lexeme is already in the table as a keyword. If so, it returns the keyword token instead of <code>&lt;id&gt;</code>. (2) <strong>Explicit recognition in the transition diagram:</strong> the scanner uses separate transitions for keywords, or equivalently, tries each keyword pattern before the general identifier pattern. The first approach is simpler and more common in practice.</p>
+  </div>
+</section>
+
+<div class="divider">&#10043;</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 12: THE LEX COMPILER -->
+<!-- ============================================================ -->
+<section class="content-section" id="sec-lex">
+  <span class="section-number">Section 12</span>
+  <h2 class="section-title">The LEX Compiler</h2>
+  <p class="section-subtitle">Generating scanners automatically from regular expression specifications</p>
+
+  <p>Writing a lexical analyzer by hand, while educational, is tedious and error-prone for any non-trivial language. The <strong>LEX</strong> tool (and its modern GNU implementation, <strong>Flex</strong>) is a <strong>scanner generator</strong> that automates this process. LEX takes as input a specification file containing regular expressions paired with actions, and produces as output a C program that implements a lexical analyzer corresponding to those specifications. This C program can then be compiled and linked with the rest of the compiler. LEX is one of the most widely used compiler construction tools and has been a standard part of the Unix programming environment since the 1970s.</p>
+
+  <!-- LEX Compiler Architecture Diagram -->
+  <div class="diagram-container">
+    <svg viewBox="0 0 900 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LEX compiler architecture showing the flow from LEX specification to executable scanner">
+      <text x="450" y="25" text-anchor="middle" fill="#2b1d12" font-family="Cormorant Garamond, serif" font-size="18" font-weight="700">The LEX Compiler Architecture</text>
+
+      <!-- LEX Source File -->
+      <rect x="30" y="70" width="140" height="70" rx="6" fill="#c4553a" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="100" y="97" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="12" font-weight="600">LEX Source</text>
+      <text x="100" y="115" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="DM Mono, monospace" font-size="10">(.l file)</text>
+      <text x="100" y="133" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="DM Mono, monospace" font-size="9">rules + actions</text>
+
+      <!-- Arrow -->
+      <line x1="170" y1="105" x2="220" y2="105" stroke="#2b1d12" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- LEX Compiler -->
+      <rect x="225" y="70" width="140" height="70" rx="6" fill="#3a7c8c" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="295" y="93" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="12" font-weight="600">LEX</text>
+      <text x="295" y="111" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="12" font-weight="600">Compiler</text>
+      <text x="295" y="130" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="DM Mono, monospace" font-size="9">generates DFA</text>
+
+      <!-- Arrow -->
+      <line x1="365" y1="105" x2="415" y2="105" stroke="#2b1d12" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- lex.yy.c -->
+      <rect x="420" y="70" width="140" height="70" rx="6" fill="#5a8f5a" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="490" y="93" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="12" font-weight="600">lex.yy.c</text>
+      <text x="490" y="111" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="DM Mono, monospace" font-size="10">Generated C code</text>
+      <text x="490" y="129" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="DM Mono, monospace" font-size="9">with yylex()</text>
+
+      <!-- Arrow -->
+      <line x1="560" y1="105" x2="610" y2="105" stroke="#2b1d12" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- C Compiler -->
+      <rect x="615" y="70" width="130" height="70" rx="6" fill="#c8a84e" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="680" y="93" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="12" font-weight="600">C Compiler</text>
+      <text x="680" y="111" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-family="DM Mono, monospace" font-size="10">(gcc/cc)</text>
+      <text x="680" y="129" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="DM Mono, monospace" font-size="9">+ LEX library</text>
+
+      <!-- Arrow -->
+      <line x1="745" y1="105" x2="775" y2="105" stroke="#2b1d12" stroke-width="1.5" marker-end="url(#arrow)"/>
+
+      <!-- Executable -->
+      <rect x="780" y="80" width="90" height="50" rx="6" fill="#7a4a6a" stroke="#2b1d12" stroke-width="1.5"/>
+      <text x="825" y="103" text-anchor="middle" fill="white" font-family="Source Serif 4, serif" font-size="12" font-weight="600">a.out</text>
+      <text x="825" y="118" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-family="DM Mono, monospace" font-size="9">scanner</text>
+
+      <!-- LEX library label -->
+      <rect x="350" y="190" width="140" height="50" rx="6" fill="#f0ebe3" stroke="#2b1d12" stroke-width="1" stroke-dasharray="4,3"/>
+      <text x="420" y="212" text-anchor="middle" fill="#7a6b5b" font-family="DM Mono, monospace" font-size="11">LEX library</text>
+      <text x="420" y="228" text-anchor="middle" fill="#7a6b5b" font-family="DM Mono, monospace" font-size="9">(yylex driver)</text>
+      <line x1="420" y1="190" x2="420" y2="140" stroke="#7a6b5b" stroke-width="1" stroke-dasharray="4,3"/>
+
+      <!-- Input stream -->
+      <line x1="20" y1="275" x2="870" y2="275" stroke="#3a7c8c" stroke-width="2"/>
+      <text x="450" y="295" text-anchor="middle" fill="#3a7c8c" font-family="DM Mono, monospace" font-size="12" font-weight="600">source characters &rarr; yylex() &rarr; token stream</text>
+      <text x="450" y="312" text-anchor="middle" fill="#7a6b5b" font-family="Source Serif 4, serif" font-size="12">The generated scanner reads characters and produces tokens for the parser (yyparse)</text>
+    </svg>
+    <p class="diagram-caption">Fig 7. &mdash; The LEX compilation pipeline. The LEX specification file (.l) is processed by the LEX compiler to generate a C source file (lex.yy.c). This file is compiled by the C compiler and linked with the LEX library to produce an executable scanner. The scanner's <code>yylex()</code> function is called by the parser each time it needs the next token.</p>
+  </div>
+
+  <div class="card card-teal">
+    <h3 class="card-title">Input Specification File Format</h3>
+    <p>A LEX specification file (with the extension <code>.l</code>) has a specific three-section format, with each section separated by a delimiter consisting of two percent signs (<code>%%</code>):</p>
+<pre>{definitions}
+%%
+{rules}
+%%
+{user subroutines}</pre>
+
+    <p><strong>Section 1: Definitions.</strong> This section contains regular definitions (named regular expressions) and C declarations enclosed in <code>%{ ... %}</code> delimiters. The declarations are copied verbatim into the generated C file, typically including <code>#include</code> directives and global variable declarations. Regular definitions give names to commonly used patterns, making the rules section more readable.</p>
+
+    <p><strong>Section 2: Rules.</strong> This is the core of the specification. Each rule has the form:</p>
+<pre>pattern    { action }</pre>
+    <p>where <em>pattern</em> is a regular expression describing a token and <em>action</em> is a C code block to be executed when the pattern matches. The patterns are matched against the input in order; when multiple patterns match the same input, the first rule listed takes priority. Additionally, when the same pattern matches substrings of different lengths, LEX follows the <strong>maximal munch</strong> rule: it matches the longest possible prefix of the remaining input.</p>
+
+    <p><strong>Section 3: User Subroutines.</strong> This section contains additional C functions that are copied verbatim into the generated file. It typically includes auxiliary functions called by the actions, such as symbol table lookup routines or error reporting functions. This section may be empty.</p>
+  </div>
+
+  <div class="card card-accent-left">
+    <h3 class="card-title">Example LEX Program</h3>
+    <p>The following LEX specification implements a simple scanner that recognizes identifiers, unsigned integers, whitespace, and assignment operators:</p>
+<pre>/* === Section 1: Definitions === */
+%{
+#include &lt;stdio.h&gt;
+#include "tokens.h"
+int line_number = 1;
+%}
+
+letter    [A-Za-z_]
+digit     [0-9]
+id        {letter}({letter}|{digit})*
+num       {digit}+
+
+%%
+
+ /* === Section 2: Rules === */
+
+[ \t]+      { /* skip whitespace */ }
+\n          { line_number++; }
+
+{id}        {
+              yylval = install_id(yytext);
+              return ID;
+            }
+
+{num}       {
+              yylval = atoi(yytext);
+              return NUM;
+            }
+
+":="        { return ASSIGN; }
+"+"         { return PLUS; }
+"*"         { return STAR; }
+";"         { return SEMI; }
+"("         { return LPAREN; }
+")"         { return RPAREN; }
+
+.           {
+              printf("Line %d: illegal character '%s'\n",
+                     line_number, yytext);
+            }
+
+%%
+
+ /* === Section 3: User Subroutines === */
+
+int install_id(char *text) {
+    /* Look up or insert identifier in symbol table */
+    /* Return symbol table index */
+    return lookup_or_insert(text);
+}</pre>
+
+    <p>The first section defines character classes <code>letter</code> and <code>digit</code>, and composite patterns <code>id</code> and <code>num</code>. The second section contains rules: whitespace is consumed silently (the action is empty), newlines increment a line counter (used for error messages), identifiers and numbers are recognized with actions that store their values and return token codes, and single-character operators return their token codes directly. The <code>yylex()</code> function generated by LEX is called by the parser; each call returns the next token. The variable <code>yytext</code> contains the matched lexeme, and <code>yylval</code> is used to pass attribute values to the parser.</p>
+  </div>
+
+  <div class="memory-box">
+    <p><strong>Three key LEX behaviors to remember for exams:</strong></p>
+    <ul style="padding-left:1.2rem;">
+      <li><strong>Priority:</strong> When multiple rules match, the first rule in the list wins.</li>
+      <li><strong>Maximal munch:</strong> When a rule can match different lengths of input, the longest match is preferred.</li>
+      <li><strong>Default action:</strong> If no rule matches, the matched character is echoed to the output (printed as-is).</li>
+    </ul>
+  </div>
+
+  <details>
+    <summary>How LEX Works Internally: From RE to DFA</summary>
+    <div class="detail-content">
+      <p>Internally, the LEX compiler performs the following steps to generate the scanner:</p>
+      <ol style="padding-left:1.5rem;">
+        <li style="margin-bottom:0.5rem;"><strong>Combine all regular expressions</strong> into a single large NFA (Nondeterministic Finite Automaton) using &epsilon;-transitions. Each pattern gets its own accepting state, and the action associated with that pattern is attached to the accepting state.</li>
+        <li style="margin-bottom:0.5rem;"><strong>Convert the NFA to a DFA</strong> (Deterministic Finite Automaton) using the subset construction algorithm. The DFA has no &epsilon;-transitions and at most one transition per state per character, making it efficient for execution.</li>
+        <li style="margin-bottom:0.5rem;"><strong>Minimize the DFA</strong> by merging equivalent states, producing the smallest possible DFA that recognizes the same language.</li>
+        <li style="margin-bottom:0.5rem;"><strong>Generate C code</strong> that implements the minimized DFA as a table-driven or switch-driven scanner. The generated code uses <code>yytext</code> to record the matched string and calls the appropriate action code when an accepting state is reached.</li>
+      </ol>
+      <p>This pipeline — from regular expressions to NFA to DFA to minimized DFA to C code — is the theoretical foundation of scanner generation, and understanding it is valuable for both exams and practical tool use.</p>
+    </div>
+  </details>
+</section>
+
+<div class="divider">&#10043;</div>
+
+<!-- ============================================================ -->
+<!-- SECTION 13: EXAM MASTERY -->
+<!-- ============================================================ -->
+<section class="content-section" id="sec-exam">
+  <span class="section-number">Section 13</span>
+  <h2 class="section-title">Exam Mastery &amp; Revision</h2>
+  <p class="section-subtitle">Everything you need to score high — condensed, organized, and ready to reproduce</p>
+
+  <!-- Quick Revision Summary -->
+  <div class="card card-accent-left" style="border-left-width:6px;">
+    <h3 class="card-title">Quick Revision Summary</h3>
+    <div class="revision-grid">
+      <div class="revision-card">
+        <h4>Compiler</h4>
+        <p style="font-size:0.85rem;">Program that translates source language (high-level) to target language (assembly/machine code). Preserves semantics, reports errors.</p>
+      </div>
+      <div class="revision-card">
+        <h4>6 Phases</h4>
+        <p style="font-size:0.85rem;">Lexical Analysis &rarr; Syntax Analysis &rarr; Semantic Analysis &rarr; Intermediate Code Gen &rarr; Code Optimization &rarr; Code Generation. Supported by Symbol Table &amp; Error Handler.</p>
+      </div>
+      <div class="revision-card">
+        <h4>Front End vs Back End</h4>
+        <p style="font-size:0.85rem;">Front end = Lexical + Syntax + Semantic + IR Gen (source-dependent). Back end = Optimization + Code Gen (machine-dependent). IR is the contract between them.</p>
+      </div>
+      <div class="revision-card">
+        <h4>Cousins</h4>
+        <p style="font-size:0.85rem;">Preprocessor &rarr; Compiler &rarr; Assembler &rarr; Linker &rarr; Loader. Each transforms the program one step closer to execution.</p>
+      </div>
+      <div class="revision-card">
+        <h4>Single-Pass vs Multi-Pass</h4>
+        <p style="font-size:0.85rem;">Single-pass: reads source once, fast but limited (no forward refs). Multi-pass: reads multiple times, supports optimizations &amp; forward references.</p>
+      </div>
+      <div class="revision-card">
+        <h4>Bootstrapping</h4>
+        <p style="font-size:0.85rem;">Using a compiler written in its own language to compile itself. Start with a small bootstrap compiler in another language, then self-compile.</p>
+      </div>
+      <div class="revision-card">
+        <h4>Lexical Analysis</h4>
+        <p style="font-size:0.85rem;">Groups characters into tokens. Token = (name, attribute). Lexeme = matched string. Pattern = rule. Uses regular expressions &amp; finite automata.</p>
+      </div>
+      <div class="revision-card">
+        <h4>Two-Buffer Scheme</h4>
+        <p style="font-size:0.85rem;">Buffer divided into two halves. lexemeBegin &amp; forward pointers. Sentinel characters at boundaries eliminate per-character EOF checks.</p>
+      </div>
+      <div class="revision-card">
+        <h4>Regular Expressions</h4>
+        <p style="font-size:0.85rem;">Union (|), Concatenation, Kleene Star (*). Precedence: * then concat then |. Regular definitions: name = RE.</p>
+      </div>
+      <div class="revision-card">
+        <h4>Transition Diagrams</h4>
+        <p style="font-size:0.85rem;">Directed graph: states (circles), transitions (labeled edges). Start state (single circle), accepting state (double circle).</p>
+      </div>
+      <div class="revision-card">
+        <h4>LEX Compiler</h4>
+        <p style="font-size:0.85rem;">Scanner generator. 3-section input: definitions, rules, actions. Generates C code (lex.yy.c). Priority: first rule wins. Maximal munch.</p>
+      </div>
+      <div class="revision-card">
+        <h4>Three-Address Code</h4>
+        <p style="font-size:0.85rem;">IR format: at most one operator per instruction. Example: t1 = a + b; t2 = t1 * c. Machine-independent bridge between front &amp; back end.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mnemonics -->
+  <div class="memory-box" style="margin-top:2rem;">
+    <h3 class="card-title" style="color:var(--accent-plum);">Mnemonics &amp; Memory Aids</h3>
+    <p><strong>Phases mnemonic:</strong> <strong>L</strong>exical <strong>S</strong>yntax <strong>S</strong>emantic <strong>I</strong>ntermediate <strong>O</strong>ptimization <strong>C</strong>ode gen &mdash; "<strong>L-S-S-I-O-C</strong>" &mdash; or "<em>Let Students Study In Organized Classrooms</em>."</p>
+    <p><strong>Token components:</strong> <strong>T</strong>oken = <strong>N</strong>ame + <strong>A</strong>ttribute &mdash; "<strong>T-N-A</strong>" &mdash; "<em>Tokens Need Attributes</em>."</p>
+    <p><strong>RE operations:</strong> <strong>U</strong>nion, <strong>C</strong>oncatenation, <strong>K</strong>leene star &mdash; "<strong>U-C-K</strong>" &mdash; "<em>Union Concatenates Kleene-ly</em>."</p>
+    <p><strong>RE precedence:</strong> Star &gt; Concatenation &gt; Union &mdash; "<strong>S-C-U</strong>" &mdash; "<em>Stars Come Underneath nothing</em>."</p>
+  </div>
+
+  <!-- Exam Question Frameworks -->
+  <details>
+    <summary>How to Structure a 10-Mark Answer: "Phases of a Compiler"</summary>
+    <div class="detail-content">
+      <p><strong>Recommended structure for 10 marks (approximately 400-500 words):</strong></p>
+      <ol style="padding-left:1.5rem;">
+        <li style="margin-bottom:0.5rem;"><strong>Opening definition</strong> (2-3 sentences): Define what compiler phases are and why decomposition is necessary.</li>
+        <li style="margin-bottom:0.5rem;"><strong>Draw the diagram</strong> (the 6-phase pipeline with symbol table and error handler). Label everything clearly.</li>
+        <li style="margin-bottom:0.5rem;"><strong>Explain each phase briefly</strong> (4-5 sentences each): Lexical (scanning, tokens), Syntax (parsing, parse tree), Semantic (type checking, annotated tree), IR Generation (three-address code), Optimization (constant folding, dead code elimination), Code Generation (instruction selection, register allocation).</li>
+        <li style="margin-bottom:0.5rem;"><strong>Symbol table and error handler</strong> (3-4 sentences): Role, when consulted, what information is stored.</li>
+        <li style="margin-bottom:0.5rem;"><strong>Trace one example</strong> through all phases (e.g., <code>a = b + c * 70</code>). Show token stream, parse tree, three-address code, optimized code, and target code.</li>
+        <li style="margin-bottom:0.5rem;"><strong>Front-end vs. back-end distinction</strong> (2-3 sentences): Which phases belong to each, why the separation matters.</li>
+      </ol>
+    </div>
+  </details>
+
+  <details>
+    <summary>How to Structure a 15-Mark Answer: "Trace Statement Through All Phases"</summary>
+    <div class="detail-content">
+      <p><strong>Recommended structure for 15 marks (approximately 700-1000 words):</strong></p>
+      <ol style="padding-left:1.5rem;">
+        <li style="margin-bottom:0.5rem;"><strong>Introduction</strong> (4-5 sentences): Briefly describe what the compiler does with the given statement.</li>
+        <li style="margin-bottom:0.5rem;"><strong>Phase 1 — Lexical Analysis:</strong> List all tokens in a table (lexeme, token name, attribute). Draw the symbol table entries. (8-10 lines)</li>
+        <li style="margin-bottom:0.5rem;"><strong>Phase 2 — Syntax Analysis:</strong> Draw the parse tree. Explain how precedence and associativity determine the tree structure. (8-10 lines + tree diagram)</li>
+        <li style="margin-bottom:0.5rem;"><strong>Phase 3 — Semantic Analysis:</strong> Explain type checking. If any implicit conversions are needed, describe them. Show annotated tree. (6-8 lines)</li>
+        <li style="margin-bottom:0.5rem;"><strong>Phase 4 — IR Generation:</strong> Write three-address code. Explain temporaries. (5-7 lines + code)</li>
+        <li style="margin-bottom:0.5rem;"><strong>Phase 5 — Optimization:</strong> Identify applicable optimizations. Show optimized IR. (5-7 lines + code)</li>
+        <li style="margin-bottom:0.5rem;"><strong>Phase 6 — Code Generation:</strong> Write target assembly code. Explain register choices. (5-7 lines + code)</li>
+        <li style="margin-bottom:0.5rem;"><strong>Symbol table final state</strong> (table showing all entries with their types and addresses).</li>
+        <li style="margin-bottom:0.5rem;"><strong>Conclusion</strong> (2-3 sentences): Summarize the transformation from source to target.</li>
+      </ol>
+    </div>
+  </details>
+
+  <!-- Most Likely Exam Questions -->
+  <div class="exam-tip" style="margin-top:2rem;">
+    <h3 class="card-title">Most Likely Exam Questions (Based on PYQ Analysis)</h3>
+    <table class="styled-table">
+      <thead><tr><th>Marks</th><th>Question</th><th>Key Points to Cover</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>2</strong></td>
+          <td>What is a token?</td>
+          <td>Definition: name + attribute. Examples. Difference from lexeme and pattern.</td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td>What is bootstrapping?</td>
+          <td>Self-compiling. Bootstrap compiler concept. Why needed.</td>
+        </tr>
+        <tr>
+          <td><strong>2</strong></td>
+          <td>Name the phases of a compiler.</td>
+          <td>List all 6 + symbol table + error handler.</td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td>Difference between front-end and back-end.</td>
+          <td>Phases, input/output, language vs. machine dependency, examples.</td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td>Explain input buffering in lexical analysis.</td>
+          <td>One-buffer scheme problems, two-buffer scheme, sentinel technique, algorithm.</td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td>Explain the cousins of a compiler.</td>
+          <td>Preprocessor, assembler, linker, loader. Roles and sequence.</td>
+        </tr>
+        <tr>
+          <td><strong>5</strong></td>
+          <td>Construct transition diagram for identifiers.</td>
+          <td>Two states: start and accepting. letter/digit transitions. Draw and explain.</td>
+        </tr>
+        <tr>
+          <td><strong>10</strong></td>
+          <td>What are the phases of a compiler? Trace <code>a = b + c * 70</code>.</td>
+          <td>Diagram + all 6 phases with intermediate outputs. Full walkthrough.</td>
+        </tr>
+        <tr>
+          <td><strong>10</strong></td>
+          <td>Single-pass vs. multi-pass compiler. Bootstrapping with 3 machines.</td>
+          <td>Comparison table + bootstrapping steps for A, B, C.</td>
+        </tr>
+        <tr>
+          <td><strong>10-15</strong></td>
+          <td>Role of lexical analyzer. Specify and recognize tokens.</td>
+          <td>RE specification, transition diagrams (id, rel, num), token table, LEX working.</td>
+        </tr>
+        <tr>
+          <td><strong>10-15</strong></td>
+          <td>Explain LEX compiler. Discuss input specification file format.</td>
+          <td>Architecture diagram, 3 sections, rules format, RE to DFA, example .l file.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Diagram Drawing Guide -->
+  <details style="margin-top:1.5rem;">
+    <summary>Exam Diagram Drawing Guide: What to Draw and How</summary>
+    <div class="detail-content">
+      <p><strong>1. Compiler Phases Diagram:</strong> Draw 6 rectangular boxes in a row. Label each: Lexical, Syntax, Semantic, IR Gen, Optimizer, Code Gen. Draw arrows between them pointing right. Below the middle, draw a box for "Symbol Table" with dashed lines connecting it to each phase. To the right below, draw "Error Handler" with dashed lines. Add "Source Program" on the left and "Target Code" on the right. Use 2 different colors to distinguish front-end from back-end phases. Label the inter-phase representations: char stream &rarr; tokens &rarr; parse tree &rarr; annotated tree &rarr; IR &rarr; optimized IR &rarr; target.</p>
+
+      <p><strong>2. Parse Tree:</strong> Draw a tree with the assignment operator at the root. The left child is the LHS identifier. The right child is the expression tree with proper precedence grouping. Always draw the tree so that higher-precedence operators are lower (deeper) in the tree. Label all nodes clearly.</p>
+
+      <p><strong>3. Transition Diagrams:</strong> Draw circles for states. Use double circles for accepting states. Draw arrows between states with labels. Draw a start arrow pointing to the initial state. For self-loops, draw curved arrows that leave and return to the same state. Always number the states.</p>
+
+      <p><strong>4. Two-Buffer Scheme:</strong> Draw a long rectangle divided into two halves. Show character positions within each half. Mark the sentinel characters at the boundaries. Draw two pointers (arrows from above): lexemeBegin and forward. Label the halves.</p>
+    </div>
+  </details>
+
+  <!-- Commonly Confused Points -->
+  <div class="confusion-box" style="margin-top:1.5rem;">
+    <h3 class="card-title" style="color:var(--accent-teal);">Most Commonly Confused Points</h3>
+    <table class="styled-table">
+      <thead><tr><th>Confusion</th><th>Clarification</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Token vs. Lexeme vs. Pattern</td>
+          <td>Token = category (e.g., &lt;id&gt;). Lexeme = specific string (e.g., "rate"). Pattern = rule that defines what matches (e.g., letter(letter|digit)*).</td>
+        </tr>
+        <tr>
+          <td>Compiler vs. Interpreter</td>
+          <td>Compiler translates entire program before execution. Interpreter translates and executes line by line. Compiled = fast execution. Interpreted = fast development.</td>
+        </tr>
+        <tr>
+          <td>Front end vs. Back end phases</td>
+          <td>Front end: Lexical + Syntax + Semantic + IR Gen (language-dependent). Back end: Optimize + Code Gen (machine-dependent).</td>
+        </tr>
+        <tr>
+          <td>NFA vs. DFA</td>
+          <td>NFA: multiple transitions possible for same input (nondeterministic). DFA: exactly one transition per input (deterministic). LEX uses DFA for efficiency.</td>
+        </tr>
+        <tr>
+          <td>Pass vs. Phase</td>
+          <td>A phase is a logical transformation step. A pass is a physical read of the source/intermediate file. One pass may contain multiple phases.</td>
+        </tr>
+        <tr>
+          <td>Symbol table lookup vs. insertion</td>
+          <td>Lookup: search for existing entry. Insertion: add new entry. The lexical analyzer does both: inserts new identifiers and looks up existing ones.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Viva Questions -->
+  <details style="margin-top:1.5rem;">
+    <summary>Viva Voce Questions with Model Answers</summary>
+    <div class="detail-content">
+      <p><strong>Q: Why is the symbol table called a "shared" data structure?</strong></p>
+      <p>A: The symbol table is shared because every phase of the compiler both reads from and writes to it. The lexical analyzer inserts identifiers, the semantic analyzer records types, and the code generator records addresses. It serves as the central repository of program information across all phases.</p>
+
+      <p><strong>Q: Can a compiler exist without a code optimizer?</strong></p>
+      <p>A: Yes. Code optimization is an optional (though highly desirable) phase. A compiler without optimization would produce correct but potentially slower or larger target code. Many simple or educational compilers skip optimization entirely. The optimization phase is what distinguishes a good compiler from a basic one.</p>
+
+      <p><strong>Q: What happens if two regular expressions in LEX can match the same input?</strong></p>
+      <p>A: LEX resolves ambiguity using two rules: (1) the rule listed first in the specification takes priority (first-match wins), and (2) among different-length matches of the same rule, the longest match wins (maximal munch).</p>
+
+      <p><strong>Q: Why do we need sentinels in the two-buffer scheme?</strong></p>
+      <p>A: Without sentinels, the scanner must check for end-of-buffer at every character, adding one comparison per character. Sentinels eliminate this check for all characters except the last one in each half, since the sentinel character will trigger the buffer-switching logic naturally. This roughly doubles the scanning speed for the end-of-buffer check case.</p>
+
+      <p><strong>Q: What is the difference between static and dynamic linking?</strong></p>
+      <p>A: In static linking, the linker copies the library code into the executable at link time. The executable is self-contained but larger. In dynamic linking, references to shared libraries are resolved at load time or run time by the OS loader. The executable is smaller and multiple programs can share one copy of the library in memory.</p>
+    </div>
+  </details>
+
+  <!-- Exam Night Recap -->
+  <div class="card card-gold" style="margin-top:2rem;border-left-width:6px;">
+    <h3 class="card-title">Exam Night: Ultra-Condensed Recap</h3>
+    <p style="font-size:0.9rem;line-height:1.8;">
+      <strong>Compiler</strong> = translates high-level to low-level. <strong>6 phases:</strong> Lexical (chars to tokens), Syntax (tokens to parse tree), Semantic (type check + annotate), IR Gen (three-address code), Optimize (make efficient), Code Gen (assembly). <strong>Two support components:</strong> Symbol Table (central info store), Error Handler (report + recover). <strong>Front end</strong> = Lexical + Syntax + Semantic + IR (language-dependent). <strong>Back end</strong> = Optimize + Code Gen (machine-dependent). <strong>Cousins:</strong> Preprocessor &rarr; Compiler &rarr; Assembler &rarr; Linker &rarr; Loader. <strong>Single-pass</strong> = one read, fast but no forward refs. <strong>Multi-pass</strong> = multiple reads, supports optimization &amp; forward refs. <strong>Bootstrapping</strong> = self-compilation using a small initial compiler. <strong>Lexical Analyzer:</strong> Token = (name, attribute). Lexeme = matched string. Pattern = rule. <strong>Input buffering:</strong> Two halves, lexemeBegin + forward pointers, sentinels at boundaries. <strong>Regular expressions:</strong> Union (|), Concatenation, Star (*). Precedence: * > concat > |. <strong>Transition diagrams:</strong> States + transitions. Start = single circle. Accept = double circle. <strong>LEX:</strong> Scanner generator. 3 sections: defs, rules, subroutines. RE &rarr; NFA &rarr; DFA &rarr; C code. First rule wins. Maximal munch.
+    </p>
+  </div>
+
+</div>
+
+<!-- Footer -->
+<footer style="text-align:center;padding:3rem 0 2rem;border-top:2px solid var(--border);margin-top:3rem;">
+  <p style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-light);letter-spacing:0.1em;text-transform:uppercase;">
+    TCS-601 &middot; Compiler Design &middot; Unit 1
+  </p>
+  <p style="font-family:var(--font-display);font-size:1.1rem;font-style:italic;color:var(--text-muted);margin-top:0.5rem;">
+    "The best way to understand a compiler is to build one."
+  </p>
+  <p style="font-family:var(--font-mono);font-size:0.65rem;color:var(--text-light);margin-top:1rem;">
+    Handcrafted study document &middot; Designed for exam mastery
+  </p>
+</footer>
+
+</div><!-- /page-wrapper -->
+
+<!-- Back to Top Button -->
+<button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">&uarr;</button>
+
+<script>
+// Back to top visibility
+window.addEventListener('scroll', function() {
+  const btn = document.getElementById('backToTop');
+  if (window.scrollY > 400) {
+    btn.style.display = 'flex';
+  } else {
+    btn.style.display = 'none';
+  }
+});
+
+// Intersection observer for fade-in animations
+const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -50px 0px' };
+const observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('.card, .diagram-container, .def-box, .exam-tip, .confusion-box, .memory-box').forEach(function(el) {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(15px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+
+// Active nav link highlighting
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.top-nav .nav-links a');
+window.addEventListener('scroll', function() {
+  let current = '';
+  sections.forEach(function(section) {
+    const sectionTop = section.offsetTop - 100;
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(function(link) {
+    link.style.color = '';
+    if (link.getAttribute('href') === '#' + current) {
+      link.style.color = '#c4553a';
+    }
+  });
+});
+</script>
+
+</body>
+</html>

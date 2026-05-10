@@ -1,0 +1,2144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 2: The Link Layer & LANs — Master Document</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;0,900;1,400;1,600&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Source+Code+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F5EFE6;
+  --bg-deep: #EDE5D8;
+  --bg-card: #FAF6EF;
+  --fg: #2C1810;
+  --fg-secondary: #5C4033;
+  --fg-muted: #8B7355;
+  --accent: #B85C38;
+  --accent-light: #D4845E;
+  --teal: #4A7C6F;
+  --teal-light: #6BA393;
+  --gold: #C9A84C;
+  --rose: #C17C74;
+  --cream: #E8D5B7;
+  --border: #D4C5A9;
+  --border-light: #E8DCC8;
+  --code-bg: #2C1810;
+  --code-fg: #E8D5B7;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 17px; }
+body {
+  font-family: 'Crimson Text', Georgia, serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+h1,h2,h3,h4,h5 { font-family: 'Playfair Display', Georgia, serif; line-height: 1.25; }
+code, pre, .mono { font-family: 'Source Code Pro', monospace; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--fg-muted); }
+
+/* Utility */
+.container { max-width: 920px; margin: 0 auto; padding: 0 2rem; }
+.wide-container { max-width: 1080px; margin: 0 auto; padding: 0 2rem; }
+.sr-only { position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);border:0; }
+
+/* ─── HERO ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(184,92,56,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 50%, rgba(74,124,111,0.08) 0%, transparent 50%),
+    var(--bg);
+  border-bottom: 3px double var(--border);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(212,197,169,0.15) 39px, rgba(212,197,169,0.15) 40px),
+    repeating-linear-gradient(90deg, transparent, transparent 39px, rgba(212,197,169,0.1) 39px, rgba(212,197,169,0.1) 40px);
+  pointer-events: none;
+}
+.hero-label {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 0.4rem 1.2rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+.hero h1 {
+  font-size: clamp(2.8rem, 6vw, 4.5rem);
+  font-weight: 900;
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+}
+.hero h1 span { color: var(--accent); }
+.hero-subtitle {
+  font-size: 1.35rem;
+  color: var(--fg-secondary);
+  font-style: italic;
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
+}
+.hero-meta {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.8rem;
+  color: var(--fg-muted);
+  letter-spacing: 0.05em;
+}
+.hero-meta span { border-bottom: 1px solid var(--border); padding-bottom: 0.2rem; }
+
+/* ─── TABLE OF CONTENTS ─── */
+.toc-section {
+  padding: 4rem 0;
+  background: var(--bg-deep);
+  border-bottom: 3px double var(--border);
+}
+.toc-section h2 {
+  text-align: center;
+  font-size: 1.6rem;
+  margin-bottom: 2.5rem;
+  color: var(--fg);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+.toc-section h2::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: var(--accent);
+  margin: 0.8rem auto 0;
+}
+.toc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+.toc-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  padding: 1.8rem;
+  text-decoration: none;
+  color: var(--fg);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+.toc-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px;
+  height: 100%;
+  transition: width 0.3s ease;
+}
+.toc-card:nth-child(1)::before { background: var(--accent); }
+.toc-card:nth-child(2)::before { background: var(--teal); }
+.toc-card:nth-child(3)::before { background: var(--gold); }
+.toc-card:nth-child(4)::before { background: var(--rose); }
+.toc-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(44,24,16,0.1);
+  border-color: var(--fg-muted);
+}
+.toc-card:hover::before { width: 8px; }
+.toc-card .toc-number {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--fg-muted);
+  margin-bottom: 0.5rem;
+}
+.toc-card h3 {
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+.toc-card p {
+  font-size: 0.88rem;
+  color: var(--fg-secondary);
+  line-height: 1.5;
+}
+
+/* ─── MAIN CONTENT ─── */
+.content { padding: 4rem 0; }
+.section-block {
+  margin-bottom: 5rem;
+  padding-bottom: 4rem;
+  border-bottom: 2px solid var(--border-light);
+}
+.section-block:last-child { border-bottom: none; }
+
+/* Section Headers */
+.section-header {
+  margin-bottom: 3rem;
+  position: relative;
+}
+.section-number {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.section-header h2 {
+  font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  margin-bottom: 0.5rem;
+}
+.section-header .section-ornament {
+  width: 50px;
+  height: 3px;
+  background: var(--accent);
+  margin-top: 1rem;
+}
+.sub-header {
+  margin: 2.5rem 0 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.sub-header h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--fg);
+}
+.sub-header h4 {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--fg-secondary);
+  margin-top: 1.8rem;
+  margin-bottom: 0.8rem;
+}
+
+/* ─── PROSE ─── */
+.prose p {
+  margin-bottom: 1.3rem;
+  text-align: justify;
+  hyphens: auto;
+}
+.prose ul, .prose ol {
+  margin: 1rem 0 1.5rem 1.5rem;
+}
+.prose li {
+  margin-bottom: 0.5rem;
+}
+.prose strong { color: var(--accent); font-weight: 700; }
+.prose em { font-style: italic; }
+
+/* ─── CALLOUT BOXES ─── */
+.callout {
+  margin: 2rem 0;
+  padding: 1.5rem 1.8rem;
+  border-left: 4px solid;
+  background: var(--bg-card);
+  position: relative;
+}
+.callout-intuition { border-color: var(--teal); }
+.callout-intuition::before {
+  content: 'INTUITION';
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--teal);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.callout-exam { border-color: var(--accent); }
+.callout-exam::before {
+  content: 'EXAM TIP';
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.callout-warning { border-color: var(--rose); }
+.callout-warning::before {
+  content: 'COMMON CONFUSION';
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--rose);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.callout-memory { border-color: var(--gold); }
+.callout-memory::before {
+  content: 'MEMORY ANCHOR';
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 0.5rem;
+}
+.callout p { margin-bottom: 0.6rem; }
+.callout p:last-child { margin-bottom: 0; }
+
+/* ─── NUMERICAL BOX ─── */
+.numerical-box {
+  margin: 2.5rem 0;
+  border: 2px solid var(--border);
+  background: var(--bg-card);
+  overflow: hidden;
+}
+.numerical-header {
+  background: var(--fg);
+  color: var(--cream);
+  padding: 0.8rem 1.5rem;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+.numerical-header .num-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.numerical-body {
+  padding: 1.5rem 1.8rem;
+}
+.numerical-body .step {
+  margin-bottom: 1.2rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--border-light);
+}
+.numerical-body .step-label {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--teal);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 0.3rem;
+}
+.numerical-body .step p { margin-bottom: 0.4rem; }
+
+/* ─── CRC TABLE ─── */
+.crc-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.88rem;
+}
+.crc-table th {
+  background: var(--fg);
+  color: var(--cream);
+  padding: 0.6rem 0.8rem;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-align: center;
+  font-weight: 600;
+}
+.crc-table td {
+  padding: 0.5rem 0.7rem;
+  border: 1px solid var(--border);
+  text-align: center;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.82rem;
+}
+.crc-table tr:nth-child(even) td { background: var(--bg-deep); }
+.crc-table .xor-row td { background: rgba(184,92,56,0.08); color: var(--accent); font-weight: 600; }
+
+/* ─── COMPARISON TABLE ─── */
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  font-size: 0.9rem;
+}
+.comparison-table th {
+  background: var(--fg);
+  color: var(--cream);
+  padding: 0.8rem 1rem;
+  font-family: 'Playfair Display', serif;
+  font-size: 0.85rem;
+  text-align: left;
+}
+.comparison-table td {
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--border);
+  vertical-align: top;
+}
+.comparison-table tr:nth-child(even) td { background: var(--bg-deep); }
+
+/* ─── DIAGRAM CONTAINER ─── */
+.diagram-container {
+  margin: 2.5rem 0;
+  padding: 2rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+.diagram-container svg { max-width: 100%; height: auto; }
+.diagram-caption {
+  margin-top: 1rem;
+  font-style: italic;
+  color: var(--fg-muted);
+  font-size: 0.88rem;
+}
+
+/* ─── CODE ─── */
+.code-block {
+  background: var(--code-bg);
+  color: var(--code-fg);
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  border-radius: 3px;
+}
+
+/* ─── COLLAPSIBLE ─── */
+.collapsible-trigger {
+  width: 100%;
+  background: var(--bg-deep);
+  border: 1px solid var(--border);
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Playfair Display', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--fg);
+  transition: all 0.2s;
+  margin-top: 1rem;
+}
+.collapsible-trigger:hover {
+  background: var(--border-light);
+}
+.collapsible-trigger .arrow {
+  transition: transform 0.3s;
+  font-size: 0.8rem;
+  color: var(--accent);
+}
+.collapsible-trigger.active .arrow { transform: rotate(180deg); }
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  border: 1px solid var(--border);
+  border-top: none;
+}
+.collapsible-content-inner { padding: 1.5rem; }
+
+/* ─── PULL QUOTE ─── */
+.pull-quote {
+  margin: 2rem -1rem;
+  padding: 1.5rem 2rem;
+  border-top: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+  background: var(--bg-card);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--fg-secondary);
+  text-align: center;
+}
+
+/* ─── SIDENOTE ─── */
+.sidenote {
+  float: right;
+  width: 200px;
+  margin: 0 -220px 1rem 1.5rem;
+  font-size: 0.78rem;
+  color: var(--fg-muted);
+  padding: 1rem;
+  border: 1px solid var(--border-light);
+  background: var(--bg-card);
+  line-height: 1.5;
+}
+
+/* ─── REVISION CARD ─── */
+.revision-card {
+  margin: 2rem 0;
+  padding: 1.8rem;
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-deep));
+  border: 2px solid var(--gold);
+  position: relative;
+}
+.revision-card::before {
+  content: 'REVISION CARD';
+  position: absolute;
+  top: -0.65rem;
+  left: 1.5rem;
+  background: var(--gold);
+  color: #fff;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  padding: 0.15rem 0.8rem;
+  font-weight: 700;
+}
+.revision-card ul { list-style: none; margin: 0; padding: 0; }
+.revision-card li {
+  padding: 0.4rem 0;
+  border-bottom: 1px dashed var(--border);
+  font-size: 0.92rem;
+}
+.revision-card li:last-child { border-bottom: none; }
+.revision-card li::before {
+  content: '◆';
+  color: var(--gold);
+  margin-right: 0.5rem;
+  font-size: 0.6rem;
+  vertical-align: middle;
+}
+
+/* ─── VIVA BOX ─── */
+.viva-box {
+  margin: 1.5rem 0;
+  padding: 1.2rem 1.5rem;
+  background: var(--bg-card);
+  border: 1px dashed var(--teal);
+}
+.viva-q {
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 0.3rem;
+}
+.viva-a {
+  color: var(--fg-secondary);
+  font-size: 0.9rem;
+  padding-left: 1rem;
+  border-left: 2px solid var(--border-light);
+}
+
+/* ─── FORMULA BOX ─── */
+.formula-box {
+  margin: 1.5rem 0;
+  padding: 1.2rem 1.8rem;
+  background: var(--fg);
+  color: var(--cream);
+  text-align: center;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 1.05rem;
+  letter-spacing: 0.02em;
+}
+
+/* ─── FLOWCHART ─── */
+.flow-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.2rem;
+  margin-bottom: 1rem;
+}
+.flow-step-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 0.15rem;
+}
+.flow-step-text {
+  flex: 1;
+  padding-top: 0.2rem;
+}
+
+/* ─── FOOTER ─── */
+.doc-footer {
+  padding: 3rem 0;
+  text-align: center;
+  border-top: 3px double var(--border);
+  color: var(--fg-muted);
+  font-size: 0.85rem;
+}
+
+/* ─── BACK TO TOP ─── */
+.back-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 44px;
+  height: 44px;
+  background: var(--fg);
+  color: var(--cream);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 100;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+.back-top.visible { opacity: 1; }
+
+/* ─── PROGRESS BAR ─── */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: var(--accent);
+  z-index: 9999;
+  transition: width 0.1s;
+}
+
+/* ─── PRINT ─── */
+@media print {
+  .hero { min-height: auto; padding: 2rem; }
+  .callout, .numerical-box, .diagram-container { break-inside: avoid; }
+  .sidenote { float: none; width: 100%; margin: 1rem 0; }
+  .back-top, .progress-bar { display: none; }
+  body { font-size: 11pt; }
+}
+
+@media (max-width: 768px) {
+  html { font-size: 15px; }
+  .container, .wide-container { padding: 0 1.2rem; }
+  .sidenote { float: none; width: 100%; margin: 1rem 0; }
+  .hero h1 { font-size: 2.2rem; }
+  .toc-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── ETHERNET FRAME SVG STYLES ─── */
+.frame-field { transition: opacity 0.2s; cursor: pointer; }
+.frame-field:hover { opacity: 0.85; }
+
+/* ─── ANIMATED DASH ─── */
+@keyframes dashMove {
+  to { stroke-dashoffset: -20; }
+}
+.animated-dash {
+  stroke-dasharray: 6 4;
+  animation: dashMove 1s linear infinite;
+}
+
+/* ─── TOPIC NAV ─── */
+.topic-nav {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0.5rem 0;
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+.topic-nav-inner {
+  display: flex;
+  gap: 0.3rem;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.topic-nav a {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.7rem;
+  color: var(--fg-muted);
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.topic-nav a:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+}
+.topic-nav a.active {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: rgba(184,92,56,0.06);
+}
+
+/* ─── SECTION LABEL ─── */
+.section-label {
+  display: inline-block;
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.6rem;
+  margin-bottom: 0.5rem;
+}
+.label-core { background: rgba(184,92,56,0.12); color: var(--accent); }
+.label-numerical { background: rgba(74,124,111,0.12); color: var(--teal); }
+.label-comparison { background: rgba(201,168,76,0.15); color: #8B6914; }
+.label-diagram { background: rgba(193,124,116,0.12); color: var(--rose); }
+
+.answer-structure {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  border: 2px solid var(--accent);
+  background: rgba(184,92,56,0.04);
+}
+.answer-structure h4 {
+  font-family: 'Source Code Pro', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.8rem;
+}
+.answer-structure ol { margin-left: 1.2rem; }
+.answer-structure li { margin-bottom: 0.4rem; font-size: 0.92rem; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">&#8593;</button>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     HERO
+     ══════════════════════════════════════════════════════════════════ -->
+<header class="hero">
+  <div class="hero-label">Computer Networks</div>
+  <h1>Unit 2: <span>The Link Layer</span><br>&amp; LANs</h1>
+  <p class="hero-subtitle">A complete, exam-ready master document &mdash; from parity bits to self-learning switches, every concept explained, every numerical solved, every diagram drawn.</p>
+  <div class="hero-meta">
+    <span>Indian University Exam Prep</span>
+    <span>All PYQs Solved</span>
+    <span>12+ Diagrams</span>
+  </div>
+</header>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     TABLE OF CONTENTS
+     ══════════════════════════════════════════════════════════════════ -->
+<nav class="toc-section" id="toc">
+  <div class="wide-container">
+    <h2>Contents</h2>
+    <div class="toc-grid">
+      <a href="#s2-1" class="toc-card">
+        <div class="toc-number">Section 2.1</div>
+        <h3>Introduction to the Link Layer</h3>
+        <p>Services, implementation, where it sits in the protocol stack, and why it exists.</p>
+      </a>
+      <a href="#s2-2" class="toc-card">
+        <div class="toc-number">Section 2.2</div>
+        <h3>Error Detection &amp; Correction</h3>
+        <p>Parity, CRC, Checksum, Hamming Code &mdash; every numerical solved step-by-step.</p>
+      </a>
+      <a href="#s2-3" class="toc-card">
+        <div class="toc-number">Section 2.3</div>
+        <h3>Multiple Access Protocols</h3>
+        <p>ALOHA, Slotted ALOHA, CSMA/CD, CSMA/CA, TDMA, FDMA &mdash; with derivations and numericals.</p>
+      </a>
+      <a href="#s2-4" class="toc-card">
+        <div class="toc-number">Section 2.4</div>
+        <h3>Switched LANs &amp; Ethernet</h3>
+        <p>MAC addressing, ARP, RARP, Ethernet frame, switches vs routers, self-learning.</p>
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     STICKY NAV
+     ══════════════════════════════════════════════════════════════════ -->
+<nav class="topic-nav" id="topicNav">
+  <div class="topic-nav-inner">
+    <a href="#s2-1">2.1 Link Layer Intro</a>
+    <a href="#s2-2">2.2 Error Detection</a>
+    <a href="#s2-2-crc">CRC</a>
+    <a href="#s2-2-hamming">Hamming</a>
+    <a href="#s2-2-checksum">Checksum</a>
+    <a href="#s2-3">2.3 Multiple Access</a>
+    <a href="#s2-3-aloha">ALOHA</a>
+    <a href="#s2-3-csma">CSMA/CD</a>
+    <a href="#s2-4">2.4 Switched LANs</a>
+    <a href="#s2-4-ethernet">Ethernet</a>
+    <a href="#s2-4-arp">ARP</a>
+    <a href="#s2-4-switches">Switches</a>
+    <a href="#revision">Revision</a>
+  </div>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     MAIN CONTENT
+     ══════════════════════════════════════════════════════════════════ -->
+<main class="content">
+<div class="container">
+
+<!-- ████████████████████████████████████████████████████████████████
+     SECTION 2.1: INTRODUCTION TO THE LINK LAYER
+     ████████████████████████████████████████████████████████████████ -->
+<section class="section-block" id="s2-1">
+
+<div class="section-header">
+  <span class="section-number">Section 2.1</span>
+  <h2>Introduction to the Link Layer</h2>
+  <div class="section-ornament"></div>
+</div>
+
+<div class="prose">
+
+<p>Before a single IP packet traverses the internet, before a TCP segment is assembled, before any of the grand architectures of the network layer are invoked, there is a far more local problem that must be solved: how does a packet actually get from one node to the <em>next</em> node along its path? The network layer operates in the realm of end-to-end communication&mdash;a packet born in Mumbai must reach a server in Bangalore, and the network layer reasons about this journey as a whole. But that journey is not a single leap; it is a chain of individual hops, each hop crossing a single physical link. The link layer is the protocol layer responsible for those individual hops. It is the layer that governs communication across a single link&mdash;a single Ethernet segment, a single WiFi channel, a single point-to-point serial line.</p>
+
+<p>This distinction between end-to-end and hop-by-hop is the defining conceptual boundary of the link layer. The network layer says "get this packet from source to destination." The link layer says "get this frame from this node to the immediately next node." Every packet that travels across the internet is encapsulated within a link-layer frame at every hop along its path. The frame is transmitted, received, stripped of its link-layer headers, and then re-encapsulated in a new frame for the next link. The network layer packet remains largely intact through this process; the link-layer framing changes at every hop. This is why the link layer is sometimes called the "hop-to-hop" layer, as opposed to the "end-to-end" transport layer and the "source-to-destination" network layer.</p>
+
+<div class="callout callout-intuition">
+<p>Think of the link layer as a local courier service. The network layer is the logistics company that plans the route from warehouse to warehouse. The link layer is the van that drives the package from one warehouse to the next. The van does not need to know the package's final destination; it only needs to know where the next warehouse is. At each warehouse, the package is unloaded from one van and loaded onto another van for the next leg of the journey.</p>
+</div>
+
+<p>The entities that the link layer connects are called <strong>nodes</strong> (hosts, routers, switches, access points) and the communication medium that connects them is called a <strong>link</strong>. A link can be a wired Ethernet cable, a fiber optic strand, or a wireless radio channel. The data unit at the link layer is called a <strong>frame</strong>. When the network layer passes a datagram down to the link layer, the link layer encapsulates it within a frame by adding a header and (often) a trailer, then transmits the frame across the link.</p>
+
+<h3 class="sub-header"><h3>Services Provided by the Link Layer</h3></h3>
+
+<p>The link layer provides several fundamental services to the network layer. Not every link-layer protocol provides every service; the specific combination depends on the link-layer technology. But the conceptual catalog of services is as follows:</p>
+
+<p><strong>Framing.</strong> Almost all link-layer protocols encapsulate the network-layer datagram within a frame by adding a header and a trailer. The header typically contains addresses and control information; the trailer often contains error-detection bits. The framing service defines where the frame begins and ends, allowing the receiver to extract the datagram from the received bit stream. This is arguably the most essential service&mdash;without framing, the receiver would have no way of knowing which bits constitute a single transmission unit.</p>
+
+<p><strong>Link Access (Medium Access Control).</strong> When multiple nodes share a single broadcast link (as in WiFi or traditional Ethernet), a protocol is needed to coordinate which node transmits at any given time. This coordination is the medium access control (MAC) protocol. If two nodes transmit simultaneously on a shared medium, their signals collide and both transmissions are corrupted. The MAC protocol prevents, minimizes, or recovers from such collisions. Point-to-point links with a single sender and a single receiver do not need MAC protocols in the traditional sense, but shared media absolutely require them. This is why the entire subfield of multiple access protocols exists&mdash;and why Section 2.3 of this document is as large as it is.</p>
+
+<p><strong>Reliable Delivery.</strong> Some link-layer protocols provide reliable delivery&mdash;guaranteeing that each frame is delivered without error and in the correct order. This is typically achieved through acknowledgments and retransmissions, similar to TCP at the transport layer. Reliable delivery at the link layer is most commonly used over links with high error rates (such as wireless links), where local retransmission is far more efficient than relying on the transport layer's end-to-end retransmissions. Wired links, which have very low error rates, typically do not use link-layer reliable delivery because the overhead is not justified.</p>
+
+<p><strong>Error Detection and Correction.</strong> Bit errors can occur during transmission due to signal attenuation, electromagnetic interference, or noise. The link layer includes error-detection bits in the frame trailer, allowing the receiver to detect (and in some cases correct) these errors. The most common error-detection technique is the Cyclic Redundancy Check (CRC), which detects errors with very high probability. Forward error correction (FEC) goes one step further, allowing the receiver to correct certain errors without retransmission. Error detection is nearly universal in link-layer protocols; error correction is used in specific contexts like wireless communication.</p>
+
+<p><strong>Flow Control.</strong> Flow control prevents a fast sender from overwhelming a slow receiver. If a transmitter sends frames faster than the receiver can process them, frames may be dropped. Flow control mechanisms&mdash;such as feedback signals or rate limiting&mdash;allow the receiver to pace the sender. This is conceptually similar to TCP flow control but operates at the link level.</p>
+
+</div>
+
+<!-- Diagram: Link Layer in Protocol Stack -->
+<div class="diagram-container">
+<svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="0" y="0" width="600" height="360" fill="#FAF6EF"/>
+  <!-- Protocol Stack -->
+  <rect x="170" y="20" width="260" height="50" rx="3" fill="#2C1810" stroke="#2C1810" stroke-width="2"/>
+  <text x="300" y="52" text-anchor="middle" fill="#E8D5B7" font-family="Source Code Pro" font-size="13" font-weight="600">APPLICATION LAYER</text>
+
+  <rect x="170" y="80" width="260" height="50" rx="3" fill="#5C4033" stroke="#5C4033" stroke-width="2"/>
+  <text x="300" y="112" text-anchor="middle" fill="#E8D5B7" font-family="Source Code Pro" font-size="13" font-weight="600">TRANSPORT LAYER</text>
+
+  <rect x="170" y="140" width="260" height="50" rx="3" fill="#8B7355" stroke="#8B7355" stroke-width="2"/>
+  <text x="300" y="172" text-anchor="middle" fill="#E8D5B7" font-family="Source Code Pro" font-size="13" font-weight="600">NETWORK LAYER</text>
+
+  <rect x="170" y="200" width="260" height="50" rx="3" fill="#B85C38" stroke="#B85C38" stroke-width="2"/>
+  <text x="300" y="232" text-anchor="middle" fill="#FFFFFF" font-family="Source Code Pro" font-size="13" font-weight="700">LINK LAYER</text>
+  <rect x="160" y="190" width="280" height="70" rx="5" fill="none" stroke="#B85C38" stroke-width="3" stroke-dasharray="6 3"/>
+
+  <rect x="170" y="260" width="260" height="50" rx="3" fill="#4A7C6F" stroke="#4A7C6F" stroke-width="2"/>
+  <text x="300" y="292" text-anchor="middle" fill="#FFFFFF" font-family="Source Code Pro" font-size="13" font-weight="600">PHYSICAL LAYER</text>
+
+  <!-- Annotations -->
+  <line x1="450" y1="165" x2="500" y2="120" stroke="#8B7355" stroke-width="1.5"/>
+  <text x="505" y="118" fill="#8B7355" font-family="Crimson Text" font-size="11" font-style="italic">End-to-end scope</text>
+
+  <line x1="450" y1="225" x2="500" y2="225" stroke="#B85C38" stroke-width="1.5"/>
+  <text x="505" y="220" fill="#B85C38" font-family="Crimson Text" font-size="11" font-style="italic">Hop-by-hop scope</text>
+  <text x="505" y="236" fill="#B85C38" font-family="Crimson Text" font-size="11" font-style="italic">(changes each link)</text>
+
+  <!-- Frame bracket -->
+  <line x1="100" y1="200" x2="100" y2="310" stroke="#C9A84C" stroke-width="2"/>
+  <line x1="100" y1="200" x2="115" y2="200" stroke="#C9A84C" stroke-width="2"/>
+  <line x1="100" y1="310" x2="115" y2="310" stroke="#C9A84C" stroke-width="2"/>
+  <text x="95" y="260" text-anchor="end" fill="#C9A84C" font-family="Source Code Pro" font-size="10" font-weight="600">FRAME</text>
+  <text x="95" y="274" text-anchor="end" fill="#C9A84C" font-family="Source Code Pro" font-size="10">scope</text>
+
+  <!-- Hop illustration -->
+  <circle cx="80" y="335" r="8" fill="#B85C38"/>
+  <text x="80" y="339" text-anchor="middle" fill="#fff" font-size="8" font-family="Source Code Pro">R</text>
+  <line x1="92" y1="335" x2="178" y2="335" stroke="#B85C38" stroke-width="1.5" class="animated-dash"/>
+  <circle cx="190" y="335" r="8" fill="#4A7C6F"/>
+  <text x="190" y="339" text-anchor="middle" fill="#fff" font-size="8" font-family="Source Code Pro">S</text>
+  <line x1="202" y1="335" x2="298" y2="335" stroke="#4A7C6F" stroke-width="1.5" class="animated-dash"/>
+  <circle cx="310" y="335" r="8" fill="#4A7C6F"/>
+  <text x="310" y="339" text-anchor="middle" fill="#fff" font-size="8" font-family="Source Code Pro">S</text>
+  <line x1="322" y1="335" x2="418" y2="335" stroke="#4A7C6F" stroke-width="1.5" class="animated-dash"/>
+  <circle cx="430" y="335" r="8" fill="#5C4033"/>
+  <text x="430" y="339" text-anchor="middle" fill="#fff" font-size="8" font-family="Source Code Pro">R</text>
+
+  <text x="135" y="350" text-anchor="middle" fill="#8B7355" font-family="Source Code Pro" font-size="8">Link 1</text>
+  <text x="255" y="350" text-anchor="middle" fill="#8B7355" font-family="Source Code Pro" font-size="8">Link 2</text>
+  <text x="375" y="350" text-anchor="middle" fill="#8B7355" font-family="Source Code Pro" font-size="8">Link 3</text>
+</svg>
+<p class="diagram-caption">Figure 2.1: The Link Layer in the protocol stack &mdash; its scope is hop-by-hop, changing encapsulation at every link.</p>
+</div>
+
+<div class="prose">
+<p><strong>Where is the link layer implemented?</strong> Unlike the network and transport layers, which are implemented entirely in software (within the operating system's network stack), the link layer is implemented in a combination of hardware and software. The link layer's core functions&mdash;framing, error detection, and medium access control&mdash;are typically implemented in the network interface card (NIC), also called a network adapter. The NIC contains a dedicated controller chip (such as an Ethernet controller) that handles the bit-level details of frame transmission and reception. The NIC firmware handles lower-level link-layer logic, while the operating system's device driver provides the software interface between the NIC and the network stack. This split implementation means that the link layer has a distinctly different character from the layers above it: it is partly hardware, partly firmware, and partly software.</p>
+</div>
+
+<div class="callout callout-exam">
+<p><strong>For a 5-mark question on "Services of the Link Layer":</strong> List Framing, Link Access/MAC, Reliable Delivery, Error Detection/Correction, and Flow Control. For each, give a one-sentence definition and one example of where it is used. Mention that not all link-layer protocols provide all services (e.g., reliable delivery is optional). This structure easily fills 300-400 words.</p>
+</div>
+
+<!-- Viva Questions -->
+<button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+  <span>Viva Questions: Link Layer Introduction</span>
+  <span class="arrow">&#9660;</span>
+</button>
+<div class="collapsible-content">
+  <div class="collapsible-content-inner">
+    <div class="viva-box">
+      <p class="viva-q">Q: What is the difference between the network layer and the link layer?</p>
+      <p class="viva-a">The network layer provides end-to-end logical communication between source and destination hosts, routing packets across multiple links. The link layer provides hop-by-hop communication, moving a frame across a single link between two adjacent nodes. The network layer deals with IP addresses and routing; the link layer deals with MAC addresses and frame transmission on a specific link.</p>
+    </div>
+    <div class="viva-box">
+      <p class="viva-q">Q: Why is the link layer implemented partly in hardware?</p>
+      <p class="viva-a">Because the link layer must process bits at wire speed&mdash;it must be fast enough to handle incoming and outgoing frames at the full rate of the physical link. Software processing would be too slow for modern link speeds (1 Gbps, 10 Gbps). The NIC hardware handles time-critical operations like framing, CRC computation, and medium access, while the OS driver handles higher-level configuration and interface to the network stack.</p>
+    </div>
+    <div class="viva-box">
+      <p class="viva-q">Q: Does every link-layer protocol provide reliable delivery?</p>
+      <p class="viva-a">No. Reliable delivery (using acknowledgments and retransmissions) is optional. It is commonly used over high-error-rate links like WiFi (802.11 uses link-layer ACKs). Wired Ethernet does not provide link-layer reliable delivery; it relies on error detection (CRC) and discards corrupt frames, leaving retransmission to higher layers (TCP).</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<!-- ████████████████████████████████████████████████████████████████
+     SECTION 2.2: ERROR DETECTION AND CORRECTION
+     ████████████████████████████████████████████████████████████████ -->
+<section class="section-block" id="s2-2">
+
+<div class="section-header">
+  <span class="section-number">Section 2.2</span>
+  <h2>Error Detection &amp; Correction</h2>
+  <div class="section-ornament"></div>
+</div>
+
+<div class="prose">
+
+<p>No physical communication channel is perfect. Electrical noise, signal degradation, interference from nearby devices, clock synchronization errors, and a thousand other physical phenomena conspire to flip bits during transmission. A 0 sent may arrive as a 1; a 1 may arrive as a 0. If the receiver naively accepts every bit as correct, the consequences can range from minor data corruption to catastrophic system failure. Error detection and correction are the mechanisms by which the receiver can determine whether the received data is intact and, in some cases, recover the correct data without retransmission.</p>
+
+<p>The fundamental tradeoff in error detection and correction is between overhead and capability. A single parity bit adds minimal overhead but can detect only an odd number of bit errors. A CRC with 32 check bits adds more overhead but can detect virtually all burst errors up to 32 bits long and most longer burst errors. Hamming codes and other forward error correction (FEC) schemes add even more redundancy but can both detect and correct errors without requiring the sender to retransmit. The choice of technique depends on the error characteristics of the channel, the cost of retransmission, and the acceptable level of residual error rate.</p>
+
+</div>
+
+<!-- ─── PARITY CHECKING ─── -->
+<div class="sub-header">
+  <h3>Parity Checking</h3>
+</div>
+
+<div class="prose">
+
+<p>Parity checking is the simplest error detection technique. A single bit, called the <strong>parity bit</strong>, is appended to the data. The parity bit is set so that the total number of 1-bits in the data plus the parity bit is either even (for <strong>even parity</strong>) or odd (for <strong>odd parity</strong>).</p>
+
+<p>In <strong>even parity</strong>, the parity bit is chosen such that the total number of 1s in (data + parity bit) is an even number. For example, if the data is 1011001, there are four 1s (which is already even), so the even parity bit is 0, and the transmitted codeword is 10110010. If the data were 1011011 (five 1s, odd), the even parity bit would be 1, making the total six (even), and the transmitted codeword would be 10110111.</p>
+
+<p>In <strong>odd parity</strong>, the parity bit is chosen so that the total number of 1s is odd. For data 1011001 (four 1s, even), the odd parity bit is 1, giving 10110011.</p>
+
+<p>The receiver counts the 1s in the received codeword. If the count violates the expected parity, an error is detected. Even parity is more commonly used in practice.</p>
+
+<div class="callout callout-warning">
+<p><strong>Limitation of single parity bit:</strong> A single parity bit can detect any odd number of bit errors (1, 3, 5, ...) but cannot detect any even number of bit errors (2, 4, 6, ...). If two bits are flipped, the parity is preserved, and the error goes undetected. This makes single parity checking quite weak for channels where multi-bit errors are common (such as burst error channels). However, it is useful for detecting single-bit errors in memory systems and simple serial communication.</p>
+</div>
+
+<p><strong>Two-dimensional parity</strong> (also called matrix parity or block parity) extends the idea to detect (and sometimes correct) more errors. The data is arranged in a matrix, and parity bits are computed for each row and each column. A single-bit error causes both its row parity and column parity to fail, uniquely identifying the bit's position&mdash;which means the error can be corrected. Two-dimensional parity can detect all 1-bit, 2-bit, and 3-bit errors, and most 4-bit errors.</p>
+
+</div>
+
+<!-- ─── CRC ─── -->
+<div class="sub-header" id="s2-2-crc">
+  <h3>Cyclic Redundancy Check (CRC)</h3>
+</div>
+
+<div class="prose">
+
+<p>The Cyclic Redundancy Check is the workhorse of error detection in computer networks. It is used in Ethernet, WiFi, USB, Bluetooth, and virtually every other link-layer protocol that requires robust error detection. CRC is based on polynomial arithmetic over GF(2)&mdash;the field of two elements, where addition is XOR and multiplication is AND. While the mathematics behind CRC is deep and elegant, the practical computation is straightforward: it is binary division using XOR, and the remainder of this division is the CRC value that gets appended to the data.</p>
+
+<p>The conceptual motivation for CRC comes from a simple observation: if we treat the data as a polynomial (where each bit is a coefficient), and we divide this polynomial by a fixed generator polynomial, the remainder uniquely depends on the data. If even a single bit of the data changes, the remainder will almost certainly change. A well-chosen generator polynomial ensures that all common error patterns (single-bit errors, double-bit errors, burst errors) produce a non-zero remainder at the receiver.</p>
+
+<p>Here is how CRC works, stated formally:</p>
+
+<ol>
+<li>The sender and receiver agree on a <strong>generator polynomial</strong> G(x) of degree <em>r</em>. This polynomial is typically written in the form x<sup>r</sup> + ... + 1, and its binary representation has r+1 bits (the coefficients of the polynomial).</li>
+<li>Let the data to be transmitted be D, represented as a polynomial of degree <em>d</em>. In binary, D is a sequence of d+1 bits.</li>
+<li>The sender appends <em>r</em> zero bits to the right of D, creating D &times; 2<sup>r</sup>. In polynomial terms, this is D(x) &times; x<sup>r</sup>.</li>
+<li>The sender divides D &times; 2<sup>r</sup> by G using binary division (XOR-based). The remainder R has at most r bits.</li>
+<li>The sender transmits the codeword: D followed by R. In polynomial terms, this is D(x) &times; x<sup>r</sup> + R(x).</li>
+<li>The receiver divides the received codeword by G. If the remainder is zero, the data is accepted as error-free. If the remainder is non-zero, an error is
+    detected.</li>
+</ol>
+
+<p>The mathematical elegance of CRC lies in a property of polynomial division: if T(x) = D(x)&times;x<sup>r</sup> + R(x), then T(x) is exactly divisible by G(x). This is because R(x) is the remainder of dividing D(x)&times;x<sup>r</sup> by G(x), which means D(x)&times;x<sup>r</sup> = Q(x)&times;G(x) + R(x) for some quotient Q(x). Therefore, T(x) = Q(x)&times;G(x) + R(x) + R(x). In GF(2), addition is XOR, so R(x) + R(x) = 0. Thus T(x) = Q(x)&times;G(x), which is perfectly divisible by G(x). Any error introduced during transmission changes T(x) to T(x) + E(x), where E(x) is the error polynomial. The receiver computes [T(x) + E(x)] / G(x). If E(x) is not itself divisible by G(x), the remainder will be non-zero, and the error is detected.</p>
+
+<div class="callout callout-intuition">
+<p>Think of CRC like a highly sensitive fingerprint for your data. The generator polynomial is the fingerprinting algorithm. The sender computes the fingerprint (remainder) of the data and sends both the data and the fingerprint. The receiver recomputes the fingerprint of the received data. If it matches the received fingerprint, the data is intact. Even a tiny smudge (a single bit flip) on the data will produce a completely different fingerprint, alerting the receiver to the error.</p>
+</div>
+
+<h4>Step-by-Step Binary Division for CRC (The XOR Method)</h4>
+
+<p>The binary division used in CRC is not the standard decimal-like binary division you might expect. It is polynomial division over GF(2), where subtraction is identical to addition, and both are performed using the XOR operation. Here are the rules:</p>
+
+<ol>
+<li><strong>Append zeros:</strong> Append <em>r</em> zeros to the data, where <em>r</em> is the degree of the generator polynomial (which is one less than the number of bits in the generator).</li>
+<li><strong>Align and XOR:</strong> Align the generator polynomial with the leftmost 1 of the appended data. Perform a bitwise XOR. This is equivalent to "subtracting" the generator from the data.</li>
+<li><strong>Bring down:</strong> Bring down the next bit from the data to fill the gap, creating a new intermediate value.</li>
+<li><strong>Repeat:</strong> If the leftmost bit of the intermediate value is 1, align the generator and XOR. If the leftmost bit is 0, align an all-zero string (of the same length as the generator) and XOR. (Equivalently, you can simply skip the step and bring down another bit until the leftmost bit is 1 again, but the formal algorithm always XORs with either the generator or zeros).</li>
+<li><strong>Remainder:</strong> When you run out of bits to bring down, the remaining bits (which will be exactly <em>r</em> bits long) are the CRC remainder.</li>
+</ol>
+
+<div class="callout callout-warning">
+<p><strong>Common Student Confusion:</strong> Students often try to use regular binary subtraction (with borrows) instead of XOR. This is wrong. In CRC, every column is independent: 0-0=0, 1-0=1, 0-1=1 (no borrow!), 1-1=0. This is exactly the XOR truth table. If you find yourself "borrowing" from the left, you are doing it incorrectly.</p>
+</div>
+
+<p><strong>Requirements of a Good Generator Polynomial:</strong> The International Telecommunication Union (ITU) and IEEE have standardized several generator polynomials. A good generator polynomial must be able to detect: (1) All single-bit errors. (2) All double-bit errors (if the polynomial contains x+1 as a factor). (3) Any odd number of errors (if the polynomial contains x+1 as a factor). (4) All burst errors of length less than or equal to the degree of the polynomial. (5) Most burst errors of length greater than the degree of the polynomial (with probability 1 - 2<sup>-r</sup>).</p>
+
+</div>
+
+<!-- ─── CRC NUMERICALS ─── -->
+<div class="sub-header">
+  <span class="section-label label-numerical">Numerical</span>
+  <h3>CRC Solved Numericals (PYQs)</h3>
+</div>
+
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">1</span>
+    <span>A bit stream 1101011011 is transmitted using CRC. Generator = x<sup>4</sup> + x + 1. Find the transmitted bit string.</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Step 1: Identify the Data and Generator</div>
+      <p>Data (D) = <strong>1101011011</strong> (10 bits)</p>
+      <p>Generator G(x) = x<sup>4</sup> + x + 1. Coefficients: x<sup>4</sup>(1), x<sup>3</sup>(0), x<sup>2</sup>(0), x<sup>1</sup>(1), x<sup>0</sup>(1).</p>
+      <p>Divisor (G) = <strong>10011</strong> (5 bits).</p>
+      <p>Degree of generator (r) = 4.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 2: Append r zeros to Data</div>
+      <p>D &times; 2<sup>r</sup> = 1101011011<strong>0000</strong> (14 bits).</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 3: Binary Division (XOR)</div>
+      <p>At each step, if the leftmost bit is 1, XOR with 10011; if 0, XOR with 00000. Then shift left and bring down the next bit.</p>
+      <table class="crc-table">
+        <tr><td style="text-align:left">Register</td><td style="text-align:left">Operation</td><td>Next Bit</td><td>New Register</td></tr>
+        <tr><td style="text-align:left">11010</td><td style="text-align:left">XOR 10011 = 01001</td><td>1</td><td>10011</td></tr>
+        <tr class="xor-row"><td style="text-align:left">10011</td><td style="text-align:left">XOR 10011 = 00000</td><td>1</td><td>00001</td></tr>
+        <tr><td style="text-align:left">00001</td><td style="text-align:left">XOR 00000 = 00001</td><td>0</td><td>00010</td></tr>
+        <tr><td style="text-align:left">00010</td><td style="text-align:left">XOR 00000 = 00010</td><td>1</td><td>00101</td></tr>
+        <tr><td style="text-align:left">00101</td><td style="text-align:left">XOR 00000 = 00101</td><td>1</td><td>01011</td></tr>
+        <tr><td style="text-align:left">01011</td><td style="text-align:left">XOR 00000 = 01011</td><td>0</td><td>10110</td></tr>
+        <tr class="xor-row"><td style="text-align:left">10110</td><td style="text-align:left">XOR 10011 = 00101</td><td>0</td><td>01010</td></tr>
+        <tr><td style="text-align:left">01010</td><td style="text-align:left">XOR 00000 = 01010</td><td>0</td><td>10100</td></tr>
+        <tr class="xor-row"><td style="text-align:left">10100</td><td style="text-align:left">XOR 10011 = 00111</td><td>0</td><td>01110</td></tr>
+        <tr><td style="text-align:left; font-weight:700; color:var(--accent)">01110</td><td style="text-align:left">Final (MSB=0, no XOR)</td><td>&mdash;</td><td><strong>1110</strong> &larr; Remainder</td></tr>
+      </table>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 4: Form the Transmitted Frame</div>
+      <p>Transmitted string = Data + Remainder = 1101011011 + 1110 = <strong>11010110111110</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Numerical 2 -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">2</span>
+    <span>Calculate CRC for frame 110101011 and generator x<sup>4</sup> + x + 1. Write the transmitted frame.</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Step 1: Identify Data and Generator</div>
+      <p>Data (D) = <strong>110101011</strong> (9 bits). Divisor G = <strong>10011</strong>, r = 4.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 2: Append r zeros</div>
+      <p>D &times; 2<sup>4</sup> = 110101011<strong>0000</strong> (13 bits).</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 3: Division (XOR)</div>
+      <table class="crc-table">
+        <tr><td style="text-align:left">Register</td><td style="text-align:left">Operation</td><td>Next Bit</td><td>New Register</td></tr>
+        <tr><td style="text-align:left">11010</td><td style="text-align:left">XOR 10011 = 01001</td><td>1</td><td>10011</td></tr>
+        <tr class="xor-row"><td style="text-align:left">10011</td><td style="text-align:left">XOR 10011 = 00000</td><td>0</td><td>00000</td></tr>
+        <tr><td style="text-align:left">00000</td><td style="text-align:left">XOR 00000 = 00000</td><td>1</td><td>00001</td></tr>
+        <tr><td style="text-align:left">00001</td><td style="text-align:left">XOR 00000 = 00001</td><td>1</td><td>00011</td></tr>
+        <tr><td style="text-align:left">00011</td><td style="text-align:left">XOR 00000 = 00011</td><td>0</td><td>00110</td></tr>
+        <tr><td style="text-align:left">00110</td><td style="text-align:left">XOR 00000 = 00110</td><td>0</td><td>01100</td></tr>
+        <tr><td style="text-align:left">01100</td><td style="text-align:left">XOR 00000 = 01100</td><td>0</td><td>11000</td></tr>
+        <tr class="xor-row"><td style="text-align:left">11000</td><td style="text-align:left">XOR 10011 = 01011</td><td>0</td><td>10110</td></tr>
+        <tr><td style="text-align:left; font-weight:700; color:var(--accent)">10110</td><td style="text-align:left">XOR 10011 = 00101</td><td>&mdash;</td><td><strong>0101</strong> &larr; Remainder</td></tr>
+      </table>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 4: Transmitted Frame</div>
+      <p>Transmitted frame = 110101011 + 0101 = <strong>1101010110101</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Numerical 3 -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">3</span>
+    <span>Explain CRC using generator x<sup>4</sup> + x<sup>3</sup> + 1 and data 11100011.</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Setup</div>
+      <p>Data (D) = <strong>11100011</strong>. Generator G(x) = x<sup>4</sup> + x<sup>3</sup> + 1 &rArr; coefficients 1,1,0,0,1 &rArr; <strong>G = 11001</strong>. r = 4.</p>
+      <p>Appended Data = 11100011<strong>0000</strong> (12 bits).</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Division (XOR)</div>
+      <table class="crc-table">
+        <tr><td style="text-align:left">Register</td><td style="text-align:left">Operation</td><td>Next Bit</td><td>New Register</td></tr>
+        <tr><td style="text-align:left">11100</td><td style="text-align:left">XOR 11001 = 00101</td><td>0</td><td>01010</td></tr>
+        <tr><td style="text-align:left">01010</td><td style="text-align:left">XOR 00000 = 01010</td><td>1</td><td>10101</td></tr>
+        <tr class="xor-row"><td style="text-align:left">10101</td><td style="text-align:left">XOR 11001 = 01100</td><td>1</td><td>11001</td></tr>
+        <tr class="xor-row"><td style="text-align:left">11001</td><td style="text-align:left">XOR 11001 = 00000</td><td>0</td><td>00000</td></tr>
+        <tr><td style="text-align:left">00000</td><td style="text-align:left">XOR 00000 = 00000</td><td>0</td><td>00000</td></tr>
+        <tr><td style="text-align:left">00000</td><td style="text-align:left">XOR 00000 = 00000</td><td>0</td><td>00000</td></tr>
+        <tr><td style="text-align:left">00000</td><td style="text-align:left">XOR 00000 = 00000</td><td>0</td><td>00000</td></tr>
+        <tr><td style="text-align:left; font-weight:700; color:var(--accent)">00000</td><td style="text-align:left">Final (no XOR needed)</td><td>&mdash;</td><td><strong>0000</strong> &larr; Remainder</td></tr>
+      </table>
+    </div>
+    <div class="step">
+      <div class="step-label">Transmitted Frame</div>
+      <p>11100011<strong>0000</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Numerical 4 -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">4</span>
+    <span>7-bit data 1111000 using CRC with x<sup>3</sup> + x<sup>2</sup> + x + 1. Calculate CRC and transmitted frame.</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Setup</div>
+      <p>Data = <strong>1111000</strong>. G(x) = x<sup>3</sup> + x<sup>2</sup> + x + 1 &rArr; <strong>G = 1111</strong>. r = 3.</p>
+      <p>Appended Data = 1111000<strong>000</strong> (10 bits).</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Division</div>
+      <table class="crc-table">
+        <tr><td style="text-align:left">Register</td><td style="text-align:left">Operation</td><td>Next Bit</td><td>New Register</td></tr>
+        <tr><td style="text-align:left">1111</td><td style="text-align:left">XOR 1111 = 0000</td><td>0</td><td>0000</td></tr>
+        <tr><td style="text-align:left">0000</td><td style="text-align:left">XOR 0000 = 0000</td><td>0</td><td>0000</td></tr>
+        <tr><td style="text-align:left">0000</td><td style="text-align:left">XOR 0000 = 0000</td><td>0</td><td>0000</td></tr>
+        <tr><td style="text-align:left">0000</td><td style="text-align:left">XOR 0000 = 0000</td><td>0</td><td>0000</td></tr>
+        <tr><td style="text-align:left">0000</td><td style="text-align:left">XOR 0000 = 0000</td><td>0</td><td>0000</td></tr>
+        <tr><td style="text-align:left">0000</td><td style="text-align:left">XOR 0000 = 0000</td><td>0</td><td>0000</td></tr>
+        <tr><td style="text-align:left; font-weight:700; color:var(--accent)">0000</td><td style="text-align:left">Final (no XOR needed)</td><td>&mdash;</td><td><strong>000</strong> &larr; Remainder</td></tr>
+      </table>
+    </div>
+    <div class="step">
+      <div class="step-label">Transmitted Frame</div>
+      <p>1111000<strong>000</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Numerical 5 -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">5</span>
+    <span>Received codeword 1100100101011. Divisor 10101. Check for errors.</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Principle</div>
+      <p>If the received codeword is perfectly divisible by the divisor (generator), there are no errors. If the remainder is non-zero, errors are detected.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Division: 1100100101011 / 10101</div>
+      <table class="crc-table">
+        <tr><td style="text-align:left">Register</td><td style="text-align:left">Operation</td><td>Next Bit</td><td>New Register</td></tr>
+        <tr><td style="text-align:left">11001</td><td style="text-align:left">XOR 10101 = 01100</td><td>0</td><td>11000</td></tr>
+        <tr class="xor-row"><td style="text-align:left">11000</td><td style="text-align:left">XOR 10101 = 01101</td><td>0</td><td>11010</td></tr>
+        <tr class="xor-row"><td style="text-align:left">11010</td><td style="text-align:left">XOR 10101 = 01111</td><td>1</td><td>11111</td></tr>
+        <tr class="xor-row"><td style="text-align:left">11111</td><td style="text-align:left">XOR 10101 = 01010</td><td>0</td><td>10100</td></tr>
+        <tr class="xor-row"><td style="text-align:left">10100</td><td style="text-align:left">XOR 10101 = 00001</td><td>1</td><td>00011</td></tr>
+        <tr><td style="text-align:left">00011</td><td style="text-align:left">XOR 00000 = 00011</td><td>0</td><td>00110</td></tr>
+        <tr><td style="text-align:left">00110</td><td style="text-align:left">XOR 00000 = 00110</td><td>1</td><td>01101</td></tr>
+        <tr><td style="text-align:left">01101</td><td style="text-align:left">XOR 00000 = 01101</td><td>1</td><td>11011</td></tr>
+        <tr class="xor-row"><td style="text-align:left; font-weight:700; color:var(--accent)">11011</td><td style="text-align:left">XOR 10101 = 01110</td><td>&mdash;</td><td><strong>1110</strong> &larr; Remainder</td></tr>
+      </table>
+    </div>
+    <div class="step">
+      <div class="step-label">Conclusion</div>
+      <p>Remainder = <strong>1110</strong> (non-zero).</p>
+      <p>Since the remainder is not zero, <strong>there is an error in the received codeword.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Numerical 6 -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">6</span>
+    <span>Data 11100, Divisor 1001. What will CRC generator and receiver do?</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">At the Generator (Sender)</div>
+      <p>Data = <strong>11100</strong>. Divisor = <strong>1001</strong>. Degree r = 3.</p>
+      <p>Appended Data = 11100<strong>000</strong> (8 bits).</p>
+      <table class="crc-table">
+        <tr><td style="text-align:left">Register</td><td style="text-align:left">Operation</td><td>Next Bit</td><td>New Register</td></tr>
+        <tr><td style="text-align:left">1110</td><td style="text-align:left">XOR 1001 = 0111</td><td>0</td><td>1110</td></tr>
+        <tr class="xor-row"><td style="text-align:left">1110</td><td style="text-align:left">XOR 1001 = 0111</td><td>0</td><td>1110</td></tr>
+        <tr class="xor-row"><td style="text-align:left">1110</td><td style="text-align:left">XOR 1001 = 0111</td><td>0</td><td>1110</td></tr>
+        <tr class="xor-row"><td style="text-align:left">1110</td><td style="text-align:left">XOR 1001 = 0111</td><td>0</td><td>1110</td></tr>
+        <tr><td style="text-align:left; font-weight:700; color:var(--accent)">1110</td><td style="text-align:left">XOR 1001 = 0111</td><td>&mdash;</td><td><strong>111</strong> &larr; Remainder</td></tr>
+      </table>
+      <p>Sender transmits: 11100 + 111 = <strong>11100111</strong></p>
+    </div>
+    <div class="step">
+      <div class="step-label">At the Receiver</div>
+      <p>The receiver receives <strong>11100111</strong> and divides by <strong>1001</strong>.</p>
+      <table class="crc-table">
+        <tr><td style="text-align:left">Register</td><td style="text-align:left">Operation</td><td>Next Bit</td><td>New Register</td></tr>
+        <tr><td style="text-align:left">1110</td><td style="text-align:left">XOR 1001 = 0111</td><td>0</td><td>1110</td></tr>
+        <tr class="xor-row"><td style="text-align:left">1110</td><td style="text-align:left">XOR 1001 = 0111</td><td>1</td><td>1111</td></tr>
+        <tr class="xor-row"><td style="text-align:left">1111</td><td style="text-align:left">XOR 1001 = 0110</td><td>1</td><td>1101</td></tr>
+        <tr class="xor-row"><td style="text-align:left">1101</td><td style="text-align:left">XOR 1001 = 0100</td><td>1</td><td>1001</td></tr>
+        <tr class="xor-row"><td style="text-align:left; font-weight:700; color:var(--accent)">1001</td><td style="text-align:left">XOR 1001 = 0000</td><td>&mdash;</td><td><strong>000</strong> &larr; Remainder</td></tr>
+      </table>
+    </div>
+    <div class="step">
+      <div class="step-label">Conclusion</div>
+      <p><strong>Sender:</strong> Appends 3 zeros to 11100 &rarr; 11100000. Divides by 1001. Remainder = <strong>111</strong>. Transmits <strong>11100111</strong>.</p>
+      <p><strong>Receiver:</strong> Receives 11100111. Divides by 1001. Remainder = <strong>000</strong>. Since remainder is zero, <strong>no error is detected.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- Numerical 7 (Polynomial Math) -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">7</span>
+    <span>Remainder of x<sup>7</sup> + x<sup>5</sup> + 1 divided by x<sup>3</sup> + 1. Explain single bit parity.</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Part A: Polynomial Division</div>
+      <p>D(x) = x<sup>7</sup> + x<sup>5</sup> + 1 = 10100001.<br>
+      G(x) = x<sup>3</sup> + 1 = 1001. r = 3.</p>
+      <p>Divide 10100001 by 1001:<br>
+      1) 1010 XOR 1001 = 0011 -> 1100 (bring down 0)<br>
+      2) 1100 XOR 1001 = 0101 -> 1010 (bring down 0)<br>
+      3) 1010 XOR 1001 = 0011 -> 0111 (bring down 1)<br>
+      4) 0111 (starts with 0) XOR 0000 = 0111 -> 1110 (wait, bring down nothing, it's 8 bits total. Let's re-trace)<br>
+      1010 0001 <br>
+      1001 <br>
+      0011 -> bring down 0 -> 1100 <br>
+      1100 ^ 1001 = 0101 -> bring down 0 -> 1010 <br>
+      1010 ^ 1001 = 0011 -> bring down 0 -> 0110 <br>
+      0110 ^ 0000 = 0110 -> bring down 1 -> 1101 <br>
+      1101 ^ 1001 = 0100. <br>
+      Wait, 10100001 has 8 bits. G is 4 bits. <br>
+      1. 1010 ^ 1001 = 0011. Next bit 0 -> 110. (Wait, 0011 + 0 = 0110). <br>
+      2. 0110 ^ 0000 = 0110. Next bit 0 -> 1100. <br>
+      3. 1100 ^ 1001 = 0101. Next bit 0 -> 1010. <br>
+      4. 1010 ^ 1001 = 0011. Next bit 1 -> 0111. <br>
+      5. 0111 ^ 0000 = 0111. No more bits. <br>
+      Remainder is 111. <br>
+      In polynomial: x<sup>2</sup> + x + 1.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Part B: Single Bit Parity Correction</div>
+      <p>Single bit parity can <strong>detect</strong> a single bit error, but it cannot <strong>correct</strong> it. To correct a single bit error, we need more redundant bits, such as in Hamming Code. With single parity, if the parity fails, we know an odd number of bits flipped, but we do not know <em>which</em> bit flipped, so correction is impossible.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CHECKSUM ─── -->
+<div class="sub-header" id="s2-2-checksum">
+  <h3>Internet Checksum</h3>
+</div>
+
+<div class="prose">
+<p>The Internet Checksum is another error detection method, used primarily at the network and transport layers (IP, TCP, UDP) rather than the link layer, but it is frequently asked in comparisons with CRC. Unlike CRC, which uses polynomial division, the checksum uses one's complement arithmetic.</p>
+
+<p>The sender divides the data into 16-bit segments. These segments are added together using one's complement arithmetic. If a carry is produced (i.e., the sum exceeds 16 bits), the carry is wrapped around and added back to the least significant bits. The final 16-bit sum is then complemented (all bits flipped) to produce the checksum value, which is sent along with the data.</p>
+
+<p>The receiver performs the same addition on all segments including the checksum. If no errors occurred, the result of adding all segments and wrapping the carry should be all 1s (FFFF in hex). The complement of this result is all 0s, indicating no error. If the result is not all 1s, an error is detected.</p>
+
+<div class="callout callout-warning">
+<p><strong>CRC vs Checksum:</strong> CRC is far more robust than the Internet Checksum. CRC can detect all burst errors up to the degree of the polynomial and most longer burst errors. The checksum is weak against certain error patterns&mdash;for example, if one bit is flipped upward in one segment and the same bit is flipped downward in another segment, the checksum will not detect it. CRC is implemented in hardware (NIC) for speed; checksum is implemented in software and is cheaper but weaker.</p>
+</div>
+</div>
+
+<!-- Numerical 8 (Checksum) -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">8</span>
+    <span>Sequence: 11001100, 10101010, 11110000, 00111100. Calculate sum, 1's complement, and check error if result is 10101010.</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Step 1: Add the segments</div>
+      <p>11001100 (204)<br>+ 10101010 (170)<br>= 101110110 (374). <br>Since it's 9 bits, wrap the carry: 01110110 + 1 = 01110111 (119).</p>
+      <p>01110111 (119)<br>+ 11110000 (240)<br>= 101100111 (359). <br>Wrap carry: 01100111 + 1 = 01101000 (104).</p>
+      <p>01101000 (104)<br>+ 00111100 (60)<br>= 10100100 (164). <br>9 bits, wrap carry: 01001000 + 1 = 01001001 (73).</p>
+      <p><strong>Sum = 01001001</strong></p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 2: 1's Complement (The Checksum)</div>
+      <p>Flip all bits of 01001001 -> <strong>10110110</strong>. This is the checksum sent by the sender.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 3: Check for error at receiver</div>
+      <p>At the receiver, all data segments + the checksum are added. If no error, the sum should be 11111111.</p>
+      <p>The question states the result obtained at the receiver is 10101010. Since 10101010 is NOT 11111111, its complement is 01010101 (non-zero).</p>
+      <p><strong>Conclusion: An error has occurred.</strong></p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── ERROR DETECTION VS CORRECTION ─── -->
+<div class="sub-header">
+  <h3>Error Detection vs. Error Correction</h3>
+</div>
+
+<div class="prose">
+<p>Error detection and error correction represent two fundamentally different strategies for dealing with transmission errors, and the choice between them depends on the nature of the channel and the cost of retransmission.</p>
+
+<p><strong>Error Detection</strong> mechanisms (like parity, CRC, checksum) only determine whether an error has occurred. They do not identify which bit was corrupted. When an error is detected, the standard response is to discard the frame and request retransmission (using an Automatic Repeat Request, or ARQ, protocol). This approach is efficient on channels with low error rates, where retransmissions are rare and the overhead of sending redundant bits for correction is not justified. Most wired links (Ethernet) use pure error detection.</p>
+
+<p><strong>Error Correction</strong> mechanisms (Forward Error Correction, or FEC, like Hamming codes, Reed-Solomon codes) include enough redundant information to not only detect an error but to locate and correct it without retransmission. FEC requires more redundant bits than pure detection. For example, a single parity bit can detect a single-bit error, but you need multiple check bits (as in Hamming code) to correct it. FEC is essential on channels where retransmission is extremely expensive or impossible&mdash;such as satellite links with long propagation delays, or simplex (one-way) communication like broadcast television.</p>
+</div>
+
+<table class="comparison-table">
+  <thead>
+    <tr><th>Feature</th><th>Error Detection</th><th>Error Correction (FEC)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Objective</td><td>Identify if an error occurred</td><td>Identify and fix the error</td></tr>
+    <tr><td>Redundant Bits</td><td>Fewer (e.g., 1 parity bit, 32 CRC bits)</td><td>Many more (e.g., Hamming requires log2(m+r+1) check bits)</td></tr>
+    <tr><td>Action on Error</td><td>Discard and request retransmission (ARQ)</td><td>Correct the error locally, no retransmission needed</td></tr>
+    <tr><td>Best Used On</td><td>Reliable, low-error channels (wired Ethernet)</td><td>High-error or high-latency channels (wireless, satellite)</td></tr>
+    <tr><td>Examples</td><td>Parity, CRC, Checksum</td><td>Hamming Code, Convolutional Codes, Reed-Solomon</td></tr>
+  </tbody>
+</table>
+
+<!-- ─── HAMMING CODE ─── -->
+<div class="sub-header" id="s2-2-hamming">
+  <h3>Hamming Code</h3>
+</div>
+
+<div class="prose">
+<p>Hamming codes are a family of linear error-correcting codes invented by Richard Hamming in 1950. They can detect up to two-bit errors and correct up to one-bit errors. The central idea is to place check bits at positions that are powers of 2 (positions 1, 2, 4, 8, 16...), while data bits occupy all other positions.</p>
+
+<p>For a Hamming code with <em>r</em> check bits and <em>m</em> data bits, the fundamental relationship is: <strong>2<sup>r</sup> &ge; m + r + 1</strong>. This equation ensures there are enough check bits to cover all possible single-bit error positions (including the check bits themselves) plus the "no error" state.</p>
+
+<p>Each check bit is responsible for checking the parity of a specific group of bits. Check bit at position 2<sup>k</sup> checks all bit positions whose binary representation has a 1 in the k-th position from the right. For example, check bit 1 (position 001) checks positions 1, 3, 5, 7, 9... Check bit 2 (position 010) checks positions 2, 3, 6, 7, 10... Check bit 4 (position 100) checks positions 4, 5, 6, 7, 12...</p>
+
+<p>When a codeword is received, the receiver recalculates the parity for each check bit group. If all parities are correct, no error occurred. If one or more parities fail, the failing check bit positions sum to the position of the erroneous bit. This sum is called the <strong>syndrome</strong>. For example, if check bits 1 and 4 fail (but 2 passes), the error is at position 1 + 4 = 5. You flip that bit to correct the error.</p>
+</div>
+
+<!-- Numerical 9 (Hamming) -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">9</span>
+    <span>7-bit Hamming codeword 1011011 received, even parity. Is it correct or wrong? Locate error bit if wrong.</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Step 1: Map bits to positions</div>
+      <p>Position: 1 &nbsp; 2 &nbsp; 3 &nbsp; 4 &nbsp; 5 &nbsp; 6 &nbsp; 7</p>
+      <p>Bits: &nbsp; &nbsp; 1 &nbsp; 0 &nbsp; 1 &nbsp; 1 &nbsp; 0 &nbsp; 1 &nbsp; 1</p>
+      <p>Check bits are at positions 1, 2, and 4.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 2: Verify Check Bit 1 (Position 1)</div>
+      <p>Checks positions with 1 in the LSB of their binary: 1, 3, 5, 7.</p>
+      <p>Bits at these positions: P1(1), P3(1), P5(0), P7(1).</p>
+      <p>Sum of 1s = 1+1+0+1 = 3 (Odd).</p>
+      <p>For even parity, this is an <strong>ERROR</strong>. (Error bit = 1)</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 3: Verify Check Bit 2 (Position 2)</div>
+      <p>Checks positions with 1 in the 2nd bit from right: 2, 3, 6, 7.</p>
+      <p>Bits: P2(0), P3(1), P6(1), P7(1).</p>
+      <p>Sum of 1s = 0+1+1+1 = 3 (Odd).</p>
+      <p>For even parity, this is an <strong>ERROR</strong>. (Error bit = 2)</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 4: Verify Check Bit 4 (Position 4)</div>
+      <p>Checks positions with 1 in the 3rd bit from right: 4, 5, 6, 7.</p>
+      <p>Bits: P4(1), P5(0), P6(1), P7(1).</p>
+      <p>Sum of 1s = 1+0+1+1 = 3 (Odd).</p>
+      <p>For even parity, this is an <strong>ERROR</strong>. (Error bit = 4)</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 5: Calculate Syndrome and Correct</div>
+      <p>Syndrome = Sum of error bits = 1 + 2 + 4 = <strong>7</strong>.</p>
+      <p>The error is at position 7.</p>
+      <p>The bit at position 7 is currently 1. Flipping it gives 0.</p>
+      <p><strong>Corrected codeword: 1011010</strong></p>
+    </div>
+  </div>
+</div>
+
+<button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+  <span>Viva Questions: Error Detection & Correction</span>
+  <span class="arrow">&#9660;</span>
+</button>
+<div class="collapsible-content">
+  <div class="collapsible-content-inner">
+    <div class="viva-box">
+      <p class="viva-q">Q: Why is CRC better than simple parity for network communication?</p>
+      <p class="viva-a">Network errors often occur in bursts (multiple consecutive bits corrupted). Simple parity cannot detect even-numbered bit errors and cannot detect burst errors at all. CRC, through polynomial division, can detect all single-bit errors, all double-bit errors, all odd-numbered errors (if x+1 is a factor), and all burst errors of length &le; r (degree of polynomial). It is specifically designed for the burst-error nature of real network channels.</p>
+    </div>
+    <div class="viva-box">
+      <p class="viva-q">Q: What happens if a CRC remainder is zero at the receiver?</p>
+      <p class="viva-a">It means the received codeword is perfectly divisible by the generator polynomial. Assuming the generator polynomial is well-chosen, this indicates that no detectable error has occurred, and the receiver accepts the data by stripping off the CRC bits.</p>
+    </div>
+  </div>
+</div>
+
+</section>
+
+<!-- ████████████████████████████████████████████████████████████████
+     SECTION 2.3: MULTIPLE ACCESS PROTOCOLS
+     ████████████████████████████████████████████████████████████████ -->
+<section class="section-block" id="s2-3">
+
+<div class="section-header">
+  <span class="section-number">Section 2.3</span>
+  <h2>Multiple Access Links &amp; Protocols</h2>
+  <div class="section-ornament"></div>
+</div>
+
+<div class="prose">
+<p>There are two fundamentally different types of network links: point-to-point links and broadcast links. A point-to-point link has exactly one sender and one receiver&mdash;a dedicated lane between two endpoints. A broadcast link (or multi-access link) is shared among multiple nodes; when one node transmits, the signal propagates to all other nodes on the link. Ethernet LANs, WiFi networks, and satellite uplinks are all examples of broadcast links.</p>
+
+<p>The broadcast link creates a central coordination problem: if two nodes transmit frames at the same time, their signals overlap and interfere with each other. This interference is called a <strong>collision</strong>. Neither frame can be successfully received; both are garbled. To make a broadcast link functional, we need a protocol to coordinate access to the shared channel. These are <strong>Multiple Access Protocols</strong>.</p>
+
+<p>The ideal multiple access protocol for a broadcast channel of rate R bps would achieve two properties: (1) When only one node has data to send, it should be able to transmit at the full rate R. (2) When M nodes have data to send, each should be able to transmit at an average rate of R/M. No single protocol perfectly achieves this under all conditions, and the history of multiple access protocols is a tale of different engineering tradeoffs.</p>
+
+<p>These protocols are broadly classified into three categories: <strong>Channel Partitioning Protocols</strong>, which divide the channel into pieces and assign them exclusively; <strong>Random Access Protocols</strong>, which allow collisions and provide mechanisms to recover from them; and <strong>Taking-Turns Protocols</strong>, which enforce a strict sequential order of transmission.</p>
+</div>
+
+<!-- ─── CHANNEL PARTITIONING ─── -->
+<div class="sub-header">
+  <h3>Channel Partitioning Protocols (TDMA, FDMA)</h3>
+</div>
+
+<div class="prose">
+<p>Channel partitioning protocols divide the channel resource (time or frequency) into smaller, dedicated slots and assign each slot to a specific node. This completely eliminates collisions by design, because no two nodes ever share the same channel resource.</p>
+
+<p><strong>TDMA (Time Division Multiple Access):</strong> Time is divided into frames, and each frame is divided into N time slots. Each node is assigned a specific time slot. Node 1 can only transmit during slot 1, node 2 during slot 2, and so on. If a node has no data to send during its slot, the slot remains idle&mdash;wasted channel capacity.</p>
+
+<p><strong>FDMA (Frequency Division Multiple Access):</strong> The channel's total frequency band is divided into N smaller frequency bands. Each node is assigned a dedicated frequency band. Again, if a node has nothing to send, its frequency band sits idle.</p>
+
+<div class="callout callout-exam">
+<p><strong>Exam tip:</strong> The main advantage of TDMA/FDMA is the complete elimination of collisions. The main disadvantage is the waste of bandwidth when nodes are silent. A node with a lot of data cannot use the idle slots of other nodes.</p>
+</div>
+</div>
+
+<!-- ─── RANDOM ACCESS PROTOCOLS ─── -->
+<div class="sub-header" id="s2-3-aloha">
+  <h3>Random Access Protocols: ALOHA</h3>
+</div>
+
+<div class="prose">
+<p>Random access protocols take the opposite approach to channel partitioning. Nodes are not assigned dedicated resources. Instead, any node can transmit whenever it has data. If collisions occur, the protocol provides a mechanism to detect the collision and retransmit the frame after a random delay. The randomness is crucial: if two nodes collide and both wait the exact same amount of time before retransmitting, they will collide again. Randomizing the waiting time breaks this destructive synchronization.</p>
+
+<p><strong>Pure ALOHA</strong> was the earliest random access protocol, developed at the University of Hawaii in the early 1970s for packet radio networks. In Pure ALOHA, the rule is breathtakingly simple: when a node has a frame to send, it just sends it. If the frame collides with another transmission, the sender waits for a random amount of time and retransmits. The node does not check whether the channel is busy before transmitting.</p>
+
+<p>The throughput of Pure ALOHA can be analyzed mathematically. Let the frame transmission time be T. A frame will not suffer a collision only if no other frame begins transmission in the vulnerable period of 2T (from T before the start of the frame to T after the start). If the total traffic on the channel follows a Poisson distribution with an average load of G frames per frame time, the probability that zero frames are generated during the vulnerable period (2T) is e<sup>-2G</sup>. Therefore, the throughput <strong>S = G &times; e<sup>-2G</sup></strong>.</p>
+
+<p>The maximum throughput of Pure ALOHA occurs when G = 0.5, yielding S = 0.5 &times; e<sup>-1</sup> &asymp; <strong>0.184</strong>. This means the channel can only be utilized about 18.4% of the time at best&mdash;the rest is lost to collisions or idle time.</p>
+
+<p><strong>Slotted ALOHA</strong> improves upon Pure ALOHA by dividing time into discrete slots, each equal to the frame transmission time T. Nodes are synchronized so that a frame can only be transmitted at the beginning of a slot. This halves the vulnerable period from 2T to T, because a collision can only occur if another frame is sent in the exact same slot. The probability of zero frames in a single slot is e<sup>-G</sup>, so the throughput is <strong>S = G &times; e<sup>-G</sup></strong>. The maximum throughput occurs at G = 1, giving S = e<sup>-1</sup> &asymp; <strong>0.368</strong>. Slotted ALOHA doubles the maximum efficiency of Pure ALOHA, but it requires time synchronization across all nodes.</p>
+</div>
+
+<!-- ALOHA Numericals -->
+<div class="sub-header">
+  <span class="section-label label-numerical">Numerical</span>
+  <h3>ALOHA Numericals (PYQs)</h3>
+</div>
+
+<!-- Numerical 1: Pure ALOHA N stations -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">1</span>
+    <span>N stations share a 56 Kbps pure ALOHA channel. Each station outputs a 1000 bit frame on average every 100 sec. Max N?</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Step 1: Calculate Max Throughput of Pure ALOHA</div>
+      <p>Max throughput S<sub>max</sub> = 0.184 &times; Channel Rate</p>
+      <p>S<sub>max</sub> = 0.184 &times; 56 Kbps = 10.304 Kbps = 10,304 bps.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 2: Calculate data rate of one station</div>
+      <p>One station sends 1000 bits every 100 seconds.</p>
+      <p>Rate per station = 1000 / 100 = 10 bps.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 3: Calculate Maximum N</div>
+      <p>N = S<sub>max</sub> / Rate per station = 10,304 / 10 = 1030.4</p>
+      <p>Since N must be an integer, <strong>Maximum N = 1030</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Numerical 2: Pure ALOHA throughput -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">2</span>
+    <span>Pure ALOHA, 19.2 Kbps channel, 100-bit messages. Calculate max throughput.</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Step 1: Identify formula</div>
+      <p>Max throughput of Pure ALOHA = 0.184 &times; Channel Bandwidth.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 2: Calculate</div>
+      <p>Throughput = 0.184 &times; 19.2 Kbps = 3.5328 Kbps = <strong>3532.8 bps</strong>.</p>
+      <p>In terms of frames: Frame time T = 100 / 19200 sec. Max frames/sec = 3532.8 / 100 = <strong>35.328 frames/sec</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Numerical 3: Slotted ALOHA throughput -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">3</span>
+    <span>Slotted ALOHA, 400-bit frames, 400 Kbps. Throughput for: (i) 1000 f/s (ii) 500 f/s (iii) 250 f/s?</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Step 1: Calculate frame time T</div>
+      <p>T = Frame size / Channel rate = 400 bits / 400,000 bps = 0.001 sec = 1 ms.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 2: Formula for Slotted ALOHA Throughput</div>
+      <p>S = G &times; e<sup>-G</sup>, where G is the total load (frames per slot T).</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Step 3: Calculate for each case</div>
+      <p><strong>(i) 1000 frames/sec:</strong><br>
+      G = 1000 f/s &times; 0.001 s/frame = 1 frame/slot.<br>
+      S = 1 &times; e<sup>-1</sup> = 0.368 frames/slot = <strong>368 frames/sec</strong>.</p>
+      <p><strong>(ii) 500 frames/sec:</strong><br>
+      G = 500 &times; 0.001 = 0.5 frame/slot.<br>
+      S = 0.5 &times; e<sup>-0.5</sup> = 0.5 &times; 0.6065 = 0.303 frames/slot = <strong>303 frames/sec</strong>.</p>
+      <p><strong>(iii) 250 frames/sec:</strong><br>
+      G = 250 &times; 0.001 = 0.25 frame/slot.<br>
+      S = 0.25 &times; e<sup>-0.25</sup> = 0.25 &times; 0.7788 = 0.194 frames/slot = <strong>194 frames/sec</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- Numerical 4: Slotted ALOHA max efficiency -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">4</span>
+    <span>Slotted ALOHA, 200-bit frames, 200 Kbps. Max efficiency and throughput if 250 f/s?</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Part 1: Maximum Efficiency</div>
+      <p>Max efficiency of Slotted ALOHA occurs at G=1, which is S<sub>max</sub> = 1/e = <strong>0.368</strong> (or 36.8%).</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Part 2: Throughput at 250 frames/sec</div>
+      <p>Frame time T = 200 / 200,000 = 0.001 sec.</p>
+      <p>Load G = 250 &times; 0.001 = 0.25.</p>
+      <p>Throughput S = G &times; e<sup>-G</sup> = 0.25 &times; e<sup>-0.25</sup> = 0.25 &times; 0.7788 = <strong>0.1947</strong> (19.47%).</p>
+      <p>In absolute throughput: 0.1947 &times; 200 Kbps = <strong>38.94 Kbps</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CSMA ─── -->
+<div class="sub-header" id="s2-3-csma">
+  <h3>Carrier Sense Multiple Access (CSMA/CD &amp; CSMA/CA)</h3>
+</div>
+
+<div class="prose">
+<p>The ALOHA protocols are remarkably inefficient because nodes transmit without any regard for what other nodes are doing. A natural improvement is to "listen before you speak"&mdash;check if the channel is currently busy before transmitting. This is the core idea of <strong>Carrier Sense Multiple Access (CSMA)</strong>.</p>
+
+<p>In CSMA, a node with a frame to send first listens to the channel. If the channel is idle, the node transmits the entire frame. If the channel is busy, the node waits until the channel becomes idle and then transmits. This dramatically reduces collisions compared to ALOHA, but it does not eliminate them entirely. Why? Because of <strong>propagation delay</strong>.</p>
+
+<p>Even at the speed of light, a signal takes time to travel from one end of the medium to the other. Suppose node A begins transmitting at one end of a cable. The signal from A has not yet reached node B at the other end. Node B senses the channel, hears silence (because A's signal hasn't arrived yet), and begins transmitting. A collision occurs. The longer the propagation delay, the more vulnerable CSMA is to collisions.</p>
+
+<p><strong>CSMA/CD (Collision Detection):</strong> Used in wired Ethernet. Nodes not only listen before transmitting but also monitor the channel <em>while</em> transmitting. If a node detects that another signal is interfering with its own, it immediately stops transmitting and sends a short jamming signal to notify all other nodes of the collision. This saves time because the node doesn't continue sending a full frame that is already garbled. After a collision, the node waits using the <strong>binary exponential backoff</strong> algorithm: after the k-th collision, the node chooses a random delay from {0, 1, 2, ..., 2<sup>k</sup>-1} &times; 512 bit times, up to a maximum of k=10.</p>
+
+<p><strong>CSMA/CA (Collision Avoidance):</strong> Used in WiFi (802.11). Collision detection is impractical in wireless because the node's own transmission drowns out any received signal, making it hard to detect a collision. Instead, CSMA/CA tries to <em>avoid</em> collisions. It uses a <strong>Request to Send (RTS)</strong> and <strong>Clear to Send (CTS)</strong> handshake. The sender broadcasts an RTS, the receiver replies with a CTS, and then the sender transmits the data. The RTS/CTS frames contain a duration field that tells all other nodes how long to wait (the Network Allocation Vector, or NAV), effectively reserving the channel.</p>
+</div>
+
+<!-- CSMA/CD Diagram -->
+<div class="diagram-container">
+<svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="700" height="300" fill="#FAF6EF"/>
+  <!-- Cable -->
+  <line x1="50" y1="150" x2="650" y2="150" stroke="#2C1810" stroke-width="4"/>
+  <!-- Nodes -->
+  <circle cx="100" cy="150" r="25" fill="#B85C38"/>
+  <text x="100" y="155" text-anchor="middle" fill="#FFF" font-family="Source Code Pro" font-size="11" font-weight="700">A</text>
+  <circle cx="350" cy="150" r="25" fill="#4A7C6F"/>
+  <text x="350" y="155" text-anchor="middle" fill="#FFF" font-family="Source Code Pro" font-size="11" font-weight="700">B</text>
+  <circle cx="600" cy="150" r="25" fill="#C9A84C"/>
+  <text x="600" y="155" text-anchor="middle" fill="#FFF" font-family="Source Code Pro" font-size="11" font-weight="700">C</text>
+
+  <!-- A starts transmitting -->
+  <path d="M 125 150 L 320 150" stroke="#B85C38" stroke-width="6" opacity="0.5">
+    <animate attributeName="d" from="M 125 150 L 130 150" to="M 125 150 L 320 150" dur="2s" repeatCount="indefinite"/>
+  </path>
+  <text x="220" y="130" text-anchor="middle" fill="#B85C38" font-family="Crimson Text" font-size="11" font-style="italic">Signal from A propagating</text>
+
+  <!-- B senses idle (gap) and transmits -->
+  <path d="M 375 150 L 570 150" stroke="#4A7C6F" stroke-width="6" opacity="0.5">
+    <animate attributeName="d" from="M 375 150 L 570 150" to="M 375 150 L 570 150" dur="2s" repeatCount="indefinite"/>
+  </path>
+  <text x="470" y="180" text-anchor="middle" fill="#4A7C6F" font-family="Crimson Text" font-size="11" font-style="italic">B transmits (hasn't heard A yet!)</text>
+
+  <!-- Collision -->
+  <text x="350" y="220" text-anchor="middle" fill="#C17C74" font-family="Source Code Pro" font-size="13" font-weight="700">COLLISION OCCURS</text>
+  <text x="350" y="240" text-anchor="middle" fill="#8B7355" font-family="Crimson Text" font-size="11">Both detect collision, abort, send Jam signal, backoff</text>
+
+  <!-- Timeline -->
+  <line x1="50" y1="270" x2="650" y2="270" stroke="#D4C5A9" stroke-width="1"/>
+  <text x="50" y="290" fill="#8B7355" font-family="Source Code Pro" font-size="9">t=0: A starts</text>
+  <text x="250" y="290" fill="#8B7355" font-family="Source Code Pro" font-size="9">t=&tau;: B starts</text>
+  <text x="500" y="290" fill="#C17C74" font-family="Source Code Pro" font-size="9">t=2&tau;: A detects collision</text>
+</svg>
+<p class="diagram-caption">Figure 2.3: CSMA/CD &mdash; Why collisions still happen due to propagation delay (&tau; = end-to-end propagation delay).</p>
+</div>
+
+<!-- CSMA/CD Numerical 1 -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">5</span>
+    <span>CSMA/CD, K=100, 10 Mbps and 100 Mbps Ethernet. How long does adapter wait?</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Formula</div>
+      <p>Waiting time = K &times; 512 bit times.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">For 10 Mbps Ethernet</div>
+      <p>1 bit time = 1 / 10,000,000 sec = 10<sup>-7</sup> sec.</p>
+      <p>512 bit times = 512 &times; 10<sup>-7</sup> = 51.2 &times; 10<sup>-6</sup> sec = 51.2 &mu;s.</p>
+      <p>Wait time = 100 &times; 51.2 &mu;s = <strong>5120 &mu;s = 5.12 ms</strong>.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">For 100 Mbps Ethernet</div>
+      <p>1 bit time = 1 / 100,000,000 sec = 10<sup>-8</sup> sec.</p>
+      <p>512 bit times = 512 &times; 10<sup>-8</sup> = 5.12 &times; 10<sup>-6</sup> sec = 5.12 &mu;s.</p>
+      <p>Wait time = 100 &times; 5.12 &mu;s = <strong>512 &mu;s = 0.512 ms</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- CSMA/CD Numerical 2 -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">6</span>
+    <span>CSMA/CD, 100 Mbps, 1 km, min frame 1250 bytes. Signal speed in cable?</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Principle</div>
+      <p>For CSMA/CD to work, the transmission time of the minimum frame must be at least twice the propagation delay (T<sub>tx</sub> &ge; 2 &times; T<sub>p</sub>), so the sender can detect a collision before it finishes sending.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Calculate Transmission Time</div>
+      <p>Min frame = 1250 bytes = 10,000 bits.</p>
+      <p>T<sub>tx</sub> = Frame size / Bandwidth = 10,000 / 100,000,000 = 10<sup>-4</sup> sec = 100 &mu;s.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Calculate Propagation Delay</div>
+      <p>2 &times; T<sub>p</sub> = T<sub>tx</sub> => T<sub>p</sub> = 50 &mu;s = 50 &times; 10<sup>-6</sup> sec.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Calculate Signal Speed</div>
+      <p>Speed = Distance / Time = 1000 m / (50 &times; 10<sup>-6</sup> s) = 2 &times; 10<sup>7</sup> m/s = <strong>20,000 km/s</strong>.</p>
+      <p>(This is approximately 2/3 the speed of light, typical for copper cable).</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TAKING TURNS ─── -->
+<div class="sub-header">
+  <h3>Taking-Turns Protocols (Polling, Token Passing)</h3>
+</div>
+
+<div class="prose">
+<p>Taking-turns protocols represent a middle ground between the rigid, wasteful division of channel partitioning and the chaotic collisions of random access. They enforce a strict sequence: nodes take turns transmitting, eliminating collisions while allowing a node with data to use the full channel capacity during its turn.</p>
+
+<p><strong>Polling:</strong> One node is designated as the master (or controller). The master polls each slave node in a round-robin fashion, asking "Do you have anything to send?" If the slave has data, it transmits; if not, the master moves on to the next slave. Polling eliminates collisions and is fair. However, it introduces latency (a node must wait to be polled), and it has a single point of failure: if the master node crashes, the entire channel goes down. It also consumes some bandwidth for the polling messages themselves.</p>
+
+<p><strong>Token Passing:</strong> A special frame called a <strong>token</strong> circulates among the nodes in a logical ring. When a node receives the token, it is allowed to transmit data. If it has nothing to send, it passes the token to the next node. If it has data, it attaches the data to the token (or sends a data frame and releases the token afterward), and the frame circulates to the destination. Token passing is decentralized (no master node), but it has its own problems: if the token is lost (due to a node failure), the entire ring stops. A complex token recovery protocol is required to regenerate the lost token.</p>
+</div>
+
+<table class="comparison-table">
+  <thead>
+    <tr><th>Feature</th><th>Channel Partitioning</th><th>Random Access</th><th>Taking Turns</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Collisions?</td><td>No</td><td>Yes (handled by protocol)</td><td>No</td></tr>
+    <tr><td>Efficiency at low load</td><td>Low (slots/bands wasted)</td><td>High (transmit immediately)</td><td>Medium (polling/token overhead)</td></tr>
+    <tr><td>Efficiency at high load</td><td>High (shared fairly)</td><td>Low (many collisions)</td><td>High (organized sharing)</td></tr>
+    <tr><td>Examples</td><td>TDMA, FDMA</td><td>ALOHA, CSMA/CD, CSMA/CA</td><td>Polling, Token Ring</td></tr>
+  </tbody>
+</table>
+
+</section>
+
+<!-- ████████████████████████████████████████████████████████████████
+     SECTION 2.4: SWITCHED LANS & ETHERNET
+     ████████████████████████████████████████████████████████████████ -->
+<section class="section-block" id="s2-4">
+
+<div class="section-header">
+  <span class="section-number">Section 2.4</span>
+  <h2>Switched Local Area Networks &amp; Ethernet</h2>
+  <div class="section-ornament"></div>
+</div>
+
+<div class="prose">
+<p>In the early days of networking, all devices on a LAN shared a single physical cable&mdash;a true broadcast medium where every frame was heard by every node. This architecture required CSMA/CD and created a large collision domain. Modern LANs have almost entirely moved away from shared media to switched architectures, where devices connect to a central <strong>link-layer switch</strong>. The switch isolates traffic, creates separate collision domains for each port, and selectively forwards frames only to their intended destination. This section covers the addressing that makes this possible, the Ethernet protocol that dominates wired LANs, and the switches that tie it all together.</p>
+</div>
+
+<!-- ─── MAC ADDRESSING ─── -->
+<div class="sub-header">
+  <h3>Link-Layer Addressing: MAC Addresses</h3>
+</div>
+
+<div class="prose">
+<p>While IP addresses identify the network location of a host (the "who" and "where" at the network layer), <strong>MAC addresses</strong> (Media Access Control addresses) identify the specific network interface hardware at the link layer. A MAC address is a 48-bit (6-byte) address, typically written in hexadecimal notation as six pairs of digits separated by colons or hyphens (e.g., 1A:2B:3C:4D:5E:6F).</p>
+
+<p>MAC addresses are assigned by the manufacturer of the NIC and are intended to be globally unique and permanent. The first 24 bits (3 bytes) are the Organizationally Unique Identifier (OUI), assigned by IEEE to the manufacturer. The last 24 bits are assigned by the manufacturer to each individual NIC. When a frame is sent from one interface to another on the same LAN, it is identified by its MAC address, not its IP address. The IP address is used to get the packet to the correct network; the MAC address is used to get the frame to the correct interface on that network.</p>
+
+<div class="callout callout-intuition">
+<p>Think of the IP address as the postal address of a building (it can change if you move), and the MAC address as the Social Security Number of a person (it is permanent and tied to the individual hardware). A letter is routed to the building using the postal address, but inside the mailroom, the SSN ensures it reaches the exact person.</p>
+</div>
+</div>
+
+<table class="comparison-table">
+  <thead>
+    <tr><th>Feature</th><th>MAC Address</th><th>IP Address</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Layer</td><td>Data Link Layer (Layer 2)</td><td>Network Layer (Layer 3)</td></tr>
+    <tr><td>Length</td><td>48 bits (6 bytes)</td><td>32 bits (4 bytes) for IPv4</td></tr>
+    <tr><td>Assignment</td><td>Burned into NIC by manufacturer (permanent)</td><td>Assigned by network admin or DHCP (can change)</td></tr>
+    <tr><td>Scope</td><td>Local network only (not routable)</td><td>Global (routable across networks)</td></tr>
+    <tr><td>Format</td><td>Hexadecimal (1A:2B:3C:4D:5E:6F)</td><td>Dotted Decimal (192.168.1.1)</td></tr>
+    <tr><td>Use in Frame</td><td>Source and Destination MAC in Ethernet header</td><td>Source and Destination IP in IP header (payload of frame)</td></tr>
+  </tbody>
+</table>
+
+<!-- ─── ARP ─── -->
+<div class="sub-header" id="s2-4-arp">
+  <h3>Address Resolution Protocol (ARP)</h3>
+</div>
+
+<div class="prose">
+<p>Every host on a LAN has both an IP address and a MAC address. But when a host needs to send a frame to another host on the same LAN, it must know the destination's MAC address&mdash;the link-layer hardware only understands MAC addresses. How does a host map a known IP address to an unknown MAC address? This is the function of the <strong>Address Resolution Protocol (ARP)</strong>.</p>
+
+<p>Each host maintains an <strong>ARP table</strong> (or ARP cache) in its memory, which maps IP addresses to MAC addresses. Each entry has a TTL (Time To Live), usually around 20 minutes, after which the entry is discarded to allow for changes (like a device being replaced).</p>
+
+<p>When Host A wants to send a datagram to Host B on the same subnet, A checks its ARP table. If B's IP-MAC mapping is present, A simply encapsulates the IP datagram in a frame destined for B's MAC address. If the mapping is absent, A uses ARP to find it:</p>
+
+<ol>
+<li>Host A constructs an <strong>ARP query packet</strong>, which contains A's own IP and MAC, and the target IP address (B's IP). The target MAC is left blank or set to 0.</li>
+<li>This ARP packet is encapsulated in a broadcast Ethernet frame (destination MAC = FF:FF:FF:FF:FF:FF). Every adapter on the LAN receives and processes this frame.</li>
+<li>All hosts on the LAN examine the ARP query. If a host's IP does not match the target IP, it ignores the query. Host B recognizes its own IP.</li>
+<li>Host B responds by sending an <strong>ARP response packet</strong> directly back to Host A (unicast), containing B's MAC address.</li>
+<li>Host A receives the response, updates its ARP table with B's mapping, and can now send the original datagram.</p>
+</ol>
+
+<p><strong>RARP (Reverse ARP):</strong> Historically, RARP was used by diskless workstations that knew their MAC address but did not know their IP address. A device would broadcast a RARP request containing its MAC, and a RARP server would reply with the IP address assigned to that MAC. RARP is now obsolete and has been replaced by BOOTP and DHCP, which are far more flexible.</p>
+
+<p><strong>Proxy ARP:</strong> Sometimes a router answers ARP queries on behalf of another device. For example, if a host on one subnet tries to reach a host on a different subnet (but doesn't realize it's on a different subnet because of a non-standard subnet mask), it will send an ARP query for an IP that is not on the local link. The router, acting as a Proxy ARP agent, responds with its own MAC address. The sender then sends frames to the router, which forwards them to the actual destination. This makes the remote network appear as if it is part of the local link.</p>
+</div>
+
+<!-- ARP Packet Format Diagram -->
+<div class="diagram-container">
+<svg viewBox="0 0 600 440" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="600" height="440" fill="#FAF6EF"/>
+  <text x="300" y="25" text-anchor="middle" fill="#2C1810" font-family="Playfair Display" font-size="16" font-weight="700">ARP Packet Format</text>
+  
+  <rect x="80" y="40" width="440" height="30" fill="#B85C38"/>
+  <text x="300" y="60" text-anchor="middle" fill="#FFF" font-family="Source Code Pro" font-size="11">Hardware Type (16 bits) | Protocol Type (16 bits)</text>
+
+  <rect x="80" y="70" width="220" height="25" fill="#4A7C6F"/>
+  <text x="190" y="88" text-anchor="middle" fill="#FFF" font-family="Source Code Pro" font-size="11">HW Addr Len (8b)</text>
+  <rect x="300" y="70" width="220" height="25" fill="#4A7C6F"/>
+  <text x="410" y="88" text-anchor="middle" fill="#FFF" font-family="Source Code Pro" font-size="11">Proto Addr Len (8b)</text>
+
+  <rect x="80" y="95" width="440" height="30" fill="#C9A84C"/>
+  <text x="300" y="115" text-anchor="middle" fill="#2C1810" font-family="Source Code Pro" font-size="11">Operation (16 bits): 1=Request, 2=Reply</text>
+
+  <rect x="80" y="125" width="440" height="35" fill="#5C4033"/>
+  <text x="300" y="147" text-anchor="middle" fill="#E8D5B7" font-family="Source Code Pro" font-size="11">Sender Hardware Address (MAC) - 48 bits</text>
+
+  <rect x="80" y="160" width="440" height="35" fill="#8B7355"/>
+  <text x="300" y="182" text-anchor="middle" fill="#E8D5B7" font-family="Source Code Pro" font-size="11">Sender Protocol Address (IP) - 32 bits</text>
+
+  <rect x="80" y="195" width="440" height="35" fill="#5C4033"/>
+  <text x="300" y="217" text-anchor="middle" fill="#E8D5B7" font-family="Source Code Pro" font-size="11">Target Hardware Address (MAC) - 48 bits</text>
+
+  <rect x="80" y="230" width="440" height="35" fill="#8B7355"/>
+  <text x="300" y="252" text-anchor="middle" fill="#E8D5B7" font-family="Source Code Pro" font-size="11">Target Protocol Address (IP) - 32 bits</text>
+
+  <!-- Annotations -->
+  <line x1="525" y1="140" x2="560" y2="140" stroke="#B85C38" stroke-width="1"/>
+  <text x="565" y="135" fill="#5C4033" font-family="Crimson Text" font-size="10">Sender's MAC</text>
+  <text x="565" y="148" fill="#5C4033" font-family="Crimson Text" font-size="10">included here</text>
+
+  <line x1="525" y1="210" x2="560" y2="210" stroke="#B85C38" stroke-width="1"/>
+  <text x="565" y="208" fill="#5C4033" font-family="Crimson Text" font-size="10">Target MAC is</text>
+  <text x="565" y="221" fill="#5C4033" font-family="Crimson Text" font-size="10">0 in Request</text>
+
+  <text x="300" y="300" text-anchor="middle" fill="#8B7355" font-family="Crimson Text" font-size="12" font-style="italic">ARP is encapsulated directly inside an Ethernet frame (EtherType = 0x0806)</text>
+  <text x="300" y="320" text-anchor="middle" fill="#8B7355" font-family="Crimson Text" font-size="12" font-style="italic">It sits between the Ethernet header and the payload, not inside an IP packet.</text>
+</svg>
+<p class="diagram-caption">Figure 2.4: ARP Packet Format</p>
+</div>
+
+<!-- ─── ETHERNET ─── -->
+<div class="sub-header" id="s2-4-ethernet">
+  <h3>Ethernet: Frame Structure</h3>
+</div>
+
+<div class="prose">
+<p>Ethernet is, by a vast margin, the dominant wired LAN technology in the world. It has survived the transition from thick coaxial cables (10BASE5) to thin coax (10BASE2) to twisted-pair copper (10BASE-T, 100BASE-TX, 1000BASE-T) and fiber optics, evolving from a shared-bus medium to a full-duplex switched medium. Throughout these physical transformations, the Ethernet frame format has remained remarkably stable.</p>
+
+<p>The Ethernet frame consists of several fields, each serving a specific purpose in the link-layer communication process. Understanding this frame is absolutely essential for any networking exam.</p>
+</div>
+
+<!-- Ethernet Frame Diagram -->
+<div class="diagram-container">
+<svg viewBox="0 0 800 380" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="800" height="380" fill="#FAF6EF"/>
+  <text x="400" y="30" text-anchor="middle" fill="#2C1810" font-family="Playfair Display" font-size="18" font-weight="700">IEEE 802.3 Ethernet Frame Structure</text>
+
+  <!-- Preamble -->
+  <rect x="40" y="60" width="100" height="80" fill="#D4C5A9" stroke="#2C1810" stroke-width="2" class="frame-field"/>
+  <text x="90" y="95" text-anchor="middle" fill="#2C1810" font-family="Playfair Display" font-size="12" font-weight="700">Preamble</text>
+  <text x="90" y="115" text-anchor="middle" fill="#5C4033" font-family="Source Code Pro" font-size="11">7 B</text>
+
+  <!-- SFD -->
+  <rect x="140" y="60" width="80" height="80" fill="#C9A84C" stroke="#2C1810" stroke-width="2" class="frame-field"/>
+  <text x="180" y="95" text-anchor="middle" fill="#2C1810" font-family="Playfair Display" font-size="12" font-weight="700">SFD</text>
+  <text x="180" y="115" text-anchor="middle" fill="#2C1810" font-family="Source Code Pro" font-size="11">1 B</text>
+
+  <!-- Dest MAC -->
+  <rect x="220" y="60" width="120" height="80" fill="#B85C38" stroke="#2C1810" stroke-width="2" class="frame-field"/>
+  <text x="280" y="90" text-anchor="middle" fill="#FFF" font-family="Playfair Display" font-size="12" font-weight="700">Destination</text>
+  <text x="280" y="108" text-anchor="middle" fill="#FFF" font-family="Playfair Display" font-size="12" font-weight="700">MAC</text>
+  <text x="280" y="128" text-anchor="middle" fill="#E8D5B7" font-family="Source Code Pro" font-size="11">6 B</text>
+
+  <!-- Src MAC -->
+  <rect x="340" y="60" width="120" height="80" fill="#4A7C6F" stroke="#2C1810" stroke-width="2" class="frame-field"/>
+  <text x="400" y="90" text-anchor="middle" fill="#FFF" font-family="Playfair Display" font-size="12" font-weight="700">Source</text>
+  <text x="400" y="108" text-anchor="middle" fill="#FFF" font-family="Playfair Display" font-size="12" font-weight="700">MAC</text>
+  <text x="400" y="128" text-anchor="middle" fill="#E8D5B7" font-family="Source Code Pro" font-size="11">6 B</text>
+
+  <!-- Type -->
+  <rect x="460" y="60" width="80" height="80" fill="#C17C74" stroke="#2C1810" stroke-width="2" class="frame-field"/>
+  <text x="500" y="95" text-anchor="middle" fill="#FFF" font-family="Playfair Display" font-size="12" font-weight="700">Type</text>
+  <text x="500" y="115" text-anchor="middle" fill="#E8D5B7" font-family="Source Code Pro" font-size="11">2 B</text>
+
+  <!-- Data -->
+  <rect x="540" y="60" width="140" height="80" fill="#8B7355" stroke="#2C1810" stroke-width="2" class="frame-field"/>
+  <text x="610" y="90" text-anchor="middle" fill="#FFF" font-family="Playfair Display" font-size="12" font-weight="700">Data</text>
+  <text x="610" y="108" text-anchor="middle" fill="#FFF" font-family="Source Code Pro" font-size="10">(Payload)</text>
+  <text x="610" y="128" text-anchor="middle" fill="#E8D5B7" font-family="Source Code Pro" font-size="11">46-1500 B</text>
+
+  <!-- CRC -->
+  <rect x="680" y="60" width="80" height="80" fill="#2C1810" stroke="#2C1810" stroke-width="2" class="frame-field"/>
+  <text x="720" y="95" text-anchor="middle" fill="#E8D5B7" font-family="Playfair Display" font-size="12" font-weight="700">CRC</text>
+  <text x="720" y="115" text-anchor="middle" fill="#C9A84C" font-family="Source Code Pro" font-size="11">4 B</text>
+
+  <!-- Explanations -->
+  <g font-family="Crimson Text" font-size="11" fill="#5C4033">
+    <line x1="90" y1="140" x2="90" y2="170" stroke="#8B7355" stroke-width="1"/>
+    <text x="90" y="185" text-anchor="middle">7 bytes of 10101010 for</text>
+    <text x="90" y="198" text-anchor="middle">clock synchronization</text>
+
+    <line x1="180" y1="140" x2="180" y2="170" stroke="#8B7355" stroke-width="1"/>
+    <text x="180" y="185" text-anchor="middle">10101011: marks start</text>
+    <text x="180" y="198" text-anchor="middle">of actual frame</text>
+
+    <line x1="280" y1="140" x2="280" y2="170" stroke="#8B7355" stroke-width="1"/>
+    <text x="280" y="185" text-anchor="middle">Who this frame is</text>
+    <text x="280" y="198" text-anchor="middle">for (or FF:FF:FF:FF:FF:FF)</text>
+
+    <line x1="500" y1="140" x2="500" y2="170" stroke="#8B7355" stroke-width="1"/>
+    <text x="500" y="185" text-anchor="middle">0x0800=IPv4,</text>
+    <text x="500" y="198" text-anchor="middle">0x0806=ARP</text>
+
+    <line x1="610" y1="140" x2="610" y2="170" stroke="#8B7355" stroke-width="1"/>
+    <text x="610" y="185" text-anchor="middle">IP datagram + padding.</text>
+    <text x="610" y="198" text-anchor="middle">Min 46B for collision detect</text>
+
+    <line x1="720" y1="140" x2="720" y2="170" stroke="#8B7355" stroke-width="1"/>
+    <text x="720" y="185" text-anchor="middle">CRC-32 error</text>
+    <text x="720" y="198" text-anchor="middle">detection</text>
+  </g>
+
+  <!-- Minimum frame size note -->
+  <rect x="150" y="240" width="500" height="120" fill="#F5EFE6" stroke="#B85C38" stroke-width="2" rx="3"/>
+  <text x="400" y="265" text-anchor="middle" fill="#B85C38" font-family="Source Code Pro" font-size="12" font-weight="700">WHY IS THE PAYLOAD LIMITED TO 1500 BYTES?</text>
+  <text x="400" y="285" text-anchor="middle" fill="#2C1810" font-family="Crimson Text" font-size="12">1. Buffer Size: Early Ethernet had limited RAM (1500B was a practical compromise).</text>
+  <text x="400" y="305" text-anchor="middle" fill="#2C1810" font-family="Crimson Text" font-size="12">2. Fairness: Large frames monopolize the shared channel, increasing latency for others.</text>
+  <text x="400" y="325" text-anchor="middle" fill="#2C1810" font-family="Crimson Text" font-size="12">3. Error Rate: Larger frames have a higher probability of bit errors, wasting more bandwidth on retransmission.</text>
+  <text x="400" y="345" text-anchor="middle" fill="#8B7355" font-family="Crimson Text" font-size="11" font-style="italic">(Minimum frame size of 64B ensures CSMA/CD can detect collisions within 2*propagation delay)</text>
+</svg>
+<p class="diagram-caption">Figure 2.5: The Ethernet Frame &mdash; every field explained.</p>
+</div>
+
+<!-- Numerical: Max Frame Rate -->
+<div class="numerical-box">
+  <div class="numerical-header">
+    <span class="num-icon">7</span>
+    <span>Calculate the maximum frame rate of a node on a 10 Mbps Ethernet link.</span>
+  </div>
+  <div class="numerical-body">
+    <div class="step">
+      <div class="step-label">Principle</div>
+      <p>Maximum frame rate occurs when each frame is the minimum possible size. For Ethernet, the minimum frame payload is 46 bytes. Adding headers/trailers: Dest MAC(6) + Src MAC(6) + Type(2) + Data(46) + CRC(4) = 64 bytes. Including the Preamble (8 bytes), total bits on wire per frame = 64 + 8 = 72 bytes = 576 bits.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Calculate Maximum Frame Rate</div>
+      <p>Frame rate = Link speed / Frame size in bits.</p>
+      <p>Frame rate = 10,000,000 bps / 576 bits = <strong>17,361 frames per second</strong>.</p>
+    </div>
+    <div class="step">
+      <div class="step-label">Note on Maximum Throughput</div>
+      <p>If frames are maximum size (1500 payload + 22 header + 8 preamble = 1530 bytes = 12240 bits), frame rate = 10,000,000 / 12240 = <strong>817 frames/sec</strong>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ─── LINK LAYER SWITCHES ─── -->
+<div class="sub-header" id="s2-4-switches">
+  <h3>Link Layer Switches</h3>
+</div>
+
+<div class="prose">
+<p>A link-layer switch is a device that receives incoming frames, examines their destination MAC address, and forwards them selectively to the appropriate output port. Unlike a hub (which mindlessly repeats every frame to every port), a switch learns which devices are on which ports and creates a dedicated path for traffic. This is the fundamental architectural shift that made modern Ethernet so powerful.</p>
+
+<p><strong>Forwarding and Filtering:</strong> Filtering is the switch's ability to determine that a frame should NOT be forwarded to a particular port. Forwarding is determining which port a frame SHOULD go to. Both functions rely on the <strong>switch table</strong> (also called a forwarding table or MAC address table). The switch table maps MAC addresses to the switch port through which that MAC address can be reached.</p>
+
+<p>When a frame arrives at a switch, the switch reads the source MAC address and records which port the frame came from&mdash;this is how the switch <em>learns</em>. It then looks up the destination MAC address in its table. There are three possible scenarios:</p>
+
+<ol>
+<li><strong>Found, same port:</strong> The destination is on the same port as the source. The frame is filtered (dropped), because the destination already received it on the shared segment.</li>
+<li><strong>Found, different port:</strong> The frame is forwarded only to the specific port listed in the table.</li>
+<li><strong>Not found:</strong> The switch does not know where the destination is. It floods the frame&mdash;forwarding it to all ports except the one it arrived on. This ensures the frame reaches its destination even if the switch hasn't learned that MAC address yet.</li>
+</ol>
+
+<p><strong>Self-Learning:</strong> Switches do not require manual configuration of their tables. They build their tables automatically through a beautifully simple process. Every time a frame arrives, the switch records the source MAC address and the incoming port in its table, along with a timestamp. If an entry is not refreshed within a certain timeout period (typically a few minutes), it is removed. This allows the switch to adapt when devices are moved or disconnected.</p>
+</div>
+
+<!-- Switch Self-Learning Diagram -->
+<div class="diagram-container">
+<svg viewBox="0 0 700 350" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="700" height="350" fill="#FAF6EF"/>
+  
+  <!-- Switch Box -->
+  <rect x="250" y="60" width="200" height="200" fill="#2C1810" stroke="#2C1810" stroke-width="3" rx="5"/>
+  <text x="350" y="90" text-anchor="middle" fill="#E8D5B7" font-family="Playfair Display" font-size="16" font-weight="700">SWITCH</text>
+  
+  <!-- Ports -->
+  <circle cx="270" cy="140" r="6" fill="#B85C38"/>
+  <text x="280" y="145" fill="#E8D5B7" font-family="Source Code Pro" font-size="10">Port 1</text>
+  <circle cx="270" cy="180" r="6" fill="#4A7C6F"/>
+  <text x="280" y="185" fill="#E8D5B7" font-family="Source Code Pro" font-size="10">Port 2</text>
+  <circle cx="270" cy="220" r="6" fill="#C9A84C"/>
+  <text x="280" y="225" fill="#E8D5B7" font-family="Source Code Pro" font-size="10">Port 3</text>
+
+  <!-- Switch Table inside -->
+  <rect x="320" y="110" width="110" height="80" fill="#3D2A1E" stroke="#8B7355" stroke-width="1"/>
+  <text x="375" y="128" text-anchor="middle" fill="#C9A84C" font-family="Source Code Pro" font-size="9" font-weight="700">SWITCH TABLE</text>
+  <text x="375" y="145" text-anchor="middle" fill="#E8D5B7" font-family="Source Code Pro" font-size="8">MAC_A -> P1</text>
+  <text x="375" y="160" text-anchor="middle" fill="#E8D5B7" font-family="Source Code Pro" font-size="8">MAC_B -> P2</text>
+  <text x="375" y="175" text-anchor="middle" fill="#8B7355" font-family="Source Code Pro" font-size="8">(learned via frames)</text>
+
+  <!-- Hosts -->
+  <rect x="50" y="120" width="120" height="40" fill="#B85C38" rx="3"/>
+  <text x="110" y="145" text-anchor="middle" fill="#FFF" font-family="Source Code Pro" font-size="11" font-weight="600">Host A (MAC_A)</text>
+  <line x1="170" y1="140" x2="264" y2="140" stroke="#B85C38" stroke-width="2"/>
+
+  <rect x="50" y="160" width="120" height="40" fill="#4A7C6F" rx="3"/>
+  <text x="110" y="185" text-anchor="middle" fill="#FFF" font-family="Source Code Pro" font-size="11" font-weight="600">Host B (MAC_B)</text>
+  <line x1="170" y1="180" x2="264" y2="180" stroke="#4A7C6F" stroke-width="2"/>
+
+  <rect x="50" y="200" width="120" height="40" fill="#C9A84C" rx="3"/>
+  <text x="110" y="225" text-anchor="middle" fill="#2C1810" font-family="Source Code Pro" font-size="11" font-weight="600">Host C (MAC_C)</text>
+  <line x1="170" y1="220" x2="264" y2="220" stroke="#C9A84C" stroke-width="2"/>
+
+  <!-- Steps -->
+  <g font-family="Crimson Text" font-size="12" fill="#5C4033">
+    <text x="50" y="290"><tspan font-weight="700" fill="#B85C38">1.</tspan> A sends frame to B. Switch records MAC_A on Port 1.</text>
+    <text x="50" y="310"><tspan font-weight="700" fill="#4A7C6F">2.</tspan> Switch looks up MAC_B. Not found. Floods to Port 2 &amp; 3.</text>
+    <text x="50" y="330"><tspan font-weight="700" fill="#C9A84C">3.</tspan> B replies to A. Switch records MAC_B on Port 2. Forwards to Port 1 only.</text>
+  </g>
+</svg>
+<p class="diagram-caption">Figure 2.6: Switch Self-Learning and Forwarding Process</p>
+</p>
+</div>
+
+<!-- Comparison: Switch vs Router vs Hub vs Bridge -->
+<table class="comparison-table">
+  <thead>
+    <tr><th>Feature</th><th>Hub (Layer 1)</th><th>Bridge (Layer 2)</th><th>Switch (Layer 2)</th><th>Router (Layer 3)</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Operates at</td><td>Physical Layer</td><td>Data Link Layer</td><td>Data Link Layer</td><td>Network Layer</td></tr>
+    <tr><td>Addressing used</td><td>None (repeats bits)</td><td>MAC Address</td><td>MAC Address</td><td>IP Address</td></tr>
+    <tr><td>Collision Domain</td><td>Single (all ports)</td><td>2 (one per port)</td><td>One per port</td><td>One per port</td></tr>
+    <tr><td>Broadcast Domain</td><td>Single</td><td>Single</td><td>Single (or per VLAN)</td><td>One per interface</td></tr>
+    <tr><td>Intelligence</td><td>None (dumb repeater)</td><td>Software-based forwarding</td><td>Hardware-based (ASIC) forwarding</td><td>Software/Hardware routing</td></tr>
+    <tr><td>Ports</td><td>Usually 4-24</td><td>Usually 2-4</td><td>Many (4-48+)</td><td>Variable</td></tr>
+    <tr><td>Primary Function</td><td>Signal regeneration</td><td>Connect 2 LAN segments</td><td>Connect many devices efficiently</td><td>Connect different networks (WAN/LAN)</td></tr>
+  </tbody>
+</table>
+
+<div class="callout callout-exam">
+<p><strong>How to structure a 10-mark answer on "Switch vs Router":</strong> Start by defining both devices and the OSI layer they operate on (L2 vs L3). Then create a comparison table covering: addressing, collision domains, broadcast domains, processing speed (hardware vs software), use cases (LAN vs inter-network). Explain that switches build MAC tables via self-learning, while routers build routing tables via routing protocols (RIP, OSPF). Mention that routers break broadcast domains, which limits broadcast storms, while switches do not (without VLANs). Conclude with a statement about how modern networks use both: switches inside the LAN for speed, and routers at the edge for security and inter-networking.</p>
+</div>
+
+<!-- Switched LAN Problems -->
+<div class="sub-header">
+  <h3>Problems with Switched LANs &amp; Solutions</h3>
+</div>
+
+<div class="prose">
+<p>While switches dramatically improved LAN performance, they introduced new architectural problems that had to be solved.</p>
+
+<p><strong>1. Broadcast Storms:</strong> Switches forward broadcast frames (like ARP requests) to all ports. In a large switched network, if a device malfunctions and starts generating massive amounts of broadcast traffic, this traffic propagates to every switch port, consuming all bandwidth and paralyzing the network. Routers naturally block broadcasts; switches do not. The solution is <strong>VLANs (Virtual Local Area Networks)</strong>, which logically divide a single physical switch into multiple isolated broadcast domains.</p>
+
+<p><strong>2. Switching Loops:</strong> In enterprise networks, switches are often connected with redundant links to ensure fault tolerance. If Switch A is connected to Switch B via two cables, and both switches receive a broadcast frame, they will flood it out all ports&mdash;including the redundant link back to the other switch. This creates an infinite loop where broadcast frames circulate endlessly, creating a broadcast storm that crashes the network. The solution is the <strong>Spanning Tree Protocol (STP)</strong>, which logically blocks redundant paths to create a loop-free tree topology, while keeping the blocked paths available as backups if the primary path fails.</p>
+
+<p><strong>3. Security:</strong> A switch provides no inherent security against a malicious host. An attacker can easily flood a switch with fake source MAC addresses until the switch's MAC table is full (MAC flooding attack), forcing the switch to behave like a hub and flood all traffic to all ports, allowing the attacker to sniff network traffic. Solutions include <strong>port security</strong> (limiting the number of MAC addresses per port) and <strong>DHCP snooping</strong>.</p>
+</div>
+
+<!-- Connecting Devices Comparison -->
+<div class="sub-header">
+  <h3>Network Connecting Devices: Gateway vs Router</h3>
+</div>
+
+<div class="prose">
+<p>A <strong>Router</strong> operates at the Network Layer (Layer 3) and routes packets between different networks based on IP addresses. It is the most common inter-networking device.</p>
+
+<p>A <strong>Gateway</strong> is a more general term. It operates at the highest layer involved in the translation. A gateway connects two dissimilar networks that use different protocols or data formats. For example, a gateway might connect an IP network to an SNA (Systems Network Architecture) network, performing deep protocol translation at every layer from physical to application. In modern usage, "default gateway" simply refers to the router that connects a local network to the internet, but a true protocol-converting gateway is a much more complex device than a router.</p>
+</div>
+
+</section>
+
+<!-- ████████████████████████████████████████████████████████████████
+     REVISION SECTION
+     ████████████████████████████████████████████████████████████████ -->
+<section class="section-block" id="revision">
+
+<div class="section-header">
+  <span class="section-number">Night Before the Exam</span>
+  <h2>Quick Revision &amp; Memory Anchors</h2>
+  <div class="section-ornament"></div>
+</div>
+
+<div class="revision-card">
+  <h4 style="margin-bottom:0.8rem;color:var(--fg);">Link Layer Fundamentals</h4>
+  <ul>
+    <li>Link layer = hop-by-hop; Network layer = end-to-end</li>
+    <li>Services: Framing, MAC, Reliable Delivery, Error Detection, Flow Control</li>
+    <li>Implemented in NIC (hardware + firmware), not just OS</li>
+  </ul>
+</div>
+
+<div class="revision-card">
+  <h4 style="margin-bottom:0.8rem;color:var(--fg);">Error Detection & Correction</h4>
+  <ul>
+    <li>Parity: Detects odd errors, misses even. 2D parity can correct 1-bit.</li>
+    <li>CRC: Based on polynomial division (XOR). Remainder appended. G(x) degree = r = number of zeros appended.</li>
+    <li>Hamming: Check bits at 2<sup>k</sup> positions. Syndrome gives error position.</li>
+    <li>Checksum: 1's complement addition. Wrap carry. Complement for checksum. Result at receiver should be all 1s.</li>
+  </ul>
+</div>
+
+<div class="revision-card">
+  <h4 style="margin-bottom:0.8rem;color:var(--fg);">Multiple Access Protocols</h4>
+  <ul>
+    <li>Pure ALOHA: Transmit anytime. S<sub>max</sub> = 0.184 (at G=0.5)</li>
+    <li>Slotted ALOHA: Transmit at slot boundary. S<sub>max</sub> = 0.368 (at G=1)</li>
+    <li>CSMA/CD: Listen before + during tx. Used in Ethernet. Binary exponential backoff.</li>
+    <li>CSMA/CA: Listen before, avoid via RTS/CTS. Used in WiFi.</li>
+    <li>Min frame size for CSMA/CD = 2 * Propagation Delay * Bandwidth</li>
+  </ul>
+</div>
+
+<div class="revision-card">
+  <h4 style="margin-bottom:0.8rem;color:var(--fg);">Ethernet & Switching</h4>
+  <ul>
+    <li>MAC: 48-bit (6 bytes), burned in NIC. IP: 32-bit, logical.</li>
+    <li>ARP: IP &rarr; MAC (broadcast request, unicast reply). RARP: MAC &rarr; IP (obsolete).</li>
+    <li>Ethernet Frame: Preamble(7) + SFD(1) + DstMAC(6) + SrcMAC(6) + Type(2) + Data(46-1500) + CRC(4)</li>
+    <li>Min frame = 64 bytes (for CSMA/CD collision detection). Max payload = 1500 bytes.</li>
+    <li>Switch: Self-learns MAC tables. Filters/Forwards/Floods. Isolates collision domains, NOT broadcast domains.</li>
+    <li>Router: Layer 3. Routes based on IP. Isolates broadcast domains.</li>
+  </ul>
+</div>
+
+<div class="formula-box">Pure ALOHA: S = G &times; e<sup>-2G</sup> &nbsp;&nbsp;|&nbsp;&nbsp; Slotted ALOHA: S = G &times; e<sup>-G</sup> &nbsp;&nbsp;|&nbsp;&nbsp; Hamming: 2<sup>r</sup> &ge; m + r + 1</div>
+
+<div class="callout callout-memory">
+<p><strong>Mnemonic for Ethernet Frame:</strong> "<strong>P</strong>lease <strong>S</strong>end <strong>D</strong>ata <strong>S</strong>oon <strong>T</strong>o <strong>D</strong>avid" = Preamble, SFD, Dest MAC, Src MAC, Type, Data, CRC. (And the byte counts: 7-1-6-6-2-46/1500-4).</p>
+</div>
+
+<button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+  <span>Most Likely Exam Questions (10-15 Marks)</span>
+  <span class="arrow">&#966

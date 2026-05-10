@@ -1,0 +1,1677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 2 — Syntax Analysis | Compiler Design TCS-601</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@300;400;500&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0e6;
+  --bg-alt: #ece5d5;
+  --surface: #fffdf7;
+  --accent: #b83a2a;
+  --accent-light: #e8d5cf;
+  --accent2: #2d6a4f;
+  --accent2-light: #d4edda;
+  --gold: #b8860b;
+  --gold-light: #fdf3d8;
+  --text: #2c2c2c;
+  --text-muted: #6b6357;
+  --border: #d4c5a9;
+  --code-bg: #2b2b2b;
+  --code-text: #e8dfc8;
+  --heading: 'Playfair Display', Georgia, serif;
+  --body: 'Crimson Pro', Georgia, serif;
+  --mono: 'JetBrains Mono', 'Courier New', monospace;
+  --annotation: 'DM Mono', monospace;
+  --shadow: 0 2px 12px rgba(0,0,0,0.06);
+  --shadow-lg: 0 8px 30px rgba(0,0,0,0.08);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 17px; }
+body {
+  font-family: var(--body);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+h1, h2, h3, h4, h5 { font-family: var(--heading); font-weight: 700; line-height: 1.3; }
+h1 { font-size: 2.8rem; }
+h2 { font-size: 2rem; margin-bottom: 0.8rem; color: var(--accent); }
+h3 { font-size: 1.5rem; margin-bottom: 0.6rem; }
+h4 { font-size: 1.2rem; margin-bottom: 0.4rem; }
+p { margin-bottom: 1rem; text-align: justify; }
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+a:hover { border-bottom-color: var(--accent); }
+code { font-family: var(--mono); font-size: 0.88em; background: #f0ead6; padding: 0.15em 0.4em; border-radius: 3px; }
+pre {
+  background: var(--code-bg);
+  color: var(--code-text);
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  padding: 1.2rem 1.5rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 1rem 0 1.5rem;
+  line-height: 1.6;
+  box-shadow: var(--shadow);
+}
+pre code { background: none; padding: 0; font-size: inherit; }
+
+/* NAV */
+.side-nav {
+  position: fixed; left: 0; top: 0; width: 280px; height: 100vh;
+  background: var(--surface); border-right: 1px solid var(--border);
+  overflow-y: auto; z-index: 100; padding: 1.5rem 1rem;
+  transform: translateX(-100%); transition: transform 0.4s cubic-bezier(0.4,0,0.2,1);
+  box-shadow: var(--shadow-lg);
+}
+.side-nav.open { transform: translateX(0); }
+.side-nav h3 { font-size: 1rem; color: var(--accent); margin-bottom: 1rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.side-nav a {
+  display: block; padding: 0.4rem 0.6rem; color: var(--text-muted);
+  font-size: 0.85rem; border-radius: 4px; margin-bottom: 2px;
+  transition: all 0.2s; border: none; font-family: var(--body);
+}
+.side-nav a:hover { background: var(--accent-light); color: var(--accent); }
+.side-nav a.sub { padding-left: 1.4rem; font-size: 0.8rem; }
+.nav-toggle {
+  position: fixed; left: 1rem; top: 1rem; z-index: 200;
+  background: var(--accent); color: #fff; border: none;
+  width: 44px; height: 44px; border-radius: 50%; cursor: pointer;
+  font-size: 1.2rem; display: flex; align-items: center; justify-content: center;
+  box-shadow: var(--shadow); transition: all 0.3s;
+}
+.nav-toggle:hover { transform: scale(1.1); }
+
+/* LAYOUT */
+.container { max-width: 900px; margin: 0 auto; padding: 0 2rem; }
+.section { padding: 3rem 0; border-bottom: 1px solid var(--border); }
+
+/* HERO */
+.hero {
+  text-align: center; padding: 5rem 2rem 4rem;
+  background: linear-gradient(135deg, #f5f0e6 0%, #ece5d5 50%, #f0ead6 100%);
+  border-bottom: 3px double var(--border);
+}
+.hero h1 { font-size: 3.2rem; color: var(--accent); margin-bottom: 0.5rem; }
+.hero .subtitle { font-size: 1.3rem; color: var(--text-muted); font-style: italic; font-weight: 300; }
+.hero .meta { font-family: var(--annotation); font-size: 0.8rem; color: var(--gold); margin-top: 1.5rem; letter-spacing: 0.15em; text-transform: uppercase; }
+.hero-ornament { display: flex; align-items: center; justify-content: center; gap: 1rem; margin: 1.5rem 0; }
+.hero-ornament span { width: 60px; height: 1px; background: var(--gold); }
+.hero-ornament .diamond { width: 8px; height: 8px; background: var(--gold); transform: rotate(45deg); flex-shrink: 0; }
+
+/* CARDS */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 8px; padding: 1.8rem; margin: 1.5rem 0;
+  box-shadow: var(--shadow); position: relative;
+}
+.card::before {
+  content: '';
+  position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--accent); border-radius: 8px 0 0 8px;
+}
+.card.green::before { background: var(--accent2); }
+.card.gold::before { background: var(--gold); }
+
+/* CALLOUT BOXES */
+.callout {
+  border-radius: 6px; padding: 1.2rem 1.5rem; margin: 1.5rem 0;
+  font-size: 0.95rem; position: relative;
+}
+.callout-exam {
+  background: #fef3e2; border: 1px solid #e8c47a; border-left: 4px solid var(--gold);
+}
+.callout-exam .label {
+  font-family: var(--annotation); font-size: 0.7rem; letter-spacing: 0.15em;
+  text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 0.5rem;
+}
+.callout-tip {
+  background: var(--accent2-light); border: 1px solid #a3d4b8; border-left: 4px solid var(--accent2);
+}
+.callout-confusion {
+  background: #fde8e8; border: 1px solid #e8a0a0; border-left: 4px solid var(--accent);
+}
+
+/* DEFINITION BOX */
+.defn {
+  background: linear-gradient(135deg, #faf6ee 0%, #f5f0e6 100%);
+  border: 2px solid var(--border); border-radius: 8px;
+  padding: 1.5rem 1.8rem; margin: 1.5rem 0;
+  position: relative;
+}
+.defn .defn-label {
+  position: absolute; top: -0.7rem; left: 1.5rem;
+  background: var(--accent); color: #fff; font-family: var(--annotation);
+  font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+  padding: 0.2rem 0.8rem; border-radius: 3px;
+}
+
+/* TABLES */
+table {
+  width: 100%; border-collapse: collapse; margin: 1.5rem 0;
+  font-size: 0.92rem; background: var(--surface);
+  box-shadow: var(--shadow); border-radius: 6px; overflow: hidden;
+}
+th {
+  background: var(--accent); color: #fff; font-family: var(--heading);
+  font-weight: 700; padding: 0.7rem 1rem; text-align: center;
+  font-size: 0.85rem; letter-spacing: 0.05em;
+}
+td {
+  padding: 0.6rem 1rem; border-bottom: 1px solid #eee; text-align: center;
+}
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) { background: #faf8f2; }
+
+/* COLLAPSIBLE */
+details {
+  margin: 1rem 0; border: 1px solid var(--border); border-radius: 6px;
+  background: var(--surface); overflow: hidden;
+}
+details summary {
+  padding: 0.8rem 1.2rem; cursor: pointer; font-family: var(--heading);
+  font-weight: 700; font-size: 1rem; color: var(--accent);
+  background: #faf8f2; list-style: none; position: relative;
+}
+details summary::before {
+  content: '▸'; position: absolute; left: 0.8rem; top: 50%;
+  transform: translateY(-50%); transition: transform 0.3s;
+}
+details[open] summary::before { transform: translateY(-50%) rotate(90deg); }
+details .details-content { padding: 1.2rem; }
+
+/* PROCESS STEPS */
+.step-list { counter-reset: step-counter; list-style: none; padding: 0; margin: 1.5rem 0; }
+.step-list li {
+  counter-increment: step-counter; position: relative;
+  padding: 0.8rem 0 0.8rem 3rem; margin-bottom: 0.5rem;
+}
+.step-list li::before {
+  content: counter(step-counter);
+  position: absolute; left: 0; top: 0.6rem;
+  width: 2rem; height: 2rem; border-radius: 50%;
+  background: var(--accent); color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--heading); font-size: 0.85rem; font-weight: 700;
+}
+
+/* ANALOGY BOX */
+.analogy {
+  background: #f8f4ee; border: 1px dashed var(--gold);
+  border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1.5rem 0;
+  font-style: italic; position: relative;
+}
+.analogy::before {
+  content: 'ANALOGY'; position: absolute; top: -0.6rem; left: 1.5rem;
+  background: var(--gold); color: #fff; font-family: var(--annotation);
+  font-size: 0.6rem; letter-spacing: 0.2em; padding: 0.15rem 0.7rem;
+  border-radius: 3px; font-style: normal;
+}
+
+/* PULL QUOTE */
+.pull-quote {
+  border-top: 2px solid var(--gold); border-bottom: 2px solid var(--gold);
+  margin: 2rem 0; padding: 1.5rem 2rem; text-align: center;
+  font-family: var(--heading); font-size: 1.3rem; font-style: italic;
+  color: var(--accent);
+}
+
+/* REVISION CARD */
+.rev-card {
+  background: linear-gradient(135deg, #fef9f0 0%, #fdf5e6 100%);
+  border: 2px solid var(--gold); border-radius: 10px;
+  padding: 1.5rem 2rem; margin: 2rem 0;
+}
+.rev-card h4 { color: var(--gold); font-size: 1rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1rem; }
+
+/* PYQ BADGE */
+.pyq-badge {
+  display: inline-block; background: var(--accent); color: #fff;
+  font-family: var(--annotation); font-size: 0.6rem; letter-spacing: 0.1em;
+  padding: 0.15rem 0.5rem; border-radius: 3px; margin-right: 0.5rem;
+  vertical-align: middle; text-transform: uppercase;
+}
+
+/* FORMULA */
+.formula {
+  background: #2b2b2b; color: #f0e6d0; font-family: var(--mono);
+  padding: 1rem 1.5rem; border-radius: 6px; margin: 1rem 0;
+  text-align: center; font-size: 1rem; letter-spacing: 0.05em;
+}
+
+/* SVG styling */
+.diagram-container {
+  margin: 2rem 0; text-align: center; overflow-x: auto;
+}
+.diagram-container svg {
+  max-width: 100%; height: auto;
+}
+.diagram-caption {
+  font-family: var(--annotation); font-size: 0.75rem;
+  color: var(--text-muted); margin-top: 0.5rem; text-align: center;
+  letter-spacing: 0.05em;
+}
+
+/* ANIMATIONS */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeInUp 0.6s ease forwards; }
+
+/* SCROLL PROGRESS */
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 3px;
+  background: var(--accent); z-index: 1000; transition: width 0.1s;
+}
+
+/* PRINT */
+@media print {
+  .side-nav, .nav-toggle, .progress-bar { display: none; }
+  body { font-size: 11pt; }
+  .container { max-width: 100%; }
+  .hero { padding: 2rem; }
+  details { border: 1px solid #ccc; }
+  details[open] .details-content { display: block; }
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  html { font-size: 15px; }
+  .hero h1 { font-size: 2.2rem; }
+  .container { padding: 0 1.2rem; }
+  table { font-size: 0.82rem; }
+  td, th { padding: 0.4rem 0.5rem; }
+}
+
+/* NUMERICAL BOX */
+.numerical {
+  background: var(--surface); border: 2px solid var(--accent2);
+  border-radius: 8px; margin: 2rem 0; overflow: hidden;
+}
+.numerical .num-header {
+  background: var(--accent2); color: #fff; padding: 0.8rem 1.5rem;
+  font-family: var(--heading); font-weight: 700; font-size: 1.1rem;
+}
+.numerical .num-body { padding: 1.5rem; }
+.num-step {
+  background: #f8faf8; border-left: 3px solid var(--accent2);
+  padding: 0.8rem 1rem; margin: 0.8rem 0; border-radius: 0 4px 4px 0;
+}
+.num-step .step-label {
+  font-family: var(--annotation); font-size: 0.7rem;
+  color: var(--accent2); letter-spacing: 0.15em;
+  text-transform: uppercase; font-weight: 600;
+}
+
+/* COMPARISON TABLE */
+.compare-table th { background: var(--accent2); }
+
+/* MEMORY */
+.memory-trick {
+  background: linear-gradient(135deg, #fdf5ff 0%, #f5f0ff 100%);
+  border: 1px solid #d4b8e8; border-left: 4px solid #9b59b6;
+  border-radius: 0 6px 6px 0; padding: 1rem 1.5rem; margin: 1.5rem 0;
+}
+.memory-trick .label {
+  font-family: var(--annotation); font-size: 0.65rem;
+  color: #9b59b6; letter-spacing: 0.15em; text-transform: uppercase;
+  font-weight: 600; margin-bottom: 0.5rem;
+}
+
+ol { padding-left: 1.5rem; margin-bottom: 1rem; }
+ul { padding-left: 1.5rem; margin-bottom: 1rem; }
+li { margin-bottom: 0.3rem; }
+
+hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+.inline-math { font-family: var(--mono); font-style: italic; font-size: 0.95em; }
+.epsilon { font-family: var(--body); font-style: italic; }
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">☰</button>
+
+<nav class="side-nav" id="sideNav">
+  <h3>Unit 2 · Navigation</h3>
+  <a href="#sec-intro">1. The Role of the Parser</a>
+  <a href="#sec-cfg" class="sub">2. Context-Free Grammars</a>
+  <a href="#sec-derivation" class="sub">2a. Derivations & Parse Trees</a>
+  <a href="#sec-problems" class="sub">3. Problematic Grammars</a>
+  <a href="#sec-ambiguous" class="sub">3a. Ambiguous Grammars</a>
+  <a href="#sec-left-recursion" class="sub">3b. Left Recursion</a>
+  <a href="#sec-left-factoring" class="sub">3c. Left Factoring</a>
+  <a href="#sec-topdown">4. Top-Down Parsing</a>
+  <a href="#sec-recursive-descent" class="sub">4a. Recursive Descent</a>
+  <a href="#sec-first-follow" class="sub">4b. FIRST & FOLLOW</a>
+  <a href="#sec-ll1" class="sub">4c. LL(1) Parsing</a>
+  <a href="#sec-bottomup">5. Bottom-Up Parsing</a>
+  <a href="#sec-operator" class="sub">6. Operator-Precedence</a>
+  <a href="#sec-lr">7. LR Parsers</a>
+  <a href="#sec-lr0" class="sub">7a. LR(0)</a>
+  <a href="#sec-slr" class="sub">7b. SLR</a>
+  <a href="#sec-clr" class="sub">7c. CLR(1)</a>
+  <a href="#sec-lalr" class="sub">7d. LALR</a>
+  <a href="#sec-ambiguous-use" class="sub">8. Using Ambiguous Grammars</a>
+  <a href="#sec-generators" class="sub">9. Parser Generators & Errors</a>
+  <a href="#sec-revision">★ Final Revision Sheet</a>
+</nav>
+
+<!-- ==================== HERO ==================== -->
+<header class="hero">
+  <div class="meta">TCS-601 · Compiler Design · Unit 2</div>
+  <h1>Syntax Analysis — I</h1>
+  <div class="hero-ornament">
+    <span></span><div class="diamond"></div><span></span>
+  </div>
+  <p class="subtitle">The Role of the Parser · Context-Free Grammars · Top-Down &amp; Bottom-Up Parsing · LR Parsers · Parser Generators</p>
+  <p style="font-family: var(--annotation); font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem;">A handcrafted study document covering every concept, mechanism, and numerical you need for university examinations.</p>
+</header>
+
+<main class="container">
+
+<!-- ==================== SECTION 1: ROLE OF PARSER ==================== -->
+<section class="section" id="sec-intro">
+<h2>1. The Role of the Parser</h2>
+
+<p>When a compiler reads source code, the very first meaningful work happens inside the <strong>lexical analyser</strong> (the scanner), which converts raw characters into a stream of <em>tokens</em> — discrete units like keywords, identifiers, operators, and literals. But a stream of tokens, however clean, is still just a flat sequence. It carries no information about the <em>structure</em> of the program: which expressions belong inside which statements, which statements are nested inside which blocks, or how operators group their operands. That structural understanding is the responsibility of the <strong>syntax analyser</strong>, more commonly called the <strong>parser</strong>.</p>
+
+<p>The parser sits at the second major phase of compilation. It receives the token stream from the lexical analyser and determines whether that stream constitutes a valid sentence of the source language according to the language's <em>context-free grammar</em> (CFG). If the tokens form a syntactically correct program, the parser constructs a <strong>parse tree</strong> (or its more compact cousin, the <strong>abstract syntax tree</strong>) that represents the hierarchical grammatical structure. This tree then becomes the input to subsequent phases — semantic analysis, intermediate code generation, and so on. If the tokens do not conform to any valid production of the grammar, the parser reports a <strong>syntax error</strong>, ideally with a meaningful diagnostic message that helps the programmer locate and fix the problem.</p>
+
+<p>Why does this matter so much? Because the parse tree is the compiler's primary representation of <em>meaning</em>. Without it, the compiler has no way to know whether <code>a + b * c</code> should be parsed as <code>(a + b) * c</code> or <code>a + (b * c)</code>. The grammar's structure — encoded in the parse tree — resolves such ambiguities and establishes the correct evaluation order. Every subsequent compiler phase depends on this tree being correctly constructed.</p>
+
+<div class="diagram-container">
+<svg viewBox="0 0 800 180" xmlns="http://www.w3.org/2000/svg" style="max-width:700px;">
+  <defs>
+    <filter id="shadow1" x="-5%" y="-5%" width="110%" height="120%">
+      <feDropShadow dx="1" dy="2" stdDeviation="2" flood-opacity="0.1"/>
+    </filter>
+  </defs>
+  <!-- Boxes -->
+  <rect x="10" y="60" width="120" height="50" rx="6" fill="#f5f0e6" stroke="#b83a2a" stroke-width="2" filter="url(#shadow1)"/>
+  <text x="70" y="90" text-anchor="middle" font-family="Playfair Display" font-size="12" fill="#2c2c2c">Source Code</text>
+  <rect x="160" y="60" width="120" height="50" rx="6" fill="#e8d5cf" stroke="#b83a2a" stroke-width="2" filter="url(#shadow1)"/>
+  <text x="220" y="85" text-anchor="middle" font-family="Playfair Display" font-size="11" fill="#2c2c2c">Lexical</text>
+  <text x="220" y="100" text-anchor="middle" font-family="Playfair Display" font-size="11" fill="#2c2c2c">Analyser</text>
+  <rect x="310" y="60" width="120" height="50" rx="6" fill="#d4edda" stroke="#2d6a4f" stroke-width="2" filter="url(#shadow1)"/>
+  <text x="370" y="85" text-anchor="middle" font-family="Playfair Display" font-size="11" fill="#2c2c2c">Syntax</text>
+  <text x="370" y="100" text-anchor="middle" font-family="Playfair Display" font-size="11" fill="#2c2c2c">Analyser</text>
+  <rect x="460" y="60" width="120" height="50" rx="6" fill="#fdf3d8" stroke="#b8860b" stroke-width="2" filter="url(#shadow1)"/>
+  <text x="520" y="85" text-anchor="middle" font-family="Playfair Display" font-size="11" fill="#2c2c2c">Semantic</text>
+  <text x="520" y="100" text-anchor="middle" font-family="Playfair Display" font-size="11" fill="#2c2c2c">Analyser</text>
+  <rect x="610" y="60" width="140" height="50" rx="6" fill="#f5f0e6" stroke="#6b6357" stroke-width="2" filter="url(#shadow1)"/>
+  <text x="680" y="85" text-anchor="middle" font-family="Playfair Display" font-size="11" fill="#2c2c2c">Intermediate Code</text>
+  <text x="680" y="100" text-anchor="middle" font-family="Playfair Display" font-size="11" fill="#2c2c2c">Generator</text>
+  <!-- Arrows -->
+  <line x1="130" y1="85" x2="155" y2="85" stroke="#6b6357" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="280" y1="85" x2="305" y2="85" stroke="#2d6a4f" stroke-width="2"/>
+  <line x1="430" y1="85" x2="455" y2="85" stroke="#6b6357" stroke-width="2"/>
+  <line x1="580" y1="85" x2="605" y2="85" stroke="#6b6357" stroke-width="2"/>
+  <!-- Arrowheads -->
+  <polygon points="155,81 155,89 162,85" fill="#6b6357"/>
+  <polygon points="305,81 305,89 312,85" fill="#2d6a4f"/>
+  <polygon points="455,81 455,89 462,85" fill="#6b6357"/>
+  <polygon points="605,81 605,89 612,85" fill="#6b6357"/>
+  <!-- Labels under arrows -->
+  <text x="145" y="125" text-anchor="middle" font-family="DM Mono" font-size="9" fill="#6b6357">characters</text>
+  <text x="295" y="125" text-anchor="middle" font-family="DM Mono" font-size="9" fill="#2d6a4f">tokens</text>
+  <text x="445" y="125" text-anchor="middle" font-family="DM Mono" font-size="9" fill="#6b6357">parse tree</text>
+  <text x="595" y="125" text-anchor="middle" font-family="DM Mono" font-size="9" fill="#6b6357">AST</text>
+  <!-- Highlight box around parser -->
+  <rect x="305" y="50" width="130" height="70" rx="8" fill="none" stroke="#2d6a4f" stroke-width="2" stroke-dasharray="5,3"/>
+  <text x="370" y="140" text-anchor="middle" font-family="DM Mono" font-size="9" fill="#2d6a4f">◄ YOU ARE HERE</text>
+</svg>
+<p class="diagram-caption">Figure 1.1 — The parser's position in the compilation pipeline. The syntax analyser receives tokens and produces a parse tree.</p>
+</div>
+
+<h3>1.1 What the Parser Must Accomplish</h3>
+
+<p>The parser has three fundamental responsibilities. First, <strong>recognition</strong>: it must determine whether the input token sequence is a valid sentence of the grammar. This is essentially a membership test — "Does this sequence belong to the language generated by the CFG?" Second, <strong>structural analysis</strong>: if the sentence is valid, the parser must construct the parse tree (or at least the information needed to build one), showing exactly which productions were applied at each step and how the nonterminals were expanded. Third, <strong>error detection and recovery</strong>: if the input is not a valid sentence, the parser must detect this fact, report a meaningful error, and ideally recover gracefully so that additional errors in the same compilation can be found.</p>
+
+<p>The theoretical foundation for parsing comes from the theory of formal languages. Context-free grammars, which we shall study in detail in the next section, provide a natural and powerful notation for describing the syntax of programming languages. The parser essentially implements an algorithm that decides CFG membership and, in doing so, reconstructs the derivation of the input string from the start symbol of the grammar.</p>
+
+<h3>1.2 Two Families of Parsers</h3>
+
+<p>All practical parsers fall into two broad families, distinguished by the direction in which they traverse the parse tree.</p>
+
+<p><strong>Top-down parsers</strong> begin at the root of the parse tree (the start symbol) and work downward toward the leaves (the terminal symbols in the input). At each step, the parser has a current nonterminal that it needs to expand, and it chooses a production for that nonterminal. The choice is guided by looking at the next few input tokens. Predictive parsers like LL(1) look ahead exactly one token to decide which production to apply. Recursive descent parsers implement each nonterminal as a separate function that attempts to match the corresponding portion of the input.</p>
+
+<p><strong>Bottom-up parsers</strong> begin at the leaves (the input tokens) and work upward toward the root. At each step, the parser identifies a substring of the input that matches the right-hand side of some production and <em>reduces</em> it to the corresponding nonterminal. This is the reverse of applying a production. LR parsers (LR(0), SLR, CLR(1), LALR) are the most powerful practical bottom-up parsers and are widely used in parser generators like Yacc and Bison.</p>
+
+<div class="callout callout-exam">
+<div class="label">Exam Tip</div>
+<p style="margin:0;">A very common 2-mark or 5-mark question asks you to "Explain the role of the parser in a compiler." Make sure you mention: (1) it receives tokens from the lexical analyser, (2) it checks syntactic correctness using the CFG, (3) it builds a parse tree, (4) it reports syntax errors, and (5) the parse tree feeds into semantic analysis. For a 10-mark answer, add a diagram of the compiler pipeline and briefly compare top-down versus bottom-up approaches.</p>
+</div>
+
+<div class="analogy">
+Think of parsing like diagramming a sentence in English class. The lexical analyser has already identified the nouns, verbs, and adjectives (tokens). The parser now groups them into phrases and clauses, building a tree that shows "the cat (subject) sat (verb) on (preposition) the mat (object)" — establishing structure from a flat sequence of words.
+</div>
+</section>
+
+<!-- ==================== SECTION 2: CONTEXT-FREE GRAMMARS ==================== -->
+<section class="section" id="sec-cfg">
+<h2>2. Context-Free Grammars</h2>
+
+<p>A <strong>context-free grammar</strong> (CFG) is a formalism for describing the syntax of a programming language in a way that is both mathematically precise and practically useful for compiler construction. The concept was introduced by Noam Chomsky in 1956 as part of his famous hierarchy of formal grammars, and it quickly became the standard tool for programming language specification because most programming language constructs can be naturally described by context-free rules, while the parsing algorithms for CFGs are efficient enough for practical use.</p>
+
+<div class="defn">
+<div class="defn-label">Formal Definition</div>
+<p>A <strong>context-free grammar</strong> G is a quadruple (N, T, P, S) where:</p>
+<ul>
+  <li><strong>N</strong> is a finite set of <strong>nonterminal symbols</strong> (also called variables or syntactic categories). These represent abstract syntactic constructs like "expression," "statement," or "program."</li>
+  <li><strong>T</strong> is a finite set of <strong>terminal symbols</strong> (the tokens of the language). These are the actual symbols that appear in the input — keywords, identifiers, operators, literals. N ∩ T = ∅.</li>
+  <li><strong>P</strong> is a finite set of <strong>productions</strong> (or rules). Each production has the form A → α, where A ∈ N and α ∈ (N ∪ T)*. The left-hand side is always a single nonterminal — this is what makes the grammar "context-free."</li>
+  <li><strong>S</strong> ∈ N is the <strong>start symbol</strong>. The language generated by the grammar consists of all terminal strings derivable from S.</li>
+</ul>
+</div>
+
+<p>The term "context-free" deserves explanation because it reveals a fundamental property of the formalism. In a context-free grammar, a nonterminal A can be rewritten regardless of what symbols surround it in the current sentential form. The production A → α applies whether A appears in the middle of a long string or stands alone. This is in contrast to context-sensitive grammars, where the replacement of A can depend on its context. For programming languages, context-freeness is a very useful property: it means the syntax of an "expression" is the same whether that expression appears inside an assignment statement, a function call, or a conditional test.</p>
+
+<h3>2.1 Components Illustrated</h3>
+
+<p>Consider the classic arithmetic expression grammar:</p>
+
+<pre><code>E → E + T | T
+T → T * F | F
+F → ( E ) | id</code></pre>
+
+<p>Here, <strong>N</strong> = {E, T, F}, <strong>T</strong> = {+, *, (, ), id}, and <strong>S</strong> = E. The vertical bar | is shorthand for multiple productions with the same left-hand side: <code>E → E + T</code> and <code>E → T</code> are two separate productions. The nonterminal E represents "expressions," T represents "terms," and F represents "factors." This hierarchical decomposition encodes the standard precedence rules of arithmetic: multiplication (handled in T) binds more tightly than addition (handled in E), and parenthesized expressions and individual identifiers are the atomic units (handled in F).</p>
+
+<p>This particular grammar is one of the most important examples in compiler design. You will encounter it repeatedly throughout this unit. It demonstrates how a CFG naturally captures operator precedence through its layered structure — each level of the grammar hierarchy corresponds to a precedence level in the language.</p>
+
+<h3 id="sec-derivation">2.2 Derivations and Parse Trees</h3>
+
+<p>A <strong>derivation</strong> is a sequence of sentential forms obtained by repeatedly applying productions, starting from the start symbol. If we write α ⇒ β to mean "β is obtained from α by applying one production," then a derivation from S to a terminal string w is written S ⇒* w. The symbol ⇒* means "derives in zero or more steps."</p>
+
+<p>There are two important types of derivation. In a <strong>leftmost derivation</strong>, at each step we always replace the leftmost nonterminal. In a <strong>rightmost derivation</strong>, we always replace the rightmost nonterminal. The choice of derivation order does not change the language generated, but it does affect the shape of the parse tree and, crucially, which parsing strategy is appropriate.</p>
+
+<p>A <strong>parse tree</strong> (also called a <strong>derivation tree</strong> or <strong>syntax tree</strong>) is a graphical representation of a derivation. The root is labelled with the start symbol. Each interior node is labelled with a nonterminal A, and its children are labelled with the symbols on the right-hand side of some production A → α. The leaves of the tree, read from left to right, give the terminal string that was derived.</p>
+
+<div class="diagram-container">
+<svg viewBox="0 0 560 320" xmlns="http://www.w3.org/2000/svg" style="max-width:520px;">
+  <style>
+    .tree-node { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 500; }
+    .tree-line { stroke: #b8860b; stroke-width: 1.5; fill: none; }
+    .tree-circle { fill: #fffdf7; stroke: #b8860b; stroke-width: 1.5; }
+    .tree-terminal { fill: #b83a2a; font-family: 'Playfair Display', serif; font-weight: 700; }
+    .tree-nonterm { fill: #2d6a4f; }
+  </style>
+  <!-- E -->
+  <circle cx="280" cy="30" r="20" class="tree-circle"/>
+  <text x="280" y="35" text-anchor="middle" class="tree-node tree-nonterm">E</text>
+  <!-- E + T -->
+  <line x1="280" y1="50" x2="140" y2="100" class="tree-line"/>
+  <line x1="280" y1="50" x2="280" y2="100" class="tree-line"/>
+  <line x1="280" y1="50" x2="420" y2="100" class="tree-line"/>
+  <circle cx="140" cy="110" r="20" class="tree-circle"/>
+  <text x="140" y="115" text-anchor="middle" class="tree-node tree-nonterm">E</text>
+  <circle cx="280" cy="110" r="18" class="tree-circle" fill="#fef3e2"/>
+  <text x="280" y="115" text-anchor="middle" class="tree-node tree-terminal">+</text>
+  <circle cx="420" cy="110" r="20" class="tree-circle"/>
+  <text x="420" y="115" text-anchor="middle" class="tree-node tree-nonterm">T</text>
+  <!-- E → T -->
+  <line x1="140" y1="130" x2="140" y2="170" class="tree-line"/>
+  <circle cx="140" cy="180" r="20" class="tree-circle"/>
+  <text x="140" y="185" text-anchor="middle" class="tree-node tree-nonterm">T</text>
+  <!-- T → F -->
+  <line x1="140" y1="200" x2="140" y2="230" class="tree-line"/>
+  <circle cx="140" cy="240" r="20" class="tree-circle"/>
+  <text x="140" y="245" text-anchor="middle" class="tree-node tree-nonterm">F</text>
+  <!-- F → id -->
+  <line x1="140" y1="260" x2="140" y2="285" class="tree-line"/>
+  <circle cx="140" cy="295" r="18" class="tree-circle" fill="#fef3e2"/>
+  <text x="140" y="300" text-anchor="middle" class="tree-node tree-terminal">id</text>
+  <!-- T → T * F -->
+  <line x1="420" y1="130" x2="340" y2="170" class="tree-line"/>
+  <line x1="420" y1="130" x2="420" y2="170" class="tree-line"/>
+  <line x1="420" y1="130" x2="500" y2="170" class="tree-line"/>
+  <circle cx="340" cy="180" r="20" class="tree-circle"/>
+  <text x="340" y="185" text-anchor="middle" class="tree-node tree-nonterm">T</text>
+  <circle cx="420" cy="180" r="18" class="tree-circle" fill="#fef3e2"/>
+  <text x="420" y="185" text-anchor="middle" class="tree-node tree-terminal">*</text>
+  <circle cx="500" cy="180" r="20" class="tree-circle"/>
+  <text x="500" y="185" text-anchor="middle" class="tree-node tree-nonterm">F</text>
+  <!-- T → F -->
+  <line x1="340" y1="200" x2="340" y2="230" class="tree-line"/>
+  <circle cx="340" cy="240" r="20" class="tree-circle"/>
+  <text x="340" y="245" text-anchor="middle" class="tree-node tree-nonterm">F</text>
+  <!-- F → id -->
+  <line x1="340" y1="260" x2="340" y2="285" class="tree-line"/>
+  <circle cx="340" cy="295" r="18" class="tree-circle" fill="#fef3e2"/>
+  <text x="340" y="300" text-anchor="middle" class="tree-node tree-terminal">id</text>
+  <!-- F → id -->
+  <line x1="500" y1="200" x2="500" y2="230" class="tree-line"/>
+  <circle cx="500" cy="240" r="18" class="tree-circle" fill="#fef3e2"/>
+  <text x="500" y="245" text-anchor="middle" class="tree-node tree-terminal">id</text>
+</svg>
+<p class="diagram-caption">Figure 2.1 — Parse tree for <code>id + id * id</code> using the expression grammar E → E + T | T, T → T * F | F, F → (E) | id. Notice how the tree structure naturally enforces that * binds more tightly than +.</p>
+</div>
+
+<p>In the parse tree above, notice something important: the <code>*</code> operator appears deeper in the tree than the <code>+</code> operator. Because multiplication (T) is at a lower level than addition (E) in the grammar hierarchy, the tree structure forces <code>id * id</code> to be grouped as a single term before the addition is performed. This is how a CFG encodes operator precedence — not through explicit priority declarations, but through the layered structure of nonterminals.</p>
+
+<p>The <strong>leftmost derivation</strong> of <code>id + id * id</code> is:</p>
+<pre><code>E ⇒ E + T
+  ⇒ T + T
+  ⇒ F + T
+  ⇒ id + T
+  ⇒ id + T * F
+  ⇒ id + F * F
+  ⇒ id + id * F
+  ⇒ id + id * id</code></pre>
+
+<p>Each step replaces the leftmost nonterminal. The rightmost derivation would replace the rightmost nonterminal at each step, producing a different sequence of sentential forms but arriving at the same parse tree.</p>
+
+<div class="callout callout-exam">
+<div class="label">Exam Tip</div>
+<p style="margin:0;">When drawing parse trees in exams, always label every node clearly. Use rounded boxes or circles for nonterminals and square/rectangular boxes for terminals. Make sure the tree reads left-to-right at the leaf level to produce exactly the input string. For a 10-mark parse tree question, the tree alone might carry 5-6 marks, with the remaining marks for derivation steps and explanation.</p>
+</div>
+</section>
+
+<!-- ==================== SECTION 3: PROBLEMATIC GRAMMARS ==================== -->
+<section class="section" id="sec-problems">
+<h2>3. Problematic Grammars &amp; Their Solutions</h2>
+
+<p>Not all grammars are equally amenable to parsing. Three common problems can make a grammar unsuitable for efficient parsing algorithms: <strong>ambiguity</strong>, <strong>left recursion</strong>, and <strong>non-determinism</strong> (also called lack of left factoring). Each of these problems can be identified systematically and, in most cases, resolved by transforming the grammar into an equivalent one that is better behaved. These transformations are among the most frequently tested topics in university examinations, and you should be able to perform them mechanically and explain why they work.</p>
+
+<!-- 3a: Ambiguous -->
+<h3 id="sec-ambiguous">3a. Ambiguous Grammars</h3>
+
+<p>A grammar is <strong>ambiguous</strong> if there exists at least one string in the language that has <strong>two or more distinct parse trees</strong> (equivalently, two or more distinct leftmost derivations or two or more distinct rightmost derivations). Ambiguity is problematic because the compiler cannot determine which parse tree is "correct" without additional information — the grammar itself does not resolve the structural meaning of the string.</p>
+
+<div class="defn">
+<div class="defn-label">Definition</div>
+<p>A grammar G is <strong>ambiguous</strong> if and only if there exists a string w ∈ L(G) such that w has more than one parse tree (or equivalently, more than one leftmost derivation) in G.</p>
+</div>
+
+<p><strong>Classic Example:</strong> The expression grammar <code>E → E + E | E * E | id</code> is ambiguous. Consider the string <code>id + id * id</code>. This string has two parse trees:</p>
+
+<p><strong>Parse Tree 1</strong> (interpreting as <code>id + (id * id)</code>): The <code>*</code> is applied first, grouping the last two ids, then <code>+</code> is applied. This corresponds to standard mathematical precedence.</p>
+
+<p><strong>Parse Tree 2</strong> (interpreting as <code>(id + id) * id</code>): The <code>+</code> is applied first, grouping the first two ids, then <code>*</code> is applied. This gives a completely different result.</p>
+
+<p>Since the same input yields two different parse trees, the grammar is ambiguous. This is precisely why we use the <strong>unambiguous</strong> grammar <code>E → E + T | T, T → T * F | F, F → (E) | id</code> — its layered structure encodes precedence explicitly.</p>
+
+<p><strong>The Dangling-Else Ambiguity:</strong> Another classic example arises in conditional statements. The grammar:</p>
+<pre><code>S → if E then S | if E then S else S | other</code></pre>
+<p>is ambiguous because a statement like <code>if E₁ then if E₂ then S₁ else S₂</code> can be parsed with the <code>else</code> belonging to either the outer or inner <code>if</code>. We will discuss how to resolve this using precedence rules in Section 8.</p>
+
+<div class="callout callout-confusion">
+<p><strong>Common Student Confusion:</strong> "Ambiguous grammar" does not mean the grammar is bad or incorrect. It means the grammar admits multiple structural interpretations for some strings. For practical compiler use, we need unambiguous grammars because the parser must produce exactly one parse tree. However, ambiguous grammars are sometimes more concise and can still be used in parser generators that allow precedence declarations to resolve ambiguities (like Yacc).</p>
+</div>
+
+<div class="callout callout-exam">
+<div class="label">PYQ Alert</div>
+<p style="margin:0;"><span class="pyq-badge">Repeated</span> "Check whether the grammar E → E + T | T, T → T * F | F, F → (E) | id is ambiguous." Answer: This grammar is <strong>unambiguous</strong> because every string has exactly one parse tree — the precedence layers (E for addition, T for multiplication, F for atoms) and the parenthesised sub-expression rule (F → (E)) eliminate all ambiguity. Explain by showing that the original ambiguous grammar <code>E → E + E | E * E | id</code> produces two trees for <code>id + id * id</code>, while this grammar produces exactly one.</p>
+</div>
+
+<!-- 3b: Left Recursion -->
+<h3 id="sec-left-recursion">3b. Left Recursion</h3>
+
+<p>A grammar is <strong>left-recursive</strong> if there exists a nonterminal A such that A ⇒+ Aα for some (possibly empty) sequence of symbols α. This can happen in two ways. <strong>Immediate (direct) left recursion</strong> occurs when a production has the form A → Aα — the nonterminal A appears as the very first symbol on the right-hand side. <strong>Indirect left recursion</strong> occurs when A derives through a chain of other nonterminals back to itself, as in A ⇒ Bβ ⇒ Aαβ.</p>
+
+<p>Left recursion is a serious problem for <strong>top-down parsers</strong>. A top-down parser attempts to expand a nonterminal A by choosing a production and then trying to match the production's right-hand symbols against the input. If the chosen production is A → Aα, the parser will immediately need to expand A again — leading to the same production choice, and so on indefinitely. The parser gets stuck in an infinite loop without consuming any input. Bottom-up parsers are not affected by left recursion because they work in the opposite direction.</p>
+
+<div class="defn">
+<div class="defn-label">Algorithm: Removing Immediate Left Recursion</div>
+<p>Suppose A has productions: A → Aα₁ | Aα₂ | ... | Aαₘ | β₁ | β₂ | ... | βₙ where no βᵢ begins with A. Replace these with:</p>
+<pre><code>A  → β₁A' | β₂A' | ... | βₙA'
+A' → α₁A' | α₂A' | ... | αₘA' | ε</code></pre>
+<p>where A' is a new nonterminal not previously in the grammar. The ε (empty string) production allows the recursion to terminate.</p>
+</div>
+
+<div class="analogy">
+Imagine you're trying to describe "a sequence of one or more apples." You might say "an apple is: an apple followed by another apple, or just an apple." That's left-recursive and circular. The fix: say "an apple sequence is: one apple optionally followed by more apples," where "more apples" can itself be empty. This is exactly what the algorithm does — it separates the "base case" (the β's) from the "recursive case" (the α's) and introduces a new nonterminal for the repetition.
+</div>
+
+<div class="numerical">
+<div class="num-header">Worked Numerical: Remove Left Recursion from S → Sda | ca | b</div>
+<div class="num-body">
+
+<p>This is one of the most frequently appearing PYQ problems. Let us solve it step by step.</p>
+
+<div class="num-step">
+<div class="step-label">Step 1 — Identify the Left-Recursive Productions</div>
+<p>The production <code>S → Sda</code> is immediately left-recursive because S appears as the first symbol on the right-hand side. The other productions <code>S → ca</code> and <code>S → b</code> do not start with S, so they are the "base cases" (the β's).</p>
+<p>Here: α = da (the part after the recursive S), and the β's are ca and b.</p>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 2 — Apply the Algorithm</div>
+<p>We create a new nonterminal S' and rewrite:</p>
+<pre><code>S  → caS' | bS'
+S' → daS' | ε</code></pre>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 3 — Verify</div>
+<p>Let's verify that the new grammar generates the same language. Original: S can derive strings like <code>ca</code>, <code>b</code>, <code>ca da</code>, <code>b da</code>, <code>ca da da</code>, etc. (each time S → Sda adds a "da" suffix).</p>
+<p>New grammar: <code>S → caS'</code> and <code>S' → daS' | ε</code>. So S' generates (da)* — zero or more "da"s. S generates <code>ca(da)*</code> or <code>b(da)*</code>. This matches the original language exactly.</p>
+</div>
+
+<p><strong>The derivation of <code>ca da da</code>:</strong></p>
+<pre><code>S ⇒ caS'           (using S → caS')
+  ⇒ cadaS'         (using S' → daS')
+  ⇒ cadadaS'       (using S' → daS')
+  ⇒ cadada         (using S' → ε)</code></pre>
+</div>
+</div>
+
+<div class="numerical">
+<div class="num-header">Worked Numerical: Remove Left Recursion from S → Sab | Scd | a | b | c</div>
+<div class="num-body">
+
+<div class="num-step">
+<div class="step-label">Step 1 — Identify Left-Recursive Productions</div>
+<p><code>S → Sab</code> and <code>S → Scd</code> are left-recursive (S appears first on RHS). The base cases (β's) are <code>a</code>, <code>b</code>, and <code>c</code>.</p>
+<p>Here: α₁ = ab, α₂ = cd.</p>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 2 — Apply the Algorithm</div>
+<pre><code>S  → aS' | bS' | cS'
+S' → abS' | cdS' | ε</code></pre>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 3 — Verify</div>
+<p>Original generates: strings starting with a, b, or c, followed by zero or more repetitions of "ab" or "cd" in any combination. New grammar: S' generates (ab | cd)*, and S prepends a, b, or c. Same language. Correct.</p>
+</div>
+</div>
+</div>
+
+<div class="numerical">
+<div class="num-header">Worked Numerical: Remove Left Recursion from A → Aa | Acd | d | a</div>
+<div class="num-body">
+
+<div class="num-step">
+<div class="step-label">Step 1 — Identify</div>
+<p>Left-recursive: <code>A → Aa</code> and <code>A → Acd</code>. Base cases: <code>A → d</code> and <code>A → a</code>. So α₁ = a, α₂ = cd, β₁ = d, β₂ = a.</p>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 2 — Rewrite</div>
+<pre><code>A  → dA' | aA'
+A' → aA' | cdA' | ε</code></pre>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 3 — Verify</div>
+<p>Original: A generates d or a, followed by any sequence of a's and cd's. New grammar: A' generates (a | cd)*, and A prepends d or a. Correct.</p>
+</div>
+</div>
+</div>
+
+<div class="memory-trick">
+<div class="label">Memory Trick</div>
+<p style="margin:0;">Think of the algorithm as "peeling off the recursion." The left-recursive productions (A → Aα) become the recursive part of the new nonterminal (A' → αA' | ε). The non-left-recursive productions (A → β) become the entry point (A → βA'). The new A' acts like a "while loop" that optionally repeats the α part zero or more times.</p>
+</div>
+
+<!-- 3c: Left Factoring -->
+<h3 id="sec-left-factoring">3c. Left Factoring (Non-Determinism)</h3>
+
+<p>A grammar has a <strong>common prefix problem</strong> (also called non-determinism) when two or more productions for the same nonterminal share a common prefix on their right-hand sides. For example, if we have <code>A → αβ₁ | αβ₂</code>, then a top-down parser looking at A cannot decide which production to use without looking beyond the prefix α. For LL(1) parsing, we are only allowed to look one token ahead, so this common prefix creates a conflict.</p>
+
+<p><strong>Left factoring</strong> is the transformation that resolves this problem. It "factors out" the common prefix into a single production and introduces a new nonterminal for the remaining suffixes.</p>
+
+<div class="defn">
+<div class="defn-label">Algorithm: Left Factoring</div>
+<p>Suppose A has productions: A → αβ₁ | αβ₂ | ... | αβₙ | γ₁ | γ₂ | ... | γₘ where α is the longest common prefix and none of the γ's start with α. Replace with:</p>
+<pre><code>A  → αA' | γ₁ | γ₂ | ... | γₘ
+A' → β₁ | β₂ | ... | βₙ</code></pre>
+</div>
+
+<div class="numerical">
+<div class="num-header">Worked Example: Left Factoring</div>
+<div class="num-body">
+<p><strong>Given:</strong> S → aB | aC | Sd | Se, B → bBc | f, C → g</p>
+
+<div class="num-step">
+<div class="step-label">Step 1 — First Remove Left Recursion (if present)</div>
+<p><code>S → Sd | Se</code> are left-recursive. Removing: S → aBS' | aCS', S' → dS' | eS' | ε. (We handle the non-left-recursive part aB and aC as β's, and Sd, Se as α's.)</p>
+<p>Wait — <code>S → aB | aC | Sd | Se</code>. The left-recursive ones are S → Sd and S → Se. So α₁ = d, α₂ = e. The non-left-recursive ones are S → aB and S → aC.</p>
+<pre><code>S  → aBS' | aCS'
+S' → dS' | eS' | ε</code></pre>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 2 — Now Left Factor</div>
+<p><code>S → aBS' | aCS'</code> share common prefix <code>a</code>. Factor out:</p>
+<pre><code>S  → aS'' | ...   (but we also have the original S' from left recursion removal)
+S'' → BS' | CS'</code></pre>
+<p>Full grammar after both transformations:</p>
+<pre><code>S   → aS''
+S'' → BS' | CS'
+S'  → dS' | eS' | ε
+B   → bBc | f
+C   → g</code></pre>
+</div>
+</div>
+</div>
+
+<div class="callout callout-exam">
+<div class="label">Exam Tip — Order of Transformations</div>
+<p style="margin:0;">When a grammar has both left recursion and common prefixes, the standard approach is: (1) remove left recursion first, then (2) apply left factoring. The reason is that left recursion removal can itself introduce common prefixes (as seen above), so factoring should be done last to clean up any remaining issues.</p>
+</div>
+</section>
+
+<!-- ==================== SECTION 4: TOP-DOWN PARSING ==================== -->
+<section class="section" id="sec-topdown">
+<h2>4. Top-Down Parsing</h2>
+
+<p>Top-down parsing starts from the start symbol and attempts to derive the input string by successively expanding nonterminals. The parser maintains a prediction of what the remaining input should look like and tries to match it token by token. There are two major approaches: <strong>recursive descent parsing</strong>, which uses recursive function calls, and <strong>predictive parsing (LL(1))</strong>, which uses a parsing table and a stack.</p>
+
+<!-- 4a: Recursive Descent -->
+<h3 id="sec-recursive-descent">4a. Recursive Descent Parsing</h3>
+
+<p>In <strong>recursive descent parsing</strong>, each nonterminal in the grammar is implemented as a separate function (or procedure). When a function for nonterminal A is called, it examines the next input token and decides which production of A to apply. It then tries to match the symbols on the right-hand side of that production: for each terminal, it checks that the input matches and advances; for each nonterminal, it makes a recursive call to the corresponding function.</p>
+
+<p>Recursive descent parsers are intuitive, easy to write by hand, and easy to debug. Many real-world compilers and interpreters use them. However, they have limitations: they cannot handle left-recursive grammars (the recursive function would call itself infinitely without consuming input), and they may require backtracking when multiple productions share a common prefix and the parser cannot decide which one to use based on a single lookahead token.</p>
+
+<p>A <strong>non-recursive descent parser</strong> (also called a <strong>table-driven parser</strong> or <strong>predictive parser</strong>) avoids recursive function calls by using an explicit stack and a parsing table. The LL(1) parser is the most important example. It uses FIRST and FOLLOW sets to build a table that tells the parser exactly which production to apply at each step, eliminating the need for backtracking entirely.</p>
+
+<div class="callout callout-exam">
+<div class="label">PYQ Alert</div>
+<p style="margin:0;"><span class="pyq-badge">Repeated</span> "Write a short note on Recursive Descent Parsing vs Non-Recursive Descent Parsing." For a 5-mark answer: describe each approach (recursive function calls vs stack+table), mention that recursive descent is intuitive but may need backtracking and cannot handle left recursion, while non-recursive (predictive/LL(1)) uses FIRST/FOLLOW for deterministic parsing without backtracking. For 10 marks, add pseudocode examples and discuss time complexity (both O(n) for LL(1) grammars).</p>
+</div>
+
+<!-- 4b: FIRST and FOLLOW -->
+<h3 id="sec-first-follow">4b. FIRST and FOLLOW Sets</h3>
+
+<p>The concepts of FIRST and FOLLOW are the mathematical backbone of predictive parsing. They allow us to convert a grammar into a deterministic parsing algorithm by computing, for each nonterminal, which terminal symbols can appear at the beginning of strings derived from it, and which terminals can immediately follow it in valid derivations. Without these sets, building an LL(1) parsing table would be impossible.</p>
+
+<div class="defn">
+<div class="defn-label">FIRST Set</div>
+<p>For any string α ∈ (N ∪ T)*, <strong>FIRST(α)</strong> is the set of all terminals that can appear as the first symbol of any string derived from α. Formally:</p>
+<ul>
+  <li>If α is a terminal a, then FIRST(α) = {a}.</li>
+  <li>If α is a nonterminal A with production A → ε, then ε ∈ FIRST(A).</li>
+  <li>If A → X₁X₂...Xₙ is a production, then FIRST(A) includes every terminal in FIRST(X₁) (excluding ε). If ε ∈ FIRST(X₁), also include FIRST(X₂) (excluding ε), and so on. If ε ∈ FIRST(X₁) through FIRST(Xₙ), then ε ∈ FIRST(A).</li>
+</ul>
+</div>
+
+<div class="defn">
+<div class="defn-label">FOLLOW Set</div>
+<p>For any nonterminal A, <strong>FOLLOW(A)</strong> is the set of all terminals that can appear immediately after A in some sentential form. Formally:</p>
+<ul>
+  <li>If A is the start symbol, then $ ∈ FOLLOW(A) (where $ is the end-of-input marker).</li>
+  <li>If there is a production B → αAβ, then every terminal in FIRST(β) (excluding ε) is in FOLLOW(A).</li>
+  <li>If there is a production B → αAβ and ε ∈ FIRST(β), then FOLLOW(B) ⊆ FOLLOW(A).</li>
+  <li>If there is a production B → αA, then FOLLOW(B) ⊆ FOLLOW(A).</li>
+</ul>
+</div>
+
+<div class="numerical">
+<div class="num-header">Worked Numerical: Compute FIRST and FOLLOW Sets</div>
+<div class="num-body">
+<p><strong>Given Grammar (after removing left recursion):</strong></p>
+<pre><code>E  → TE'
+E' → +TE' | ε
+T  → FT'
+T' → *FT' | ε
+F  → (E) | id</code></pre>
+
+<div class="num-step">
+<div class="step-label">Step 1 — Compute FIRST Sets (bottom-up, starting from terminals)</div>
+<p><strong>FIRST(F):</strong> F → (E) starts with terminal (, and F → id starts with terminal id. So <strong>FIRST(F) = {(, id}</strong>.</p>
+<p><strong>FIRST(T):</strong> T → FT', so we look at FIRST(F). Since ε ∉ FIRST(F), we stop. <strong>FIRST(T) = {(, id}</strong>.</p>
+<p><strong>FIRST(T'):</strong> T' → *FT' starts with terminal *. T' → ε gives ε. So <strong>FIRST(T') = {*, ε}</strong>.</p>
+<p><strong>FIRST(E):</strong> E → TE', so we look at FIRST(T). Since ε ∉ FIRST(T), we stop. <strong>FIRST(E) = {(, id}</strong>.</p>
+<p><strong>FIRST(E'):</strong> E' → +TE' starts with terminal +. E' → ε gives ε. So <strong>FIRST(E') = {+, ε}</strong>.</p>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 2 — Compute FOLLOW Sets (top-down, starting from start symbol)</div>
+<p><strong>FOLLOW(E):</strong> E is the start symbol, so $ ∈ FOLLOW(E). Also, F → (E), so ) ∈ FOLLOW(E). <strong>FOLLOW(E) = {$, )}</strong>.</p>
+<p><strong>FOLLOW(E'):</strong> E → TE', so FOLLOW(E') ⊇ FOLLOW(E) = {$, )}. (E' is at the end of E → TE'.) <strong>FOLLOW(E') = {$, )}</strong>.</p>
+<p><strong>FOLLOW(T):</strong> E → TE', so FIRST(E') \ {ε} ⊆ FOLLOW(T). That gives {+}. Also, since ε ∈ FIRST(E'), FOLLOW(E) ⊆ FOLLOW(T). So FOLLOW(T) ⊇ {+, $, )}. Also, E' → +TE', same reasoning: FOLLOW(T) ⊇ FOLLOW(E') = {$, )} and {+}. All together: <strong>FOLLOW(T) = {+, $, )}</strong>.</p>
+<p><strong>FOLLOW(T'):</strong> T → FT', so FOLLOW(T') ⊇ FOLLOW(T) = {+, $, )}. (T' is at the end of T → FT'.) <strong>FOLLOW(T') = {+, $, )}</strong>.</p>
+<p><strong>FOLLOW(F):</strong> T → FT', so FIRST(T') \ {ε} ⊆ FOLLOW(F). That gives {*}. Also, since ε ∈ FIRST(T'), FOLLOW(T) ⊆ FOLLOW(F). So FOLLOW(F) ⊇ {*, +, $, )}. Also, T' → *FT', same reasoning: FOLLOW(F) ⊇ FOLLOW(T') = {+, $, )} and {*}. All together: <strong>FOLLOW(F) = {*, +, $, )}</strong>.</p>
+</div>
+</div>
+</div>
+
+<div class="callout callout-exam">
+<div class="label">Exam Presentation Tip</div>
+<p style="margin:0;">In exams, present FIRST and FOLLOW sets in a clean table format. Always show your work for each nonterminal. Common mistakes: (1) forgetting to include $ in FOLLOW of the start symbol, (2) not propagating FOLLOW sets through nullable nonterminals (when ε ∈ FIRST(β) in A → αBβ, FOLLOW(A) must flow into FOLLOW(B)), (3) confusing FIRST and FOLLOW — remember FIRST looks at the <em>beginning</em> of derivations, FOLLOW looks at what comes <em>after</em>.</p>
+</div>
+
+<!-- 4c: LL(1) Parsing -->
+<h3 id="sec-ll1">4c. LL(1) Parsing</h3>
+
+<p>An <strong>LL(1) parser</strong> is a top-down, table-driven parser that reads input from <strong>L</strong>eft to right, produces a <strong>L</strong>eftmost derivation, and uses <strong>1</strong> token of lookahead. The "L" in LL stands for the direction the input is scanned (left-to-right), and the second "L" stands for the type of derivation (leftmost). The "1" means the parser examines at most one upcoming token to decide which production to apply.</p>
+
+<p>The LL(1) parser uses three data structures: an <strong>input buffer</strong> containing the token stream (ending with $), a <strong>stack</strong> for pending grammar symbols (initially containing $S, where S is the start symbol), and a <strong>parsing table</strong> M[A, a] that maps each nonterminal-terminal pair to a production or an error.</p>
+
+<div class="defn">
+<div class="defn-label">Algorithm: Constructing the LL(1) Parsing Table</div>
+<p>For each production A → α in the grammar:</p>
+<ol>
+  <li>For each terminal a in FIRST(α), add A → α to M[A, a].</li>
+  <li>If ε ∈ FIRST(α), then for each terminal b in FOLLOW(A), add A → α to M[A, b]. If $ ∈ FOLLOW(A), also add A → α to M[A, $].</li>
+</ol>
+<p>A grammar is <strong>LL(1)</strong> if and only if every cell of the parsing table contains at most one production (no conflicts).</p>
+</div>
+
+<div class="numerical">
+<div class="num-header">Worked Numerical: Construct the LL(1) Parsing Table</div>
+<div class="num-body">
+<p><strong>Grammar (after left recursion removal):</strong></p>
+<pre><code>E  → TE'          (Production 1)
+E' → +TE'         (Production 2)
+E' → ε            (Production 3)
+T  → FT'          (Production 4)
+T' → *FT'         (Production 5)
+T' → ε            (Production 6)
+F  → (E)          (Production 7)
+F  → id           (Production 8)</code></pre>
+
+<p>Using the FIRST and FOLLOW sets computed earlier:</p>
+
+<div class="num-step">
+<div class="step-label">Step 1 — Apply the Algorithm to Each Production</div>
+
+<p><strong>E → TE':</strong> FIRST(TE') = FIRST(T) = {(, id}. So add to M[E, (] and M[E, id].</p>
+<p><strong>E' → +TE':</strong> FIRST(+TE') = {+}. So add to M[E', +].</p>
+<p><strong>E' → ε:</strong> ε is the entire RHS, so add to M[E', b] for each b in FOLLOW(E') = {$, )}. So add to M[E', $] and M[E', )].</p>
+<p><strong>T → FT':</strong> FIRST(FT') = FIRST(F) = {(, id}. So add to M[T, (] and M[T, id].</p>
+<p><strong>T' → *FT':</strong> FIRST(*FT') = {*}. So add to M[T', *].</p>
+<p><strong>T' → ε:</strong> Add to M[T', b] for each b in FOLLOW(T') = {+, $, )}. So add to M[T', +], M[T', $], M[T', )].</p>
+<p><strong>F → (E):</strong> FIRST((E)) = {(}. So add to M[F, (].</p>
+<p><strong>F → id:</strong> FIRST(id) = {id}. So add to M[F, id].</p>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 2 — Assemble the Parsing Table</div>
+
+<table>
+<tr><th></th><th>id</th><th>+</th><th>*</th><th>(</th><th>)</th><th>$</th></tr>
+<tr><td><strong>E</strong></td><td>E→TE'</td><td></td><td></td><td>E→TE'</td><td></td><td></td></tr>
+<tr><td><strong>E'</strong></td><td></td><td>E'→+TE'</td><td></td><td></td><td>E'→ε</td><td>E'→ε</td></tr>
+<tr><td><strong>T</strong></td><td>T→FT'</td><td></td><td></td><td>T→FT'</td><td></td><td></td></tr>
+<tr><td><strong>T'</strong></td><td></td><td>T'→ε</td><td>T'→*FT'</td><td></td><td>T'→ε</td><td>T'→ε</td></tr>
+<tr><td><strong>F</strong></td><td>F→id</td><td></td><td></td><td>F→(E)</td><td></td><td></td></tr>
+</table>
+
+<p>Every cell has at most one production, so the grammar is <strong>LL(1)</strong>.</p>
+</div>
+</div>
+</div>
+
+<div class="numerical">
+<div class="num-header">Worked Numerical: LL(1) Parsing Simulation for Input <code>id + id * id</code></div>
+<div class="num-body">
+<p>Using the parsing table above, we parse the input string <code>id + id * id $</code>.</p>
+<p>The algorithm: Look at the top-of-stack symbol X and the current input token a.</p>
+<ul>
+  <li>If X = a = $: accept.</li>
+  <li>If X is a terminal: if X = a, pop X and advance input. Otherwise, error.</li>
+  <li>If X is a nonterminal: look up M[X, a]. If it contains a production X → Y₁Y₂...Yₖ, pop X and push Yₖ, Yₖ₋₁, ..., Y₁ onto the stack (reverse order so Y₁ is on top). If the cell is empty, error.</li>
+</ul>
+
+<table>
+<tr><th>Step</th><th>Stack</th><th>Input</th><th>Action</th></tr>
+<tr><td>1</td><td>$ E</td><td>id + id * id $</td><td>M[E, id] = E→TE'. Pop E, push E'T.</td></tr>
+<tr><td>2</td><td>$ E' T</td><td>id + id * id $</td><td>M[T, id] = T→FT'. Pop T, push T'F.</td></tr>
+<tr><td>3</td><td>$ E' T' F</td><td>id + id * id $</td><td>M[F, id] = F→id. Pop F, push id.</td></tr>
+<tr><td>4</td><td>$ E' T' id</td><td>id + id * id $</td><td>Top = id, Input = id. Match! Pop id, advance.</td></tr>
+<tr><td>5</td><td>$ E' T'</td><td>+ id * id $</td><td>M[T', +] = T'→ε. Pop T' (push nothing).</td></tr>
+<tr><td>6</td><td>$ E'</td><td>+ id * id $</td><td>M[E', +] = E'→+TE'. Pop E', push E'T+.</td></tr>
+<tr><td>7</td><td>$ E' T +</td><td>+ id * id $</td><td>Top = +, Input = +. Match! Pop +, advance.</td></tr>
+<tr><td>8</td><td>$ E' T</td><td>id * id $</td><td>M[T, id] = T→FT'. Pop T, push T'F.</td></tr>
+<tr><td>9</td><td>$ E' T' F</td><td>id * id $</td><td>M[F, id] = F→id. Pop F, push id.</td></tr>
+<tr><td>10</td><td>$ E' T' id</td><td>id * id $</td><td>Match! Pop id, advance.</td></tr>
+<tr><td>11</td><td>$ E' T'</td><td>* id $</td><td>M[T', *] = T'→*FT'. Pop T', push T'F*.</td></tr>
+<tr><td>12</td><td>$ E' T' F *</td><td>* id $</td><td>Top = *, Input = *. Match! Pop *, advance.</td></tr>
+<tr><td>13</td><td>$ E' T' F</td><td>id $</td><td>M[F, id] = F→id. Pop F, push id.</td></tr>
+<tr><td>14</td><td>$ E' T' id</td><td>id $</td><td>Match! Pop id, advance.</td></tr>
+<tr><td>15</td><td>$ E' T'</td><td>$</td><td>M[T', $] = T'→ε. Pop T'.</td></tr>
+<tr><td>16</td><td>$ E'</td><td>$</td><td>M[E', $] = E'→ε. Pop E'.</td></tr>
+<tr><td>17</td><td>$</td><td>$</td><td>Stack top = $, Input = $. <strong>Accept!</strong></td></tr>
+</table>
+
+<p>The input is successfully parsed. Notice that the parser produces a leftmost derivation in reverse: the sequence of productions applied is E → TE' → FT'E' → idT'E' → idE' → id+TE' → id+FT'E' → id+idT'E' → id+id*FT'E' → id+id*idT'E' → id+id*idE' → id+id*id.</p>
+</div>
+</div>
+
+<div class="callout callout-exam">
+<div class="label">Steps to Follow for LL(1) Table Construction (Exam Procedure)</div>
+<p style="margin:0;">(1) Remove left recursion from the grammar. (2) Left factor if necessary. (3) Compute FIRST sets for all nonterminals. (4) Compute FOLLOW sets for all nonterminals (don't forget $ for start symbol). (5) For each production A → α: add to M[A, a] for all a in FIRST(α); if ε ∈ FIRST(α), add to M[A, b] for all b in FOLLOW(A). (6) Check for conflicts — if any cell has more than one production, the grammar is not LL(1).</p>
+</div>
+
+<h4>Why LL(1) and LR(0) Are Incomparable</h4>
+
+<p>An interesting theoretical fact: the classes of LL(1) grammars and LR(0) grammars are <strong>incomparable</strong> — neither is a subset of the other. This surprises many students who expect LL(1) to be "weaker" than LR(0) since LL(1) ⊂ LR(1).</p>
+
+<p><strong>LL(1) but not LR(0):</strong> S → Aa | b, A → c | ε. This is LL(1) (no conflicts in the parsing table) but not LR(0) because in the initial LR(0) item set, we have both A → .c (shift on c) and A → . (reduce on all inputs), creating a shift-reduce conflict on input c.</p>
+
+<p><strong>LR(0) but not LL(1):</strong> S → aA | aB, A → b, B → c. This is LR(0) (no conflicts in any LR(0) item set) but not LL(1) because FIRST(aA) = {a} and FIRST(aB) = {a} overlap in row S.</p>
+</section>
+
+<!-- ==================== SECTION 5: BOTTOM-UP PARSING ==================== -->
+<section class="section" id="sec-bottomup">
+<h2>5. Bottom-Up Parsing: Foundations</h2>
+
+<p>Bottom-up parsers construct a parse tree from the leaves upward to the root. Rather than expanding nonterminals as a top-down parser does, a bottom-up parser performs <strong>reductions</strong>: it identifies a substring of the input that matches the right-hand side of some production and replaces it with the corresponding nonterminal. The sequence of reductions, when read in reverse, gives a rightmost derivation of the input.</p>
+
+<h3>5.1 Shift-Reduce Parsing</h3>
+
+<p>The most common framework for bottom-up parsing is <strong>shift-reduce parsing</strong>. The parser maintains a <strong>stack</strong> and an <strong>input buffer</strong>. At each step, it performs one of two actions:</p>
+
+<ul>
+  <li><strong>Shift:</strong> Move the next input token onto the top of the stack.</li>
+  <li><strong>Reduce:</strong> If the top symbols on the stack match the right-hand side of some production A → β, replace β on the stack with A. (This is the reverse of expanding A → β.)</li>
+</ul>
+
+<p>The parser also needs two other operations: <strong>accept</strong> (when the start symbol is on the stack and the input is exhausted) and <strong>error</strong> (when neither shift nor reduce is applicable).</p>
+
+<h3>5.2 Handles</h3>
+
+<p>The critical concept in bottom-up parsing is the <strong>handle</strong>. A handle of a sentential form is a substring β that (1) matches the right-hand side of some production A → β, and (2) replacing β by A is a step in the reverse of a rightmost derivation. Intuitively, the handle is the "right thing to reduce" at each step. Finding the correct handle is the essential challenge of bottom-up parsing — shift too early and you miss the handle, shift too late and you reduce the wrong substring.</p>
+
+<div class="analogy">
+Imagine you are disassembling a model airplane back into its component pieces. The "handle" is the one sub-assembly that, when you remove it and replace it with its name (like "wing assembly"), moves you one step closer to having just the raw materials. If you try to remove the wrong sub-assembly first — say, trying to remove half the fuselage along with the wing — you won't match any known sub-assembly and you'll be stuck.
+</div>
+
+<h3>5.3 Viable Prefixes</h3>
+
+<p>A <strong>viable prefix</strong> is a prefix of a right-sentential form that does not extend past the right end of the handle. The set of viable prefixes is a regular language, which means it can be recognized by a finite automaton. This is the theoretical foundation for LR parsing: the LR parser's states correspond to states of a DFA that recognizes viable prefixes, and the parsing table encodes the DFA's transitions.</p>
+</section>
+
+<!-- ==================== SECTION 6: OPERATOR-PRECEDENCE PARSING ==================== -->
+<section class="section" id="sec-operator">
+<h2>6. Operator-Precedence Parsing</h2>
+
+<p><strong>Operator-precedence parsing</strong> is a special form of bottom-up parsing that works well for expression grammars where operators have clearly defined precedence and associativity. Rather than using the full machinery of LR parsing, it defines three precedence relations between pairs of terminal symbols and uses these relations to decide when to shift and when to reduce.</p>
+
+<p>The three relations between adjacent terminal symbols a and b are:</p>
+<ul>
+  <li><strong>a ⋖ b</strong> (a "yields to" b): b has higher precedence; we should shift b onto the stack.</li>
+  <li><strong>a ≐ b</strong> (a "equals" b): a and b have the same precedence and appear in the same production; we should continue shifting.</li>
+  <li><strong>a ⋗ b</strong> (a "takes precedence over" b): a has higher precedence; we should reduce the handle on the stack.</li>
+</ul>
+
+<div class="defn">
+<div class="defn-label">Algorithm: Constructing Operator Precedence Relations (Lead &amp; Last Method)</div>
+<p><strong>Step 1:</strong> For each nonterminal A, compute <strong>Lead(A)</strong> = set of all terminals that can appear as the leftmost terminal in a sentential form derived from A. Compute <strong>Last(A)</strong> = set of all terminals that can appear as the rightmost terminal.</p>
+<p><strong>Step 2:</strong> For each production, examine pairs of adjacent symbols:</p>
+<ul>
+  <li>If the production contains ...aN... (terminal followed by nonterminal): a ⋖ every terminal in Lead(N).</li>
+  <li>If the production contains ...Na... (nonterminal followed by terminal): every terminal in Last(N) ⋗ a.</li>
+  <li>If the production contains ...ab... (two adjacent terminals): a ≐ b.</li>
+</ul>
+<p><strong>Step 3:</strong> Add boundary relations: $ ⋖ every terminal in Lead(S), and every terminal in Last(S) ⋗ $.</p>
+<p><strong>Step 4:</strong> For operators at the same precedence level (left-associative): a ⋗ a. For right-associative: a ⋖ a. For operators at different levels, use the given precedence order.</p>
+</div>
+
+<div class="numerical">
+<div class="num-header">Worked Numerical: Operator-Precedence Parsing of <code>2 + 3 * 4</code></div>
+<div class="num-body">
+<p><strong>Given Grammar:</strong> E → E + E | E * E | id (left associative, precedence: id > * > + > $)</p>
+<p>The operators (terminals) are: <strong>id, *, +, $</strong></p>
+
+<div class="num-step">
+<div class="step-label">Step 1 — Compute Lead and Last</div>
+<p>For E → E + E | E * E | id:</p>
+<p>Lead(E): The leftmost terminal of any string derived from E. E → id gives id. E → E + E starts with whatever E starts with, which is id. E → E * E similarly. So <strong>Lead(E) = {id}</strong>.</p>
+<p>Last(E): The rightmost terminal of any string derived from E. E → id gives id. E → E + E ends with whatever E ends with, which is id. E → E * E similarly. So <strong>Last(E) = {id}</strong>.</p>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 2 — Build Relations from Productions</div>
+<p><strong>E → E + E:</strong> Last(E) ⋗ + gives id ⋗ +. And + ⋖ Lead(E) gives + ⋖ id.</p>
+<p><strong>E → E * E:</strong> Last(E) ⋗ * gives id ⋗ *. And * ⋖ Lead(E) gives * ⋖ id.</p>
+<p>No adjacent terminal pairs in any production, so no ≐ relations from here.</p>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 3 — Add Boundary Relations</div>
+<p>$ ⋖ Lead(E): $ ⋖ id. Last(E) ⋗ $: id ⋗ $.</p>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 4 — Add Precedence Between Operators</div>
+<p>Since id > * > + > $ (left-associative):</p>
+<ul>
+  <li>* ⋗ + (since * has higher precedence than +)</li>
+  <li>+ ⋗ + (same level, left-associative → ⋗)</li>
+  <li>* ⋗ * (same level, left-associative → ⋗)</li>
+  <li>+ ⋖ * (since + has lower precedence than *)</li>
+</ul>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 5 — Complete Operator Precedence Table</div>
+<table>
+<tr><th>Stack ↓ \ Input →</th><th>id</th><th>*</th><th>+</th><th>$</th></tr>
+<tr><td><strong>id</strong></td><td>err</td><td>⋗</td><td>⋗</td><td>⋗</td></tr>
+<tr><td><strong>*</strong></td><td>⋖</td><td>⋗</td><td>⋗</td><td>⋗</td></tr>
+<tr><td><strong>+</strong></td><td>⋖</td><td>⋖</td><td>⋗</td><td>⋗</td></tr>
+<tr><td><strong>$</strong></td><td>⋖</td><td>⋖</td><td>⋖</td><td>acc</td></tr>
+</table>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 6 — Parse the String <code>id + id * id</code></div>
+<p>The parsing algorithm: Read input left to right. Compare the topmost terminal on the stack with the next input token using the table.</p>
+<ul>
+  <li>If relation is ⋖ or ≐: <strong>shift</strong> the input token onto the stack.</li>
+  <li>If relation is ⋗: <strong>reduce</strong> — pop symbols from the stack until you find a terminal a that has a ⋖ relation with the symbol below it (i.e., find the handle), then replace the handle with E.</li>
+  <li>If relation is "acc": accept.</li>
+</ul>
+
+<table>
+<tr><th>Step</th><th>Stack</th><th>Relation</th><th>Input</th><th>Action</th></tr>
+<tr><td>1</td><td>$</td><td>$ ⋖ id</td><td>id + id * id $</td><td>Shift id</td></tr>
+<tr><td>2</td><td>$ id</td><td>id ⋗ +</td><td>+ id * id $</td><td>Reduce: id → E</td></tr>
+<tr><td>3</td><td>$ E</td><td>$ ⋖ +</td><td>+ id * id $</td><td>Shift +</td></tr>
+<tr><td>4</td><td>$ E +</td><td>+ ⋖ id</td><td>id * id $</td><td>Shift id</td></tr>
+<tr><td>5</td><td>$ E + id</td><td>id ⋗ *</td><td>* id $</td><td>Reduce: id → E</td></tr>
+<tr><td>6</td><td>$ E + E</td><td>+ ⋖ *</td><td>* id $</td><td>Shift * (note: + ⋖ *, so shift!)</td></tr>
+<tr><td>7</td><td>$ E + E *</td><td>* ⋖ id</td><td>id $</td><td>Shift id</td></tr>
+<tr><td>8</td><td>$ E + E * id</td><td>id ⋗ $</td><td>$</td><td>Reduce: id → E</td></tr>
+<tr><td>9</td><td>$ E + E * E</td><td>* ⋗ $</td><td>$</td><td>Reduce: E * E → E</td></tr>
+<tr><td>10</td><td>$ E + E</td><td>+ ⋗ $</td><td>$</td><td>Reduce: E + E → E</td></tr>
+<tr><td>11</td><td>$ E</td><td>accept</td><td>$</td><td><strong>Accept!</strong></td></tr>
+</table>
+
+<p><strong>Key Observation:</strong> At step 6, the top of stack is <code>$ E + E</code> and the next input is <code>*</code>. The relation between + and * is + ⋖ * (yields to), meaning * has higher precedence. So we shift * rather than reducing E + E. This correctly enforces that multiplication binds more tightly than addition — the <code>*</code> is consumed before the <code>+</code> reduction happens.</p>
+</div>
+</div>
+</div>
+
+<div class="callout callout-exam">
+<div class="label">How to Draw the Operator Precedence Table in Exams</div>
+<p style="margin:0;">Draw a square table with all operators (including $) as both row and column headers. Fill each cell with the appropriate relation symbol. Write a small legend: ⋖ = shift, ⋗ = reduce, ≐ = shift (equal), err = error. The table is the key artifact — get it right and the parsing simulation becomes mechanical.</p>
+</div>
+
+<div class="memory-trick">
+<div class="label">Memory Trick for Relations</div>
+<p style="margin:0;"><strong>⋖</strong> looks like an arrow pointing RIGHT (into the stack) — SHIFT. <strong>⋗</strong> looks like an arrow pointing LEFT (out of the stack) — REDUCE. <strong>≐</strong> means EQUAL (same level) — keep shifting. Think: "the symbol that is 'taller' (higher precedence) wins."</p>
+</div>
+</section>
+
+<!-- ==================== SECTION 7: LR PARSERS ==================== -->
+<section class="section" id="sec-lr">
+<h2>7. LR Parsers</h2>
+
+<p>LR parsing is the most powerful and general bottom-up parsing method used in practice. The name "LR" stands for <strong>L</strong>eft-to-right scanning of input with <strong>R</strong>ightmost derivation in reverse. An LR parser reads input from left to right and constructs a rightmost derivation in reverse order — exactly what a bottom-up parser does. The elegance of LR parsing lies in its use of a deterministic finite automaton (DFA) to recognize viable prefixes, which enables it to make shift/reduce decisions with no backtracking.</p>
+
+<p>There are four canonical variants of LR parsers, listed here from weakest to strongest:</p>
+
+<ol>
+  <li><strong>LR(0)</strong> — uses no lookahead. Simplest but least powerful.</li>
+  <li><strong>SLR (Simple LR)</strong> — uses FOLLOW sets as lookahead. More powerful than LR(0) but still limited.</li>
+  <li><strong>CLR(1) (Canonical LR(1))</strong> — uses exact 1-token lookahead carried in each item. Most powerful but tables can be very large.</li>
+  <li><strong>LALR(1) (Look-Ahead LR)</strong> — merges CLR(1) states with the same LR(0) core. Same power as SLR for most practical grammars, with smaller tables than CLR(1).</li>
+</ol>
+
+<p>All four share the same basic framework: construct a set of <strong>item sets</strong> (each representing a state of the parser), build a DFA from these items, and then construct a parsing table from the DFA. The differences lie in how items are augmented with lookahead information and how conflicts are resolved.</p>
+
+<div class="diagram-container">
+<svg viewBox="0 0 600 100" xmlns="http://www.w3.org/2000/svg" style="max-width:550px;">
+  <defs>
+    <marker id="arrowG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2d6a4f"/>
+    </marker>
+  </defs>
+  <rect x="10" y="30" width="100" height="40" rx="5" fill="#d4edda" stroke="#2d6a4f" stroke-width="1.5"/>
+  <text x="60" y="55" text-anchor="middle" font-family="Playfair Display" font-size="12" font-weight="700" fill="#2d6a4f">LR(0)</text>
+  <line x1="110" y1="50" x2="140" y2="50" stroke="#2d6a4f" stroke-width="1.5" marker-end="url(#arrowG)"/>
+  <text x="125" y="43" text-anchor="middle" font-family="DM Mono" font-size="8" fill="#6b6357">+FOLLOW</text>
+  <rect x="145" y="30" width="100" height="40" rx="5" fill="#d4edda" stroke="#2d6a4f" stroke-width="1.5"/>
+  <text x="195" y="55" text-anchor="middle" font-family="Playfair Display" font-size="12" font-weight="700" fill="#2d6a4f">SLR</text>
+  <line x1="245" y1="50" x2="275" y2="50" stroke="#2d6a4f" stroke-width="1.5" marker-end="url(#arrowG)"/>
+  <text x="260" y="43" text-anchor="middle" font-family="DM Mono" font-size="8" fill="#6b6357">+lookahead</text>
+  <rect x="280" y="30" width="100" height="40" rx="5" fill="#d4edda" stroke="#2d6a4f" stroke-width="1.5"/>
+  <text x="330" y="55" text-anchor="middle" font-family="Playfair Display" font-size="12" font-weight="700" fill="#2d6a4f">CLR(1)</text>
+  <line x1="330" y1="70" x2="330" y2="90" stroke="#2d6a4f" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="380" y="85" text-anchor="middle" font-family="DM Mono" font-size="8" fill="#6b6357">merge states</text>
+  <line x1="380" y1="80" x2="470" y2="55" stroke="#2d6a4f" stroke-width="1.5" marker-end="url(#arrowG)"/>
+  <rect x="475" y="30" width="100" height="40" rx="5" fill="#fdf3d8" stroke="#b8860b" stroke-width="2"/>
+  <text x="525" y="55" text-anchor="middle" font-family="Playfair Display" font-size="12" font-weight="700" fill="#b8860b">LALR</text>
+  <text x="300" y="15" text-anchor="middle" font-family="DM Mono" font-size="9" fill="#b83a2a">POWER INCREASES →</text>
+</svg>
+<p class="diagram-caption">Figure 7.1 — The LR parser family. Each variant adds sophistication to handle more grammars.</p>
+</div>
+
+<h3 id="sec-lr0">7a. LR(0) Parsers</h3>
+
+<p>An <strong>LR(0) item</strong> is a production with a dot (·) placed somewhere on the right-hand side. The dot represents how far the parser has progressed in matching that production. For example, the production <code>E → E + T</code> generates four items:</p>
+<ul>
+  <li>E → · E + T (haven't seen anything yet)</li>
+  <li>E → E · + T (have seen E)</li>
+  <li>E → E + · T (have seen E +)</li>
+  <li>E → E + T · (have seen the entire RHS — ready to reduce)</li>
+</ul>
+
+<p>An item with the dot at the very end (like E → E + T ·) is called a <strong>complete item</strong> or <strong>reduce item</strong>. It indicates that the parser has found a handle and should reduce. An item with the dot before a nonterminal (like E → · E + T) requires <strong>closure</strong>: we must also add all productions for that nonterminal with the dot at the beginning, because those are also possibilities the parser must track.</p>
+
+<div class="defn">
+<div class="defn-label">Closure and Goto Functions</div>
+<p><strong>Closure(I):</strong> If item [A → α · Bβ] is in set I, then for every production B → γ, add [B → · γ] to I (if not already present). Repeat until no more items can be added.</p>
+<p><strong>Goto(I, X):</strong> The set of items obtained by moving the dot past symbol X in all items of I where X immediately follows the dot, then computing the closure of the result.</p>
+</div>
+
+<div class="numerical">
+<div class="num-header">Worked Numerical: LR(0) Item Sets, DFA &amp; Parsing Table</div>
+<div class="num-body">
+<p><strong>Given Grammar:</strong></p>
+<pre><code>E → E + T | T
+T → T * F | F
+F → id</code></pre>
+
+<div class="num-step">
+<div class="step-label">Step 1 — Augment the Grammar</div>
+<p>Add a new start symbol: <code>E' → E</code>. This ensures the parser knows when it has successfully reduced the entire input.</p>
+<p>Number the productions for reference:</p>
+<pre><code>(1) E' → E
+(2) E  → E + T
+(3) E  → T
+(4) T  → T * F
+(5) T  → F
+(6) F  → id</code></pre>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 2 — Construct the Canonical Collection of LR(0) Item Sets</div>
+
+<p><strong>State I₀ = Closure({E' → ·E}):</strong></p>
+<pre><code>E' → ·E
+E  → ·E + T
+E  → ·T
+T  → ·T * F
+T  → ·F
+F  → ·id</code></pre>
+
+<p><strong>Goto(I₀, E) = I₁:</strong></p>
+<pre><code>E' → E·
+E  → E· + T</code></pre>
+
+<p><strong>Goto(I₀, T) = I₂:</strong></p>
+<pre><code>E  → T·
+T  → T· * F</code></pre>
+
+<p><strong>Goto(I₀, F) = I₃:</strong></p>
+<pre><code>T  → F·</code></pre>
+
+<p><strong>Goto(I₀, id) = I₄:</strong></p>
+<pre><code>F  → id·</code></pre>
+
+<p><strong>Goto(I₁, +) = I₅:</strong></p>
+<pre><code>E  → E + ·T
+T  → ·T * F
+T  → ·F
+F  → ·id</code></pre>
+
+<p><strong>Goto(I₅, T) = I₆:</strong></p>
+<pre><code>E  → E + T·
+T  → T· * F</code></pre>
+
+<p><strong>Goto(I₅, F) = I₃</strong> (same as I₃ — reuse)</p>
+
+<p><strong>Goto(I₅, id) = I₄</strong> (same as I₄ — reuse)</p>
+
+<p><strong>Goto(I₂, *) = I₇:</strong></p>
+<pre><code>T  → T * ·F
+F  → ·id</code></pre>
+
+<p><strong>Goto(I₇, F) = I₈:</strong></p>
+<pre><code>T  → T * F·</code></pre>
+
+<p><strong>Goto(I₇, id) = I₄</strong> (reuse)</p>
+
+<p><strong>Goto(I₆, *) = I₇</strong> (reuse)</p>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 3 — Build the LR(0) Parsing Table</div>
+<p>Rules for LR(0):</p>
+<ul>
+  <li>If [A → α · aβ] is in Iᵢ and Goto(Iᵢ, a) = Iⱼ (where a is terminal): Action[i, a] = Shift j.</li>
+  <li>If [A → α ·] is in Iᵢ (complete item): Action[i, a] = Reduce A → α for ALL terminals a (including $).</li>
+  <li>If [E' → E ·] is in Iᵢ: Action[i, $] = Accept.</li>
+  <li>Goto[Iᵢ, A] = Iⱼ (where A is nonterminal): Goto[i, A] = j.</li>
+</ul>
+
+<table>
+<tr><th>State</th><th>id</th><th>+</th><th>*</th><th>$</th><th>E</th><th>T</th><th>F</th></tr>
+<tr><td><strong>0</strong></td><td>s4</td><td></td><td></td><td></td><td>1</td><td>2</td><td>3</td></tr>
+<tr><td><strong>1</strong></td><td></td><td>s5</td><td></td><td>acc</td><td></td><td></td><td></td></tr>
+<tr><td><strong>2</strong></td><td></td><td>r3,r3</td><td>s7</td><td>r3</td><td></td><td></td><td></td></tr>
+<tr><td><strong>3</strong></td><td></td><td>r5</td><td>r5</td><td>r5</td><td></td><td></td><td></td></tr>
+<tr><td><strong>4</strong></td><td></td><td>r6</td><td>r6</td><td>r6</td><td></td><td></td><td></td></tr>
+<tr><td><strong>5</strong></td><td>s4</td><td></td><td></td><td></td><td></td><td>6</td><td>3</td></tr>
+<tr><td><strong>6</strong></td><td></td><td>r2,r2</td><td>s7</td><td>r2</td><td></td><td></td><td></td></tr>
+<tr><td><strong>7</strong></td><td>s4</td><td></td><td></td><td></td><td></td><td></td><td>8</td></tr>
+<tr><td><strong>8</strong></td><td></td><td>r4</td><td>r4</td><td>r4</td><td></td><td></td><td></td></tr>
+</table>
+
+<p><strong>Important:</strong> States 2 and 6 have <strong>shift-reduce conflicts</strong>. In state 2, we have both E → T· (reduce on all terminals) and T → T·*F (shift on *). On token + or $, we should reduce (E → T). On token *, we have a conflict: LR(0) says reduce (because it reduces on ALL inputs), but the correct behavior is to shift (because * has higher precedence). This is why LR(0) is too weak for this grammar — we need SLR to resolve the conflict using FOLLOW sets.</p>
+</div>
+</div>
+</div>
+
+<h3 id="sec-slr">7b. SLR (Simple LR) Parsing</h3>
+
+<p>SLR parsing improves upon LR(0) by using <strong>FOLLOW sets</strong> to resolve conflicts. Instead of reducing a complete item [A → α ·] on every terminal (as LR(0) does), SLR reduces only on the terminals in <strong>FOLLOW(A)</strong>. This simple modification eliminates many spurious conflicts.</p>
+
+<div class="numerical">
+<div class="num-header">Worked Numerical: SLR Parsing Table &amp; Parsing <code>id + id * id</code></div>
+<div class="num-body">
+<p><strong>Grammar:</strong> E' → E, E → E + T | T, T → T * F | F, F → id</p>
+
+<div class="num-step">
+<div class="step-label">Step 1 — Compute FOLLOW Sets</div>
+<p>FOLLOW(E) = {$, +, )} (E is start → $; E appears in E → E+T → + ∈ FOLLOW; F → (E) → ) ∈ FOLLOW)</p>
+<p>FOLLOW(T) = {*, +, $, )} (from E → E+T and T → T*F and propagation from E)</p>
+<p>FOLLOW(F) = {*, +, $, )} (from T → T*F and T → F)</p>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 2 — Use Same Item Sets (I₀ through I₈)</div>
+<p>The LR(0) item sets are identical. Only the table construction changes.</p>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 3 — Construct SLR Parsing Table</div>
+<p>Rules: Reduce A → α (dot at end) only on terminals in FOLLOW(A), not on all terminals.</p>
+
+<table>
+<tr><th>State</th><th>id</th><th>+</th><th>*</th><th>$</th><th>E</th><th>T</th><th>F</th></tr>
+<tr><td><strong>0</strong></td><td>s4</td><td></td><td></td><td></td><td>1</td><td>2</td><td>3</td></tr>
+<tr><td><strong>1</strong></td><td></td><td>s5</td><td></td><td>accept</td><td></td><td></td><td></td></tr>
+<tr><td><strong>2</strong></td><td></td><td><strong>r3</strong></td><td><strong>s7</strong></td><td><strong>r3</strong></td><td></td><td></td><td></td></tr>
+<tr><td><strong>3</strong></td><td></td><td>r5</td><td>r5</td><td>r5</td><td></td><td></td><td></td></tr>
+<tr><td><strong>4</strong></td><td></td><td>r6</td><td>r6</td><td>r6</td><td></td><td></td><td></td></tr>
+<tr><td><strong>5</strong></td><td>s4</td><td></td><td></td><td></td><td></td><td>6</td><td>3</td></tr>
+<tr><td><strong>6</strong></td><td></td><td><strong>r2</strong></td><td><strong>s7</strong></td><td><strong>r2</strong></td><td></td><td></td><td></td></tr>
+<tr><td><strong>7</strong></td><td>s4</td><td></td><td></td><td></td><td></td><td></td><td>8</td></tr>
+<tr><td><strong>8</strong></td><td></td><td>r4</td><td>r4</td><td>r4</td><td></td><td></td><td></td></tr>
+</table>
+
+<p><strong>How the conflicts were resolved in State 2:</strong> E → T· means reduce E → T, but only on FOLLOW(E) = {+, $, )}. T → T·*F means shift on *. There is no overlap: on + and $ we reduce, on * we shift. <strong>No conflicts!</strong></p>
+
+<p><strong>Similarly in State 6:</strong> E → E+T· means reduce on FOLLOW(E) = {+, $, )}. T → T·*F means shift on *. Again, no overlap. The grammar is SLR.</p>
+</div>
+
+<div class="num-step">
+<div class="step-label">Step 4 — Parse <code>id + id * id $</code></div>
+
+<table>
+<tr><th>Step</th><th>State Stack</th><th>Symbol Stack</th><th>Input</th><th>Action</th></tr>
+<tr><td>1</td><td>0</td><td>$</td><td>id + id * id $</td><td>Shift, go to state 4</td></tr>
+<tr><td>2</td><td>0 4</td><td>$ id</td><td>+ id * id $</td><td>Reduce F → id; Goto(0,F) = 3</td></tr>
+<tr><td>3</td><td>0 3</td><td>$ F</td><td>+ id * id $</td><td>Reduce T → F; Goto(0,T) = 2</td></tr>
+<tr><td>4</td><td>0 2</td><td>$ T</td><td>+ id * id $</td><td>Reduce E → T; Goto(0,E) = 1</td></tr>
+<tr><td>5</td><td>0 1</td><td>$ E</td><td>+ id * id $</td><td>Shift +; go to state 5</td></tr>
+<tr><td>6</td><td>0 1 5</td><td>$ E +</td><td>id * id $</td><td>Shift id; go to state 4</td></tr>
+<tr><td>7</td><td>0 1 5 4</td><td>$ E + id</td><td>* id $</td><td>Reduce F → id; Goto(5,F) = 3</td></tr>
+<tr><td>8</td><td>0 1 5 3</td><td>$ E + F</td><td>* id $</td><td>Reduce T → F; Goto(5,T) = 6</td></tr>
+<tr><td>9</td><td>0 1 5 6</td><td>$ E + T</td><td>* id $</td><td>Shift *; go to state 7</td></tr>
+<tr><td>10</td><td>0 1 5 6 7</td><td>$ E + T *</td><td>id $</td><td>Shift id; go to state 4</td></tr>
+<tr><td>11</td><td>0 1 5 6 7 4</td><td>$ E + T * id</td><td>$</td><td>Reduce F → id; Goto(7,F) = 8</td></tr>
+<tr><td>12</td><td>0 1 5 6 7 8</td><td>$ E + T * F</td><td>$</td><td>Reduce T → T*F; Goto(5,T) = 6</td></tr>
+<tr><td>13</td><td>0 1 5 6</td><td>$ E + T</td><td>$</td><td>Reduce E → E+T; Goto(0,E) = 1</td></tr>
+<tr><td>14</td><td>0 1</td><td>$ E</td><td>$</td><td><strong>Accept!</strong></td></tr>
+</table>
+</div>
+</div>
+</div>
+
+<div class="callout callout-exam">
+<div class="label">LR(0) vs SLR: Key Difference</div>
+<p style="margin:0;">In LR(0), a reduce item [A → α ·] causes a reduction on <strong>every</strong> terminal. In SLR, a reduce item [A → α ·] causes a reduction only on terminals in <strong>FOLLOW(A)</strong>. This simple difference resolves many shift-reduce and reduce-reduce conflicts that plague LR(0) parsers.</p>
+</div>
+
+<h3 id="sec-clr">7c. CLR(1) — Canonical LR(1) Parsing</h3>
+
+<p>CLR(1) parsing is the most powerful variant. It carries <strong>exact lookahead information</strong> in each item, rather than relying on the approximate FOLLOW sets that SLR uses. An LR(1) item is a pair [A → α · β, a] where a is a <strong>lookahead terminal</strong>. The parser reduces A → α only when the next input token is exactly a, not on all of FOLLOW(A).</p>
+
+<div class="defn">
+<div class="defn-label">LR(1) Item and Closure</div>
+<p>An LR(1) item is [A → α · β, a] where A → αβ is a production and a ∈ T ∪ {$} is the lookahead.</p>
+<p><strong>Closure(I):</strong> If [A → α · Bβ, a] ∈ I, then for each production B → γ and each terminal b ∈ FIRST(βa), add [B → · γ, b] to I.</p>
+<p><strong>Goto(I, X):</strong> Move the dot past X in all items of I where X follows the dot, then compute closure.</p>
+</div>
+
+<div class="numerical">
+<div class="num-header">CLR(1) Example: S → (L) | a, L → L,S | S</div>
+<div class="num-body">
+
+<p><strong>Augmented:</strong> S' → S. Let's construct LR(1) items.</p>
+
+<div class="num-step">
+<div class="step-label">I₀ = Closure({[S' → ·S, $]})</div>
+<pre><code>S' → ·S,        {$}
+S  → ·(L),      {$}
+S  → ·a,        {$}
+L  → ·L,S,      {)}
+L  → ·S,        {)}
+S  → ·(L),      {)}
+S  → ·a,        {)}
+L  → ·L,S,      {,}
+L  → ·S,        {,}
+S  → ·(L),      {,}
+S  → ·a,        {,}</code></pre>
+<p>Consolidating lookaheads:</p>
+<pre><code>S' → ·S,        {$}
+S  → ·(L),      {$, ), ,}
+S  → ·a,        {$, ), ,}
+L  → ·L,S,      {), ,}
+L  → ·S,        {), ,}</code></pre>
+</div>
+
+<p><strong>I₁ = Goto(I₀, S):</strong> {S' → S·, $, L → S·, )/comma}</p>
+<p><strong>I₂ = Goto(I₀, ():</strong></p>
+<pre><code>S  → ( ·L),     {$, ), ,}
+L  → ·L,S,      {)}
+L  → ·S,        {)}
+S  → ·(L),      {)}
+S  → ·a,        {)}
+L  → ·L,S,      {,}
+L  → ·S,        {,}
+S  → ·(L),      {,}
+S  → ·a,        {,}</code></pre>
+<p>Consolidating: L → ·L,S, {),,}, L → ·S, {),,}, S → ·(L), {),,}, S → ·a, {),,}</p>
+
+<p><strong>I₃ = Goto(I₂, L):</strong> {S → (L·), {$, ), ,}, L → L·S, {), ,}} plus closure for L → L·S:</p>
+<pre><code>S → (L·),       {$, ), ,}
+L → L·S,        {), ,}
+S → ·(L),       {), ,}
+S → ·a,         {), ,}</code></pre>
+
+<p><strong>I₄ = Goto(I₂, S):</strong> {L → S·, {), ,}}</p>
+
+<p><strong>I₅ = Goto(I₂, a):</strong> {S → a·, {), ,}}</p>
+
+<p><strong>I₆ = Goto(I₃, )): </strong>{S → (L)·, {$, ), ,}}</p>
+
+<p><strong>I₇ = Goto(I₃, S):</strong> {L → LS·, {), ,}}</p>
+
+<p><strong>I₈ = Goto(I₃, ():</strong> Same structure as I₂ with lookaheads {), ,}.</p>
+
+<p><strong>I₉ = Goto(I₀, a):</strong> {S → a·, {$, ), ,}}</p>
+
+<p><strong>Verification (is it CLR(1)?)</strong>: We check that no state has two different reduce items with the same lookahead. If the lookaheads in each state are distinct for each reduce action, the grammar is CLR(1). In this case, all reduce items have non-overlapping lookaheads, so the grammar is <strong>CLR(1)</strong>.</p>
+</div>
+</div>
+
+<h3 id="sec-lalr">7d. LALR(1) Parsing</h3>
+
+<p><strong>LALR(1)</strong> parsing is a practical compromise between CLR(1) and SLR. It takes the CLR(1) item sets and <strong>merges</strong> any two states that have the same <strong>LR(0) core</strong> (the same set of items ignoring lookaheads). The merged state's lookaheads are the union of the two original states' lookaheads. This reduces the number of states (often dramatically) while preserving most of CLR(1)'s power.</p>
+
+<p>The key property of LALR: it never introduces new shift/reduce conflicts. It may introduce new reduce/reduce conflicts if two merged reduce items have overlapping lookaheads, but for most practical grammars this does not happen.</p>
+
+<div class="numerical">
+<div class="num-header">LALR Check: S → ABC, A → aA | ε, B → bB | ε, C → cC | d</div>
+<div class="num-body">
+
+<p><strong>Step 1: Build CLR(1) items.</strong> (Abbreviated for space — the key observation is about state merging.)</p>
+
+<p><strong>Step 2: Identify states with the same LR(0) core.</strong> States that have items like [A → ·, ...] with different lookaheads will be candidates for merging.</p>
+
+<p><strong>Step 3: Merge and check for conflicts.</strong> After merging, if no reduce-reduce conflicts arise (i.e., no two reduce items in the same merged state have the same lookahead), the grammar is <strong>LALR(1)</strong>.</p>
+
+<p>For this particular grammar, the ε-productions create nullable nonterminals A, B, and C. In the CLR(1) construction, reduce items for A → ε, B → ε, and C → ε will carry specific lookaheads. When states are merged, these lookaheads are combined. If the combined lookaheads don't overlap with other reduce items in the same state, the grammar is LALR. In this case, the grammar <strong>is LALR(1)</strong> because the merged states do not create reduce-reduce conflicts.</p>
+</div>
+</div>
+
+<div class="callout callout-exam">
+<div class="label">Comparing LR(0), SLR, CLR(1), and LALR — Exam Answer Template</div>
+<table class="compare-table">
+<tr><th>Feature</th><th>LR(0)</th><th>SLR</th><th>CLR(1)</th><th>LALR(1)</th></tr>
+<tr><td>Lookahead</td><td>None</td><td>FOLLOW sets</td><td>Exact per-item</td><td>Merged exact</td></tr>
+<tr><td>Items</td><td>[A→α·]</td><td>[A→α·]</td><td>[A→α·, a]</td><td>[A→α·, merged lookaheads]</td></tr>
+<tr><td>Reduce action</td><td>All terminals</td><td>FOLLOW(A)</td><td>Exact lookahead a</td><td>Merged lookahead set</td></tr>
+<tr><td>Power</td><td>Weakest</td><td>Better</td><td>Strongest</td><td>≈ SLR to CLR</td></tr>
+<tr><td>Table size</td><td>Smallest</td><td>Small</td><td>Largest</td><td>Same as SLR</td></tr>
+<tr><td>Handles</td><td>LR(0) grammars</td><td>SLR grammars</td><td>All LR(1) grammars</td><td>Most LR(1) grammars</td></tr>
+</table>
+</div>
+
+<div class="memory-trick">
+<div class="label">Memory Trick</div>
+<p style="margin:0;"><strong>LR(0)</strong> = "I'll reduce on everything" (blind). <strong>SLR</strong> = "I'll reduce on what could follow me" (FOLLOW sets — a rough filter). <strong>CLR(1)</strong> = "I'll reduce only on exactly the right token" (precise but bulky). <strong>LALR</strong> = "I'll be as precise as CLR but merge identical-looking states" (compact and practical). Think of it as: LR(0) is a sledgehammer, SLR is a hammer, CLR is a scalpel, and LALR is a Swiss Army knife.</p>
+</div>
+</section>
+
+<!-- ==================== SECTION 8: AMBIGUOUS GRAMMARS ==================== -->
+<section class="section" id="sec-ambiguous-use">
+<h2>8. Using Ambiguous Grammars</h2>
+
+<p>While ambiguous grammars are problematic for pure parser generators that require deterministic tables, they are actually used extensively in practice through tools like <strong>Yacc</strong> and <strong>Bison</strong>. These tools allow you to write ambiguous grammars and resolve the ambiguities using <strong>precedence and associativity declarations</strong>. This is often more convenient and readable than writing an equivalent unambiguous grammar.</p>
+
+<h3>8.1 The Dangling-Else Problem</h3>
+
+<p>The most famous ambiguity in programming language grammars is the <strong>dangling-else problem</strong>. Consider:</p>
+<pre><code>S → if E then S | if E then S else S | other</code></pre>
+<p>The statement <code>if E₁ then if E₂ then S₁ else S₂</code> is ambiguous: does the <code>else</code> belong to the outer <code>if</code> or the inner <code>if</code>?</p>
+
+<p><strong>Standard resolution:</strong> Associate each <code>else</code> with the <strong>closest unmatched <code>if</code></strong> (innermost matching). This can be implemented by rewriting the grammar as:</p>
+<pre><code>S → M | U
+M → if E then M else M | other    (matched if)
+U → if E then S | if E then M else U  (unmatched if)</code></pre>
+
+<p>In practice, most parser generators resolve this by preferring <strong>shift over reduce</strong> when a shift-reduce conflict occurs. Since the parser shifts the <code>else</code> (associating it with the innermost <code>if</code>), the standard convention is automatically applied.</p>
+
+<h3>8.2 Precedence and Associativity in Parser Generators</h3>
+
+<p>In Yacc/Bison, you can declare operator precedence and associativity using directives:</p>
+<pre><code>%left '+' '-'
+%left '*' '/'
+%right '^'
+%nonassoc UMINUS</code></pre>
+
+<p>These declarations resolve the shift-reduce conflicts in expression grammars. Operators declared on the same line have equal precedence; operators declared later have higher precedence. <code>%left</code> means left-associative (prefer reduce), <code>%right</code> means right-associative (prefer shift), and <code>%nonassoc</code> means the operator cannot be chained (e.g., comparison operators like <code><</code>).</p>
+</section>
+
+<!-- ==================== SECTION 9: PARSER GENERATORS & ERROR HANDLING ==================== -->
+<section class="section" id="sec-generators">
+<h2>9. Parser Generators &amp; Error Handling</h2>
+
+<h3>9.1 Parser Generators</h3>
+
+<p>A <strong>parser generator</strong> is a tool that automatically constructs a parser from a grammar specification. The most widely known parser generator is <strong>Yacc</strong> (Yet Another Compiler Compiler), developed by Stephen Johnson at Bell Labs in 1975, and its modern descendant <strong>Bison</strong>. These tools take a CFG augmented with semantic actions (pieces of C/C++ code) and produce a complete bottom-up parser — typically an LALR(1) parser — as output.</p>
+
+<p>The workflow is straightforward: the programmer writes a <code>.y</code> file containing grammar rules, precedence declarations, and semantic actions. The parser generator reads this file, constructs the LALR(1) parsing table, and outputs a C/C++ source file containing the table-driven parser. This file is then compiled and linked with the lexical analyser (typically produced by Lex/Flex) to create a complete front end.</p>
+
+<p>For top-down parsing, tools like <strong>ANTLR</strong> (ANother Tool for Language Recognition) generate LL(*) parsers with adaptive look-ahead. <strong>JavaCC</strong> is another popular tool for generating LL(1) parsers for Java.</p>
+
+<h3>9.2 Error Handling in Parsers</h3>
+
+<p>Error handling is a critical aspect of parser design. When the parser encounters a token that does not match any expected production, it must detect the error, report it usefully, and recover enough to continue parsing the rest of the input (so that multiple errors can be found in a single compilation run).</p>
+
+<p><strong>Types of errors detected during syntax analysis:</strong></p>
+<ul>
+  <li><strong>Syntax errors:</strong> Missing or extra tokens, misplaced delimiters (e.g., mismatched parentheses).</li>
+  <li><strong>Token errors:</strong> Malformed tokens that the lexer couldn't classify (also detected at the lexical level).</li>
+  <li><strong>Type errors:</strong> In some cases, syntactic misuse of types (though most type checking is done in semantic analysis).</li>
+</ul>
+
+<h4>Error Recovery Strategies</h4>
+
+<p><strong>1. Panic-Mode Recovery:</strong> The simplest strategy. When an error is detected, the parser discards tokens from the input one by one until it finds a synchronizing token (like <code>;</code>, <code>}</code>, or <code>end</code>) — a token that is likely to be a valid restart point. Then parsing resumes from that point. This is safe (it never enters an infinite loop) but may skip a lot of input.</p>
+
+<p><strong>2. Phrase-Level Recovery:</strong> When an error is detected, the parser performs a local correction: it may insert a missing token, delete an unexpected token, or replace one token with another. The parsing table can specify the recovery action for each error entry. This is more precise than panic mode but requires careful design to avoid cascading errors.</p>
+
+<p><strong>3. Error Productions:</strong> The programmer adds extra productions to the grammar that describe common syntactic errors. For example, adding a production <code>S → if E then</code> (missing the then-clause body) allows the parser to recognize and diagnose this specific mistake.</p>
+
+<p><strong>4. Global-Correction:</strong> The parser tries to find the minimal set of insertions, deletions, or changes that would make the input valid. This is theoretically appealing but computationally expensive (O(n³) or worse) and is not used in practice.</p>
+
+<div class="callout callout-exam">
+<div class="label">PYQ Alert</div>
+<p style="margin:0;"><span class="pyq-badge">Repeated</span> "What do you mean by error handler? Illustrate the various types of errors detected by the error handler at the lexical and syntax analysis phase. Illustrate error handling techniques with an appropriate example." For a complete 15-mark answer: (1) define error handler, (2) list error types at lexical level (invalid characters, unterminated strings) and syntax level (missing semicolons, unbalanced braces, type mismatches), (3) explain each recovery strategy with an example, (4) discuss trade-offs between strategies, (5) include a diagram showing error detection in the compiler pipeline.</p>
+</div>
+</section>
+
+<!-- ==================== FINAL REVISION SHEET ==================== -->
+<section class="section" id="sec-revision">
+<h2>★ Final Revision Sheet</h2>
+
+<div class="rev-card">
+<h4>Quick Revision: Everything You Need in 5 Minutes</h4>
+
+<p><strong>CFG:</strong> G = (N, T, P, S). Productions have single nonterminal on LHS. Generates context-free languages.</p>
+
+<p><strong>Ambiguous:</strong> Two parse trees for same string. Fix: rewrite grammar or use precedence declarations.</p>
+
+<p><strong>Left Recursion:</strong> A → Aα | β. Fix: A → βA', A' → αA' | ε.</p>
+
+<p><strong>Left Factoring:</strong> A → αβ₁ | αβ₂. Fix: A → αA', A' → β₁ | β₂.</p>
+
+<p><strong>FIRST(X):</strong> Terminals that can begin strings derived from X.</p>
+
+<p><strong>FOLLOW(A):</strong> Terminals that can immediately follow A in sentential forms. $ always in FOLLOW of start symbol.</p>
+
+<p><strong>LL(1) Table:</strong> For A → α: put in M[A, a] for all a ∈ FIRST(α). If ε ∈ FIRST(α), also put in M[A, b] for all b ∈ FOLLOW(A). No cell should have two entries.</p>
+
+<p><strong>LR(0) Item:</strong> Production with dot. Complete item → reduce on ALL terminals.</p>
+
+<p><strong>SLR:</strong> Reduce A → α only on FOLLOW(A).</p>
+
+<p><strong>CLR(1):</strong> Items carry exact lookahead [A → α·β, a]. Reduce only on a.</p>
+
+<p><strong>LALR:</strong> Merge CLR(1) states with same LR(0) core. Union lookaheads.</p>
+
+<p><strong>Operator Precedence:</strong> Three relations: ⋖ (shift), ≐ (equal/shift), ⋗ (reduce). Build table from grammar and precedence rules.</p>
+
+<p><strong>Error Recovery:</strong> Panic-mode (skip to sync token), phrase-level (local fix), error productions, global correction.</p>
+</div>
+
+<div class="rev-card">
+<h4>Most Likely Exam Questions (from PYQ Analysis)</h4>
+<ol>
+  <li>Remove left recursion from given grammar (3-4 variants appear repeatedly)</li>
+  <li>Compute FIRST and FOLLOW sets, construct LL(1) parsing table</li>
+  <li>Check if grammar is LL(1) — show why or why not</li>
+  <li>Construct operator precedence table using Lead/Last and parse a string</li>
+  <li>Construct LR(0) item sets and SLR parsing table; parse a string</li>
+  <li>Construct CLR(1) items; verify if grammar is CLR(1)</li>
+  <li>Check if grammar is LALR — explain merging process</li>
+  <li>Explain LL(1) vs LR(0) incomparability with examples</li>
+  <li>Difference between recursive descent and table-driven parsing</li>
+  <li>Error handling techniques with examples</li>
+</ol>
+</div>
+
+<div class="rev-card">
+<h4>How to Structure a 10-Mark Answer on "Construct LL(1) Parsing Table"</h4>
+<ol>
+  <li><strong>(1 mark)</strong> State the grammar clearly.</li>
+  <li><strong>(2 marks)</strong> Remove left recursion / apply left factoring if needed.</li>
+  <li><strong>(2 marks)</strong> Compute FIRST sets — show work for each nonterminal.</li>
+  <li><strong>(2 marks)</strong> Compute FOLLOW sets — show work, mention $ for start symbol.</li>
+  <li><strong>(2 marks)</strong> Construct the parsing table using the FIRST/FOLLOW algorithm.</li>
+  <li><strong>(1 mark)</strong> Conclude: state whether the grammar is LL(1) (no conflicts in any cell) and briefly explain why.</li>
+</ol>
+</div>
+
+<div class="rev-card">
+<h4>How to Structure a 10-Mark Answer on "Construct SLR Parsing Table"</h4>
+<ol>
+  <li><strong>(1 mark)</strong> State the grammar and augment it (add E' → E).</li>
+  <li><strong>(3 marks)</strong> Construct the canonical collection of LR(0) item sets — show all states I₀ through Iₙ with Goto and Closure computations.</li>
+  <li><strong>(1 mark)</strong> Compute FOLLOW sets for all nonterminals.</li>
+  <li><strong>(3 marks)</strong> Construct the SLR parsing table — for each state, apply shift rules (dot before terminal → shift) and reduce rules (dot at end → reduce on FOLLOW).</li>
+  <li><strong>(2 marks)</strong> Parse a given input string — show the state stack, symbol stack, input, and action for each step.</li>
+</ol>
+</div>
+
+<div class="rev-card">
+<h4>Commonly Confused Points</h4>
+<ul>
+  <li><strong>FIRST vs FOLLOW:</strong> FIRST asks "what can START a string from X?" FOLLOW asks "what can come AFTER X?"</li>
+  <li><strong>LR(0) reduce vs SLR reduce:</strong> LR(0) reduces on ALL terminals; SLR reduces only on FOLLOW(A).</li>
+  <li><strong>CLR(1) vs LALR:</strong> CLR(1) has distinct states per lookahead; LALR merges states with same LR(0) core.</li>
+  <li><strong>Left recursion removal changes the grammar:</strong> The new grammar with A' is equivalent (generates same language) but has different parse trees.</li>
+  <li><strong>LL(1) requires no left recursion and no common prefixes.</strong> If either exists, transform first.</li>
+  <li><strong>Operator precedence parsing is NOT LR parsing.</strong> It's a simpler technique that works only for expression-like grammars.</li>
+  <li><strong>ε ∈ FIRST(A) means A can derive the empty string.</strong> This affects both FIRST and FOLLOW computations.</li>
+  <li><strong>Augmented grammar:</strong> Always add S' → S as production 0 for LR parsing. The augmented start symbol has $ in its FOLLOW set.</li>
+</ul>
+</div>
+
+<div class="rev-card">
+<h4>Diagram Quick-Draw Guide for Exams</h4>
+<p><strong>Parse Tree:</strong> Draw a tree with nonterminals at internal nodes and terminals at leaves. Connect with lines. Make sure left-to-right leaf reading = input string.</p>
+<p><strong>LR(0) DFA:</strong> Draw circles for each state. Label with item sets. Draw arrows for transitions on terminals and nonterminals. Number each state (I₀, I₁, ...).</p>
+<p><strong>Operator Precedence Table:</strong> Square grid with all operators as row/column headers. Fill with ⋖, ⋗, ≐, err, acc. Use a box around the table.</p>
+<p><strong>Compiler Pipeline:</strong> Horizontal boxes: Source → Lexical → Tokens → [Parser] → Parse Tree → Semantic → ... Label arrows with what flows between phases.</p>
+</div>
+
+<div class="pull-quote">
+"The grammar is not the language. The language is what the grammar generates — and the parser is the machine that bridges the two."
+</div>
+
+</section>
+
+</main>
+
+<footer style="text-align:center; padding: 3rem 2rem; border-top: 3px double var(--border); margin-top: 2rem; background: var(--bg-alt);">
+  <p style="font-family: var(--heading); font-size: 1.1rem; color: var(--accent);">Unit 2 · Syntax Analysis — I</p>
+  <p style="font-family: var(--annotation); font-size: 0.75rem; color: var(--text-muted); letter-spacing: 0.1em;">TCS-601 · Compiler Design · Comprehensive Study Document</p>
+  <p style="font-family: var(--annotation); font-size: 0.7rem; color: var(--text-muted); margin-top: 0.5rem;">Covering all PYQ topics with detailed explanations, worked numericals, and exam strategies.</p>
+</footer>
+
+<script>
+// Navigation toggle
+const navToggle = document.getElementById('navToggle');
+const sideNav = document.getElementById('sideNav');
+navToggle.addEventListener('click', () => {
+  sideNav.classList.toggle('open');
+  navToggle.textContent = sideNav.classList.contains('open') ? '✕' : '☰';
+});
+
+// Close nav on link click (mobile)
+sideNav.querySelectorAll('a').forEach(a => {
+  a.addEventListener('click', () => {
+    if (window.innerWidth < 900) {
+      sideNav.classList.remove('open');
+      navToggle.textContent = '☰';
+    }
+  });
+});
+
+// Progress bar
+window.addEventListener('scroll', () => {
+  const scrollTop = document.documentElement.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const progress = (scrollTop / scrollHeight) * 100;
+  document.getElementById('progressBar').style.width = progress + '%';
+});
+
+// Intersection observer for fade-in animations
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.card, .numerical, .callout, .defn, .rev-card, .analogy').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(15px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>

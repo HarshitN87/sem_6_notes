@@ -1,0 +1,2182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 3 — The Link Layer & LANs: VLANs, MPLS, Data Center Networking</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F4EDE4;
+  --bg-deep: #EBE1D3;
+  --fg: #2C2418;
+  --fg-muted: #5C4A32;
+  --fg-light: #8B7B65;
+  --accent: #9B4D2B;
+  --accent2: #4A6741;
+  --accent3: #B8860B;
+  --card: #EDE6D6;
+  --card-alt: #E5DCD0;
+  --border: #C4B89C;
+  --border-dark: #8B7B65;
+  --highlight: #F7F0E3;
+  --parchment: #FAF5EB;
+  --red-soft: #A0522D;
+  --teal: #3B7A7A;
+  --plum: #6B3A5E;
+  --radius: 3px;
+  --shadow: 0 1px 4px rgba(44,36,24,0.08);
+  --shadow-deep: 0 4px 16px rgba(44,36,24,0.12);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 17px; }
+
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--bg);
+  color: var(--fg);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- SCROLLBAR --- */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg-deep); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--border-dark); }
+
+/* --- UTILITY --- */
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+/* --- COVER --- */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(155,77,43,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(74,103,65,0.05) 0%, transparent 50%),
+    linear-gradient(175deg, var(--parchment) 0%, var(--bg) 40%, var(--bg-deep) 100%);
+  border-bottom: 2px solid var(--border);
+  position: relative;
+}
+.cover::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 6px;
+  background: repeating-linear-gradient(90deg, var(--accent) 0px, var(--accent) 12px, var(--accent2) 12px, var(--accent2) 24px, var(--accent3) 24px, var(--accent3) 36px);
+}
+.cover-subject {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--fg-light);
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border);
+  padding: 0.4rem 1.2rem;
+  background: var(--card);
+}
+.cover-unit {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(3rem, 8vw, 6rem);
+  font-weight: 700;
+  line-height: 1.05;
+  color: var(--fg);
+  margin-bottom: 0.3rem;
+}
+.cover-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+  font-weight: 500;
+  font-style: italic;
+  color: var(--accent);
+  margin-bottom: 2rem;
+  max-width: 700px;
+}
+.cover-topics {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  max-width: 800px;
+  margin-bottom: 3rem;
+}
+.cover-topics span {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.8rem;
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--fg-muted);
+}
+.cover-rule {
+  width: 60px;
+  height: 2px;
+  background: var(--accent);
+  margin-bottom: 2rem;
+}
+.cover-meta {
+  font-size: 0.85rem;
+  color: var(--fg-light);
+  font-style: italic;
+  max-width: 520px;
+  line-height: 1.7;
+}
+
+/* --- LAYOUT --- */
+.page-wrapper {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.toc-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0.6rem 0;
+  backdrop-filter: blur(8px);
+  overflow-x: auto;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+.toc-bar::-webkit-scrollbar { height: 0; }
+.toc-inner {
+  display: flex;
+  gap: 0.3rem;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.toc-link {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fg-light);
+  text-decoration: none;
+  padding: 0.3rem 0.7rem;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.toc-link:hover, .toc-link.active {
+  color: var(--accent);
+  border-color: var(--border);
+  background: var(--card);
+}
+
+/* --- CHAPTER --- */
+.chapter {
+  padding: 4rem 0 2rem;
+  border-bottom: 1px solid var(--border);
+}
+.chapter:last-of-type { border-bottom: none; }
+
+.chapter-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px dashed var(--border);
+}
+.chapter-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--fg-light);
+  margin-bottom: 0.5rem;
+}
+.chapter-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700;
+  color: var(--fg);
+  margin-bottom: 0.5rem;
+}
+.chapter-subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--accent);
+}
+
+/* --- SECTION --- */
+.section {
+  margin-bottom: 3rem;
+}
+.section-label {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 0.2rem 0.6rem;
+  display: inline-block;
+  margin-bottom: 0.8rem;
+  background: rgba(155,77,43,0.04);
+}
+.section-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.55rem;
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: 1rem;
+  line-height: 1.3;
+}
+
+/* --- PROSE --- */
+.prose { margin-bottom: 1.5rem; }
+.prose p {
+  margin-bottom: 1.2rem;
+  text-align: justify;
+  hyphens: auto;
+}
+.prose p:last-child { margin-bottom: 0; }
+
+/* --- PULL QUOTE --- */
+.pull-quote {
+  border-left: 3px solid var(--accent);
+  padding: 1rem 1.5rem;
+  margin: 2rem 0;
+  background: rgba(155,77,43,0.03);
+  font-style: italic;
+  color: var(--fg-muted);
+  font-size: 1.05rem;
+  line-height: 1.7;
+}
+
+/* --- SIDENOTE --- */
+.sidenote {
+  float: right;
+  width: 200px;
+  margin: 0 0 1rem 1.5rem;
+  padding: 0.8rem;
+  background: var(--parchment);
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  line-height: 1.6;
+  color: var(--fg-muted);
+  position: relative;
+}
+.sidenote::before {
+  content: 'NOTE';
+  font-family: 'Fira Code', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.3rem;
+}
+
+/* --- CARDS --- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+.card-accent {
+  border-left: 3px solid var(--accent);
+}
+.card-green {
+  border-left: 3px solid var(--accent2);
+  background: rgba(74,103,65,0.04);
+}
+.card-gold {
+  border-left: 3px solid var(--accent3);
+  background: rgba(184,134,11,0.04);
+}
+.card-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.6rem;
+  color: var(--fg);
+}
+.card p, .card li {
+  font-size: 0.9rem;
+  line-height: 1.65;
+  color: var(--fg-muted);
+}
+.card ul, .card ol {
+  padding-left: 1.2rem;
+  margin-bottom: 0.5rem;
+}
+.card li { margin-bottom: 0.3rem; }
+
+/* --- DEFINITION BOX --- */
+.def-box {
+  background: var(--parchment);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+  position: relative;
+}
+.def-box::before {
+  content: 'FORMAL DEFINITION';
+  font-family: 'Fira Code', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  position: absolute;
+  top: -0.5rem;
+  left: 1rem;
+  background: var(--parchment);
+  padding: 0 0.4rem;
+}
+.def-box p {
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: var(--fg-muted);
+}
+
+/* --- COMPARISON TABLE --- */
+.table-wrapper {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+thead th {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--fg-light);
+  background: var(--bg-deep);
+  padding: 0.7rem 1rem;
+  text-align: left;
+  border-bottom: 2px solid var(--border);
+}
+tbody td {
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--fg-muted);
+  vertical-align: top;
+  line-height: 1.55;
+}
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: rgba(155,77,43,0.03); }
+
+/* --- COLLAPSIBLE --- */
+.collapsible {
+  margin: 1.5rem 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--card);
+  overflow: hidden;
+}
+.collapsible-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 1.2rem;
+  cursor: pointer;
+  user-select: none;
+  background: var(--bg-deep);
+  transition: background 0.2s;
+}
+.collapsible-header:hover { background: var(--card-alt); }
+.collapsible-header-left {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.collapsible-icon {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.collapsible-arrow {
+  font-size: 0.8rem;
+  color: var(--fg-light);
+  transition: transform 0.25s;
+}
+.collapsible.open .collapsible-arrow { transform: rotate(180deg); }
+.collapsible-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, padding 0.3s ease;
+  padding: 0 1.2rem;
+}
+.collapsible.open .collapsible-body {
+  max-height: 3000px;
+  padding: 1rem 1.2rem;
+}
+.collapsible-body p, .collapsible-body li {
+  font-size: 0.88rem;
+  line-height: 1.65;
+  color: var(--fg-muted);
+}
+.collapsible-body ul, .collapsible-body ol { padding-left: 1.2rem; margin-bottom: 0.5rem; }
+.collapsible-body li { margin-bottom: 0.25rem; }
+
+/* --- SVG DIAGRAM CONTAINER --- */
+.diagram-container {
+  margin: 2rem 0;
+  text-align: center;
+}
+.diagram-container svg {
+  max-width: 100%;
+  height: auto;
+}
+.diagram-caption {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: var(--fg-light);
+  margin-top: 0.6rem;
+  text-align: center;
+}
+
+/* --- EXAM TIP --- */
+.exam-tip {
+  background: rgba(184,134,11,0.06);
+  border: 1px solid rgba(184,134,11,0.25);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  margin: 1.5rem 0;
+  position: relative;
+}
+.exam-tip::before {
+  content: 'EXAM STRATEGY';
+  font-family: 'Fira Code', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--accent3);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+.exam-tip p, .exam-tip li {
+  font-size: 0.88rem;
+  color: var(--fg-muted);
+  line-height: 1.6;
+}
+
+/* --- MEMORY ANCHOR --- */
+.memory-anchor {
+  background: rgba(74,103,65,0.05);
+  border: 1px dashed var(--accent2);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  margin: 1.5rem 0;
+}
+.memory-anchor::before {
+  content: 'MEMORY ANCHOR';
+  font-family: 'Fira Code', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--accent2);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+.memory-anchor p {
+  font-size: 0.88rem;
+  color: var(--fg-muted);
+  line-height: 1.6;
+}
+
+/* --- CONFUSION BOX --- */
+.confusion-box {
+  background: rgba(160,82,45,0.04);
+  border: 1px solid rgba(160,82,45,0.2);
+  border-radius: var(--radius);
+  padding: 1rem 1.2rem;
+  margin: 1.5rem 0;
+}
+.confusion-box::before {
+  content: 'COMMON CONFUSION';
+  font-family: 'Fira Code', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--red-soft);
+  margin-bottom: 0.4rem;
+  display: block;
+}
+.confusion-box p {
+  font-size: 0.88rem;
+  color: var(--fg-muted);
+  line-height: 1.6;
+}
+
+/* --- REVISION CARD --- */
+.revision-card {
+  background: var(--parchment);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin: 1.5rem 0;
+  position: relative;
+}
+.revision-card::before {
+  content: 'REVISION CARD';
+  font-family: 'Fira Code', monospace;
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  position: absolute;
+  top: -0.5rem;
+  left: 1rem;
+  background: var(--parchment);
+  padding: 0 0.4rem;
+}
+.revision-card p, .revision-card li {
+  font-size: 0.85rem;
+  line-height: 1.6;
+  color: var(--fg-muted);
+}
+.revision-card ul, .revision-card ol { padding-left: 1.2rem; }
+
+/* --- DIVIDER --- */
+.divider {
+  text-align: center;
+  margin: 3rem 0;
+  color: var(--border);
+  font-size: 1.2rem;
+  letter-spacing: 0.5em;
+}
+
+/* --- TWO COL --- */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+@media (max-width: 700px) {
+  .two-col { grid-template-columns: 1fr; }
+  .sidenote { float: none; width: 100%; margin: 1rem 0; }
+}
+
+/* --- HIGHLIGHT MARK --- */
+mark {
+  background: rgba(184,134,11,0.18);
+  padding: 0.05em 0.2em;
+  border-radius: 2px;
+  color: inherit;
+}
+
+/* --- INLINE CODE --- */
+code {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.82em;
+  background: var(--bg-deep);
+  padding: 0.1em 0.35em;
+  border-radius: 2px;
+  color: var(--accent);
+}
+
+/* --- STRONG --- */
+strong { font-weight: 600; color: var(--fg); }
+
+/* --- APPENDIX --- */
+.appendix {
+  background: var(--bg-deep);
+  border-top: 2px solid var(--border);
+  padding: 3rem 0;
+  margin-top: 2rem;
+}
+
+/* --- VIVA Q --- */
+.viva-item {
+  border-bottom: 1px solid var(--border);
+  padding: 0.7rem 0;
+}
+.viva-q {
+  font-weight: 600;
+  color: var(--fg);
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+.viva-a {
+  display: none;
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--fg-muted);
+  line-height: 1.6;
+  padding-left: 1rem;
+  border-left: 2px solid var(--accent2);
+}
+.viva-item.open .viva-a { display: block; }
+
+/* --- PRINT --- */
+@media print {
+  .toc-bar { display: none; }
+  body { font-size: 11pt; }
+  .cover { min-height: auto; padding: 2rem; page-break-after: always; }
+  .chapter { page-break-before: always; }
+  .collapsible-body { max-height: none !important; padding: 1rem 1.2rem !important; }
+  .collapsible-arrow { display: none; }
+  .sidenote { float: none; width: 100%; margin: 1rem 0; }
+}
+
+/* --- ANIMATIONS --- */
+@keyframes fadeSlideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeSlideUp 0.6s ease forwards; }
+
+@keyframes subtlePulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+/* --- FLOW STEP --- */
+.flow-steps {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  margin: 1.5rem 0;
+  align-items: flex-start;
+}
+.flow-step {
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+  padding: 0.8rem 0.5rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--fg-muted);
+  line-height: 1.5;
+  position: relative;
+}
+.flow-step strong {
+  display: block;
+  font-family: 'Fira Code', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.3rem;
+}
+.flow-arrow {
+  display: flex;
+  align-items: center;
+  color: var(--border-dark);
+  font-size: 1.2rem;
+  padding: 0 0.3rem;
+}
+
+/* --- KEY TERM --- */
+.key-term {
+  font-weight: 600;
+  color: var(--accent);
+  border-bottom: 1px dotted var(--accent);
+  cursor: help;
+}
+
+/* --- TAG --- */
+.tag {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.15rem 0.45rem;
+  border-radius: 2px;
+  display: inline-block;
+  margin-right: 0.3rem;
+}
+.tag-2m { background: rgba(74,103,65,0.12); color: var(--accent2); }
+.tag-5m { background: rgba(184,134,11,0.12); color: var(--accent3); }
+.tag-10m { background: rgba(155,77,43,0.12); color: var(--accent); }
+.tag-15m { background: rgba(160,82,45,0.12); color: var(--red-soft); }
+</style>
+</head>
+<body>
+
+<!-- ==================== COVER ==================== -->
+<header class="cover">
+  <div class="cover-subject">Computer Networks &mdash; CN2</div>
+  <div class="cover-unit">Unit 3</div>
+  <div class="cover-title">The Link Layer &amp; LANs: VLANs, MPLS, and the Architecture of Data Centers</div>
+  <div class="cover-rule"></div>
+  <div class="cover-topics">
+    <span>Virtual LANs</span>
+    <span>802.1Q</span>
+    <span>VXLAN / EVPN</span>
+    <span>Link Virtualization</span>
+    <span>MPLS</span>
+    <span>Label-Switched Routers</span>
+    <span>Traffic Engineering</span>
+    <span>Data Center Architectures</span>
+    <span>Leaf-Spine Topology</span>
+    <span>SDN in Data Centers</span>
+    <span>Google ORION</span>
+    <span>AI / HPC Networking</span>
+  </div>
+  <div class="cover-meta">
+    A comprehensive, exam-oriented master document for Indian university examinations.
+    Every concept is explained with enough depth to write confident 400&ndash;1000 word answers.
+    Includes diagrams, comparisons, viva questions, revision cards, and memory anchors.
+  </div>
+</header>
+
+<!-- ==================== TOC BAR ==================== -->
+<nav class="toc-bar" id="tocBar">
+  <div class="toc-inner">
+    <a href="#ch1" class="toc-link">I. VLANs</a>
+    <a href="#ch1-motivation" class="toc-link">Motivation</a>
+    <a href="#ch1-port" class="toc-link">Port-Based</a>
+    <a href="#ch1-trunk" class="toc-link">Trunk Ports</a>
+    <a href="#ch1-8021q" class="toc-link">802.1Q</a>
+    <a href="#ch1-vxlan" class="toc-link">VXLAN</a>
+    <a href="#ch2" class="toc-link">II. Link Virtualization</a>
+    <a href="#ch3" class="toc-link">III. MPLS</a>
+    <a href="#ch3-signaling" class="toc-link">Signaling</a>
+    <a href="#ch4" class="toc-link">IV. Data Centers</a>
+    <a href="#ch4-elements" class="toc-link">Elements</a>
+    <a href="#ch4-topology" class="toc-link">Topology</a>
+    <a href="#ch4-routing" class="toc-link">Routing</a>
+    <a href="#ch4-protocols" class="toc-link">Protocols</a>
+    <a href="#ch5" class="toc-link">V. Trends</a>
+    <a href="#appendix" class="toc-link">Exam Arsenal</a>
+  </div>
+</nav>
+
+<!-- ==================== MAIN CONTENT ==================== -->
+<main class="page-wrapper">
+
+<!-- ============================================================ -->
+<!-- CHAPTER I: VIRTUAL LANS                                      -->
+<!-- ============================================================ -->
+<section class="chapter" id="ch1">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter I</div>
+    <h1 class="chapter-title">Virtual Local Area Networks</h1>
+    <div class="chapter-subtitle">Segmenting the Broadcast Domain Without Rewiring the World</div>
+  </div>
+
+  <!-- MOTIVATION -->
+  <div class="section" id="ch1-motivation">
+    <span class="section-label">Motivation</span>
+    <h2 class="section-title">Why VLANs? The Scaling Problem of a Single Broadcast Domain</h2>
+
+    <div class="prose">
+      <p>Imagine a university campus network&mdash;not the idealized diagrams of textbooks, but the real thing, humming and clicking in a basement room, serving thousands of machines across departments of computer science, electrical engineering, mechanical engineering, and the humanities. Every single machine, in the absence of any subdivision, resides in one flat Layer 2 network. This means every broadcast frame&mdash;every ARP request asking &ldquo;who has 192.168.1.1?&rdquo;, every DHCP discover message, every frame destined for an unknown MAC address&mdash;floods out of every switch port on the entire campus. A DHCP request from a laptop in the physics department creates traffic on a switch port serving the library&rsquo;s printers. An ARP request in the dean&rsquo;s office consumes bandwidth at a server rack in the basement. This is the reality of a <strong>single broadcast domain</strong>, and it is the fundamental problem that VLANs were designed to solve.</p>
+
+      <p>The issue is not merely one of wasted bandwidth, although that is certainly a concern. In a sufficiently large LAN, broadcast traffic can consume a non-trivial fraction of available capacity. Every host must process every broadcast frame at least enough to determine that the frame is not relevant to it&mdash;this consumes CPU cycles on every endpoint. But the more serious problems are ones of <strong>security, privacy, and administrative flexibility</strong>. In a single broadcast domain, any host can see broadcast traffic from any other host. A compromised machine in one department can inject malicious ARP responses that affect machines in entirely different departments. A curious student running a packet sniffer in promiscuous mode can observe broadcast traffic&mdash;and potentially unicast traffic misdirected by ARP poisoning&mdash;from across the entire organization. There is no isolation, no containment, no way to say &ldquo;these machines talk to each other freely, but those machines should not even see each other&rsquo;s presence at Layer 2.&rdquo;</p>
+
+      <p>Then there is the administrative problem, which is perhaps the most immediately felt by network operators. Consider a computer science professor who moves offices from the CS building to the electrical engineering building. Physically, her computer is now plugged into a switch port in the EE building. But she needs to remain on the CS department&rsquo;s network&mdash;she needs access to CS file servers, CS subnets, CS-specific firewall rules, and CS IP address ranges. In a world without VLANs, her machine is now on the EE network, period. The only solutions are either to physically rewire the building&rsquo;s switches (impractical and fragile), to deploy a separate physical network infrastructure for each department (expensive and unscalable), or to accept that the user&rsquo;s network location is determined entirely by her physical location (inflexible and frustrating).</p>
+
+      <p>VLANs dissolve this coupling between physical topology and logical network membership. They allow a single physical switch&mdash;or an entire network of interconnected switches&mdash;to be partitioned into multiple virtual LANs, each of which functions as its own independent broadcast domain. Frames in one VLAN cannot leak into another VLAN at Layer 2, providing isolation, security, and efficient use of bandwidth. And a port&rsquo;s VLAN membership is a software configuration, not a hardware constraint, meaning that the CS professor&rsquo;s new office port can be reassigned to the CS VLAN with a few keystrokes on a management console, without any physical rewiring whatsoever.</p>
+    </div>
+
+    <div class="def-box">
+      <p><strong>Virtual Local Area Network (VLAN):</strong> A logical grouping of network nodes&mdash;defined by software configuration on switch ports, MAC addresses, or protocol types&mdash;such that members of the same VLAN share a common broadcast domain, while nodes in different VLANs are isolated from each other at Layer 2, regardless of their physical location or physical connectivity.</p>
+    </div>
+
+    <div class="memory-anchor">
+      <p><strong>Analogy:</strong> Think of a large open-plan office. Without VLANs, it&rsquo;s as if there are no walls&mdash;everyone hears every conversation (broadcast). VLANs are like installing glass partitions: people in the same partitioned area can talk freely among themselves, but cannot hear conversations in other areas. The partitions are movable (software-configured), so when someone moves desks, you just reposition the glass&mdash;no construction needed.</p>
+    </div>
+
+    <div class="confusion-box">
+      <p><strong>VLAN vs. Subnet:</strong> A VLAN operates at Layer 2 (Data Link), segmenting broadcast domains. A subnet operates at Layer 3 (Network), segmenting IP address ranges. In practice, each VLAN typically maps to a separate IP subnet, but they are conceptually distinct. A VLAN prevents broadcast frames from crossing boundaries; a subnet determines how IP packets are routed. You could theoretically have multiple subnets within one VLAN, but this is poor practice because broadcasts still cross subnet boundaries within the VLAN.</p>
+    </div>
+  </div>
+
+  <!-- PORT-BASED VLANS -->
+  <div class="section" id="ch1-port">
+    <span class="section-label">Core Concept</span>
+    <h2 class="section-title">Port-Based VLANs: The Simplest and Most Common Form</h2>
+
+    <div class="prose">
+      <p>The most widely deployed form of VLAN is the <strong>port-based VLAN</strong>, and its mechanism is elegantly straightforward. A switch that supports VLAN capabilities&mdash;which is to say, virtually every managed switch manufactured in the last two decades&mdash;allows its physical ports to be grouped into one or more VLANs using the switch&rsquo;s management software. When a port is assigned to a particular VLAN, the switch treats that port as belonging to an isolated broadcast domain consisting only of the other ports in the same VLAN. A frame arriving on a port in VLAN 10 will only be forwarded out of other ports that also belong to VLAN 10. The switch maintains a separate forwarding table for each VLAN, so even MAC address learning is VLAN-aware: if a frame with source MAC <code>AA:BB:CC:DD:EE:FF</code> arrives on a port in VLAN 10, the switch learns that <code>AA:BB:CC:DD:EE:FF</code> is reachable via VLAN 10, not via any other VLAN.</p>
+
+      <p>Consider a concrete example. A 16-port switch is configured so that ports 1 through 8 belong to the EE VLAN and ports 9 through 15 belong to the CS VLAN. Port 16 might be a special uplink port. When a host on port 2 (EE VLAN) sends a broadcast frame, the switch forwards that frame only out of ports 1, 3, 4, 5, 6, 7, and 8&mdash;the other ports in the EE VLAN. Ports 9 through 15 see nothing. The CS hosts are completely unaware that a broadcast occurred in the EE VLAN. This is <strong>traffic isolation</strong>, and it is the fundamental benefit of VLANs.</p>
+
+      <p>It is worth noting that port-based VLANs are not the only possible implementation. Some switches support <strong>MAC-based VLANs</strong>, where VLAN membership is determined by the MAC address of the endpoint rather than the physical port. This means that a laptop belongs to a particular VLAN regardless of which switch port it plugs into. This is more flexible but also more complex to manage, since the switch must maintain a mapping of MAC addresses to VLANs. There are also <strong>protocol-based VLANs</strong>, where VLAN membership is determined by the Layer 3 protocol in the frame (IP, IPX, AppleTalk, etc.), though these are largely historical. Finally, some systems support <strong>dynamic VLAN membership</strong>, where ports can be assigned to VLANs on the fly based on authentication (for example, via IEEE 802.1X), allowing a user&rsquo;s VLAN assignment to follow them based on their login credentials rather than their physical port or MAC address.</p>
+    </div>
+
+    <!-- PORT-BASED VLAN DIAGRAM -->
+    <div class="diagram-container">
+      <svg viewBox="0 0 760 340" xmlns="http://www.w3.org/2000/svg">
+        <!-- Switch body -->
+        <rect x="140" y="80" width="480" height="100" rx="4" fill="#EDE6D6" stroke="#5C4A32" stroke-width="2"/>
+        <text x="380" y="105" font-family="Cormorant Garamond, serif" font-size="14" font-weight="600" fill="#2C2418" text-anchor="middle">Managed Switch (VLAN-Capable)</text>
+
+        <!-- EE VLAN ports -->
+        <rect x="160" y="120" width="24" height="24" rx="2" fill="#D4A574" stroke="#5C4A32" stroke-width="1"/>
+        <text x="172" y="136" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">1</text>
+        <rect x="192" y="120" width="24" height="24" rx="2" fill="#D4A574" stroke="#5C4A32" stroke-width="1"/>
+        <text x="204" y="136" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">2</text>
+        <rect x="224" y="120" width="24" height="24" rx="2" fill="#D4A574" stroke="#5C4A32" stroke-width="1"/>
+        <text x="236" y="136" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">3</text>
+        <rect x="256" y="120" width="24" height="24" rx="2" fill="#D4A574" stroke="#5C4A32" stroke-width="1"/>
+        <text x="268" y="136" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">4</text>
+        <rect x="288" y="120" width="24" height="24" rx="2" fill="#D4A574" stroke="#5C4A32" stroke-width="1"/>
+        <text x="300" y="136" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">5</text>
+        <rect x="320" y="120" width="24" height="24" rx="2" fill="#D4A574" stroke="#5C4A32" stroke-width="1"/>
+        <text x="332" y="136" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">6</text>
+
+        <!-- Dots -->
+        <text x="360" y="137" font-family="Source Serif 4, serif" font-size="14" fill="#8B7B65">...</text>
+
+        <rect x="380" y="120" width="24" height="24" rx="2" fill="#D4A574" stroke="#5C4A32" stroke-width="1"/>
+        <text x="392" y="136" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">8</text>
+
+        <!-- CS VLAN ports -->
+        <rect x="430" y="120" width="24" height="24" rx="2" fill="#7B9E6B" stroke="#5C4A32" stroke-width="1"/>
+        <text x="442" y="136" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">9</text>
+        <rect x="462" y="120" width="24" height="24" rx="2" fill="#7B9E6B" stroke="#5C4A32" stroke-width="1"/>
+        <text x="474" y="136" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">10</text>
+        <rect x="494" y="120" width="24" height="24" rx="2" fill="#7B9E6B" stroke="#5C4A32" stroke-width="1"/>
+        <text x="506" y="136" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">11</text>
+        <rect x="526" y="120" width="24" height="24" rx="2" fill="#7B9E6B" stroke="#5C4A32" stroke-width="1"/>
+        <text x="538" y="136" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">12</text>
+
+        <text x="566" y="137" font-family="Source Serif 4, serif" font-size="14" fill="#8B7B65">...</text>
+
+        <rect x="584" y="120" width="24" height="24" rx="2" fill="#7B9E6B" stroke="#5C4A32" stroke-width="1"/>
+        <text x="596" y="136" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">15</text>
+
+        <!-- EE VLAN bracket -->
+        <path d="M 160 155 L 160 170 L 404 170 L 404 155" fill="none" stroke="#D4A574" stroke-width="1.5"/>
+        <text x="282" y="188" font-family="Fira Code, monospace" font-size="9" fill="#9B4D2B" text-anchor="middle" font-weight="500">EE VLAN (Ports 1&ndash;8)</text>
+
+        <!-- CS VLAN bracket -->
+        <path d="M 430 155 L 430 170 L 608 170 L 608 155" fill="none" stroke="#7B9E6B" stroke-width="1.5"/>
+        <text x="519" y="188" font-family="Fira Code, monospace" font-size="9" fill="#4A6741" text-anchor="middle" font-weight="500">CS VLAN (Ports 9&ndash;15)</text>
+
+        <!-- EE hosts -->
+        <rect x="155" y="230" width="60" height="35" rx="3" fill="#FAF5EB" stroke="#D4A574" stroke-width="1"/>
+        <text x="185" y="252" font-family="Fira Code, monospace" font-size="8" fill="#5C4A32" text-anchor="middle">EE Host</text>
+        <line x1="172" y1="144" x2="185" y2="230" stroke="#D4A574" stroke-width="1" stroke-dasharray="3,2"/>
+
+        <rect x="275" y="230" width="60" height="35" rx="3" fill="#FAF5EB" stroke="#D4A574" stroke-width="1"/>
+        <text x="305" y="252" font-family="Fira Code, monospace" font-size="8" fill="#5C4A32" text-anchor="middle">EE Host</text>
+        <line x1="300" y1="144" x2="305" y2="230" stroke="#D4A574" stroke-width="1" stroke-dasharray="3,2"/>
+
+        <!-- CS hosts -->
+        <rect x="440" y="230" width="60" height="35" rx="3" fill="#FAF5EB" stroke="#7B9E6B" stroke-width="1"/>
+        <text x="470" y="252" font-family="Fira Code, monospace" font-size="8" fill="#5C4A32" text-anchor="middle">CS Host</text>
+        <line x1="442" y1="144" x2="470" y2="230" stroke="#7B9E6B" stroke-width="1" stroke-dasharray="3,2"/>
+
+        <rect x="560" y="230" width="60" height="35" rx="3" fill="#FAF5EB" stroke="#7B9E6B" stroke-width="1"/>
+        <text x="590" y="252" font-family="Fira Code, monospace" font-size="8" fill="#5C4A32" text-anchor="middle">CS Host</text>
+        <line x1="596" y1="144" x2="590" y2="230" stroke="#7B9E6B" stroke-width="1" stroke-dasharray="3,2"/>
+
+        <!-- Isolation symbol -->
+        <line x1="415" y1="210" x2="415" y2="280" stroke="#A0522D" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <text x="415" y="305" font-family="Cormorant Garamond, serif" font-size="11" fill="#A0522D" text-anchor="middle" font-style="italic">Isolated at Layer 2</text>
+
+        <!-- Broadcast arrows within EE -->
+        <path d="M 195 265 Q 240 290 280 265" fill="none" stroke="#D4A574" stroke-width="1" marker-end="url(#arrowEE)"/>
+        <text x="240" y="295" font-family="Source Serif 4, serif" font-size="9" fill="#D4A574" text-anchor="middle">Broadcast OK</text>
+
+        <!-- Broadcast arrows within CS -->
+        <path d="M 480 265 Q 525 290 570 265" fill="none" stroke="#7B9E6B" stroke-width="1" marker-end="url(#arrowCS)"/>
+        <text x="525" y="295" font-family="Source Serif 4, serif" font-size="9" fill="#7B9E6B" text-anchor="middle">Broadcast OK</text>
+
+        <defs>
+          <marker id="arrowEE" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 Z" fill="#D4A574"/></marker>
+          <marker id="arrowCS" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 Z" fill="#7B9E6B"/></marker>
+        </defs>
+      </svg>
+      <div class="diagram-caption">Figure 1: Port-Based VLAN &mdash; A single physical switch partitioned into two isolated broadcast domains. EE hosts (tan) can broadcast to each other but not to CS hosts (green), and vice versa.</div>
+    </div>
+
+    <div class="card card-green">
+      <div class="card-title">Key Properties of Port-Based VLANs</div>
+      <ul>
+        <li><strong>Traffic Isolation:</strong> Frames from ports in VLAN X can only reach other ports in VLAN X. The switch enforces this isolation in hardware.</li>
+        <li><strong>Separate Forwarding Tables:</strong> Each VLAN has its own MAC address table, so the same MAC address could theoretically appear in different VLANs without conflict.</li>
+        <li><strong>Software Configuration:</strong> VLAN membership is configured via the switch management interface (CLI, SNMP, or web GUI)&mdash;no physical rewiring needed.</li>
+        <li><strong>Flexible Membership:</strong> Ports can be dynamically reassigned between VLANs. Some implementations support MAC-based or authentication-based VLAN assignment.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- VLANS SPANNING MULTIPLE SWITCHES -->
+  <div class="section" id="ch1-trunk">
+    <span class="section-label">Inter-Switch</span>
+    <h2 class="section-title">VLANs Spanning Multiple Switches: The Trunk Port</h2>
+
+    <div class="prose">
+      <p>Port-based VLANs on a single switch are conceptually simple, but real networks rarely consist of a single switch. A building might have one switch per floor, and departments might span multiple floors. The CS department might have machines on the first, third, and fifth floors, each connected to a different switch. We need a mechanism that allows VLANs to extend across multiple switches while maintaining traffic isolation. This is where the <strong>trunk port</strong> enters the picture.</p>
+
+      <p>A trunk port is a switch port configured to carry traffic for <em>multiple</em> VLANs between switches. Unlike an access port, which carries traffic for only a single VLAN and connects to end hosts, a trunk port sits on the inter-switch link and must be able to distinguish which VLAN each frame belongs to. This creates an immediate problem: an ordinary Ethernet frame (as defined by IEEE 802.1) contains no VLAN identifier. If switch A sends a frame from VLAN 10 and a frame from VLAN 20 to switch B over the same trunk link, switch B has no way to tell which VLAN each frame belongs to. The frames look identical at the Ethernet layer. To solve this, we need a protocol that tags frames with their VLAN identifiers as they traverse trunk links, and removes those tags when frames are forwarded out of access ports to end hosts.</p>
+
+      <p>That protocol is <strong>IEEE 802.1Q</strong>, and it is the industry standard for VLAN tagging. When a frame enters a switch through an access port belonging to VLAN 10, the switch associates the frame with VLAN 10 internally. When the switch needs to forward that frame out of a trunk port, it inserts a 4-byte 802.1Q tag into the Ethernet frame header. This tag contains, among other fields, a 12-bit VLAN identifier that explicitly labels the frame as belonging to VLAN 10. When the neighboring switch receives the frame on its trunk port, it reads the VLAN identifier, strips the tag, and forwards the frame only out of ports that belong to VLAN 10. The tag exists only on the trunk link&mdash;end hosts never see it. This insertion-and-removal process is entirely handled by the switches and is transparent to the connected endpoints.</p>
+    </div>
+
+    <!-- TRUNK PORT DIAGRAM -->
+    <div class="diagram-container">
+      <svg viewBox="0 0 780 300" xmlns="http://www.w3.org/2000/svg">
+        <!-- Switch 1 -->
+        <rect x="40" y="60" width="260" height="100" rx="4" fill="#EDE6D6" stroke="#5C4A32" stroke-width="2"/>
+        <text x="170" y="82" font-family="Cormorant Garamond, serif" font-size="13" font-weight="600" fill="#2C2418" text-anchor="middle">Switch 1</text>
+
+        <rect x="60" y="100" width="20" height="20" rx="2" fill="#D4A574" stroke="#5C4A32" stroke-width="1"/>
+        <text x="70" y="114" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">2</text>
+        <rect x="90" y="100" width="20" height="20" rx="2" fill="#D4A574" stroke="#5C4A32" stroke-width="1"/>
+        <text x="100" y="114" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">3</text>
+        <rect x="120" y="100" width="20" height="20" rx="2" fill="#7B9E6B" stroke="#5C4A32" stroke-width="1"/>
+        <text x="130" y="114" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">4</text>
+        <rect x="150" y="100" width="20" height="20" rx="2" fill="#7B9E6B" stroke="#5C4A32" stroke-width="1"/>
+        <text x="160" y="114" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">6</text>
+
+        <!-- Trunk port on Switch 1 -->
+        <rect x="255" y="100" width="30" height="20" rx="2" fill="#C47D4E" stroke="#5C4A32" stroke-width="1.5"/>
+        <text x="270" y="114" font-family="Fira Code, monospace" font-size="6" fill="#FAF5EB" text-anchor="middle">Trunk</text>
+
+        <!-- Labels -->
+        <text x="80" y="140" font-family="Fira Code, monospace" font-size="8" fill="#9B4D2B" text-anchor="middle">EE</text>
+        <text x="145" y="140" font-family="Fira Code, monospace" font-size="8" fill="#4A6741" text-anchor="middle">CS</text>
+
+        <!-- Switch 2 -->
+        <rect x="480" y="60" width="260" height="100" rx="4" fill="#EDE6D6" stroke="#5C4A32" stroke-width="2"/>
+        <text x="610" y="82" font-family="Cormorant Garamond, serif" font-size="13" font-weight="600" fill="#2C2418" text-anchor="middle">Switch 2</text>
+
+        <!-- Trunk port on Switch 2 -->
+        <rect x="495" y="100" width="30" height="20" rx="2" fill="#C47D4E" stroke="#5C4A32" stroke-width="1.5"/>
+        <text x="510" y="114" font-family="Fira Code, monospace" font-size="6" fill="#FAF5EB" text-anchor="middle">Trunk</text>
+
+        <rect x="570" y="100" width="20" height="20" rx="2" fill="#D4A574" stroke="#5C4A32" stroke-width="1"/>
+        <text x="580" y="114" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">5</text>
+        <rect x="600" y="100" width="20" height="20" rx="2" fill="#7B9E6B" stroke="#5C4A32" stroke-width="1"/>
+        <text x="610" y="114" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">7</text>
+        <rect x="630" y="100" width="20" height="20" rx="2" fill="#7B9E6B" stroke="#5C4A32" stroke-width="1"/>
+        <text x="640" y="114" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">8</text>
+
+        <text x="580" y="140" font-family="Fira Code, monospace" font-size="8" fill="#9B4D2B" text-anchor="middle">EE</text>
+        <text x="635" y="140" font-family="Fira Code, monospace" font-size="8" fill="#4A6741" text-anchor="middle">CS</text>
+
+        <!-- Trunk link -->
+        <line x1="285" y1="110" x2="495" y2="110" stroke="#C47D4E" stroke-width="2.5"/>
+        <text x="390" y="100" font-family="Fira Code, monospace" font-size="8" fill="#C47D4E" text-anchor="middle">802.1Q Tagged Frames</text>
+
+        <!-- Tag detail -->
+        <rect x="340" y="120" width="100" height="18" rx="2" fill="#FAF5EB" stroke="#C47D4E" stroke-width="1"/>
+        <text x="390" y="133" font-family="Fira Code, monospace" font-size="7" fill="#C47D4E" text-anchor="middle">VLAN ID + Priority</text>
+
+        <!-- Hosts -->
+        <rect x="55" y="200" width="50" height="30" rx="3" fill="#FAF5EB" stroke="#D4A574" stroke-width="1"/>
+        <text x="80" y="219" font-family="Fira Code, monospace" font-size="7" fill="#5C4A32" text-anchor="middle">EE</text>
+        <line x1="70" y1="120" x2="80" y2="200" stroke="#D4A574" stroke-width="1" stroke-dasharray="3,2"/>
+
+        <rect x="115" y="200" width="50" height="30" rx="3" fill="#FAF5EB" stroke="#7B9E6B" stroke-width="1"/>
+        <text x="140" y="219" font-family="Fira Code, monospace" font-size="7" fill="#5C4A32" text-anchor="middle">CS</text>
+        <line x1="130" y1="120" x2="140" y2="200" stroke="#7B9E6B" stroke-width="1" stroke-dasharray="3,2"/>
+
+        <rect x="565" y="200" width="50" height="30" rx="3" fill="#FAF5EB" stroke="#D4A574" stroke-width="1"/>
+        <text x="590" y="219" font-family="Fira Code, monospace" font-size="7" fill="#5C4A32" text-anchor="middle">EE</text>
+        <line x1="580" y1="120" x2="590" y2="200" stroke="#D4A574" stroke-width="1" stroke-dasharray="3,2"/>
+
+        <rect x="625" y="200" width="50" height="30" rx="3" fill="#FAF5EB" stroke="#7B9E6B" stroke-width="1"/>
+        <text x="650" y="219" font-family="Fira Code, monospace" font-size="7" fill="#5C4A32" text-anchor="middle">CS</text>
+        <line x1="640" y1="120" x2="650" y2="200" stroke="#7B9E6B" stroke-width="1" stroke-dasharray="3,2"/>
+
+        <!-- Explanation -->
+        <text x="390" y="260" font-family="Source Serif 4, serif" font-size="10" fill="#8B7B65" text-anchor="middle" font-style="italic">Trunk port carries frames for ALL VLANs, each tagged with its VLAN ID</text>
+        <text x="390" y="278" font-family="Source Serif 4, serif" font-size="10" fill="#8B7B65" text-anchor="middle" font-style="italic">Access ports carry untagged frames for a single VLAN only</text>
+      </svg>
+      <div class="diagram-caption">Figure 2: VLANs Spanning Multiple Switches &mdash; Trunk ports (terracotta) carry 802.1Q-tagged frames for all VLANs between switches. Access ports (colored by VLAN) carry untagged frames to end hosts.</div>
+    </div>
+
+    <div class="card card-accent">
+      <div class="card-title">Access Port vs. Trunk Port</div>
+      <div class="table-wrapper" style="margin: 0.5rem 0; border: none; background: transparent;">
+        <table>
+          <thead><tr><th>Property</th><th>Access Port</th><th>Trunk Port</th></tr></thead>
+          <tbody>
+            <tr><td>Carries traffic for</td><td>Exactly one VLAN</td><td>Multiple VLANs</td></tr>
+            <tr><td>Connects to</td><td>End hosts (PCs, printers)</td><td>Other switches or routers</td></tr>
+            <tr><td>Frame tagging</td><td>Untagged (native VLAN)</td><td>802.1Q tagged (except native VLAN)</td></tr>
+            <tr><td>Configuration</td><td><code>switchport mode access</code></td><td><code>switchport mode trunk</code></td></tr>
+            <tr><td>VLAN membership</td><td>Assigned to one VLAN</td><td>Carries all allowed VLANs</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 802.1Q FRAME FORMAT -->
+  <div class="section" id="ch1-8021q">
+    <span class="section-label">Protocol Deep Dive</span>
+    <h2 class="section-title">IEEE 802.1Q: The VLAN Frame Format</h2>
+
+    <div class="prose">
+      <p>The 802.1Q standard, formally known as IEEE 802.1Q Virtual Bridged Local Area Networks, defines how VLAN information is encoded within Ethernet frames. The mechanism is both elegant and minimally disruptive: a 4-byte tag is inserted between the source MAC address and the EtherType (or Length) field of the standard Ethernet frame. This insertion increases the maximum Ethernet frame size from 1518 bytes to 1522 bytes. The tag consists of two 2-byte fields: the <strong>Tag Protocol Identifier (TPID)</strong> and the <strong>Tag Control Information (TCI)</strong>.</p>
+
+      <p>The TPID is set to the fixed value <code>0x8100</code> (81-00 in hexadecimal), which serves as an unambiguous marker that this frame carries an 802.1Q tag. When a switch receives a frame and sees <code>0x8100</code> in the position where it expects an EtherType field, it knows that the next two bytes contain VLAN information rather than a protocol identifier. This is a clever piece of engineering: the tag is backward-compatible in the sense that older devices that do not understand 802.1Q will simply see an unfamiliar EtherType and drop the frame, rather than misinterpreting its contents.</p>
+
+      <p>The TCI field contains three sub-fields. The most important is the <strong>12-bit VLAN Identifier (VID)</strong>, which can represent 4,096 distinct VLAN values (0 through 4,095). VLAN 0 is reserved for priority tagging (frames that carry priority information but no VLAN assignment), and VLAN 4,095 (0xFFF) is reserved, so the usable range is VLANs 1 through 4,094. VLAN 1 is typically the default VLAN on most switches. The TCI also contains a <strong>3-bit Priority Code Point (PCP)</strong>, which functions similarly to the IP ToS/DSCP field and allows Ethernet frames to be assigned one of eight priority levels for Quality of Service (QoS) processing. The remaining bit is the <strong>Canonical Format Indicator (CFI)</strong>, which was used for compatibility between Ethernet and Token Ring networks but is now largely obsolete.</p>
+
+      <p>When a switch inserts the 802.1Q tag, the original frame&rsquo;s Frame Check Sequence (FCS, commonly called CRC) becomes invalid because the frame contents have changed. The switch must therefore <strong>recompute the CRC</strong> based on the modified frame and insert the new FCS at the end. When the receiving switch strips the tag, it recomputes the CRC again for the original frame. This dual recomputation ensures frame integrity is maintained throughout the tagging and untagging process.</p>
+    </div>
+
+    <!-- 802.1Q FRAME FORMAT DIAGRAM -->
+    <div class="diagram-container">
+      <svg viewBox="0 0 760 380" xmlns="http://www.w3.org/2000/svg">
+        <!-- Standard 802.1 frame -->
+        <text x="30" y="30" font-family="Cormorant Garamond, serif" font-size="14" font-weight="600" fill="#2C2418">Standard 802.1 Ethernet Frame</text>
+        <rect x="30" y="40" width="70" height="40" rx="2" fill="#E5DCD0" stroke="#5C4A32" stroke-width="1"/>
+        <text x="65" y="64" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">Dest MAC</text>
+        <text x="65" y="75" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">6 bytes</text>
+
+        <rect x="100" y="40" width="70" height="40" rx="2" fill="#E5DCD0" stroke="#5C4A32" stroke-width="1"/>
+        <text x="135" y="64" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">Src MAC</text>
+        <text x="135" y="75" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">6 bytes</text>
+
+        <rect x="170" y="40" width="60" height="40" rx="2" fill="#E5DCD0" stroke="#5C4A32" stroke-width="1"/>
+        <text x="200" y="64" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">Type</text>
+        <text x="200" y="75" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">2 bytes</text>
+
+        <rect x="230" y="40" width="300" height="40" rx="2" fill="#FAF5EB" stroke="#5C4A32" stroke-width="1"/>
+        <text x="380" y="64" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">Data (Payload)</text>
+        <text x="380" y="75" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">46&ndash;1500 bytes</text>
+
+        <rect x="530" y="40" width="50" height="40" rx="2" fill="#E5DCD0" stroke="#5C4A32" stroke-width="1"/>
+        <text x="555" y="64" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">CRC</text>
+        <text x="555" y="75" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">4 bytes</text>
+
+        <!-- Arrow showing insertion point -->
+        <path d="M 170 85 L 170 110 L 170 130" fill="none" stroke="#9B4D2B" stroke-width="1.5" marker-end="url(#arrowAcc)"/>
+
+        <!-- 802.1Q frame -->
+        <text x="30" y="150" font-family="Cormorant Garamond, serif" font-size="14" font-weight="600" fill="#2C2418">802.1Q Tagged Ethernet Frame</text>
+        <rect x="30" y="160" width="60" height="40" rx="2" fill="#E5DCD0" stroke="#5C4A32" stroke-width="1"/>
+        <text x="60" y="184" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">Dest MAC</text>
+        <text x="60" y="195" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">6B</text>
+
+        <rect x="90" y="160" width="60" height="40" rx="2" fill="#E5DCD0" stroke="#5C4A32" stroke-width="1"/>
+        <text x="120" y="184" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">Src MAC</text>
+        <text x="120" y="195" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">6B</text>
+
+        <!-- 802.1Q Tag - highlighted -->
+        <rect x="150" y="160" width="120" height="40" rx="2" fill="#C47D4E" fill-opacity="0.2" stroke="#9B4D2B" stroke-width="2"/>
+        <text x="210" y="177" font-family="Fira Code, monospace" font-size="9" fill="#9B4D2B" text-anchor="middle" font-weight="600">802.1Q Tag</text>
+        <text x="210" y="195" font-family="Fira Code, monospace" font-size="7" fill="#9B4D2B" text-anchor="middle">4 bytes (inserted)</text>
+
+        <rect x="270" y="160" width="60" height="40" rx="2" fill="#E5DCD0" stroke="#5C4A32" stroke-width="1"/>
+        <text x="300" y="184" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">Type</text>
+        <text x="300" y="195" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">2B</text>
+
+        <rect x="330" y="160" width="240" height="40" rx="2" fill="#FAF5EB" stroke="#5C4A32" stroke-width="1"/>
+        <text x="450" y="184" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">Data (Payload)</text>
+        <text x="450" y="195" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">46&ndash;1500 bytes</text>
+
+        <rect x="570" y="160" width="50" height="40" rx="2" fill="#E5DCD0" stroke="#A0522D" stroke-width="1.5"/>
+        <text x="595" y="184" font-family="Fira Code, monospace" font-size="8" fill="#A0522D" text-anchor="middle">CRC*</text>
+        <text x="595" y="195" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">4B</text>
+
+        <!-- Tag breakdown -->
+        <text x="30" y="230" font-family="Cormorant Garamond, serif" font-size="13" font-weight="600" fill="#2C2418">802.1Q Tag Breakdown (4 bytes)</text>
+
+        <!-- TPID -->
+        <rect x="30" y="245" width="250" height="50" rx="2" fill="#D4A574" fill-opacity="0.2" stroke="#9B4D2B" stroke-width="1.5"/>
+        <text x="155" y="268" font-family="Fira Code, monospace" font-size="9" fill="#9B4D2B" text-anchor="middle" font-weight="500">Tag Protocol Identifier (TPID)</text>
+        <text x="155" y="285" font-family="Fira Code, monospace" font-size="9" fill="#5C4A32" text-anchor="middle">Value: 0x8100 &nbsp; | &nbsp; 2 bytes</text>
+
+        <!-- TCI -->
+        <rect x="290" y="245" width="350" height="50" rx="2" fill="#7B9E6B" fill-opacity="0.15" stroke="#4A6741" stroke-width="1.5"/>
+        <text x="465" y="263" font-family="Fira Code, monospace" font-size="9" fill="#4A6741" text-anchor="middle" font-weight="500">Tag Control Information (TCI) &mdash; 2 bytes</text>
+
+        <!-- TCI sub-fields -->
+        <rect x="290" y="305" width="50" height="35" rx="2" fill="#B8860B" fill-opacity="0.12" stroke="#B8860B" stroke-width="1"/>
+        <text x="315" y="320" font-family="Fira Code, monospace" font-size="7" fill="#B8860B" text-anchor="middle">PCP</text>
+        <text x="315" y="333" font-family="Fira Code, monospace" font-size="6" fill="#8B7B65" text-anchor="middle">3 bits</text>
+
+        <rect x="340" y="305" width="35" height="35" rx="2" fill="#E5DCD0" stroke="#5C4A32" stroke-width="1"/>
+        <text x="357" y="320" font-family="Fira Code, monospace" font-size="7" fill="#5C4A32" text-anchor="middle">CFI</text>
+        <text x="357" y="333" font-family="Fira Code, monospace" font-size="6" fill="#8B7B65" text-anchor="middle">1 bit</text>
+
+        <rect x="375" y="305" width="265" height="35" rx="2" fill="#9B4D2B" fill-opacity="0.12" stroke="#9B4D2B" stroke-width="1.5"/>
+        <text x="507" y="320" font-family="Fira Code, monospace" font-size="9" fill="#9B4D2B" text-anchor="middle" font-weight="600">VLAN Identifier (VID)</text>
+        <text x="507" y="333" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">12 bits &rarr; 4,096 possible VLANs (0&ndash;4095)</text>
+
+        <!-- Annotation -->
+        <text x="30" y="370" font-family="Source Serif 4, serif" font-size="9" fill="#8B7B65" font-style="italic">CRC* = Recomputed after tag insertion. Original CRC is invalid once the 4-byte tag is added.</text>
+
+        <defs>
+          <marker id="arrowAcc" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto"><path d="M 0 0 L 6 3 L 0 6 Z" fill="#9B4D2B"/></marker>
+        </defs>
+      </svg>
+      <div class="diagram-caption">Figure 3: 802.1Q Frame Format &mdash; The 4-byte tag is inserted between Source MAC and EtherType. TPID (0x8100) identifies the frame as tagged. TCI carries the 12-bit VLAN ID and 3-bit priority. CRC is recomputed.</div>
+    </div>
+
+    <div class="exam-tip">
+      <p><strong>For exams:</strong> When asked to draw the 802.1Q frame format, you MUST include: (1) TPID = 0x8100, (2) 12-bit VLAN ID within TCI, (3) 3-bit priority (PCP), (4) the fact that CRC is recomputed. Label each field with its size in bytes or bits. This is a very common 5-mark and 10-mark question.</p>
+    </div>
+
+    <div class="collapsible" id="vlan8021q-details">
+      <div class="collapsible-header" onclick="toggleCollapsible('vlan8021q-details')">
+        <div class="collapsible-header-left">
+          <span class="collapsible-icon">Expand</span>
+          <span style="font-size:0.9rem; color:var(--fg-muted);">Step-by-Step: How 802.1Q Tagging Works in Practice</span>
+        </div>
+        <span class="collapsible-arrow">&#9660;</span>
+      </div>
+      <div class="collapsible-body">
+        <ol>
+          <li><strong>Frame arrives at access port:</strong> Host A on VLAN 10 sends a standard (untagged) Ethernet frame. It arrives at switch port 3, which is configured as an access port for VLAN 10.</li>
+          <li><strong>Switch associates with VLAN:</strong> The switch internally tags the frame with VLAN 10. This internal tag is used for forwarding decisions but is not yet in the frame itself.</li>
+          <li><strong>Forwarding within same switch:</strong> If the destination is on the same switch and same VLAN, the frame is forwarded untagged out of the destination access port. No 802.1Q tag is ever created.</li>
+          <li><strong>Forwarding out trunk port:</strong> If the frame must traverse a trunk link to reach another switch, the switch inserts the 4-byte 802.1Q tag (TPID=0x8100, VID=10) between the Source MAC and EtherType fields. The CRC is recomputed.</li>
+          <li><strong>Trunk link transit:</strong> The tagged frame crosses the trunk link. Any intermediate switches that are only trunk-connected also forward based on the VLAN ID in the tag.</li>
+          <li><strong>Receiving switch strips tag:</strong> When the neighboring switch receives the frame on its trunk port, it reads the VLAN ID (10), removes the 802.1Q tag, recomputes the CRC for the original frame, and forwards the now-untagged frame out of the appropriate access port in VLAN 10.</li>
+          <li><strong>End host receives standard frame:</strong> The destination host receives a perfectly normal Ethernet frame, completely unaware that 802.1Q tagging occurred.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- VXLAN / EVPN -->
+  <div class="section" id="ch1-vxlan">
+    <span class="section-label">Advanced</span>
+    <h2 class="section-title">VXLAN and EVPN: Stretching Layer 2 Across Layer 3 Networks</h2>
+
+    <div class="prose">
+      <p>The 802.1Q VLAN framework works beautifully within a single building or campus, where switches are connected by direct physical links. But what happens when an organization needs to extend a Layer 2 domain across data centers separated by hundreds or thousands of kilometers? Perhaps a virtual machine needs to be migrated from a data center in Mumbai to one in Chennai without changing its IP address. Perhaps a disaster recovery site needs to maintain an exact Layer 2 replica of the primary site&rsquo;s network. In these scenarios, the physical infrastructure between the sites is an IP network&mdash;a Layer 3 network&mdash;and standard 802.1Q trunking cannot operate across it because trunk links require direct Layer 2 connectivity between switches.</p>
+
+      <p>This is the problem that <strong>VXLAN (Virtual eXtensible LAN)</strong> solves. Defined in RFC 7348, VXLAN is a tunneling scheme that overlays Layer 2 Ethernet networks on top of Layer 3 IP networks. The key insight is to encapsulate entire Ethernet frames within IP-UDP datagrams, allowing them to traverse any IP network as if they were simply payload data. The IP network becomes an &ldquo;underlay&rdquo; that provides raw connectivity, while the VXLAN tunnels form an &ldquo;overlay&rdquo; that preserves Layer 2 semantics. A device called a <strong>VXLAN Tunnel Endpoint (VTEP)</strong> sits at each end of the tunnel, performing the encapsulation and decapsulation.</p>
+
+      <p>VXLAN also solves a scaling limitation of 802.1Q VLANs. The 12-bit VLAN ID field supports only 4,096 VLANs, which is insufficient for large cloud providers who may need to isolate traffic for millions of tenants. VXLAN uses a <strong>24-bit VNID (VXLAN Network Identifier)</strong>, supporting up to 16 million distinct virtual networks. This massive expansion of the identifier space is one of the primary reasons VXLAN has become the de facto standard for network virtualization in modern data centers and cloud environments.</p>
+
+      <p><strong>EVPN (Ethernet VPN)</strong>, sometimes used interchangeably with VXLAN in informal discussion, is the control plane for VXLAN. While basic VXLAN relies on flooding and learning (similar to how a plain Ethernet switch learns MAC addresses), EVPN uses MP-BGP (Multi-Protocol Border Gateway Protocol) to distribute MAC and IP address information across VTEPs. This eliminates the need for flooding-based MAC learning in the overlay, making the system more scalable and robust. When we speak of &ldquo;VXLAN with EVPN,&rdquo; we are referring to the combination of VXLAN data plane encapsulation with EVPN control plane signaling&mdash;a powerful and increasingly standard architecture for modern data center networking.</p>
+    </div>
+
+    <div class="diagram-container">
+      <svg viewBox="0 0 760 280" xmlns="http://www.w3.org/2000/svg">
+        <!-- Site A -->
+        <rect x="20" y="40" width="160" height="120" rx="6" fill="#FAF5EB" stroke="#5C4A32" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="100" y="62" font-family="Cormorant Garamond, serif" font-size="12" font-weight="600" fill="#2C2418" text-anchor="middle">Site A</text>
+
+        <rect x="40" y="75" width="50" height="30" rx="2" fill="#EDE6D6" stroke="#5C4A32" stroke-width="1"/>
+        <text x="65" y="94" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">Host</text>
+
+        <rect x="110" y="75" width="50" height="30" rx="2" fill="#EDE6D6" stroke="#5C4A32" stroke-width="1"/>
+        <text x="135" y="94" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">Host</text>
+
+        <rect x="55" y="120" width="90" height="28" rx="2" fill="#D4A574" stroke="#5C4A32" stroke-width="1.5"/>
+        <text x="100" y="138" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">L2 Switch</text>
+
+        <line x1="65" y1="105" x2="80" y2="120" stroke="#5C4A32" stroke-width="1"/>
+        <line x1="135" y1="105" x2="120" y2="120" stroke="#5C4A32" stroke-width="1"/>
+
+        <!-- VTEP A -->
+        <rect x="40" y="185" width="120" height="35" rx="3" fill="#C47D4E" stroke="#5C4A32" stroke-width="1.5"/>
+        <text x="100" y="207" font-family="Fira Code, monospace" font-size="8" fill="#FAF5EB" text-anchor="middle" font-weight="500">VTEP-A</text>
+        <line x1="100" y1="160" x2="100" y2="185" stroke="#5C4A32" stroke-width="1.5"/>
+
+        <!-- IP Underlay -->
+        <rect x="230" y="150" width="300" height="70" rx="6" fill="#E5DCD0" stroke="#8B7B65" stroke-width="1" stroke-dasharray="4,2"/>
+        <text x="380" y="175" font-family="Fira Code, monospace" font-size="9" fill="#8B7B65" text-anchor="middle">IP Network (Underlay)</text>
+        <text x="380" y="195" font-family="Fira Code, monospace" font-size="8" fill="#8B7B65" text-anchor="middle">Ethernet-in-UDP encapsulation</text>
+        <text x="380" y="210" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">[Outer IP][Outer UDP][VXLAN Hdr][Original Ethernet Frame]</text>
+
+        <!-- VXLAN tunnel arrows -->
+        <line x1="160" y1="202" x2="230" y2="185" stroke="#C47D4E" stroke-width="2"/>
+        <line x1="530" y1="185" x2="600" y2="202" stroke="#C47D4E" stroke-width="2"/>
+
+        <!-- Site B -->
+        <rect x="580" y="40" width="160" height="120" rx="6" fill="#FAF5EB" stroke="#5C4A32" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="660" y="62" font-family="Cormorant Garamond, serif" font-size="12" font-weight="600" fill="#2C2418" text-anchor="middle">Site B</text>
+
+        <rect x="600" y="75" width="50" height="30" rx="2" fill="#EDE6D6" stroke="#5C4A32" stroke-width="1"/>
+        <text x="625" y="94" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">Host</text>
+
+        <rect x="670" y="75" width="50" height="30" rx="2" fill="#EDE6D6" stroke="#5C4A32" stroke-width="1"/>
+        <text x="695" y="94" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">Host</text>
+
+        <rect x="615" y="120" width="90" height="28" rx="2" fill="#D4A574" stroke="#5C4A32" stroke-width="1.5"/>
+        <text x="660" y="138" font-family="Fira Code, monospace" font-size="7" fill="#2C2418" text-anchor="middle">L2 Switch</text>
+
+        <line x1="625" y1="105" x2="640" y2="120" stroke="#5C4A32" stroke-width="1"/>
+        <line x1="695" y1="105" x2="680" y2="120" stroke="#5C4A32" stroke-width="1"/>
+
+        <!-- VTEP B -->
+        <rect x="600" y="185" width="120" height="35" rx="3" fill="#C47D4E" stroke="#5C4A32" stroke-width="1.5"/>
+        <text x="660" y="207" font-family="Fira Code, monospace" font-size="8" fill="#FAF5EB" text-anchor="middle" font-weight="500">VTEP-B</text>
+        <line x1="660" y1="160" x2="660" y2="185" stroke="#5C4A32" stroke-width="1.5"/>
+
+        <!-- Labels -->
+        <text x="380" y="260" font-family="Source Serif 4, serif" font-size="10" fill="#8B7B65" text-anchor="middle" font-style="italic">VXLAN overlays L2 on L3 &mdash; hosts at both sites appear to be on the same L2 segment</text>
+      </svg>
+      <div class="diagram-caption">Figure 4: VXLAN/EVPN Architecture &mdash; VTEPs encapsulate Ethernet frames in IP-UDP datagrams for transport across the IP underlay. Both sites share the same logical Layer 2 domain.</div>
+    </div>
+
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Feature</th><th>802.1Q VLAN</th><th>VXLAN</th></tr></thead>
+        <tbody>
+          <tr><td>Identifier size</td><td>12-bit VLAN ID</td><td>24-bit VNID</td></tr>
+          <tr><td>Max virtual networks</td><td>4,096</td><td>~16.7 million</td></tr>
+          <tr><td>Operates at</td><td>Layer 2 only</td><td>Layer 2 overlay over Layer 3</td></tr>
+          <tr><td>Spanning mechanism</td><td>Trunk ports (direct L2 links)</td><td>IP-UDP tunnels (any IP network)</td></tr>
+          <tr><td>Cross-datacenter</td><td>No (requires L2 continuity)</td><td>Yes (tunnels through L3)</td></tr>
+          <tr><td>Encapsulation</td><td>Tag insertion (4 bytes)</td><td>Full frame encapsulation (50 bytes overhead)</td></tr>
+          <tr><td>Primary use case</td><td>Campus/enterprise LANs</td><td>Data centers, cloud, multi-tenant</td></tr>
+          <tr><td>Control plane</td><td>Switch MAC learning</td><td>EVPN (MP-BGP) or flood-and-learn</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="memory-anchor">
+      <p><strong>Mnemonic:</strong> VXLAN = &ldquo;Virtual eXtended LAN&rdquo; &mdash; it <em>extends</em> your LAN across IP networks. Think of it as putting an Ethernet letter inside an IP envelope. The postal service (IP network) only sees the envelope; the recipient (VTEP) opens it and finds the original letter (Ethernet frame) inside.</p>
+    </div>
+
+    <!-- VLAN Revision Card -->
+    <div class="revision-card">
+      <p><strong>VLAN Quick Revision Points:</strong></p>
+      <ul>
+        <li>VLANs solve: broadcast scaling, security, privacy, administrative flexibility</li>
+        <li>Port-based VLAN: switch ports grouped by software into virtual LANs</li>
+        <li>Traffic isolation: frames stay within their VLAN at Layer 2</li>
+        <li>Trunk port: carries multiple VLANs between switches; uses 802.1Q tagging</li>
+        <li>802.1Q: inserts 4-byte tag (TPID 0x8100 + TCI with 12-bit VID + 3-bit priority)</li>
+        <li>CRC must be recomputed after tag insertion/removal</li>
+        <li>VXLAN: encapsulates Ethernet in IP-UDP, 24-bit VNID, crosses L3 networks</li>
+        <li>EVPN: control plane for VXLAN using MP-BGP for MAC/IP distribution</li>
+        <li>802.1Q: 4,096 VLANs max; VXLAN: ~16.7 million virtual networks</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- CHAPTER II: LINK VIRTUALIZATION                              -->
+<!-- ============================================================ -->
+<section class="chapter" id="ch2">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter II</div>
+    <h1 class="chapter-title">Link Virtualization</h1>
+    <div class="chapter-subtitle">A Network as a Link Layer &mdash; Treating an Entire Network as a Single Link</div>
+  </div>
+
+  <div class="prose">
+    <p>The concept of link virtualization represents one of the more philosophically interesting ideas in networking: the notion that an entire network&mdash;with its routers, links, protocols, and complexities&mdash;can be made to appear to higher layers as if it were simply a single link. This is not merely an abstraction for the sake of elegant layering diagrams; it is a practical engineering strategy that has been deployed at massive scale in both MPLS networks and data center fabrics. The core idea is that the internal structure of a network&mdash;how its packets are routed, what protocols it runs, how it handles congestion&mdash;can be hidden behind an interface that presents the network as a simple point-to-point or multipoint link to the devices connected to its edges.</p>
+
+    <p>Consider what a link means in the traditional sense: a physical medium (copper, fiber, wireless spectrum) that carries frames between two nodes. A link has a maximum frame size (MTU), it may introduce errors, and it delivers frames from one end to the other. Now consider a network of routers connected by links, running IP routing protocols. From the perspective of a device connected to the edge of this network, the network&rsquo;s behavior can be made to resemble a link: frames (or packets) go in one end and come out the other, with some delay and possibly some loss, but without the edge device needing to understand or participate in the network&rsquo;s internal routing. The network, in effect, <em>becomes</em> the link.</p>
+
+    <p>This perspective helps unify several technologies that might otherwise seem unrelated. MPLS, as we shall see, creates label-switched paths through a network that function like virtual circuits&mdash;like links established through the network fabric. VXLAN creates tunnels through an IP network that function like virtual Ethernet links. Even a simple GRE tunnel between two routers creates a virtual link over an IP infrastructure. In each case, the pattern is the same: a complex network is abstracted behind a simpler interface, and the resulting virtual link can be used as a building block in higher-layer network architectures. This is why the syllabus frames this section as &ldquo;Link Virtualization: A Network as a Link Layer&rdquo;&mdash;it is describing a general principle that MPLS and VXLAN both instantiate in different ways.</p>
+
+    <p>The motivation for link virtualization is both technical and economic. Technically, it allows network architects to create virtual topologies that are independent of the physical topology. A virtual link can span multiple physical hops, can be rerouted without disrupting the endpoints, and can carry traffic with specific QoS guarantees. Economically, it allows multiple virtual networks to share the same physical infrastructure, reducing capital expenditure. A single physical network can simultaneously support multiple virtual links carrying different types of traffic, each with its own service level agreement, all multiplexed onto the same fibers and routers.</p>
+  </div>
+
+  <div class="def-box">
+    <p><strong>Link Virtualization:</strong> The technique of abstracting an entire network infrastructure (routers, links, protocols) behind an interface that presents the network as a single logical link to connected devices, enabling the creation of virtual topologies independent of physical topology and allowing multiple virtual networks to share the same physical infrastructure.</p>
+  </div>
+
+  <div class="pull-quote">
+    The network becomes the link. The complex internal routing, the multiple hops, the congestion management&mdash;all of it is hidden behind the simple abstraction of &ldquo;frames go in here and come out there.&rdquo; This is not a simplification; it is a deliberate and powerful engineering decision.
+  </div>
+
+  <div class="card card-green">
+    <div class="card-title">Examples of Link Virtualization</div>
+    <ul>
+      <li><strong>MPLS LSPs:</strong> A label-switched path through a network of MPLS routers functions as a virtual link from ingress to egress.</li>
+      <li><strong>VXLAN tunnels:</strong> An IP-UDP tunnel between VTEPs functions as a virtual Ethernet link across an IP underlay.</li>
+      <li><strong>GRE tunnels:</strong> Generic Routing Encapsulation creates virtual point-to-point links over IP networks.</li>
+      <li><strong>IPsec tunnels:</strong> Secure virtual links over public IP networks.</li>
+      <li><strong>Data center fabrics:</strong> The entire leaf-spine fabric can be treated as a single logical switch (a single link-layer domain) from the perspective of connected servers.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- CHAPTER III: MPLS                                            -->
+<!-- ============================================================ -->
+<section class="chapter" id="ch3">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter III</div>
+    <h1 class="chapter-title">Multiprotocol Label Switching</h1>
+    <div class="chapter-subtitle">Forwarding by Label, Not by Prefix &mdash; Speed, Flexibility, and Traffic Engineering</div>
+  </div>
+
+  <div class="section">
+    <span class="section-label">Foundation</span>
+    <h2 class="section-title">The Problem MPLS Solves: Why Prefix Matching Isn&rsquo;t Enough</h2>
+
+    <div class="prose">
+      <p>To understand MPLS, we must first understand the bottleneck it was designed to address. In traditional IP routing, every router that receives a packet must examine the packet&rsquo;s destination IP address and perform a <strong>longest prefix match</strong> against its forwarding table. This means the router compares the destination address against every entry in its table, finding the entry with the longest matching prefix, and forwards the packet accordingly. In the late 1990s, when routing tables were growing rapidly and router hardware was far less capable than today, this lookup operation was computationally expensive. Every packet, at every hop, required this relatively complex table search. For a router processing millions of packets per second, the cumulative cost was significant.</p>
+
+      <p>MPLS was conceived as a solution to this performance problem. The idea was borrowed from the world of virtual circuits (as used in ATM and Frame Relay networks), where each packet carries a short, fixed-length identifier&mdash;a <strong>label</strong>&mdash;that can be looked up in a simple table with a single exact match, rather than a complex longest-prefix-match search. In MPLS, when a packet enters the MPLS domain at an <strong>ingress label-switched router (LSR)</strong>, the router attaches a label to the packet. Subsequent routers within the MPLS domain forward the packet based solely on this label, without examining the IP header at all. At the <strong>egress LSR</strong>, the label is removed and the packet resumes its normal IP-forwarded journey. The path that the packet follows through the MPLS domain is called a <strong>Label-Switched Path (LSP)</strong>.</p>
+
+      <p>Here is a critical point that students often misunderstand: <strong>the IP datagram still keeps its IP address</strong>. MPLS does not replace IP. The IP header with source and destination addresses remains intact inside the labeled packet. MPLS routers in the middle of the LSP do not need to look at the IP header because the label alone is sufficient for forwarding. But the IP addresses are still there, preserved for use once the packet exits the MPLS domain. MPLS is not an alternative to IP; it is a supplement that sits between Layer 2 and Layer 3, often called &ldquo;Layer 2.5.&rdquo;</p>
+
+      <p>As router hardware evolved with the development of ASICs and TCAMs (Ternary Content-Addressable Memory), the original performance motivation for MPLS became less compelling&mdash;modern routers can perform longest-prefix matching at line rate. But by the time this happened, MPLS had acquired a second, arguably more important, reason to exist: <strong>traffic engineering</strong>. In traditional IP routing, the path a packet takes is determined solely by the destination address and the shortest-path routing algorithm. All packets to the same destination take the same path, regardless of source, regardless of current network load, regardless of any policy considerations. MPLS allows network operators to establish paths based on source and destination, on available bandwidth, on administrative policy, on cost&mdash;on any criterion they choose. This flexibility, impossible with destination-based IP routing alone, is the primary reason MPLS remains widely deployed in ISP and enterprise backbones today.</p>
+    </div>
+
+    <div class="def-box">
+      <p><strong>Multiprotocol Label Switching (MPLS):</strong> A high-performance packet-forwarding technology that uses short, fixed-length labels inserted between Layer 2 and Layer 3 headers to make forwarding decisions. MPLS routers (Label-Switched Routers, LSRs) forward packets based on label values rather than IP destination prefix matching, enabling faster lookups and flexible traffic engineering. The IP header is preserved but not examined during transit through the MPLS domain.</p>
+    </div>
+
+    <div class="confusion-box">
+      <p><strong>MPLS Does NOT Replace IP:</strong> A common misconception is that MPLS is an alternative to IP routing. In reality, MPLS coexists with IP. The IP header remains in the packet throughout the MPLS domain. MPLS simply provides an alternative forwarding mechanism (label-based) that can coexist with or override IP-based forwarding decisions. Think of MPLS as an overlay on top of IP&mdash;it uses the IP infrastructure but makes its own forwarding decisions based on labels.</p>
+    </div>
+  </div>
+
+  <div class="section" id="ch3-lsr">
+    <span class="section-label">Architecture</span>
+    <h2 class="section-title">Label-Switched Routers and MPLS Forwarding</h2>
+
+    <div class="prose">
+      <p>An MPLS-capable router is called a <strong>Label-Switched Router (LSR)</strong>. Within an MPLS domain, there are three types of LSRs. The <strong>ingress LSR</strong> is the router at the edge of the MPLS domain where packets enter. It receives unlabeled IP packets, determines which LSP the packet should follow, pushes (inserts) the appropriate MPLS label onto the packet, and forwards it. The <strong>interior (transit) LSR</strong> sits inside the MPLS domain and forwards labeled packets based on their label values, performing label swapping&mdash;replacing the incoming label with a different outgoing label. The <strong>egress LSR</strong> is the router at the edge where packets leave the MPLS domain; it pops (removes) the label and forwards the packet using normal IP routing.</p>
+
+      <p>The forwarding table used by LSRs is distinct from the IP forwarding table. It is called the <strong>Label Forwarding Information Base (LFIB)</strong>, and it maps incoming labels to outgoing labels and outgoing interfaces. When an interior LSR receives a labeled packet, it looks up the incoming label in its LFIB, finds the corresponding outgoing label and interface, swaps the label, and forwards the packet. This operation&mdash;exact-match lookup on a fixed-length label&mdash;is inherently simpler than longest-prefix matching on a variable-length IP address, which was the original performance advantage of MPLS. The LFIB is populated by MPLS signaling protocols, not by IP routing protocols, which means MPLS forwarding decisions can be made independently of IP routing decisions.</p>
+
+      <p>This independence is the foundation of MPLS traffic engineering. Because the LFIB is separate from the IP routing table, an LSR can be configured to forward packets along paths that differ from what IP routing would choose. For example, IP routing might send all traffic to destination D via the shortest path through router R3. But MPLS can establish two LSPs to D: one through R3 for traffic from source A, and another through R5 and R6 for traffic from source B. Both LSPs reach the same destination, but they take different paths based on the source address&mdash;something that pure destination-based IP routing cannot do. Additionally, MPLS supports <strong>fast reroute</strong>: backup LSPs can be pre-computed so that if a link or node fails, traffic can be immediately diverted to the backup path without waiting for IP routing protocols to converge. This can reduce failover times from seconds (typical IP convergence) to milliseconds.</p>
+    </div>
+
+    <!-- MPLS vs IP diagram -->
+    <div class="diagram-container">
+      <svg viewBox="0 0 760 380" xmlns="http://www.w3.org/2000/svg">
+        <!-- IP Routing: destination-based -->
+        <text x="30" y="25" font-family="Cormorant Garamond, serif" font-size="13" font-weight="600" fill="#2C2418">IP Routing: Destination-Based</text>
+        <text x="30" y="42" font-family="Source Serif 4, serif" font-size="9" fill="#8B7B65" font-style="italic">Path determined solely by destination address &mdash; all packets to D take same path</text>
+
+        <!-- Routers -->
+        <circle cx="80" cy="100" r="22" fill="#EDE6D6" stroke="#5C4A32" stroke-width="1.5"/>
+        <text x="80" y="104" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">R1</text>
+        <text x="80" y="80" font-family="Fira Code, monospace" font-size="7" fill="#9B4D2B" text-anchor="middle">A</text>
+
+        <circle cx="250" cy="80" r="18" fill="#EDE6D6" stroke="#5C4A32" stroke-width="1.5"/>
+        <text x="250" y="84" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">R2</text>
+
+        <circle cx="250" cy="130" r="18" fill="#EDE6D6" stroke="#5C4A32" stroke-width="1.5"/>
+        <text x="250" y="134" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">R3</text>
+
+        <circle cx="420" cy="80" r="18" fill="#EDE6D6" stroke="#5C4A32" stroke-width="1.5"/>
+        <text x="420" y="84" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">R5</text>
+
+        <circle cx="420" cy="130" r="18" fill="#EDE6D6" stroke="#5C4A32" stroke-width="1.5"/>
+        <text x="420" y="134" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">R4</text>
+
+        <circle cx="590" cy="100" r="22" fill="#EDE6D6" stroke="#5C4A32" stroke-width="1.5"/>
+        <text x="590" y="104" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">R6</text>
+        <text x="590" y="80" font-family="Fira Code, monospace" font-size="7" fill="#9B4D2B" text-anchor="middle">D</text>
+
+        <!-- IP path (shortest path) -->
+        <line x1="102" y1="95" x2="232" y2="83" stroke="#9B4D2B" stroke-width="2.5"/>
+        <line x1="268" y1="80" x2="402" y2="80" stroke="#9B4D2B" stroke-width="2.5"/>
+        <line x1="438" y1="83" x2="568" y2="95" stroke="#9B4D2B" stroke-width="2.5"/>
+
+        <!-- Other links (gray) -->
+        <line x1="102" y1="105" x2="232" y2="125" stroke="#C4B89C" stroke-width="1"/>
+        <line x1="268" y1="130" x2="402" y2="130" stroke="#C4B89C" stroke-width="1"/>
+        <line x1="438" y1="125" x2="568" y2="105" stroke="#C4B89C" stroke-width="1"/>
+
+        <text x="340" y="65" font-family="Fira Code, monospace" font-size="8" fill="#9B4D2B" text-anchor="middle">Shortest path (R2-R5)</text>
+
+        <!-- MPLS Routing -->
+        <text x="30" y="210" font-family="Cormorant Garamond, serif" font-size="13" font-weight="600" fill="#2C2418">MPLS Routing: Source + Destination Based</text>
+        <text x="30" y="227" font-family="Source Serif 4, serif" font-size="9" fill="#8B7B65" font-style="italic">Path can differ based on source address &mdash; traffic engineering possible</text>
+
+        <circle cx="80" cy="290" r="22" fill="#C47D4E" fill-opacity="0.15" stroke="#C47D4E" stroke-width="1.5"/>
+        <text x="80" y="294" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">R1</text>
+        <text x="80" y="270" font-family="Fira Code, monospace" font-size="7" fill="#9B4D2B" text-anchor="middle">A</text>
+
+        <circle cx="250" cy="265" r="18" fill="#C47D4E" fill-opacity="0.1" stroke="#C47D4E" stroke-width="1.5"/>
+        <text x="250" y="269" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">R2</text>
+
+        <circle cx="250" cy="320" r="18" fill="#C47D4E" fill-opacity="0.1" stroke="#C47D4E" stroke-width="1.5"/>
+        <text x="250" y="324" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">R3</text>
+
+        <circle cx="420" cy="265" r="18" fill="#C47D4E" fill-opacity="0.1" stroke="#C47D4E" stroke-width="1.5"/>
+        <text x="420" y="269" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">R5</text>
+
+        <circle cx="420" cy="320" r="18" fill="#C47D4E" fill-opacity="0.1" stroke="#C47D4E" stroke-width="1.5"/>
+        <text x="420" y="324" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">R4</text>
+
+        <circle cx="590" cy="290" r="22" fill="#C47D4E" fill-opacity="0.15" stroke="#C47D4E" stroke-width="1.5"/>
+        <text x="590" y="294" font-family="Fira Code, monospace" font-size="8" fill="#2C2418" text-anchor="middle">R6</text>
+        <text x="590" y="270" font-family="Fira Code, monospace" font-size="7" fill="#9B4D2B" text-anchor="middle">D</text>
+
+        <!-- LSP 1: via R2-R5 -->
+        <line x1="102" y1="284" x2="232" y2="269" stroke="#4A6741" stroke-width="2.5"/>
+        <line x1="268" y1="265" x2="402" y2="265" stroke="#4A6741" stroke-width="2.5"/>
+        <line x1="438" y1="269" x2="568" y2="284" stroke="#4A6741" stroke-width="2.5"/>
+
+        <!-- LSP 2: via R3-R4 -->
+        <line x1="102" y1="298" x2="232" y2="315" stroke="#B8860B" stroke-width="2.5"/>
+        <line x1="268" y1="320" x2="402" y2="320" stroke="#B8860B" stroke-width="2.5"/>
+        <line x1="438" y1="315" x2="568" y2="298" stroke="#B8860B" stroke-width="2.5"/>
+
+        <text x="340" y="255" font-family="Fira Code, monospace" font-size="7" fill="#4A6741" text-anchor="middle">LSP-1 (low latency)</text>
+        <text x="340" y="350" font-family="Fira Code, monospace" font-size="7" fill="#B8860B" text-anchor="middle">LSP-2 (high bandwidth / backup)</text>
+
+        <text x="30" y="370" font-family="Source Serif 4, serif" font-size="9" fill="#8B7B65" font-style="italic">MPLS enables source-destination based routing, traffic engineering, and fast reroute &mdash; 10 years before SDN made generalized forwarding mainstream.</text>
+      </svg>
+      <div class="diagram-caption">Figure 5: IP Routing vs. MPLS Routing &mdash; IP sends all traffic to D on the shortest path. MPLS can establish multiple LSPs to D based on source, policy, or bandwidth, enabling traffic engineering.</div>
+    </div>
+  </div>
+
+  <div class="section" id="ch3-signaling">
+    <span class="section-label">Signaling</span>
+    <h2 class="section-title">MPLS Signaling: How Labels Get Distributed</h2>
+
+    <div class="prose">
+      <p>For MPLS forwarding to work, every LSR along a label-switched path must have the correct label mappings in its LFIB. This requires a mechanism for distributing labels and establishing LSPs. There are two primary components to this process: the routing protocol extensions that carry MPLS-relevant information, and the signaling protocol that sets up the LSPs themselves.</p>
+
+      <p>The first component involves extending existing link-state routing protocols&mdash;specifically <strong>OSPF</strong> and <strong>IS-IS</strong>&mdash;to carry additional information relevant to MPLS traffic engineering. Standard OSPF and IS-IS flood link-state information that describes the topology of the network: which routers are connected, what the link costs are, and so on. The MPLS extensions add information about link bandwidth&mdash;how much total bandwidth a link has, how much is currently reserved for MPLS LSPs, and how much is available. This information allows the ingress LSR to compute paths through the network that have sufficient available bandwidth, rather than simply choosing the shortest path. The modified protocols are called <strong>OSPF-TE</strong> and <strong>IS-IS-TE</strong> (the TE suffix stands for Traffic Engineering).</p>
+
+      <p>The second component is the <strong>RSVP-TE</strong> (Resource ReSerVation Protocol with Traffic Engineering) signaling protocol. When the ingress LSR has computed a path for a new LSP (using the bandwidth and topology information obtained from OSPF-TE or IS-IS-TE), it uses RSVP-TE to set up the LSP by sending signaling messages along the computed path. Each router along the path receives the RSVP-TE message, allocates a label for this LSP, installs the label mapping in its LFIB, and forwards the message to the next router. When the egress LSR responds, the labels are confirmed and the LSP is established. RSVP-TE also supports resource reservation&mdash;it can reserve bandwidth along the LSP, ensuring that the promised QoS is available.</p>
+
+      <p>This two-part architecture&mdash;link-state protocols for information distribution, RSVP-TE for LSP establishment&mdash;is the classic MPLS control plane. It is worth noting that there is an alternative label distribution protocol called <strong>LDP (Label Distribution Protocol)</strong>, which is simpler but does not support traffic engineering. LDP establishes LSPs that follow the same paths as IP routing, providing the label-switching performance benefit without the traffic engineering flexibility. For the purposes of this course and examination, RSVP-TE is the more important protocol because it enables the traffic engineering capabilities that are MPLS&rsquo;s primary modern justification.</p>
+    </div>
+
+    <div class="flow-steps">
+      <div class="flow-step"><strong>Step 1</strong>OSPF-TE/IS-IS-TE flood topology and bandwidth info</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><strong>Step 2</strong>Ingress LSR computes constrained path</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><strong>Step 3</strong>RSVP-TE signals along path</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><strong>Step 4</strong>Each LSR allocates label, updates LFIB</div>
+      <div class="flow-arrow">&rarr;</div>
+      <div class="flow-step"><strong>Step 5</strong>LSP established &mdash; data flows</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <span class="section-label">Forwarding Tables</span>
+    <h2 class="section-title">MPLS Forwarding Tables: The LFIB in Action</h2>
+
+    <div class="prose">
+      <p>The MPLS forwarding table, the Label Forwarding Information Base (LFIB), is conceptually straightforward. Each entry maps an incoming label to an outgoing label and an outgoing interface. When an interior LSR receives a labeled packet, it looks up the incoming label, swaps it with the outgoing label specified in the LFIB entry, and forwards the packet out of the specified interface. This is a &ldquo;swap&rdquo; operation. At the penultimate LSR (the router just before the egress), a &ldquo;pop&rdquo; operation may be performed, removing the label so that the egress LSR receives a plain IP packet. This optimization, called <strong>penultimate hop popping (PHP)</strong>, saves the egress LSR from having to perform two lookups (one on the label and one on the IP address). At the ingress LSR, a &ldquo;push&rdquo; operation adds the first label to an unlabeled IP packet.</p>
+    </div>
+
+    <!-- LFIB Table Example -->
+    <div class="table-wrapper">
+      <table>
+        <thead><tr><th>Incoming Label</th><th>Outgoing Label</th><th>Outgoing Interface</th><th>Operation</th><th>Destination</th></tr></thead>
+        <tbody>
+          <tr><td>100</td><td>200</td><td>eth0</td><td>Swap</td><td>Network D</td></tr>
+          <tr><td>101</td><td>300</td><td>eth1</td><td>Swap</td><td>Network E</td></tr>
+          <tr><td>200</td><td>&mdash;</td><td>eth2</td><td>Pop (PHP)</td><td>Network D</td></tr>
+          <tr><td>300</td><td>400</td><td>eth0</td><td>Swap</td><td>Network F</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="diagram-caption">Sample LFIB at an interior LSR. The router performs a simple exact-match lookup on the incoming label and determines the outgoing label, interface, and operation. No IP address inspection is needed.</div>
+
+    <div class="card card-accent">
+      <div class="card-title">MPLS Advantages and Disadvantages</div>
+      <div class="two-col">
+        <div>
+          <p><strong>Advantages:</strong></p>
+          <ul>
+            <li>Faster forwarding than prefix matching (historically)</li>
+            <li>Traffic engineering: paths based on source, destination, policy, bandwidth</li>
+            <li>Fast reroute: pre-computed backup paths for rapid failover</li>
+            <li>Support for QoS and guaranteed bandwidth</li>
+            <li>Layer 2.5 position enables multi-protocol support</li>
+            <li>VPN support (MPLS L3VPN, L2VPN)</li>
+          </ul>
+        </div>
+        <div>
+          <p><strong>Disadvantages:</strong></p>
+          <ul>
+            <li>Added complexity: additional protocols (RSVP-TE, LDP)</li>
+            <li>Requires MPLS-capable routers throughout the domain</li>
+            <li>Debugging and troubleshooting are more difficult</li>
+            <li>Performance advantage less relevant with modern hardware</li>
+            <li>Label space is limited per router</li>
+            <li>Not needed in small networks</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="exam-tip">
+      <p><strong>How to Structure a 10-Mark Answer on MPLS:</strong> (1) Begin with the problem: IP longest-prefix matching is slow and path-rigid. (2) Define MPLS formally. (3) Explain labels, LSRs, LSPs. (4) Draw the MPLS vs IP path diagram. (5) Explain the LFIB and swap/pop/push operations. (6) Discuss traffic engineering as the key advantage. (7) Explain signaling: OSPF-TE/IS-IS-TE + RSVP-TE. (8) Mention fast reroute. (9) Advantages and disadvantages. (10) Conclude with MPLS&rsquo;s position as &ldquo;Layer 2.5&rdquo; and its relationship to SDN.</p>
+    </div>
+
+    <div class="revision-card">
+      <p><strong>MPLS Quick Revision:</strong></p>
+      <ul>
+        <li>MPLS = fixed-length label forwarding (not longest-prefix match)</li>
+        <li>Label inserted between L2 and L3 (&ldquo;Layer 2.5&rdquo;)</li>
+        <li>IP addresses preserved but not examined during MPLS transit</li>
+        <li>LSR types: ingress (push), interior (swap), egress (pop)</li>
+        <li>LFIB: incoming label &rarr; outgoing label + interface</li>
+        <li>Traffic engineering: source+destination based routing</li>
+        <li>Fast reroute: pre-computed backup LSPs (ms failover)</li>
+        <li>Signaling: OSPF-TE/IS-IS-TE (topology info) + RSVP-TE (LSP setup)</li>
+        <li>MPLS predates SDN by ~10 years; early form of generalized forwarding</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- CHAPTER IV: DATA CENTER NETWORKING                           -->
+<!-- ============================================================ -->
+<section class="chapter" id="ch4">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter IV</div>
+    <h1 class="chapter-title">Data Center Networking</h1>
+    <div class="chapter-subtitle">Architecting for Scale: Racks, Fabrics, and the Intelligence of the Network</div>
+  </div>
+
+  <div class="section">
+    <span class="section-label">Context</span>
+    <h2 class="section-title">The Scale of Modern Data Centers</h2>
+
+    <div class="prose">
+      <p>A modern data center is an engineering marvel that dwarfs anything the early internet architects could have imagined. Tens of thousands&mdash;sometimes hundreds of thousands&mdash;of servers are densely packed into rows of racks inside vast, climate-controlled facilities. Amazon, Google, Microsoft, Facebook, Apple, and dozens of other companies operate data centers at scales that were inconceivable even twenty years ago. A single data center might serve millions of concurrent users, host thousands of different applications, and process exabytes of data. The networking challenges posed by this scale are unique and severe, and they have driven an entirely new branch of networking research and practice: <strong>data center networking</strong>.</p>
+
+      <p>The challenges are multifaceted. First, there is the challenge of <strong>sheer scale</strong>: how do you build a network that efficiently connects 100,000 servers? Traditional hierarchical network designs break down at this scale. Second, there is <strong>multi-tenancy and application diversity</strong>: multiple applications, each serving massive numbers of clients, must coexist on the same physical infrastructure without interfering with each other. Third, <strong>reliability</strong> is paramount: a data center serving millions of users cannot afford outages, and the network must be resilient to failures of individual switches, links, servers, and even entire racks. Fourth, <strong>load balancing</strong> must be sophisticated: processing, networking, and data bottlenecks must be identified and avoided in real
+         time, distributing workloads across available resources while minimizing latency for the end user. Fifth, there is the challenge of <strong>data locality</strong>: related services and data must be placed as close to each other as possible&mdash;ideally within the same rack, or at least in nearby racks&mdash;because crossing multiple tiers of the network adds both latency and congestion risk. When a web server needs to fetch data from a storage system or a caching layer, every network hop adds microseconds; at the scale of millions of requests per second, those microseconds compound into a significant performance penalty.</p>
+
+      <p>These challenges have driven a fundamental rethinking of network architecture. Traditional enterprise networks, built on hierarchical three-tier designs (access, aggregation, core), were never intended for the east-west traffic patterns that dominate data centers. In a data center, the vast majority of traffic flows between servers within the same facility&mdash;server-to-server communication for distributed computing, storage replication, and microservice interactions. This &ldquo;east-west&rdquo; traffic pattern demands a network fabric with high bisection bandwidth and low, predictable latency between any two servers, regardless of their physical location. The architectures that have emerged to meet these demands are the subject of this chapter.</p>
+    </div>
+  </div>
+
+  <div class="section" id="ch4-elements">
+    <span class="section-label">Architecture</span>
+    <h2 class="section-title">Data Center Network Elements: Racks, TORs, and the Fabric</h2>
+
+    <div class="prose">
+      <p>The fundamental building block of a data center network is the <strong>server rack</strong>. A typical rack contains between 20 and 40 server blades&mdash;thin, horizontally-mounted computers designed for dense stacking. Each blade is a complete server with its own CPU, memory, storage, and network interface. At the top of this rack sits a switch that connects to every server blade within the rack: this is the <strong>Top of Rack (TOR) switch</strong>. The TOR is the server&rsquo;s gateway to the rest of the data center. It typically provides 100G to 400G Ethernet connections down to the server blades and high-speed uplinks (often 400G or more) to the next tier of switches.</p>
+
+      <p>Above the TOR switches sits the <strong>Tier-2 (aggregation) switch layer</strong>. Each Tier-2 switch connects to multiple TOR switches below it, aggregating their traffic and providing connectivity between racks. The number of TOR switches that a single Tier-2 switch can connect to depends on the port density of the switch, but a typical ratio is around 16 TORs per Tier-2 switch. Above the Tier-2 layer, there may be a <strong>Tier-1 (core) switch layer</strong> that interconnects the Tier-2 switches and provides connectivity to the external internet. However, modern data center designs increasingly flatten this hierarchy, reducing or eliminating the core layer in favor of a more meshed, interconnected fabric.</p>
+
+      <p>The key architectural shift in modern data centers is from the rigid, tree-like hierarchy of traditional enterprise networks to a <strong>richly interconnected fabric</strong>. In a traditional tree, there is only one path between any two servers (up the tree and back down), which creates bottleneck links near the root and single points of failure. In a fabric, there are multiple paths between any pair of TOR switches, providing both increased throughput (because traffic can be spread across multiple paths) and increased reliability (because the failure of any single link or switch only eliminates some paths, not all of them). This rich interconnection is the defining characteristic of modern data center topologies.</p>
+    </div>
+
+    <!-- Data Center Topology Diagram -->
+    <div class="diagram-container">
+      <svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+        <!-- Tier-2 / Spine Switches -->
+        <text x="380" y="25" font-family="Cormorant Garamond, serif" font-size="13" font-weight="600" fill="#2C2418" text-anchor="middle">Tier-2 / Spine Layer</text>
+        <rect x="120" y="40" width="80" height="35" rx="4" fill="#7B9E6B" fill-opacity="0.2" stroke="#4A6741" stroke-width="1.5"/>
+        <text x="160" y="62" font-family="Fira Code, monospace" font-size="8" fill="#4A6741" text-anchor="middle">Spine 1</text>
+        <rect x="340" y="40" width="80" height="35" rx="4" fill="#7B9E6B" fill-opacity="0.2" stroke="#4A6741" stroke-width="1.5"/>
+        <text x="380" y="62" font-family="Fira Code, monospace" font-size="8" fill="#4A6741" text-anchor="middle">Spine 2</text>
+        <rect x="560" y="40" width="80" height="35" rx="4" fill="#7B9E6B" fill-opacity="0.2" stroke="#4A6741" stroke-width="1.5"/>
+        <text x="600" y="62" font-family="Fira Code, monospace" font-size="8" fill="#4A6741" text-anchor="middle">Spine 3</text>
+
+        <!-- TOR Switches -->
+        <text x="380" y="115" font-family="Cormorant Garamond, serif" font-size="13" font-weight="600" fill="#2C2418" text-anchor="middle">Top of Rack (TOR) / Leaf Layer</text>
+        <rect x="50" y="130" width="70" height="30" rx="3" fill="#D4A574" fill-opacity="0.2" stroke="#9B4D2B" stroke-width="1.5"/>
+        <text x="85" y="149" font-family="Fira Code, monospace" font-size="7" fill="#9B4D2B" text-anchor="middle">TOR 1</text>
+
+        <rect x="190" y="130" width="70" height="30" rx="3" fill="#D4A574" fill-opacity="0.2" stroke="#9B4D2B" stroke-width="1.5"/>
+        <text x="225" y="149" font-family="Fira Code, monospace" font-size="7" fill="#9B4D2B" text-anchor="middle">TOR 2</text>
+
+        <rect x="340" y="130" width="70" height="30" rx="3" fill="#D4A574" fill-opacity="0.2" stroke="#9B4D2B" stroke-width="1.5"/>
+        <text x="375" y="149" font-family="Fira Code, monospace" font-size="7" fill="#9B4D2B" text-anchor="middle">TOR 3</text>
+
+        <rect x="490" y="130" width="70" height="30" rx="3" fill="#D4A574" fill-opacity="0.2" stroke="#9B4D2B" stroke-width="1.5"/>
+        <text x="525" y="149" font-family="Fira Code, monospace" font-size="7" fill="#9B4D2B" text-anchor="middle">TOR 4</text>
+
+        <rect x="640" y="130" width="70" height="30" rx="3" fill="#D4A574" fill-opacity="0.2" stroke="#9B4D2B" stroke-width="1.5"/>
+        <text x="675" y="149" font-family="Fira Code, monospace" font-size="7" fill="#9B4D2B" text-anchor="middle">TOR 5</text>
+
+        <!-- Leaf-Spine Links (Every TOR connects to every Spine) -->
+        <!-- TOR 1 -->
+        <line x1="85" y1="130" x2="160" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <line x1="85" y1="130" x2="380" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <line x1="85" y1="130" x2="600" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <!-- TOR 2 -->
+        <line x1="225" y1="130" x2="160" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <line x1="225" y1="130" x2="380" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <line x1="225" y1="130" x2="600" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <!-- TOR 3 -->
+        <line x1="375" y1="130" x2="160" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <line x1="375" y1="130" x2="380" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <line x1="375" y1="130" x2="600" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <!-- TOR 4 -->
+        <line x1="525" y1="130" x2="160" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <line x1="525" y1="130" x2="380" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <line x1="525" y1="130" x2="600" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <!-- TOR 5 -->
+        <line x1="675" y1="130" x2="160" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <line x1="675" y1="130" x2="380" y2="75" stroke="#C4B89C" stroke-width="1"/>
+        <line x1="675" y1="130" x2="600" y2="75" stroke="#C4B89C" stroke-width="1"/>
+
+        <text x="380" y="100" font-family="Source Serif 4, serif" font-size="8" fill="#8B7B65" text-anchor="middle" font-style="italic">Every TOR connects to every Spine &mdash; multipath fabric</text>
+
+        <!-- Server Racks -->
+        <text x="380" y="200" font-family="Cormorant Garamond, serif" font-size="13" font-weight="600" fill="#2C2418" text-anchor="middle">Server Racks (20&ndash;40 Blades Each)</text>
+
+        <!-- Rack 1 -->
+        <rect x="40" y="215" width="90" height="150" rx="3" fill="#FAF5EB" stroke="#5C4A32" stroke-width="1.5"/>
+        <rect x="50" y="225" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="50" y="245" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="50" y="265" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="50" y="285" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="50" y="305" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <text x="85" y="348" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">Rack 1</text>
+        <line x1="85" y1="160" x2="85" y2="215" stroke="#5C4A32" stroke-width="1.5"/>
+
+        <!-- Rack 2 -->
+        <rect x="180" y="215" width="90" height="150" rx="3" fill="#FAF5EB" stroke="#5C4A32" stroke-width="1.5"/>
+        <rect x="190" y="225" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="190" y="245" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="190" y="265" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="190" y="285" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="190" y="305" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <text x="225" y="348" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">Rack 2</text>
+        <line x1="225" y1="160" x2="225" y2="215" stroke="#5C4A32" stroke-width="1.5"/>
+
+        <!-- Rack 3 -->
+        <rect x="330" y="215" width="90" height="150" rx="3" fill="#FAF5EB" stroke="#5C4A32" stroke-width="1.5"/>
+        <rect x="340" y="225" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="340" y="245" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="340" y="265" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="340" y="285" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="340" y="305" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <text x="375" y="348" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">Rack 3</text>
+        <line x1="375" y1="160" x2="375" y2="215" stroke="#5C4A32" stroke-width="1.5"/>
+
+        <!-- Rack 4 -->
+        <rect x="480" y="215" width="90" height="150" rx="3" fill="#FAF5EB" stroke="#5C4A32" stroke-width="1.5"/>
+        <rect x="490" y="225" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="490" y="245" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="490" y="265" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="490" y="285" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="490" y="305" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <text x="525" y="348" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">Rack 4</text>
+        <line x1="525" y1="160" x2="525" y2="215" stroke="#5C4A32" stroke-width="1.5"/>
+
+        <!-- Rack 5 -->
+        <rect x="630" y="215" width="90" height="150" rx="3" fill="#FAF5EB" stroke="#5C4A32" stroke-width="1.5"/>
+        <rect x="640" y="225" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="640" y="245" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="640" y="265" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="640" y="285" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <rect x="640" y="305" width="70" height="15" rx="1" fill="#EDE6D6" stroke="#8B7B65" stroke-width="0.5"/>
+        <text x="675" y="348" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" text-anchor="middle">Rack 5</text>
+        <line x1="675" y1="160" x2="675" y2="215" stroke="#5C4A32" stroke-width="1.5"/>
+
+        <!-- Labels -->
+        <text x="380" y="400" font-family="Source Serif 4, serif" font-size="10" fill="#8B7B65" text-anchor="middle" font-style="italic">Leaf-Spine Topology: Any TOR can reach any other TOR via any Spine &mdash; multipath, high bisection bandwidth</text>
+      </svg>
+      <div class="diagram-caption">Figure 6: Data Center Leaf-Spine Fabric &mdash; Every TOR (leaf) connects to every Spine switch, creating multiple equal-cost paths and eliminating single points of failure.</div>
+    </div>
+
+    <div class="card card-green">
+      <div class="card-title">Why Rich Interconnection (Leaf-Spine)?</div>
+      <ul>
+        <li><strong>Increased throughput:</strong> Multiple paths between any two TORs means aggregate bandwidth scales with the number of spine switches.</li>
+        <li><strong>Increased reliability:</strong> Redundancy at every layer. A spine switch failure only reduces available bandwidth; it does not partition the network.</li>
+        <li><strong>Predictable latency:</strong> Every inter-rack flow crosses exactly two hops (TOR &rarr; Spine &rarr; TOR), unlike tree topologies where hop count varies.</li>
+        <li><strong>Scalability:</strong> Adding capacity is straightforward: add more spines to increase bisection bandwidth, or add more leaf-spine pods.</li>
+      </ul>
+    </div>
+
+    <div class="confusion-box">
+      <p><strong>Traditional Tree vs. Leaf-Spine:</strong> In a traditional three-tier tree (access/aggregation/core), adding servers at the edge eventually oversubscribs the links at the aggregation and core layers, creating bottlenecks. A leaf-spine fabric is explicitly designed to minimize or eliminate oversubscription between tiers, ensuring that any server can communicate with any other server at line rate, limited only by the number of spine uplinks.</p>
+    </div>
+  </div>
+
+  <div class="section" id="ch4-routing">
+    <span class="section-label">Application Layer</span>
+    <h2 class="section-title">Application-Layer Routing: The Role of the Load Balancer</h2>
+
+    <div class="prose">
+      <p>While the physical and link-layer topology provides the raw connectivity within a data center, the intelligent direction of traffic is often handled at the application layer by a critical component known as the <strong>load balancer</strong>. A load balancer sits at the edge of the data center, between the external internet and the internal server fleet. It receives incoming client requests&mdash;HTTP requests for a web page, API calls for a mobile application, database queries&mdash;and distributes them across the available backend servers based on factors like server health, current load, geographic proximity, and application logic. To the external client, the data center appears as a single endpoint; the internal complexity of hundreds or thousands of servers is completely hidden.</p>
+
+      <p>The load balancer performs several functions beyond simple traffic distribution. It performs <strong>health checking</strong>: continuously monitoring backend servers and removing unhealthy ones from the rotation. It provides <strong>session persistence</strong> (affinity): ensuring that a client&rsquo;s requests are consistently directed to the same backend server for the duration of a session, which is necessary for applications that maintain local state. It terminates <strong>TLS/SSL connections</strong>, offloading the computationally expensive encryption and decryption work from the backend servers. And it provides a layer of <strong>security</strong>, absorbing DDoS attacks and filtering malicious requests before they reach the application servers. Without load balancers, the massive horizontal scalability that characterizes modern data center applications would be impossible; there would be no mechanism to coordinate client requests across a fleet of identical servers.</p>
+    </div>
+
+    <div class="def-box">
+      <p><strong>Load Balancer:</strong> An application-layer device or software that distributes incoming network traffic across multiple backend servers to optimize resource utilization, maximize throughput, reduce latency, and ensure fault tolerance. It hides the internal architecture of the data center from external clients.</p>
+    </div>
+  </div>
+
+  <div class="section" id="ch4-protocols">
+    <span class="section-label">Protocol Innovations</span>
+    <h2 class="section-title">Protocol Innovations Inside the Data Center</h2>
+
+    <div class="prose">
+      <p>The unique requirements of data center networking have driven the development of specialized protocols and adaptations of existing protocols that are rarely seen outside this context. The tightly controlled environment of a data center&mdash;where the organization owns every link, switch, and server&mdash;allows for optimizations that would be impossible on the open internet.</p>
+
+      <p>At the link layer, one of the most significant innovations is <strong>RoCE (RDMA over Converged Ethernet)</strong>. RDMA (Remote Direct Memory Access) allows one machine to directly access the memory of another machine without involving the operating system kernel on either side, dramatically reducing latency and CPU overhead. Originally developed for InfiniBand networks (which have their own specialized link layer), RoCE adapts RDMA to run over standard Ethernet, making it accessible in commodity data center environments. RoCE requires a lossless Ethernet fabric, typically achieved through Priority-based Flow Control (PFC), which prevents packet drops due to buffer overflow. This is critical because RDMA operates under the assumption that the network does not drop packets; retransmission would defeat the latency benefits.</p>
+
+      <p>At the transport layer, data centers have developed specialized congestion control mechanisms. Traditional TCP congestion control (like Reno or Cubic) was designed for the wide-area internet, where bandwidth is variable and round-trip times are long. Inside a data center, round-trip times are measured in microseconds, and the standard TCP mechanisms can be too slow to react to congestion. <strong>ECN (Explicit Congestion Notification)</strong> is used to signal congestion before packets are dropped: switches mark packets with a Congestion Experienced (CE) codepoint when queues approach capacity, and the receiving endpoint echoes this signal back to the sender, which reduces its sending rate. This approach is used by data center TCP variants like <strong>DCTCP (Data Center TCP)</strong> and <strong>DCQCN (Data Center QCN)</strong> (the latter for RoCE/RDMA traffic), which respond to ECN signals more aggressively and precisely than standard TCP. There is also experimentation with <strong>hop-by-hop (backpressure) congestion control</strong>, where switches directly signal their upstream neighbors to reduce sending rates, preventing congestion from building up in the first place.</p>
+    </div>
+
+    <div class="card card-accent">
+      <div class="card-title">SDN in the Data Center: Google ORION</div>
+      <p>Perhaps the most profound development in data center networking is the adoption of <strong>Software-Defined Networking (SDN)</strong>. SDN separates the network&rsquo;s control plane (which decides how packets are forwarded) from the data plane (which actually forwards them), centralizing control in a software controller that can program the forwarding behavior of all switches in the network.</p>
+      <p>A landmark example is <strong>Google&rsquo;s ORION</strong> SDN control plane, which manages both Google&rsquo;s internal data center network (called Jupiter) and their wide-area network (called B4). ORION implements routing, traffic engineering, and management as applications running on top of a centralized SDN core. Key aspects include:</p>
+      <ul>
+        <li><strong>Intradomain routing and iBGP:</strong> Implemented as SDN applications rather than distributed protocols running on each router.</li>
+        <li><strong>Traffic engineering:</strong> Edge-to-edge flow-based controls (such as CoFlow scheduling) to meet contractual SLAs.</li>
+        <li><strong>Management:</strong> Uses a publish-subscribe distributed microservice architecture within the Orion core.</li>
+        <li><strong>Switch signaling:</strong> OpenFlow is used to program and monitor the forwarding tables of switches from the central controller.</li>
+      </ul>
+      <p>This architecture raises a provocative question: <em>Are protocols dying?</em> When routing decisions, congestion control (partially), and failover are all managed by a centralized SDN controller rather than by distributed protocols running on each device, the traditional role of networking protocols is fundamentally diminished. The intelligence moves from the network devices to the software that controls them.</p>
+    </div>
+
+    <div class="pull-quote">
+      With SDN, the network ceases to be a collection of independently-routing devices and becomes a single, programmable system. The question is no longer &ldquo;what protocol should this router run?&rdquo; but &ldquo;what behavior should the controller program into the fabric?&rdquo;
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- CHAPTER V: TRENDS IN DATA CENTER NETWORKING                  -->
+<!-- ============================================================ -->
+<section class="chapter" id="ch5">
+  <div class="chapter-header">
+    <div class="chapter-num">Chapter V</div>
+    <h1 class="chapter-title">Trends in Data Center Networking</h1>
+    <div class="chapter-subtitle">AI Fabrics, Edge Computing, and the Sustainable Data Center</div>
+  </div>
+
+  <div class="prose">
+    <p>Data center networking is not a static discipline. The demands placed upon these networks evolve rapidly, driven by shifts in application architecture, user expectations, and global technological trends. Understanding the current trajectory of data center networking is essential not just for examinations, but for grasping the future of the field itself. The following five trends represent the most significant forces shaping data center networking today.</p>
+  </div>
+
+  <div class="two-col">
+    <div class="card card-accent">
+      <div class="card-title">1. AI and High-Performance Computing (HPC) Focus</div>
+      <p>The explosive growth of generative AI and large-scale machine learning has fundamentally altered the requirements of data center networks. Training a large language model like GPT-4 requires distributing computation across thousands of GPUs, which must exchange massive volumes of data (gradients and model parameters) with extremely low latency. A single bottleneck in the network can stall the entire training process, making network performance a critical determinant of training efficiency.</p>
+      <p>This has driven the adoption of <strong>400G and 800G Ethernet</strong>, <strong>InfiniBand</strong> (which offers native RDMA and lossless delivery), and <strong>specialized AI accelerator fabrics</strong> (such as NVIDIA&rsquo;s NVLink and NVSwitch). The network in an AI data center is not just a connectivity layer; it is a critical component of the computing fabric itself.</p>
+    </div>
+
+    <div class="card card-green">
+      <div class="card-title">2. Network Automation and SDN</div>
+      <p>Manual configuration of network devices is slow, error-prone, and fundamentally incompatible with the scale and dynamism of modern data centers. <strong>Software-Defined Networking (SDN)</strong> and intelligent, automated, and self-optimizing network architectures are replacing manual configuration. Network Intent Abstraction allows operators to declare what they want the network to do, and the SDN controller figures out how to program the devices to achieve it. This increases deployment speed, reduces human error, and enables rapid adaptation to changing conditions. The network becomes code, managed by software engineering practices rather than CLI commands.</p>
+    </div>
+
+    <div class="card card-gold">
+      <div class="card-title">3. Edge Computing Growth</div>
+      <p>Not all data processing can or should happen in centralized data centers. Applications like autonomous driving, industrial IoT, and real-time 5G services require processing latencies of a few milliseconds&mdash;latencies that are physically impossible to achieve when the nearest data center is hundreds of kilometers away. <strong>Edge data centers</strong>&mdash;smaller facilities deployed closer to the data source&mdash;are increasingly being built to handle these latency-sensitive workloads. These edge sites are connected to the central data centers, creating a distributed computing topology where workloads are placed at the optimal point on the latency-bandwidth spectrum.</p>
+    </div>
+
+    <div class="card card-accent">
+      <div class="card-title">4. Sustainability and Energy Efficiency</div>
+      <p>The power demands of AI and large-scale computing are enormous, and the environmental impact of data centers has become a critical concern. The industry is moving toward <strong>energy-efficient networking components</strong> such as Linear Pluggable Optics (LPO), which reduce power consumption in optical transceivers. <strong>Advanced cooling solutions</strong>, including liquid cooling and immersion cooling (where servers are submerged in a thermally conductive but electrically insulating fluid), are replacing traditional air cooling, which is increasingly inadequate for the heat densities of modern GPU clusters. Sustainability is no longer a secondary concern; it is a primary design constraint.</p>
+    </div>
+  </div>
+
+  <div class="card card-green" style="max-width: 600px; margin: 1.5rem auto;">
+    <div class="card-title">5. Enhanced Security and Visibility</div>
+    <p>With increased reliance on data center uptime comes an intensified focus on <strong>network observability, security, and resilience</strong>. Traditional monitoring tools are insufficient for the scale and complexity of modern fabrics. <strong>AIOps (Artificial Intelligence for IT Operations)</strong> uses machine learning to analyze network telemetry, detect anomalies, perform predictive maintenance, and identify potential security breaches before they cause outages. The ability to &ldquo;see&rdquo; everything happening in the network in real time, and to respond automatically, is becoming a fundamental requirement.</p>
+  </div>
+
+  <!-- Trends Comparison Table -->
+  <div class="table-wrapper">
+    <table>
+      <thead><tr><th>Trend</th><th>Driver</th><th>Key Technology</th><th>Impact on Networking</th></tr></thead>
+      <tbody>
+        <tr><td>AI / HPC Focus</td><td>Generative AI, ML training</td><td>400G/800G Ethernet, InfiniBand, RDMA</td><td>Ultra-low latency, lossless fabrics, GPU-centric design</td></tr>
+        <tr><td>Automation / SDN</td><td>Scale, agility, human error</td><td>SDN controllers, Intent-based networking</td><td>Centralized control, programmatic management</td></tr>
+        <tr><td>Edge Computing</td><td>IoT, 5G, autonomous systems</td><td>Micro data centers, MEC</td><td>Distributed topology, latency-sensitive placement</td></tr>
+        <tr><td>Sustainability</td><td>Power density, environmental impact</td><td>LPO, liquid/immersion cooling</td><td>Power-aware design, thermal-conscious routing</td></tr>
+        <tr><td>Security / Visibility</td><td>Uptime requirements, threat landscape</td><td>AIOps, telemetry, zero-trust</td><td>Predictive maintenance, real-time anomaly detection</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="revision-card">
+    <p><strong>Data Center Networking Quick Revision:</strong></p>
+    <ul>
+      <li>Building blocks: Server racks (20-40 blades) + TOR switch (100G-400G to servers)</li>
+      <li>Topology: Leaf-Spine (TOR = leaf, Tier-2 = spine) &mdash; every leaf connects to every spine</li>
+      <li>Multipath: increased throughput, reliability via redundancy, predictable 2-hop latency</li>
+      <li>Load balancer: application-layer routing, hides internals, distributes load, TLS offload</li>
+      <li>RoCE: RDMA over Converged Ethernet &mdash; kernel bypass, requires lossless fabric (PFC)</li>
+      <li>Transport: ECN + DCTCP/DCQCN for low-latency congestion control</li>
+      <li>SDN: Centralized control plane, Google ORION (Jupiter + B4), OpenFlow for signaling</li>
+      <li>Trends: AI/InfiniBand, SDN Automation, Edge computing, Sustainability (LPO/liquid cooling), AIOps</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!-- APPENDIX: THE EXAM ARSENAL                                   -->
+<!-- ============================================================ -->
+<section class="appendix" id="appendix">
+  <div class="page-wrapper">
+    <div class="chapter-header" style="border-bottom: none; padding-bottom: 1rem;">
+      <div class="chapter-num">Appendix</div>
+      <h1 class="chapter-title" style="font-size: 2rem;">The Exam Arsenal</h1>
+      <div class="chapter-subtitle">Revision Sheets, Viva Questions, and Answer Frameworks</div>
+    </div>
+
+    <!-- ULTRA-CONDENSED REVISION SHEET -->
+    <div class="section">
+      <span class="section-label">Night Before</span>
+      <h2 class="section-title">Ultra-Condensed Exam-Night Recap</h2>
+
+      <div class="revision-card" style="border: 2px solid var(--accent);">
+        <p><strong>VLANs:</strong> Problem = single broadcast domain (scaling, security). Solution = port-based VLANs (software grouping). Trunk port = carries multiple VLANs (802.1Q tag). 802.1Q = 4 bytes (TPID 0x8100 + TCI with 12-bit VID + 3-bit PCP). CRC recomputed. VXLAN = L2-in-L3 tunnel, 24-bit VNID (16M networks), EVPN control plane.</p>
+        <p><strong>Link Virtualization:</strong> Network-as-a-link abstraction. MPLS LSPs, VXLAN tunnels, GRE tunnels all instantiate this. Virtual topology independent of physical topology.</p>
+        <p><strong>MPLS:</strong> Fixed-length label forwarding (no prefix match). Layer 2.5. IP addresses preserved. LSR types: ingress (push), interior (swap), egress (pop). LFIB = label table. Traffic engineering = source+destination routing. Fast reroute = pre-computed backups. Signaling = OSPF-TE/IS-IS-TE + RSVP-TE.</p>
+        <p><strong>Data Centers:</strong> TOR + Tier-2 (leaf-spine). Multipath fabric. Load balancer = app-layer routing. RoCE = RDMA over Ethernet (lossless). DCTCP/ECN = transport. SDN = centralized control (Google ORION). Trends: AI/InfiniBand, SDN, Edge, Sustainability, AIOps.</p>
+      </div>
+    </div>
+
+    <!-- MNEMONICS -->
+    <div class="section">
+      <span class="section-label">Memory Aids</span>
+      <h2 class="section-title">Mnemonics and Memory Anchors</h2>
+
+      <div class="two-col">
+        <div class="memory-anchor">
+          <p><strong>802.1Q Tag Fields:</strong> &ldquo;<strong>T</strong>eachers <strong>P</strong>refer <strong>V</strong>alid <strong>P</strong>oints&rdquo; &mdash; <strong>T</strong>PID, <strong>P</strong>CP (Priority), <strong>V</strong>ID (VLAN ID), recomputed CRC <strong>P</strong>ointer. Or simply: &ldquo;TPID + TCI&rdquo; where TCI = PCP + CFI + VID.</p>
+        </div>
+        <div class="memory-anchor">
+          <p><strong>MPLS LSR Operations:</strong> &ldquo;<strong>P</strong>lease <strong>S</strong>end <strong>P</strong>opcorn&rdquo; &mdash; <strong>P</strong>ush (ingress), <strong>S</strong>wap (interior), <strong>P</strong>op (egress/PHP).</p>
+        </div>
+        <div class="memory-anchor">
+          <p><strong>Data Center Trends:</strong> &ldquo;<strong>A</strong>ll <strong>E</strong>lephants <strong>S</strong>eek <strong>S</strong>hady <strong>A</strong>reas&rdquo; &mdash; <strong>A</strong>I/HPC, <strong>E</strong>dge computing, <strong>S</strong>DN/Automation, <strong>S</strong>ustainability, <strong>A</strong>IOps/Security.</p>
+        </div>
+        <div class="memory-anchor">
+          <p><strong>Leaf-Spine Benefits:</strong> &ldquo;<strong>T</strong>hroughput, <strong>R</strong>eliability, <strong>L</strong>atency&rdquo; &mdash; <strong>T</strong>hroughput (multipath), <strong>R</strong>eliability (redundancy), <strong>L</strong>atency (predictable 2-hop).</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOST COMMONLY CONFUSED POINTS -->
+    <div class="section">
+      <span class="section-label">Clarifications</span>
+      <h2 class="section-title">Most Commonly Confused Points</h2>
+
+      <div class="confusion-box" style="margin-bottom: 1rem;">
+        <p><strong>VLAN vs. Subnet:</strong> VLAN = Layer 2 broadcast domain isolation. Subnet = Layer 3 IP address range. They usually map 1:1 but are conceptually different.</p>
+      </div>
+      <div class="confusion-box" style="margin-bottom: 1rem;">
+        <p><strong>MPLS replaces IP?</strong> NO. MPLS coexists with IP. The IP header is preserved inside the labeled packet. MPLS provides an alternative forwarding mechanism (label-based) but does not eliminate IP.</p>
+      </div>
+      <div class="confusion-box" style="margin-bottom: 1rem;">
+        <p><strong>Trunk port vs. Access port:</strong> Access = one VLAN, untagged, connects to hosts. Trunk = multiple VLANs, 802.1Q tagged, connects between switches.</p>
+      </div>
+      <div class="confusion-box" style="margin-bottom: 1rem;">
+        <p><strong>VXLAN vs. VLAN:</strong> VLAN = 12-bit ID, L2 only, single campus. VXLAN = 24-bit VNID, L2-over-L3 tunneling, crosses data centers.</p>
+      </div>
+      <div class="confusion-box">
+        <p><strong>RDMA vs. RoCE:</strong> RDMA = Remote Direct Memory Access (the memory-access technique). RoCE = RDMA over Converged Ethernet (the protocol that carries RDMA over Ethernet). RoCE is one way to implement RDMA; InfiniBand is another.</p>
+      </div>
+    </div>
+
+    <!-- HOW TO STRUCTURE EXAM ANSWERS -->
+    <div class="section">
+      <span class="section-label">Exam Strategy</span>
+      <h2 class="section-title">How to Structure a 10-Mark / 15-Mark Answer</h2>
+
+      <div class="card card-gold">
+        <div class="card-title">Universal Long-Answer Framework</div>
+        <ol>
+          <li><strong>Introduction (2 marks):</strong> Define the concept formally. State the problem it solves. Give the historical motivation (what existed before, why it was insufficient).</li>
+          <li><strong>Core Mechanism (4 marks):</strong> Step-by-step explanation of how it works. Use technical terminology and define each term. Reference a diagram.</li>
+          <li><strong>Diagram (2 marks):</strong> Draw a clear, labeled diagram. Architecture, protocol flow, or comparison. Every label matters. Explain the diagram in your text.</li>
+          <li><strong>Advantages and Disadvantages (2 marks):</strong> List at least 3 advantages and 2 disadvantages with brief explanations (not just keywords).</li>
+          <li><strong>Comparison / Context (2 marks):</strong> Compare with related technologies. Connect to broader themes (e.g., MPLS as precursor to SDN, VLAN vs VXLAN).</li>
+          <li><strong>Conclusion / Real-World Example (1-2 marks):</strong> Mention a real-world deployment (Google ORION, Facebook F16, AWS VXLAN). Show that the concept is practically relevant.</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- DIAGRAM DRAWING TIPS -->
+    <div class="section">
+      <span class="section-label">Exam Strategy</span>
+      <h2 class="section-title">Quick Diagram-Drawing Guide for Exams</h2>
+
+      <div class="exam-tip">
+        <p><strong>802.1Q Frame Format:</strong> Draw the standard Ethernet frame first (Dest MAC | Src MAC | Type | Data | CRC). Then draw the tagged version with the 4-byte insert highlighted between Src MAC and Type. Label TPID (0x8100), TCI, and break TCI into PCP (3b) + CFI (1b) + VID (12b). Mark CRC as "Recomputed". This is a guaranteed 3-4 marks within any VLAN question.</p>
+        <p><strong>MPLS vs IP Routing:</strong> Draw 6 routers in two rows. For IP: highlight one path (shortest). For MPLS: highlight two different colored paths (traffic engineering). Label one as "Destination-based" and the other as "Source+Destination based". This contrast is worth 3-4 marks.</p>
+        <p><strong>Leaf-Spine Topology:</strong> Draw 3 Spine switches on top, 4-5 TOR switches below. Draw lines from EVERY TOR to EVERY Spine. Draw 2-3 server racks below each TOR. Label the layers. Mark "Multipath" and "2-hop latency". This covers the data center architecture question.</p>
+        <p><strong>VXLAN Tunnel:</strong> Draw two sites (boxes) with L2 switches and hosts. Draw VTEPs at each edge. Draw an IP cloud in the middle. Show the tunnel going through the cloud. Label "Encapsulation" at one VTEP and "Decapsulation" at the other.</p>
+      </div>
+    </div>
+
+    <!-- LIKELY EXAM QUESTIONS -->
+    <div class="section">
+      <span class="section-label">Question Bank</span>
+      <h2 class="section-title">Most Likely University-Style Exam Questions</h2>
+
+      <div class="two-col">
+        <div class="card">
+          <div class="card-title">2-Mark Questions</div>
+          <ol>
+            <li>What is the purpose of a trunk port?</li>
+            <li>Define MPLS label.</li>
+            <li>What is the TPID value in 802.1Q?</li>
+            <li>What is a TOR switch?</li>
+            <li>State the size of the VLAN ID field in 802.1Q.</li>
+            <li>What is RoCE?</li>
+            <li>What is penultimate hop popping in MPLS?</li>
+            <li>Define VXLAN VNID and its size.</li>
+            <li>What is the role of RSVP-TE in MPLS?</li>
+            <li>Name two trends in data center networking.</li>
+          </ol>
+        </div>
+        <div class="card">
+          <div class="card-title">5-Mark Questions</div>
+          <ol>
+            <li>Explain port-based VLANs with a diagram.</li>
+            <li>Describe the 802.1Q frame format.</li>
+            <li>Compare access port and trunk port.</li>
+            <li>Explain MPLS label-switched routers (ingress, interior, egress).</li>
+            <li>What is link virtualization? Give two examples.</li>
+            <li>Describe the leaf-spine data center topology.</li>
+            <li>Explain the role of load balancers in data centers.</li>
+            <li>Compare VLAN and VXLAN.</li>
+            <li>Explain MPLS signaling using RSVP-TE.</li>
+            <li>What is EVPN? How does it relate to VXLAN?</li>
+          </ol>
+        </div>
+        <div class="card">
+          <div class="card-title">10-Mark Questions</div>
+          <ol>
+            <li>Explain VLANs spanning multiple switches with 802.1Q. Draw the frame format and explain each field.</li>
+            <li>Explain MPLS architecture: LSRs, LFIB, label operations. How does it enable traffic engineering?</li>
+            <li>Describe data center network architecture: elements, topology, and the need for rich interconnection.</li>
+            <li>Explain VXLAN/EVPN: motivation, architecture, encapsulation, and comparison with 802.1Q VLANs.</li>
+            <li>Describe protocol innovations in data center networks (RoCE, ECN, DCTCP, SDN).</li>
+          </ol>
+        </div>
+        <div class="card">
+          <div class="card-title">15-Mark Descriptive Questions</div>
+          <ol>
+            <li>Discuss Virtual LANs in detail: motivation, port-based VLANs, VLANs across multiple switches, 802.1Q frame format, and VXLAN as an evolution. Include diagrams and comparisons.</li>
+            <li>Explain Multiprotocol Label Switching (MPLS) comprehensively: motivation, architecture, forwarding, signaling, traffic engineering advantages over IP routing, and its role as link virtualization. Draw comparison diagrams.</li>
+            <li>Describe data center networking in detail: scale challenges, network elements, leaf-spine architecture, application-layer routing, protocol innovations, and emerging trends. Discuss the role of SDN with the Google ORION example.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIVA VOCE QUESTIONS -->
+    <div class="section">
+      <span class="section-label">Viva Voce</span>
+      <h2 class="section-title">Interactive Viva Practice</h2>
+      <p style="font-size: 0.9rem; color: var(--fg-muted); margin-bottom: 1rem;">Click each question to reveal a model answer.</p>
+
+      <div class="viva-item" onclick="this.classList.toggle('open')">
+        <div class="viva-q">Q: Why can't we just use subnets instead of VLANs for isolation?</div>
+        <div class="viva-a">Subnets operate at Layer 3 and control IP routing, but they do not prevent Layer 2 broadcast traffic from reaching all hosts on the same physical switch. A broadcast frame (like an ARP request) is flooded to all ports regardless of subnet. VLANs provide Layer 2 isolation, containing broadcasts within their virtual LAN. Both are needed: VLANs for L2 isolation, subnets for L3 addressing.</div>
+      </div>
+
+      <div class="viva-item" onclick="this.classList.toggle('open')">
+        <div class="viva-q">Q: What happens if an 802.1Q-tagged frame arrives at a non-VLAN-aware switch?</div>
+        <div class="viva-a">The switch will see the EtherType field as 0x8100, which it does not recognize. Standard behavior for unrecognized EtherTypes is to drop the frame. This is why 802.1Q tags are only placed on trunk ports connecting VLAN-aware switches, and removed before frames reach access ports and end hosts.</div>
+      </div>
+
+      <div class="viva-item" onclick="this.classList.toggle('open')">
+        <div class="viva-q">Q: How does MPLS differ from IP routing in terms of forwarding decision?</div>
+        <div class="viva-a">IP routing makes forwarding decisions based on the destination IP address using longest prefix matching. MPLS makes forwarding decisions based on a fixed-length label using exact match, which is faster. More importantly, IP routing is destination-based only, while MPLS can make forwarding decisions based on both source and destination, enabling traffic engineering.</div>
+      </div>
+
+      <div class="viva-item" onclick="this.classList.toggle('open')">
+        <div class="viva-q">Q: Why does a data center use a leaf-spine topology instead of a traditional three-tier tree?</div>
+        <div class="viva-a">A traditional tree creates bottleneck links at the aggregation and core layers (oversubscription) and has only one path between any two servers (single point of failure). Leaf-spine provides multiple equal-cost paths (higher throughput and redundancy), predictable 2-hop latency between any two racks, and scales horizontally by adding more spine switches.</div>
+      </div>
+
+      <div class="viva-item" onclick="this.classList.toggle('open')">
+        <div class="viva-q">Q: What is the difference between RDMA and RoCE?</div>
+        <div class="viva-a">RDMA (Remote Direct Memory Access) is a technique for directly accessing a remote machine's memory without OS kernel involvement. RoCE (RDMA over Converged Ethernet) is a specific protocol that implements RDMA over standard Ethernet networks. RDMA is the capability; RoCE is one way to deliver it (InfiniBand is another).</div>
+      </div>
+
+      <div class="viva-item" onclick="this.classList.toggle('open')">
+        <div class="viva-q">Q: Why does the professor ask "Are protocols dying?" in the context of SDN?</div>
+        <div class="viva-a">With SDN (like Google ORION), functions traditionally performed by distributed protocols&mdash;routing, traffic engineering, failover&mdash;are centralized in a software controller. Switches become simple forwarding devices programmed by the controller. Traditional distributed protocols like OSPF are replaced by controller applications. The protocols aren't literally dying, but their role is shifting from distributed decision-making to simple data-plane programming interfaces.</div>
+      </div>
+
+      <div class="viva-item" onclick="this.classList.toggle('open')">
+        <div class="viva-q">Q: Why does VXLAN use a 24-bit VNID instead of the 12-bit VLAN ID?</div>
+        <div class="viva-a">The 12-bit VLAN ID supports only 4,096 VLANs, which is insufficient for large cloud providers who need to isolate traffic for thousands or millions of tenants. The 24-bit VNID supports approximately 16.7 million virtual networks, providing the scale needed for multi-tenant cloud environments.</div>
+      </div>
+
+      <div class="viva-item" onclick="this.classList.toggle('open')">
+        <div class="viva-q">Q: What is the purpose of the Priority Code Point (PCP) field in 802.1Q?</div>
+        <div class="viva-a">The 3-bit PCP field allows Ethernet frames to be assigned one of eight priority levels (0-7) for Quality of Service (QoS) processing. Higher-priority frames (like voice traffic) can be given preferential treatment in switch queues, ensuring lower latency and jitter. It functions similarly to the IP ToS/DSCP field but operates at Layer 2.</div>
+      </div>
+    </div>
+
+    <!-- WHAT PROFESSORS USUALLY EXPECT -->
+    <div class="section">
+      <span class="section-label">Insider Knowledge</span>
+      <h2 class="section-title">What Professors Usually Expect</h2>
+
+      <div class="card card-gold">
+        <ul>
+          <li><strong>Diagrams are non-negotiable:</strong> A 10-mark question without a diagram will rarely score above 6. Always draw, always label, always reference the diagram in your text.</li>
+          <li><strong>Formal definitions first:</strong> Start every answer with a textbook-quality definition. This signals that you understand the concept at the level expected by the university.</li>
+          <li><strong>Step-by-step mechanisms:</strong> Don't skip steps. If explaining 802.1Q tagging, go from "frame arrives at access port" through "tag inserted" to "tag removed at far end." Professors want to see that you understand the process, not just the outcome.</li>
+          <li><strong>Advantages AND disadvantages:</strong> Many students list only advantages. Including disadvantages shows critical thinking and typically adds 2-3 marks.</li>
+          <li><strong>Comparisons:</strong> "Difference between" questions are extremely common. Always use a structured format (table or side-by-side points) with at least 4-5 parameters of comparison.</li>
+          <li><strong>Real-world examples:</strong> Mentioning Google ORION, Facebook F16, AWS VXLAN, or InfiniBand in AI data centers shows that your knowledge extends beyond the textbook.</li>
+          <li><strong>Protocol specifics:</strong> Values like 0x8100, 12-bit VLAN ID, 24-bit VNID, 4-byte tag&mdash;these details matter. They demonstrate precision.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CONCEPTUAL MAP -->
+    <div class="section">
+      <span class="section-label">Big Picture</span>
+      <h2 class="section-title">Unit 3 Conceptual Relationship Map</h2>
+
+      <div class="diagram-container">
+        <svg viewBox="0 0 760 420" xmlns="http://www.w3.org/2000/svg">
+          <!-- Central node -->
+          <ellipse cx="380" cy="200" rx="90" ry="35" fill="#C47D4E" fill-opacity="0.15" stroke="#9B4D2B" stroke-width="2"/>
+          <text x="380" y="196" font-family="Cormorant Garamond, serif" font-size="14" font-weight="600" fill="#2C2418" text-anchor="middle">Link Layer</text>
+          <text x="380" y="212" font-family="Cormorant Garamond, serif" font-size="12" fill="#9B4D2B" text-anchor="middle">&amp; LANs</text>
+
+          <!-- VLAN node -->
+          <rect x="60" y="50" width="140" height="50" rx="25" fill="#7B9E6B" fill-opacity="0.15" stroke="#4A6741" stroke-width="1.5"/>
+          <text x="130" y="80" font-family="Cormorant Garamond, serif" font-size="13" font-weight="500" fill="#4A6741" text-anchor="middle">VLANs / 802.1Q</text>
+
+          <!-- VXLAN node -->
+          <rect x="290" y="40" width="120" height="45" rx="22" fill="#4A6741" fill-opacity="0.12" stroke="#4A6741" stroke-width="1.5"/>
+          <text x="350" y="67" font-family="Cormorant Garamond, serif" font-size="12" fill="#4A6741" text-anchor="middle">VXLAN / EVPN</text>
+
+          <!-- Link Virtualization -->
+          <rect x="500" y="60" width="180" height="45" rx="22" fill="#B8860B" fill-opacity="0.12" stroke="#B8860B" stroke-width="1.5"/>
+          <text x="590" y="87" font-family="Cormorant Garamond, serif" font-size="12" fill="#B8860B" text-anchor="middle">Link Virtualization</text>
+
+          <!-- MPLS -->
+          <rect x="530" y="200" width="140" height="50" rx="25" fill="#9B4D2B" fill-opacity="0.12" stroke="#9B4D2B" stroke-width="1.5"/>
+          <text x="600" y="230" font-family="Cormorant Garamond, serif" font-size="13" font-weight="500" fill="#9B4D2B" text-anchor="middle">MPLS</text>
+
+          <!-- Data Center -->
+          <rect x="70" y="310" width="170" height="50" rx="25" fill="#3B7A7A" fill-opacity="0.1" stroke="#3B7A7A" stroke-width="1.5"/>
+          <text x="155" y="340" font-family="Cormorant Garamond, serif" font-size="13" font-weight="500" fill="#3B7A7A" text-anchor="middle">Data Center Arch.</text>
+
+          <!-- Protocol Innovations -->
+          <rect x="310" y="340" width="160" height="50" rx="25" fill="#6B3A5E" fill-opacity="0.1" stroke="#6B3A5E" stroke-width="1.5"/>
+          <text x="390" y="370" font-family="Cormorant Garamond, serif" font-size="12" fill="#6B3A5E" text-anchor="middle">Protocol Innovations</text>
+
+          <!-- Trends -->
+          <rect x="540" y="340" width="150" height="50" rx="25" fill="#A0522D" fill-opacity="0.1" stroke="#A0522D" stroke-width="1.5"/>
+          <text x="615" y="370" font-family="Cormorant Garamond, serif" font-size="12" fill="#A0522D" text-anchor="middle">DC Trends</text>
+
+          <!-- Connections -->
+          <line x1="165" y1="100" x2="310" y2="175" stroke="#5C4A32" stroke-width="1" stroke-dasharray="4,2"/>
+          <line x1="350" y1="85" x2="360" y2="168" stroke="#5C4A32" stroke-width="1" stroke-dasharray="4,2"/>
+          <line x1="560" y1="105" x2="460" y2="182" stroke="#5C4A32" stroke-width="1" stroke-dasharray="4,2"/>
+          <line x1="530" y1="225" x2="470" y2="212" stroke="#5C4A32" stroke-width="1" stroke-dasharray="4,2"/>
+          <line x1="180" y1="310" x2="300" y2="225" stroke="#5C4A32" stroke-width="1" stroke-dasharray="4,2"/>
+          <line x1="390" y1="340" x2="385" y2="235" stroke="#5C4A32" stroke-width="1" stroke-dasharray="4,2"/>
+          <line x1="590" y1="340" x2="560" y2="245" stroke="#5C4A32" stroke-width="1" stroke-dasharray="4,2"/>
+
+          <!-- Labels on connections -->
+          <text x="220" y="140" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" transform="rotate(-30 220 140)">broadcast isolation</text>
+          <text x="430" y="145" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" transform="rotate(15 430 145)">L2 over L3</text>
+          <text x="500" y="215" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65">label switching</text>
+          <text x="210" y="265" font-family="Fira Code, monospace" font-size="7" fill="#8B7B65" transform="rotate(30 210 265)">leaf-spine</text>
+
+          <!-- Key insight -->
+          <text x="380" y="410" font-family="Source Serif 4, serif" font-size="10" fill="#8B7B65" text-anchor="middle" font-style="italic">All concepts in Unit 3 orbit around the idea of virtualization: creating logical structures that transcend physical constraints.</text>
+        </svg>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ==================== FOOTER ==================== -->
+<footer style="text-align: center; padding: 3rem 1rem; border-top: 1px solid var(--border); color: var(--fg-light); font-size: 0.8rem; font-style: italic;">
+  <p>Crafted for deep understanding and examination mastery.</p>
+  <p style="margin-top: 0.5rem; font-family: 'Fira Code', monospace; font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--border-dark);">Unit 3 &mdash; The Link Layer &amp; LANs &mdash; VLANs, MPLS, Data Center Networking</p>
+</footer>
+
+<script>
+// Collapsible sections
+function toggleCollapsible(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    el.classList.toggle('open');
+  }
+}
+
+// Active TOC highlighting on scroll
+const tocLinks = document.querySelectorAll('.toc-link');
+const sections = [];
+
+tocLinks.forEach(link => {
+  const href = link.getAttribute('href');
+  if (href && href.startsWith('#')) {
+    const target = document.querySelector(href);
+    if (target) {
+      sections.push({ id: href, el: target, link: link });
+    }
+  }
+});
+
+function updateActiveTOC() {
+  let currentSection = null;
+  const scrollPos = window.scrollY + 120;
+
+  sections.forEach(section => {
+    if (section.el.offsetTop <= scrollPos) {
+      currentSection = section;
+    }
+  });
+
+  tocLinks.forEach(link => link.classList.remove('active'));
+  if (currentSection) {
+    currentSection.link.classList.add('active');
+  }
+}
+
+// Throttle scroll handler
+let scrollTimeout;
+window.addEventListener('scroll', () => {
+  if (scrollTimeout) clearTimeout(scrollTimeout);
+  scrollTimeout = setTimeout(updateActiveTOC, 50);
+}, { passive: true });
+
+// Smooth scroll for TOC
+tocLinks.forEach(link => {
+  link.addEventListener('click', (e) => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) {
+      const offset = 80;
+      const top = target.getBoundingClientRect().top + window.pageYOffset - offset;
+      window.scrollTo({ top: top, behavior: 'smooth' });
+    }
+  });
+});
+
+// Fade-in on scroll
+const observerOptions = { threshold: 0.1, rootMargin: '0px 0px -40px 0px' };
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('fade-in');
+      observer.unobserve(entry.target);
+    }
+  });
+}, observerOptions);
+
+document.querySelectorAll('.section, .card, .diagram-container, .revision-card').forEach(el => {
+  el.style.opacity = '0';
+  observer.observe(el);
+});
+
+// Initialize
+updateActiveTOC();
+</script>
+</body>
+</html>

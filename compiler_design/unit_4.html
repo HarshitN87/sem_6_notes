@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 4 — Intermediate Code Generation & Code Generation | Compiler Design TCS-601</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;0,8..60,700;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+--bg:#f5f0e6;--bg-alt:#ebe5d8;--surface:#faf7f0;--surface-warm:#f7f2e8;
+--accent:#c44536;--accent-hover:#a83828;--accent-light:#f0e0dc;
+--accent2:#2a6b5e;--accent2-light:#ddeae7;
+--accent3:#d4a843;--accent3-light:#f5edda;
+--text:#2c2418;--text-sec:#5a5043;--text-muted:#8a7e6d;
+--border:#d4cbb8;--border-light:#e8e2d5;
+--code-bg:#2c2418;--code-text:#f0ece4;
+--shadow-sm:0 1px 3px rgba(44,36,24,.06);
+--shadow-md:0 4px 12px rgba(44,36,24,.08);
+--shadow-lg:0 8px 30px rgba(44,36,24,.1);
+--radius:6px;--radius-lg:12px;
+}
+html{scroll-behavior:smooth;font-size:17px}
+body{
+font-family:'Source Serif 4',Georgia,'Times New Roman',serif;
+background:var(--bg);color:var(--text);line-height:1.78;
+-webkit-font-smoothing:antialiased;
+}
+body::before{
+content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+opacity:.03;
+}
+h1,h2,h3,h4,h5,h6{
+font-family:'Playfair Display',Georgia,serif;
+font-weight:600;line-height:1.25;color:var(--text);
+}
+code,pre,.mono{font-family:'JetBrains Mono','Courier New',monospace}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:.2s}
+a:hover{border-bottom-color:var(--accent)}
+.container{max-width:900px;margin:0 auto;padding:0 2rem}
+@media(max-width:768px){.container{padding:0 1.2rem}html{font-size:15px}}
+
+/* HERO */
+.hero{
+background:linear-gradient(135deg,#2c2418 0%,#3d3225 40%,#4a3828 100%);
+color:var(--bg);padding:5rem 2rem 4rem;text-align:center;
+position:relative;overflow:hidden;
+}
+.hero::before{
+content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+background:radial-gradient(ellipse at 30% 40%,rgba(196,69,54,.12) 0%,transparent 50%),
+radial-gradient(ellipse at 70% 60%,rgba(42,107,94,.1) 0%,transparent 50%);
+}
+.hero-inner{position:relative;z-index:1;max-width:700px;margin:0 auto}
+.hero h1{font-size:2.8rem;color:#f0ece4;margin-bottom:.5rem;font-weight:700;letter-spacing:-.02em}
+.hero .subtitle{font-size:1.15rem;color:#c4b89a;font-style:italic;margin-bottom:1.5rem}
+.hero .meta{font-size:.85rem;color:#9a8e7a;letter-spacing:.08em;text-transform:uppercase}
+.hero .ornament{
+width:60px;height:2px;background:var(--accent3);margin:1.5rem auto;
+position:relative;
+}
+.hero .ornament::before{
+content:'◆';position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+color:var(--accent3);font-size:.6rem;
+}
+
+/* NAV / TOC */
+.toc{
+background:var(--surface);
+border-bottom:1px solid var(--border);
+padding:1.5rem 2rem;
+position:relative;   /* change this */
+z-index:100;
+box-shadow:var(--shadow-sm);
+}
+.toc-inner{max-width:900px;margin:0 auto}
+.toc-title{
+font-family:'Playfair Display',serif;font-size:.8rem;
+letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted);
+margin-bottom:.8rem;
+}
+.toc-grid{display:flex;flex-wrap:wrap;gap:.4rem 1.2rem}
+.toc-grid a{
+font-size:.82rem;color:var(--text-sec);padding:.2rem 0;
+border-bottom:1px dotted var(--border-light);
+}
+.toc-grid a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* SECTIONS */
+section{padding:3rem 0;border-bottom:1px solid var(--border-light)}
+section:last-of-type{border-bottom:none}
+.section-header{
+text-align:center;margin-bottom:2.5rem;padding-bottom:1.5rem;
+border-bottom:1px solid var(--border-light);
+}
+.section-header h2{font-size:2rem;margin-bottom:.5rem;color:var(--accent)}
+.section-header .section-num{
+display:inline-block;font-family:'JetBrains Mono',monospace;
+font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;
+color:var(--text-muted);background:var(--bg-alt);
+padding:.25rem .8rem;border-radius:20px;margin-bottom:.8rem;
+}
+.section-header p{font-size:1rem;color:var(--text-sec);max-width:600px;margin:0 auto;font-style:italic}
+
+/* SUBSECTIONS */
+.subsection{margin-bottom:2.5rem}
+.subsection h3{
+font-size:1.45rem;margin-bottom:1rem;padding-bottom:.5rem;
+border-bottom:2px solid var(--accent-light);color:var(--text);
+}
+.subsection h4{font-size:1.15rem;margin:1.5rem 0 .7rem;color:var(--accent2)}
+
+/* PROSE */
+.prose p{margin-bottom:1.2rem;text-align:justify;hyphens:auto}
+.prose p.lead{font-size:1.08rem;color:var(--text-sec);font-style:italic;border-left:3px solid var(--accent3);padding-left:1rem;margin-bottom:1.5rem}
+
+/* CODE */
+pre{
+background:var(--code-bg);color:var(--code-text);
+padding:1.2rem 1.5rem;border-radius:var(--radius);
+overflow-x:auto;font-size:.82rem;line-height:1.65;
+margin:1.2rem 0;border:1px solid #3d3225;
+}
+code{
+font-family:'JetBrains Mono',monospace;font-size:.85em;
+background:var(--bg-alt);padding:.1rem .35rem;border-radius:3px;
+color:var(--accent);
+}
+pre code{background:none;padding:0;color:inherit;font-size:inherit}
+
+/* TABLES */
+.table-wrap{overflow-x:auto;margin:1.5rem 0;border-radius:var(--radius-lg);box-shadow:var(--shadow-md)}
+table{
+width:100%;border-collapse:collapse;font-size:.88rem;
+background:var(--surface);
+}
+thead{background:var(--text);color:var(--surface)}
+th{
+padding:.7rem 1rem;text-align:left;font-weight:600;
+font-family:'Playfair Display',serif;font-size:.82rem;
+letter-spacing:.04em;text-transform:uppercase;
+}
+td{padding:.6rem 1rem;border-bottom:1px solid var(--border-light)}
+tbody tr:hover{background:var(--accent3-light)}
+tbody tr:nth-child(even){background:var(--surface-warm)}
+tbody tr:nth-child(even):hover{background:var(--accent3-light)}
+
+/* BOXES */
+.box{
+border-radius:var(--radius-lg);padding:1.5rem 1.8rem;margin:1.5rem 0;
+position:relative;
+}
+.box::before{
+content:'';position:absolute;left:0;top:0;bottom:0;width:4px;
+border-radius:var(--radius-lg) 0 0 var(--radius-lg);
+}
+.box-exam{background:var(--accent-light);border:1px solid #e0c4bc}
+.box-exam::before{background:var(--accent)}
+.box-exam .box-title{color:var(--accent)}
+
+.box-tip{background:var(--accent2-light);border:1px solid #b8d8d0}
+.box-tip::before{background:var(--accent2)}
+.box-tip .box-title{color:var(--accent2)}
+
+.box-memory{background:var(--accent3-light);border:1px solid #e0d4a8}
+.box-memory::before{background:var(--accent3)}
+.box-memory .box-title{color:#9a7a20}
+
+.box-viva{background:#f0ecf5;border:1px solid #d4cce0}
+.box-viva::before{background:#7a5e9a}
+.box-viva .box-title{color:#7a5e9a}
+
+.box-title{
+font-family:'Playfair Display',serif;font-weight:600;
+font-size:.85rem;letter-spacing:.08em;text-transform:uppercase;
+margin-bottom:.8rem;display:flex;align-items:center;gap:.5rem;
+}
+
+/* COLLAPSIBLE */
+details{
+margin:1rem 0;border:1px solid var(--border);border-radius:var(--radius-lg);
+background:var(--surface);overflow:hidden;
+}
+details summary{
+padding:.8rem 1.2rem;cursor:pointer;font-weight:600;
+font-family:'Playfair Display',serif;font-size:.95rem;
+background:var(--surface-warm);list-style:none;
+display:flex;align-items:center;gap:.5rem;
+}
+details summary::before{content:'▸';transition:transform .2s;font-size:.8rem}
+details[open] summary::before{transform:rotate(90deg)}
+details summary::-webkit-details-marker{display:none}
+details .details-body{padding:1rem 1.2rem}
+
+/* DIAGRAM CONTAINER */
+.diagram-wrap{
+margin:2rem 0;padding:1.5rem;background:var(--surface);
+border:1px solid var(--border);border-radius:var(--radius-lg);
+box-shadow:var(--shadow-sm);text-align:center;
+}
+.diagram-wrap svg{max-width:100%;height:auto}
+.diagram-caption{
+font-size:.82rem;color:var(--text-muted);font-style:italic;
+margin-top:.8rem;text-align:center;
+}
+
+/* PULLQUOTE */
+.pullquote{
+font-family:'Playfair Display',serif;font-size:1.25rem;
+font-style:italic;color:var(--accent);text-align:center;
+padding:1.5rem 2rem;margin:2rem 0;
+border-top:2px solid var(--accent-light);
+border-bottom:2px solid var(--accent-light);
+}
+
+/* SIDENOTE */
+.sidenote{
+float:right;width:220px;margin:0 0 1rem 1.5rem;
+padding:1rem;background:var(--surface-warm);
+border:1px solid var(--border-light);border-radius:var(--radius);
+font-size:.82rem;color:var(--text-sec);line-height:1.55;
+}
+@media(max-width:768px){.sidenote{float:none;width:100%;margin:1rem 0}}
+
+/* REVISION CARD */
+.rev-card{
+background:var(--surface);border:2px solid var(--accent3);
+border-radius:var(--radius-lg);padding:1.5rem;margin:1.5rem 0;
+position:relative;
+}
+.rev-card::after{
+content:'REVISION';position:absolute;top:-10px;right:1.5rem;
+background:var(--accent3);color:#fff;font-size:.65rem;
+padding:.2rem .6rem;border-radius:3px;letter-spacing:.1em;
+font-family:'JetBrains Mono',monospace;
+}
+
+/* COMPARISON */
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}}
+.comp-item{
+background:var(--surface);border:1px solid var(--border);
+border-radius:var(--radius-lg);padding:1.2rem;
+}
+.comp-item h5{
+font-family:'Playfair Display',serif;font-size:.9rem;
+margin-bottom:.5rem;color:var(--accent2);
+}
+
+/* STEP LIST */
+.step-list{counter-reset:steps;margin:1.5rem 0;padding-left:0;list-style:none}
+.step-list li{
+counter-increment:steps;padding:.8rem 0 .8rem 3rem;
+position:relative;border-bottom:1px solid var(--border-light);
+}
+.step-list li::before{
+content:counter(steps);position:absolute;left:0;top:.8rem;
+width:1.8rem;height:1.8rem;background:var(--accent);
+color:#fff;border-radius:50%;display:flex;align-items:center;
+justify-content:center;font-size:.75rem;font-weight:700;
+font-family:'JetBrains Mono',monospace;
+}
+
+/* FLOW GRAPH NODES */
+.fg-node{
+fill:var(--surface);stroke:var(--text);stroke-width:1.5;
+}
+.fg-edge{stroke:var(--text);stroke-width:1.5;fill:none;marker-end:url(#arrowhead)}
+.fg-label{font-family:'Source Serif 4',serif;font-size:12px;fill:var(--text);text-anchor:middle}
+.fg-code{font-family:'JetBrains Mono',monospace;font-size:10px;fill:var(--text);text-anchor:middle}
+
+/* DAG STYLES */
+.dag-node{stroke:var(--text);stroke-width:1.5}
+.dag-leaf{fill:var(--accent3-light)}
+.dag-op{fill:var(--accent-light)}
+.dag-edge{stroke:var(--text);stroke-width:1.2;fill:none;marker-end:url(#arrowhead)}
+.dag-label{font-family:'JetBrains Mono',monospace;font-size:13px;fill:var(--text);text-anchor:middle;dominant-baseline:central}
+
+/* PRINT */
+@media print{
+body::before{display:none}
+.hero{padding:2rem}
+.toc{position:static;box-shadow:none}
+details[open] .details-body,.details-body{display:block!important}
+.sidenote{float:none;width:100%}
+}
+
+/* ANIMATIONS */
+@keyframes fadeInUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{animation:fadeInUp .6s ease forwards;opacity:0}
+.animate-in:nth-child(2){animation-delay:.1s}
+.animate-in:nth-child(3){animation-delay:.2s}
+
+/* BACK TO TOP */
+.back-top{
+position:fixed;bottom:2rem;right:2rem;width:44px;height:44px;
+background:var(--accent);color:#fff;border:none;border-radius:50%;
+cursor:pointer;font-size:1.2rem;box-shadow:var(--shadow-lg);
+opacity:0;transition:.3s;z-index:50;display:flex;align-items:center;justify-content:center;
+}
+.back-top.visible{opacity:1}
+.back-top:hover{background:var(--accent-hover)}
+
+/* FOOTER */
+footer{
+text-align:center;padding:3rem 2rem;
+border-top:2px solid var(--border);color:var(--text-muted);
+font-size:.85rem;font-style:italic;
+}
+footer .ornament{
+width:40px;height:1px;background:var(--accent3);margin:1rem auto;
+}
+
+/* CLEARFIX */
+.clearfix::after{content:'';display:table;clear:both}
+
+/* NUMBER CIRCLE */
+.num-circle{
+display:inline-flex;align-items:center;justify-content:center;
+width:1.6rem;height:1.6rem;background:var(--accent);
+color:#fff;border-radius:50%;font-size:.7rem;font-weight:700;
+font-family:'JetBrains Mono',monospace;margin-right:.4rem;flex-shrink:0;
+}
+</style>
+</head>
+<body>
+
+<!-- ========================= HERO ========================= -->
+<header class="hero">
+<div class="hero-inner">
+<div class="meta">Compiler Design &middot; TCS-601 &middot; Unit 4</div>
+<h1>Intermediate Code Generation<br>&amp; Code Generation</h1>
+<p class="subtitle">A comprehensive study guide for Indian university examinations — crafted for deep understanding, long-term retention, and confident answer-writing.</p>
+<div class="ornament"></div>
+</div>
+</header>
+
+<!-- ========================= TOC ========================= -->
+<nav class="toc">
+<div class="toc-inner">
+<div class="toc-title">Table of Contents</div>
+<div class="toc-grid">
+<a href="#part-a">Part A — Intermediate Code Generation</a>
+<a href="#s-intermediate">Intermediate Languages</a>
+<a href="#s-3ac">Three Address Code</a>
+<a href="#s-quad-triple">Quadruples, Triples, Indirect Triples</a>
+<a href="#s-declarations">Declarations</a>
+<a href="#s-assignment">Assignment Statements</a>
+<a href="#s-boolean">Boolean Expressions</a>
+<a href="#s-case">Case Statements</a>
+<a href="#s-backpatching">Backpatching</a>
+<a href="#s-procedure">Procedure Calls</a>
+<a href="#part-b">Part B — Code Generation</a>
+<a href="#s-design-issues">Design Issues</a>
+<a href="#s-target-machine">Target Machine</a>
+<a href="#s-storage">Run-time Storage Management</a>
+<a href="#s-basic-blocks">Basic Blocks &amp; Flow Graphs</a>
+<a href="#s-nextuse">Next-use Information</a>
+<a href="#s-simple-cg">Simple Code Generator</a>
+<a href="#s-register">Register Allocation &amp; Assignment</a>
+<a href="#s-dag">DAG Representation</a>
+<a href="#s-code-from-dag">Generating Code from DAGs</a>
+<a href="#s-revision">Quick Revision Sheet</a>
+</div>
+</div>
+</nav>
+
+<!-- ========================= PART A ========================= -->
+<div class="container">
+
+<section id="part-a">
+<div class="section-header">
+<span class="section-num">Part A</span>
+<h2>Intermediate Code Generation</h2>
+<p>The translator's secret language — a bridge between the elegance of source code and the raw machinery of hardware.</p>
+</div>
+</section>
+
+<!-- ========================= INTERMEDIATE LANGUAGES ========================= -->
+<section id="s-intermediate">
+<div class="section-header">
+<span class="section-num">Section 4.1</span>
+<h2>Intermediate Languages</h2>
+<p>Why compilers speak to themselves before speaking to machines</p>
+</div>
+
+<div class="subsection prose">
+<h3>Why Does Intermediate Code Exist?</h3>
+
+<p>Consider the fundamental challenge facing any compiler writer: a single source language (say, C or Java) must eventually run on dozens of different processor architectures, each with its own instruction set, register file, memory model, and calling conventions. If the compiler translated directly from source to every target machine, you would need <em>m × n</em> separate compilers for <em>m</em> languages and <em>n</em> architectures — an engineering nightmare that scales catastrophically. The history of computing is littered with the corpses of projects that attempted this brute-force approach. The insight that resolved this combinatorial explosion was deceptively simple: insert an intermediate representation between the front end and the back end. Now the front end produces one intermediate form per source language, and the back end consumes one intermediate form per target architecture. The total work drops from <em>m × n</em> to <em>m + n</em>, a saving so dramatic that virtually every production compiler built since the 1970s has adopted this architecture. The GNU Compiler Collection (GCC) uses GIMPLE and RTL as its intermediate forms; LLVM uses its famous IR; the Java compiler produces bytecode. Each of these is an intermediate language designed to sit in that crucial middle position, absorbing the complexity of translation so that neither the front end nor the back end needs to understand the other's world.</p>
+
+<p>The benefits of intermediate code extend far beyond mere modularity. An intermediate representation serves as the ideal substrate for machine-independent optimisations. When the compiler has translated the source program into a clean, structured intermediate form, it becomes possible to apply transformations — constant folding, dead code elimination, loop invariant code motion, common subexpression elimination — without worrying about the peculiarities of any particular instruction set. These optimisations improve the program regardless of where it will eventually run, so performing them at the intermediate level means the improvement automatically propagates to every target architecture. Furthermore, intermediate code makes the compiler vastly easier to debug and maintain. When something goes wrong, the developer can inspect the intermediate output and determine whether the fault lies in the front end (which produced bad intermediate code) or the back end (which mistranslated correct intermediate code). This separation of concerns is not merely convenient; it is the difference between a manageable engineering project and an unmaintainable monolith.</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 780 120" xmlns="http://www.w3.org/2000/svg" style="max-width:700px">
+<defs>
+<marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2c2418"/></marker>
+</defs>
+<rect x="10" y="35" width="110" height="50" rx="6" fill="#faf7f0" stroke="#2c2418" stroke-width="1.5"/>
+<text x="65" y="57" text-anchor="middle" font-family="'Playfair Display',serif" font-size="12" fill="#2c2418" font-weight="600">Source</text>
+<text x="65" y="72" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="10" fill="#8a7e6d">Program</text>
+<line x1="120" y1="60" x2="155" y2="60" class="fg-edge"/>
+<rect x="155" y="35" width="110" height="50" rx="6" fill="#f0e0dc" stroke="#c44536" stroke-width="1.5"/>
+<text x="210" y="55" text-anchor="middle" font-family="'Playfair Display',serif" font-size="11" fill="#c44536" font-weight="600">Front End</text>
+<text x="210" y="70" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="9" fill="#8a7e6d">Analysis</text>
+<line x1="265" y1="60" x2="300" y2="60" class="fg-edge"/>
+<rect x="300" y="25" width="140" height="70" rx="6" fill="#f5edda" stroke="#d4a843" stroke-width="2"/>
+<text x="370" y="50" text-anchor="middle" font-family="'Playfair Display',serif" font-size="12" fill="#9a7a20" font-weight="700">Intermediate</text>
+<text x="370" y="66" text-anchor="middle" font-family="'Playfair Display',serif" font-size="12" fill="#9a7a20" font-weight="700">Code</text>
+<text x="370" y="82" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="8" fill="#8a7e6d">← the pivot</text>
+<line x1="440" y1="60" x2="475" y2="60" class="fg-edge"/>
+<rect x="475" y="35" width="130" height="50" rx="6" fill="#ddeae7" stroke="#2a6b5e" stroke-width="1.5"/>
+<text x="540" y="55" text-anchor="middle" font-family="'Playfair Display',serif" font-size="11" fill="#2a6b5e" font-weight="600">Optimiser</text>
+<text x="540" y="70" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="9" fill="#8a7e6d">Machine-independent</text>
+<line x1="605" y1="60" x2="640" y2="60" class="fg-edge"/>
+<rect x="640" y="35" width="130" height="50" rx="6" fill="#f0e0dc" stroke="#c44536" stroke-width="1.5"/>
+<text x="705" y="55" text-anchor="middle" font-family="'Playfair Display',serif" font-size="11" fill="#c44536" font-weight="600">Back End</text>
+<text x="705" y="70" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="9" fill="#8a7e6d">Code Generation</text>
+</svg>
+<div class="diagram-caption">Figure 4.1 — The compiler pipeline. Intermediate code is the architectural pivot that decouples source-language analysis from target-machine synthesis.</div>
+</div>
+
+<h3>Principal Intermediate Representations</h3>
+
+<p>Intermediate representations come in several flavours, each with its own strengths. The most common forms are <strong>Three Address Code (3AC)</strong>, <strong>Quadruples</strong>, <strong>Triples</strong>, <strong>Indirect Triples</strong>, <strong>Abstract Syntax Trees (AST)</strong>, <strong>Postfix notation</strong>, and <strong>DAGs (Directed Acyclic Graphs)</strong>. Among these, Three Address Code and its tabular variants (quadruples and triples) dominate university syllabi and examination questions, and for good reason: they expose the structure of computation in a form that is both human-readable and machine-translatable. In Three Address Code, every instruction has at most one operator on the right-hand side, which means the instruction can be directly mapped to a single machine instruction on most architectures. This property — sometimes called the "one operation per statement" rule — is what makes 3AC so valuable as a compilation target. The restriction to three addresses (two operands and one result) mirrors the structure of actual hardware instructions, which typically consume two source registers and produce one destination register.</p>
+
+<div class="box box-tip">
+<div class="box-title">✦ Exam Tip — Benefits of Intermediate Code</div>
+<p style="margin-bottom:.5rem">A frequently asked 2-mark or 5-mark question. Memorise these benefits and expand each into a sentence or two for longer answers:</p>
+<p><strong>(1)</strong> Retargetability — same front end works for multiple target machines. <strong>(2)</strong> Machine-independent optimisation becomes possible. <strong>(3)</strong> Separation of concerns — front end and back end can be developed independently. <strong>(4)</strong> Easier debugging and testing of compiler phases. <strong>(5)</strong> Enables source-level debugging by mapping back from intermediate code. <strong>(6)</strong> Reduces overall compiler construction effort from <em>m × n</em> to <em>m + n</em>. <strong>(7)</strong> Facilitates portability of compiled programs across architectures.</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= THREE ADDRESS CODE ========================= -->
+<section id="s-3ac">
+<div class="section-header">
+<span class="section-num">Section 4.2</span>
+<h2>Three Address Code (3AC)</h2>
+<p>One operation, three addresses — the lingua franca of intermediate compilation</p>
+</div>
+
+<div class="subsection prose">
+<h3>Understanding Three Address Code</h3>
+
+<p>Three Address Code is an intermediate representation in which each instruction contains at most one operator on the right-hand side, along with at most two operand addresses and one result address — hence the name "three address." The general form is <code>x = y op z</code>, where <code>x</code> is the result, <code>y</code> and <code>z</code> are operands, and <code>op</code> is an operator. When an instruction requires fewer than three addresses (such as unary operations or assignments), the unused fields are simply left empty or marked with a dash. The beauty of this restriction is that it breaks complex expressions down into their atomic computational steps, making explicit every temporary value that the programmer left implicit. Consider the expression <code>a + b * c</code>: a human understands operator precedence and evaluates <code>b * c</code> first, but the intermediate code must make this ordering explicit. In 3AC, this becomes two instructions — <code>t1 = b * c</code> followed by <code>t2 = a + t1</code> — where <code>t1</code> and <code>t2</code> are compiler-generated temporary variables that hold intermediate results.</p>
+
+<p>The introduction of temporary variables is one of the most important conceptual aspects of 3AC. When a programmer writes <code>x = a + b * c - d</code>, the compiler must decompose this single statement into a sequence of primitive operations, each producing a temporary result. The process mirrors how one might evaluate the expression on paper: first compute <code>b * c</code>, store it somewhere, then add <code>a</code>, store that result, then subtract <code>d</code>, and finally store the overall result in <code>x</code>. Each "store somewhere" corresponds to a temporary variable in 3AC. These temporaries are not part of the original program; they are the compiler's bookkeeping mechanism for tracking partial results. In the final machine code, temporaries typically become registers or stack locations, but at the intermediate level they exist as abstract names that simplify the compiler's task enormously. The number of temporaries required for an expression is directly related to the depth of the expression tree — a fact that has implications for register allocation later in the compilation process.</p>
+
+<p>Three Address Code instructions can represent a variety of statement types. The most common categories include: <strong>assignments</strong> of the form <code>x = y op z</code> (binary operations) or <code>x = op y</code> (unary operations such as unary minus or negation); <strong>copy statements</strong> of the form <code>x = y</code>; <strong>unconditional jumps</strong> written as <code>goto L</code>; <strong>conditional jumps</strong> such as <code>if x goto L</code> or <code>ifFalse x goto L</code> or relational tests like <code>if x relop y goto L</code>; <strong>indexed assignments</strong> for array access such as <code>x = y[i]</code> and <code>x[i] = y</code>; <strong>pointer operations</strong> like <code>x = *y</code> and <code>*x = y</code>; and <strong>procedure-related</strong> instructions including <code>param x</code>, <code>call p, n</code>, and <code>return x</code>. Each of these forms maps naturally to one or a small number of machine instructions, which is precisely why 3AC serves so well as an intermediate form.</p>
+
+<h4>Generating 3AC from Expressions</h4>
+
+<p>The translation from an arithmetic expression to Three Address Code follows a systematic procedure rooted in the syntax tree of the expression. The compiler traverses the abstract syntax tree in a bottom-up fashion (post-order traversal), and for each interior node representing an operator, it emits a three-address instruction that applies that operator to the node's children and stores the result in a fresh temporary. Let us work through a detailed example to make this process concrete. Consider the expression <code>a = -(x + y - z) + (b + c * d) * (x + y + g - h)</code>. This is a complex nested expression involving unary negation, multiple arithmetic operators, and repeated subexpressions. The 3AC for this expression proceeds as follows:</p>
+
+<pre><code>t1  = x + y
+t2  = t1 - z
+t3  = - t2          // unary minus
+t4  = c * d
+t5  = b + t4
+t6  = x + y
+t7  = t6 + g
+t8  = t7 - h
+t9  = t5 * t8
+t10 = t3 + t9
+a   = t10</code></pre>
+
+<p>Notice how the expression <code>x + y</code> appears twice — once in the negated subexpression and once in the right-hand product. A naive translation generates two separate temporaries (t1 and t6) for the same computation. A compiler performing <strong>common subexpression elimination</strong> (CSE) would recognise that <code>x + y</code> has already been computed and reuse t1 instead of generating t6. This is precisely the kind of optimisation that is easiest to perform at the intermediate code level, and it is one of the reasons why DAGs (which naturally detect common subexpressions) are discussed later in this unit. For examination purposes, unless the question specifically asks for optimised code, it is generally safe to generate the straightforward (unoptimised) 3AC and then note that CSE could improve it.</p>
+
+<div class="box box-memory">
+<div class="box-title">◆ Memory Anchor</div>
+<p>Think of 3AC as a recipe with one step per instruction. Just as a recipe says "crack the eggs into bowl B, whisk, then add flour from bowl A," Three Address Code says "take operand A, apply operation, store result in temporary T." Each instruction does exactly one thing, making the sequence of computations completely explicit.</p>
+</div>
+
+<h4>Implementation Representations of 3AC</h4>
+
+<p>Three Address Code is a conceptual model, but in practice it must be stored in a data structure within the compiler. The three most common implementations are <strong>Quadruples</strong>, <strong>Triples</strong>, and <strong>Indirect Triples</strong>. Each represents the same logical information but uses a different data structure, with different trade-offs in terms of space efficiency, ease of optimisation, and ease of code generation. Understanding these three representations — and being able to construct all three for a given expression — is essential for university examinations, where this topic appears with remarkable regularity. The next section provides a thorough treatment of each representation.</p>
+
+<div class="box box-exam">
+<div class="box-title">✦ Likely Exam Questions</div>
+<p>• "Explain Three Address Code with examples." (5 marks)<br>
+• "Generate 3AC for the expression: <code>a = -(x+y-z) + (b+c*d)*(x+y+g-h)</code>" (5–10 marks)<br>
+• "What are the different representations of 3AC?" (2–5 marks)<br>
+• "List the instruction types in Three Address Code." (2 marks)</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= QUADRUPLES, TRIPLES, INDIRECT TRIPLES ========================= -->
+<section id="s-quad-triple">
+<div class="section-header">
+<span class="section-num">Section 4.3</span>
+<h2>Quadruples, Triples &amp; Indirect Triples</h2>
+<p>Three ways to tabulate the same truth — each with its own engineering character</p>
+</div>
+
+<div class="subsection prose">
+<h3>Quadruples</h3>
+
+<p>The quadruple representation stores each three-address instruction as a record with four fields: <strong>(op, arg1, arg2, result)</strong>. The <code>op</code> field holds the operator, <code>arg1</code> and <code>arg2</code> hold the operands (or pointers to symbol-table entries), and <code>result</code> holds the name of the temporary or variable where the computed value is stored. For unary operations, the <code>arg2</code> field is left blank (conventionally marked with a dash or left null). For unconditional jumps, the <code>result</code> field holds the target label. This representation is straightforward, easy to understand, and easy to manipulate — which is why it is the most commonly taught form in university courses. The quadruple table for the expression <code>a = -(x + y - z) + (b + c * d) * (x + y + g - h)</code> is shown below:</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>#</th><th>op</th><th>arg1</th><th>arg2</th><th>result</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>+</td><td>x</td><td>y</td><td>t1</td></tr>
+<tr><td>1</td><td>−</td><td>t1</td><td>z</td><td>t2</td></tr>
+<tr><td>2</td><td>uminus</td><td>t2</td><td>—</td><td>t3</td></tr>
+<tr><td>3</td><td>*</td><td>c</td><td>d</td><td>t4</td></tr>
+<tr><td>4</td><td>+</td><td>b</td><td>t4</td><td>t5</td></tr>
+<tr><td>5</td><td>+</td><td>x</td><td>y</td><td>t6</td></tr>
+<tr><td>6</td><td>+</td><td>t6</td><td>g</td><td>t7</td></tr>
+<tr><td>7</td><td>−</td><td>t7</td><td>h</td><td>t8</td></tr>
+<tr><td>8</td><td>*</td><td>t5</td><td>t8</td><td>t9</td></tr>
+<tr><td>9</td><td>+</td><td>t3</td><td>t9</td><td>t10</td></tr>
+<tr><td>10</td><td>=</td><td>t10</td><td>—</td><td>a</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>The principal advantage of quadruples is that optimisation passes can easily manipulate the table — replacing operands, rewriting operators, or eliminating redundant instructions — because every instruction is self-contained. The result field explicitly names the temporary, so when a later instruction references <code>t5</code>, the compiler can look up row 4 and see exactly how <code>t5</code> was computed. The disadvantage is space: every instruction occupies four fields even when some are unused, and the temporary names themselves consume storage. For very large programs, this overhead can become significant, which motivates the triple representation.</p>
+
+<h3>Triples</h3>
+
+<p>The triple representation eliminates the <code>result</code> field entirely, storing each instruction as a three-field record: <strong>(op, arg1, arg2)</strong>. The result of each computation is implicitly identified by the <em>position</em> (row number) of the triple in the table. When a subsequent instruction needs to refer to the result of an earlier computation, it uses the row number as a pointer — written in parentheses, such as <code>(0)</code> to refer to the result of the triple in row 0. This saves space because temporary names are no longer needed, but it introduces a complication: if the compiler rearranges or deletes triples during optimisation, all position-based references become invalid. This fragility makes triples less suitable for aggressive optimisation, though they are perfectly adequate for straightforward translation. The triple table for the same expression is:</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>#</th><th>op</th><th>arg1</th><th>arg2</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>+</td><td>x</td><td>y</td></tr>
+<tr><td>1</td><td>−</td><td>(0)</td><td>z</td></tr>
+<tr><td>2</td><td>uminus</td><td>(1)</td><td>—</td></tr>
+<tr><td>3</td><td>*</td><td>c</td><td>d</td></tr>
+<tr><td>4</td><td>+</td><td>b</td><td>(3)</td></tr>
+<tr><td>5</td><td>+</td><td>x</td><td>y</td></tr>
+<tr><td>6</td><td>+</td><td>(5)</td><td>g</td></tr>
+<tr><td>7</td><td>−</td><td>(6)</td><td>h</td></tr>
+<tr><td>8</td><td>*</td><td>(4)</td><td>(7)</td></tr>
+<tr><td>9</td><td>+</td><td>(2)</td><td>(8)</td></tr>
+<tr><td>10</td><td>=</td><td>(9)</td><td>a</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>Observe how every reference to a previously computed value uses the row number in parentheses. Triple <code>(5)</code> computes <code>x + y</code> independently of triple <code>(0)</code>, even though they compute the same value — the triple representation does not inherently perform common subexpression elimination. A compiler using triples would need a separate pass to detect and merge such redundancies. The assignment <code>a = t10</code> is represented as triple <code>(10)</code> with op <code>=</code>, arg1 <code>(9)</code> (the value being assigned), and arg2 <code>a</code> (the target variable). Different textbooks may order the arguments of the assignment differently, so it is worth checking your course material for the exact convention used.</p>
+
+<h3>Indirect Triples</h3>
+
+<p>Indirect triples combine the space efficiency of triples with the flexibility of quadruples. Instead of storing instructions directly in a position-indexed table, the compiler maintains two structures: a <strong>pointer table</strong> (an array of pointers, one per instruction, in execution order) and an <strong>instruction table</strong> (a pool of unique triple records). The pointer table determines the order of execution, while the instruction pool stores each distinct instruction only once. This separation means that the compiler can rearrange the pointer table (changing execution order) without disturbing the instruction pool, so optimisation passes can reorder, insert, or delete instructions simply by manipulating pointers — the underlying triples remain stable. This is a significant practical advantage over plain triples, where reordering invalidates positional references.</p>
+
+<p>For the same expression, the indirect triple representation would have a pointer table of 11 entries (indices 0 through 10) pointing into an instruction pool. If triples <code>(0)</code> and <code>(5)</code> both compute <code>x + y</code>, the instruction pool might store this triple only once, and both pointer entries 0 and 5 would point to it. This natural deduplication saves space and also hints at common subexpression elimination. However, note that the two <code>x + y</code> computations are conceptually independent in the unoptimised code; the indirect triple representation makes it easy to <em>detect</em> the duplication, but the actual merging requires a deliberate optimisation decision.</p>
+
+<div class="comparison">
+<div class="comp-item">
+<h5>Quadruples</h5>
+<p><strong>Fields:</strong> 4 (op, arg1, arg2, result)<br>
+<strong>References:</strong> By temporary name<br>
+<strong>Space:</strong> Higher (explicit temp names)<br>
+<strong>Optimisation:</strong> Easy — self-contained records<br>
+<strong>Reordering:</strong> Safe — no positional dependencies</p>
+</div>
+<div class="comp-item">
+<h5>Triples</h5>
+<p><strong>Fields:</strong> 3 (op, arg1, arg2)<br>
+<strong>References:</strong> By row position<br>
+<strong>Space:</strong> Lower (no temp names)<br>
+<strong>Optimisation:</strong> Fragile — reordering breaks refs<br>
+<strong>Reordering:</strong> Unsafe — positional refs invalidated</p>
+</div>
+</div>
+<div class="comparison">
+<div class="comp-item">
+<h5>Indirect Triples</h5>
+<p><strong>Fields:</strong> 3 + pointer table<br>
+<strong>References:</strong> By pointer into pool<br>
+<strong>Space:</strong> Moderate (pool + pointers)<br>
+<strong>Optimisation:</strong> Flexible — pointer table is mutable<br>
+<strong>Reordering:</strong> Safe — rearrange pointers, not triples</p>
+</div>
+<div class="comp-item">
+<h5>When to Use What</h5>
+<p><strong>Quadruples:</strong> When optimisation is a priority and space is not constrained.<br>
+<strong>Triples:</strong> When space is tight and the code is straightforward.<br>
+<strong>Indirect Triples:</strong> When you want both space efficiency and optimisability — the best of both worlds.</p>
+</div>
+</div>
+
+<h4>Worked Example: a + a * (b − c) + (b − c) * d</h4>
+
+<p>This expression is interesting because the subexpression <code>(b - c)</code> appears twice, making it a candidate for common subexpression elimination. Let us first generate the unoptimised 3AC, then construct all three representations. The syntax tree tells us to evaluate <code>b - c</code>, multiply by <code>a</code>, add <code>a</code>, compute <code>b - c</code> again, multiply by <code>d</code>, and add the two results:</p>
+
+<pre><code>// Unoptimised 3AC
+t1 = b - c
+t2 = a * t1
+t3 = a + t2
+t4 = b - c        // same as t1 — common subexpression
+t5 = t4 * d
+t6 = t3 + t5</code></pre>
+
+<p>The quadruple table for this expression is:</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>#</th><th>op</th><th>arg1</th><th>arg2</th><th>result</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>−</td><td>b</td><td>c</td><td>t1</td></tr>
+<tr><td>1</td><td>*</td><td>a</td><td>t1</td><td>t2</td></tr>
+<tr><td>2</td><td>+</td><td>a</td><td>t2</td><td>t3</td></tr>
+<tr><td>3</td><td>−</td><td>b</td><td>c</td><td>t4</td></tr>
+<tr><td>4</td><td>*</td><td>t4</td><td>d</td><td>t5</td></tr>
+<tr><td>5</td><td>+</td><td>t3</td><td>t5</td><td>t6</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>And the triple table is:</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>#</th><th>op</th><th>arg1</th><th>arg2</th></tr></thead>
+<tbody>
+<tr><td>0</td><td>−</td><td>b</td><td>c</td></tr>
+<tr><td>1</td><td>*</td><td>a</td><td>(0)</td></tr>
+<tr><td>2</td><td>+</td><td>a</td><td>(1)</td></tr>
+<tr><td>3</td><td>−</td><td>b</td><td>c</td></tr>
+<tr><td>4</td><td>*</td><td>(3)</td><td>d</td></tr>
+<tr><td>5</td><td>+</td><td>(2)</td><td>(4)</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>For indirect triples, the pointer table has entries [ptr0, ptr1, ptr2, ptr3, ptr4, ptr5] pointing into the instruction pool, which contains the unique triples. Since triples 0 and 3 are identical (both compute <code>b - c</code>), the pool stores this triple once, and both ptr0 and ptr3 reference it — a natural space saving that also signals the common subexpression to the optimiser.</p>
+
+<div class="box box-exam">
+<div class="box-title">✦ PYQ Alert</div>
+<p>"Construct quadruples, triples and indirect triples for: <code>m + m * (n - q) + (n - q) * p</code>" — This has appeared repeatedly in university exams. Note the structural similarity to the <code>a + a*(b-c) + (b-c)*d</code> example above. The pattern is identical: two repeated subexpressions, one multiplied on the left and one on the right, with the outermost addition combining them. Practice this pattern and you can handle any variant.</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= DECLARATIONS ========================= -->
+<section id="s-declarations">
+<div class="section-header">
+<span class="section-num">Section 4.4</span>
+<h2>Declarations</h2>
+<p>How the compiler records the existence and shape of every named entity</p>
+</div>
+
+<div class="subsection prose">
+<p>When the compiler encounters a declaration — whether it declares a variable, an array, a record structure, or a procedure — it does not generate executable code in the usual sense. Instead, it performs bookkeeping: it creates or updates entries in the <strong>symbol table</strong>, recording the name, type, scope, storage class, and (crucially) the relative memory address of the declared entity. The task of processing declarations is primarily a front-end responsibility, but the information gathered during declaration processing directly affects the intermediate code that the back end will eventually translate into target code.</p>
+
+<p>For simple scalar variable declarations such as <code>int x;</code> or <code>float y;</code>, the compiler allocates a fixed amount of storage (4 bytes for a typical integer, 4 or 8 bytes for a floating-point number, depending on the target architecture) and records the offset from some base address — typically the beginning of the current activation record on the runtime stack. The intermediate code for a simple declaration might be implicit (just a symbol table update) or explicit, depending on the intermediate representation. Some intermediate representations emit an instruction like <code>alloc int, 4</code> to indicate that 4 bytes of storage should be reserved for an integer variable, but this is relatively uncommon in examination contexts.</p>
+
+<p>Array declarations are more interesting from an intermediate code perspective. When the compiler encounters a declaration like <code>int A[10][20]</code>, it must compute the total storage required (10 × 20 × 4 = 800 bytes for a two-dimensional integer array in row-major order) and record the dimensions in the symbol table so that later array accesses can be translated into address calculations. The symbol table entry for an array typically stores the base address, the element type and size, the number of dimensions, and the upper and lower bounds of each dimension. This information is essential for computing the address of <code>A[i][j]</code> using the formula <code>base + ((i - low1) × (high2 - low2 + 1) + (j - low2)) × sizeof(element)</code>. For arrays with lower bound 1 (common in many languages), this simplifies to <code>base + ((i-1) × n + (j-1)) × w</code> where <code>n</code> is the number of columns and <code>w</code> is the element width.</p>
+
+<p>For record (struct) declarations, the compiler assigns offsets to each field based on the sizes and alignment requirements of the fields. In C, for example, the compiler may insert padding between fields to ensure that each field begins at an address aligned to its natural boundary. The intermediate code for accessing a record field typically involves computing <code>base + field_offset</code>, where <code>field_offset</code> is a constant determined at compile time from the struct layout. Type declarations (typedef, enum, etc.) do not generate intermediate code at all; they simply create type aliases or enumerated constants in the symbol table.</p>
+
+<div class="box box-tip">
+<div class="box-title">✦ Exam Tip</div>
+<p>Questions on declarations in compiler design exams typically focus on how the symbol table is populated and how array address calculations work. For a 5-mark question, explain the symbol table entry structure (name, type, size, offset, dimensions for arrays) and give the address formula for a 2D array. For a 10-mark question, include a worked example of computing the address of <code>A[3][5]</code> in a <code>int A[10][10]</code> declaration with base address 200 and element size 4 bytes: <code>200 + ((3-1)×10 + (5-1))×4 = 200 + 96 = 296</code>.</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= ASSIGNMENT STATEMENTS ========================= -->
+<section id="s-assignment">
+<div class="section-header">
+<span class="section-num">Section 4.5</span>
+<h2>Assignment Statements</h2>
+<p>Translating the most fundamental computational act into intermediate form</p>
+</div>
+
+<div class="subsection prose">
+<p>An assignment statement has the form <code>id = expression</code>, and its translation to Three Address Code is one of the most fundamental operations in a compiler. The process is conceptually straightforward: translate the right-hand side expression into a sequence of three-address instructions that compute its value into a temporary, then emit a copy instruction that stores the temporary's value into the left-hand side variable. The subtlety lies in the details — particularly when the left-hand side involves array accesses, pointer dereferences, or record field selections, each of which requires additional intermediate code to compute the target address.</p>
+
+<p>For a simple scalar assignment like <code>x = a + b * c</code>, the translation is: <code>t1 = b * c; t2 = a + t1; x = t2</code>. The last instruction (<code>x = t2</code>) is a simple copy. For an array element assignment like <code>A[i] = a + b</code>, the compiler must first compute the address of <code>A[i]</code> and then store the value there. In 3AC, this is represented as <code>t1 = a + b; t2 = i * w; A[t2] = t1</code>, where <code>w</code> is the element width. The notation <code>A[t2]</code> indicates that the value should be stored at offset <code>t2</code> from the base address of <code>A</code>. For two-dimensional arrays, the address computation is more involved: <code>A[i][j] = expr</code> becomes a sequence that computes the linear index from the two subscripts, multiplies by the element width, and stores the value at the computed offset from the base address.</p>
+
+<p>Pointer assignments require special treatment. An assignment like <code>*p = x</code> (store <code>x</code> at the address pointed to by <code>p</code>) is represented in 3AC as <code>*p = x</code>, where the asterisk denotes indirect store. Conversely, <code>x = *p</code> (load from the address in <code>p</code> into <code>x</code>) is represented as <code>x = *p</code>. These indirect operations are essential for implementing pointers and references in languages like C and C++, and they map directly to load and store instructions with indirect addressing modes on most target machines. The intermediate code must distinguish between direct assignments (where the left-hand side is a simple variable name) and indirect assignments (where the left-hand side involves a pointer dereference or array index), because the generated target code is fundamentally different in each case.</p>
+
+<pre><code>// Example: x = a[i] + *p
+t1 = i * w          // compute offset for a[i]
+t2 = a[t1]          // load a[i]
+t3 = *p             // load value pointed to by p
+t4 = t2 + t3        // add
+x = t4              // store result
+
+// Example: A[i][j] = x + y  (A is m×n, element width w)
+t1 = x + y
+t2 = i - lb1        // subtract lower bound of dimension 1
+t3 = n              // number of columns
+t4 = t2 * t3
+t5 = j - lb2        // subtract lower bound of dimension 2
+t6 = t4 + t5
+t7 = t6 * w         // multiply by element width
+A[t7] = t1          // store at computed address</code></pre>
+</div>
+</section>
+
+<!-- ========================= BOOLEAN EXPRESSIONS ========================= -->
+<section id="s-boolean">
+<div class="section-header">
+<span class="section-num">Section 4.6</span>
+<h2>Boolean Expressions</h2>
+<p>Translating logic, short-circuit evaluation, and flow of control</p>
+</div>
+
+<div class="subsection prose">
+<p>Boolean expressions play a dual role in programming languages. On one hand, they appear in contexts where their value is needed as data — for example, assigning the result of a comparison to a boolean variable. On the other hand, and more commonly, they appear as the controlling conditions of flow-of-control statements: <code>if</code>, <code>while</code>, <code>for</code>, and so on. The compiler's treatment of boolean expressions differs significantly depending on which role the expression is playing. When the value is needed as data, the compiler generates code that computes the boolean result (typically 0 or 1) into a temporary variable. When the expression controls a branch, the compiler generates code that jumps to one of two labels depending on whether the expression evaluates to true or false — without ever explicitly computing a boolean value. This second approach, known as <strong>jump-based</strong> or <strong>flow-of-control</strong> translation, is both more efficient and more common in practice.</p>
+
+<p>A boolean expression in a typical programming language consists of boolean operators (<code>||</code>, <code>&&amp;</code>, <code>!</code>), relational operators (<code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>, <code>==</code>, <code>!=</code>), and boolean constants (<code>true</code>, <code>false</code>). The translation of relational expressions like <code>a &lt; b</code> into 3AC for flow-of-control contexts is direct: emit <code>if a &lt; b goto L_true</code> followed by <code>goto L_false</code>. The boolean operators <code>&&amp;</code> and <code>||</code> are short-circuit operators in C-like languages, meaning that <code>E1 &amp;&amp; E2</code> does not evaluate <code>E2</code> if <code>E1</code> is false, and <code>E1 || E2</code> does not evaluate <code>E2</code> if <code>E1</code> is true. This short-circuit behaviour is naturally implemented by the jump-based translation: if <code>E1</code> is false, the code for <code>E1 &amp;&amp; E2</code> jumps directly to the false label without executing the code for <code>E2</code>.</p>
+
+<p>The jump-based translation of boolean expressions uses two label lists: the <strong>true list</strong> (a list of jump instructions that should eventually jump to the "true" target) and the <strong>false list</strong> (a list of jump instructions that should eventually jump to the "false" target). When the compiler begins translating a boolean expression, it does not yet know where the true and false targets will be — these depend on the surrounding control structure (the body of an <code>if</code>, the exit of a <code>while</code>, etc.). The compiler therefore emits jumps with <em>incomplete</em> labels and records the positions of these jumps in the true and false lists. Later, when the control structure is fully parsed and the targets are known, the compiler <strong>backpatches</strong> the incomplete jumps — filling in the correct target labels. This mechanism of deferred label resolution is called <strong>backpatching</strong>, and it deserves a thorough treatment, which we provide in the dedicated section below.</p>
+
+<div class="box box-memory">
+<div class="box-title">◆ Memory Anchor</div>
+<p>Think of backpatching like writing a letter where you mention "I'll tell you the meeting location later." You write the letter now (emitting jumps with blank labels), and later, when you know the location (the target label), you go back and fill in the blank. The true-list and false-list are your notes reminding you which blanks need to be filled.</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= CASE STATEMENTS ========================= -->
+<section id="s-case">
+<div class="section-header">
+<span class="section-num">Section 4.7</span>
+<h2>Case / Switch Statements</h2>
+<p>Translating multi-way branching into efficient intermediate code</p>
+</div>
+
+<div class="subsection prose">
+<p>The <code>switch</code> (or <code>case</code>) statement provides a multi-way branch based on the value of an expression. Its general form in C is:</p>
+
+<pre><code>switch (E) {
+    case C1: S1; break;
+    case C2: S2; break;
+    ...
+    case Cn: Sn; break;
+    default: Sd;
+}</code></pre>
+
+<p>The most straightforward translation strategy generates a sequence of conditional tests, one per case label. The compiler evaluates the expression <code>E</code> once, stores the result in a temporary, and then emits a series of comparisons: <code>if t == C1 goto L1; if t == C2 goto L2; ...; if t == Cn goto Ln; goto Ld</code>. Each label <code>Li</code> points to the code for the corresponding case body <code>Si</code>, and <code>Ld</code> points to the default body. After each case body, a <code>goto</code> to the exit label ensures that execution does not fall through to the next case (implementing the <code>break</code> semantics). This linear-search approach is simple to implement and works well when the number of cases is small. For a switch with many cases or densely packed integer constants, compilers may use a <strong>jump table</strong> — an array of code addresses indexed by the case value — which allows O(1) dispatch instead of O(n) sequential testing. However, the jump table optimisation is typically a back-end concern; at the intermediate code level, the sequential-test approach is the standard textbook treatment.</p>
+
+<p>Let us translate the following switch statement into Three Address Code:</p>
+
+<pre><code>switch(a + b) {
+    case 1: x = y + z; break;
+    case 2: u = v + w; break;
+    case 3: p = q * r / s; break;
+    default: a = b + c;
+}</code></pre>
+
+<p>The 3AC translation using the sequential-test approach is:</p>
+
+<pre><code>    t0 = a + b
+    if t0 == 1 goto L1
+    if t0 == 2 goto L2
+    if t0 == 3 goto L3
+    goto Ld
+
+L1: t1 = y + z
+    x = t1
+    goto Lexit
+
+L2: t2 = v + w
+    u = t2
+    goto Lexit
+
+L3: t3 = q * r
+    t4 = t3 / s
+    p = t4
+    goto Lexit
+
+Ld: t5 = b + c
+    a = t5
+
+Lexit:</code></pre>
+
+<p>Notice the structure: the expression <code>a + b</code> is evaluated once into <code>t0</code>, and then a cascade of conditional jumps tests <code>t0</code> against each case constant. Each case body ends with an unconditional jump to <code>Lexit</code>, preventing fall-through. The default case is reached only if none of the preceding tests succeed. In a real compiler, the backpatching mechanism would be used to fill in the labels — the jumps to <code>L1</code>, <code>L2</code>, <code>L3</code>, and <code>Lexit</code> would initially be emitted with incomplete targets, and the labels would be resolved when the corresponding code positions are determined.</p>
+
+<div class="box box-exam">
+<div class="box-title">✦ PYQ Alert — Switch-Case Translation</div>
+<p>This exact switch-case translation question has appeared in previous exams. The key steps are: (1) evaluate the switch expression into a temporary, (2) emit a cascade of conditional jumps comparing the temporary to each case constant, (3) emit a fall-through to the default, (4) translate each case body with a goto-exit at the end, (5) translate the default body last. Remember that <code>break</code> translates to <code>goto Lexit</code>, and omitting <code>break</code> would mean falling through to the next case body.</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= BACKPATCHING ========================= -->
+<section id="s-backpatching">
+<div class="section-header">
+<span class="section-num">Section 4.8</span>
+<h2>Backpatching</h2>
+<p>Deferred label resolution — the elegant mechanism that makes single-pass code generation possible</p>
+</div>
+
+<div class="subsection prose">
+<h3>The Problem Backpatching Solves</h3>
+
+<p>When a compiler translates a control-flow statement like <code>if (E) S1 else S2</code>, it faces a timing dilemma. The boolean expression <code>E</code> must generate a conditional jump to the beginning of <code>S1</code> (if true) or <code>S2</code> (if false), but the compiler does not learn the target of the "false" jump until it has finished parsing <code>S1</code> and encountered the <code>else</code> keyword. Similarly, the "true" jump for <code>S1</code> must skip over <code>S2</code> to the exit label, but this label is not known until the entire <code>if-then-else</code> construct has been parsed. In a multi-pass compiler, this is not a problem — the first pass can determine all label positions, and the second pass can fill them in. But in a single-pass compiler that generates code on the fly, the labels are genuinely unknown at the time the jumps are emitted. <strong>Backpatching</strong> resolves this dilemma by allowing the compiler to emit jumps with incomplete (blank) targets, record the positions of these jumps in a list, and fill in the correct targets later when they become known.</p>
+
+<h3>The Backpatching Mechanism</h3>
+
+<p>Backpatching uses three functions and maintains lists of incomplete jump instructions. The key data structure is a <strong>list of jump instruction positions</strong> — each element in the list is the index (in the instruction array) of a <code>goto</code> or conditional branch instruction whose target label has not yet been filled in. Three functions operate on these lists:</p>
+
+<p><strong><code>makelist(i)</code></strong> creates a new list containing the single instruction index <code>i</code>. This is called when a new jump instruction is emitted with an incomplete target.</p>
+
+<p><strong><code>merge(p1, p2)</code></strong> concatenates two lists <code>p1</code> and <code>p2</code> and returns the merged list. This is used when combining the true-lists (or false-lists) of two sub-expressions connected by <code>||</code> or <code>&amp;&amp;</code>.</p>
+
+<p><strong><code>backpatch(p, label)</code></strong> goes through every instruction index in list <code>p</code> and fills in the target field with <code>label</code>. This is called when the compiler finally determines the target address for a group of jumps.</p>
+
+<h4>SDT for Boolean Expressions with Backpatching</h4>
+
+<p>The following Syntax-Directed Translation scheme translates boolean expressions using backpatching. Each non-terminal has two inherited attributes, <code>.truelist</code> and <code>.falselist</code>, which are lists of jumps to be backpatched when the true target or false target (respectively) becomes known. The non-terminal also has a synthesized attribute <code>.nextlist</code> for jumps that should go to the next instruction after the construct.</p>
+
+<pre><code>// E → E1 || E2  (short-circuit OR)
+E1.truelist = E.truelist       // if E1 is true, E is true
+E1.falselist = makelist(nextinstr) // if E1 is false, try E2
+                                    // emit: goto __
+E2.truelist = merge(E1.truelist, E.truelist)
+E2.falselist = E.falselist
+backpatch(E1.falselist, instr for E2) // fill in: goto E2's code
+
+// E → E1 && E2  (short-circuit AND)
+E1.truelist = makelist(nextinstr)  // if E1 is true, try E2
+                                    // emit: goto __
+E1.falselist = E.falselist         // if E1 is false, E is false
+E2.truelist = E.truelist
+E2.falselist = merge(E1.falselist, E.falselist)
+backpatch(E1.truelist, instr for E2) // fill in: goto E2's code
+
+// E → !E1
+E1.truelist = E.falselist
+E1.falselist = E.truelist
+
+// E → id1 relop id2
+emit: if id1 relop id2 goto __
+E.truelist = makelist(nextinstr - 1)
+emit: goto __
+E.falselist = makelist(nextinstr - 1)
+
+// E → true
+emit: goto __
+E.truelist = makelist(nextinstr - 1)
+
+// E → false
+emit: goto __
+E.falselist = makelist(nextinstr - 1)</code></pre>
+
+<h4>SDT for if-then-else and while-do</h4>
+
+<p>The same backpatching mechanism extends naturally to control-flow statements. For <code>if (E) S1 else S2</code>:</p>
+
+<pre><code>// S → if (E) S1 else S2
+// When parsing E, we don't know where S1 and S2 begin.
+E.truelist  = makelist(...)  // jumps to S1, filled later
+E.falselist = makelist(...)  // jumps to S2, filled later
+
+// After parsing E:
+backpatch(E.truelist, instr for S1)   // true → go to S1
+backpatch(E.falselist, instr for S2)  // false → go to S2
+
+S.nextlist = merge(S1.nextlist, S2.nextlist, makelist(goto __))
+// The goto at the end of S1 skips over S2 to the exit
+// backpatch(S.nextlist, next instruction after S)</code></pre>
+
+<p>For <code>while (E) S1</code>:</p>
+
+<pre><code>// S → while (E) S1
+// Save the instruction where E's code begins
+saved = nextinstr
+
+// Translate E
+E.truelist  = makelist(...)  // jumps to S1 body
+E.falselist = makelist(...)  // jumps past the while loop
+
+// After parsing E:
+backpatch(E.truelist, instr for S1)   // true → execute body
+backpatch(S1.nextlist, saved)         // loop back to re-evaluate E
+emit: goto saved                      // unconditional loop back
+
+S.nextlist = E.falselist              // exit when E is false
+backpatch(S.nextlist, next instruction after while)</code></pre>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 500 340" xmlns="http://www.w3.org/2000/svg" style="max-width:460px">
+<defs>
+<marker id="arr2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2c2418"/></marker>
+</defs>
+<!-- if-then-else flow -->
+<text x="250" y="20" text-anchor="middle" font-family="'Playfair Display',serif" font-size="14" fill="#2c2418" font-weight="600">if (E) S1 else S2 — Control Flow</text>
+<!-- E diamond -->
+<polygon points="250,50 310,80 250,110 190,80" fill="#f5edda" stroke="#d4a843" stroke-width="1.5"/>
+<text x="250" y="84" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2c2418">E</text>
+<!-- true branch -->
+<line x1="190" y1="80" x2="120" y2="80" stroke="#2a6b5e" stroke-width="1.5" marker-end="url(#arr2)"/>
+<text x="150" y="72" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="10" fill="#2a6b5e">true</text>
+<rect x="50" y="65" width="70" height="30" rx="4" fill="#ddeae7" stroke="#2a6b5e" stroke-width="1.5"/>
+<text x="85" y="84" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2a6b5e">S1</text>
+<!-- false branch -->
+<line x1="310" y1="80" x2="380" y2="80" stroke="#c44536" stroke-width="1.5" marker-end="url(#arr2)"/>
+<text x="350" y="72" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="10" fill="#c44536">false</text>
+<rect x="380" y="65" width="70" height="30" rx="4" fill="#f0e0dc" stroke="#c44536" stroke-width="1.5"/>
+<text x="415" y="84" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#c44536">S2</text>
+<!-- exit -->
+<line x1="85" y1="95" x2="85" y2="130" stroke="#2c2418" stroke-width="1" marker-end="url(#arr2)"/>
+<line x1="415" y1="95" x2="415" y2="130" stroke="#2c2418" stroke-width="1" marker-end="url(#arr2)"/>
+<line x1="85" y1="130" x2="250" y2="130" stroke="#2c2418" stroke-width="1"/>
+<line x1="415" y1="130" x2="250" y2="130" stroke="#2c2418" stroke-width="1"/>
+<line x1="250" y1="130" x2="250" y2="145" stroke="#2c2418" stroke-width="1.5" marker-end="url(#arr2)"/>
+<rect x="220" y="145" width="60" height="24" rx="4" fill="#faf7f0" stroke="#2c2418" stroke-width="1.5"/>
+<text x="250" y="161" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#2c2418">exit</text>
+
+<!-- while-do flow -->
+<text x="250" y="200" text-anchor="middle" font-family="'Playfair Display',serif" font-size="14" fill="#2c2418" font-weight="600">while (E) S1 — Control Flow</text>
+<polygon points="250,225 310,255 250,285 190,255" fill="#f5edda" stroke="#d4a843" stroke-width="1.5"/>
+<text x="250" y="259" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2c2418">E</text>
+<!-- true → S1 -->
+<line x1="190" y1="255" x2="120" y2="255" stroke="#2a6b5e" stroke-width="1.5" marker-end="url(#arr2)"/>
+<text x="150" y="247" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="10" fill="#2a6b5e">true</text>
+<rect x="50" y="240" width="70" height="30" rx="4" fill="#ddeae7" stroke="#2a6b5e" stroke-width="1.5"/>
+<text x="85" y="259" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2a6b5e">S1</text>
+<!-- loop back -->
+<line x1="85" y1="270" x2="85" y2="305" stroke="#2c2418" stroke-width="1"/>
+<line x1="85" y1="305" x2="250" y2="305" stroke="#2c2418" stroke-width="1" stroke-dasharray="5,3"/>
+<line x1="250" y1="305" x2="250" y2="285" stroke="#2c2418" stroke-width="1" marker-end="url(#arr2)"/>
+<text x="170" y="298" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="9" fill="#8a7e6d">backpatch → loop</text>
+<!-- false → exit -->
+<line x1="310" y1="255" x2="370" y2="255" stroke="#c44536" stroke-width="1.5" marker-end="url(#arr2)"/>
+<text x="340" y="247" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="10" fill="#c44536">false</text>
+<rect x="370" y="240" width="60" height="30" rx="4" fill="#faf7f0" stroke="#2c2418" stroke-width="1.5"/>
+<text x="400" y="259" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#2c2418">exit</text>
+</svg>
+<div class="diagram-caption">Figure 4.2 — Control flow for if-then-else and while-do, showing how backpatching fills in the target labels for true and false branches.</div>
+</div>
+
+<div class="box box-exam">
+<div class="box-title">✦ PYQ Alert — Backpatching</div>
+<p>"What do you mean by backpatching? Apply backpatching to write down the SDT for Boolean expressions and flow-of-control statements (if-then-else, while-do)" — This is one of the most frequently asked questions in Unit 4. Your answer should define backpatching, explain the three functions (makelist, merge, backpatch), show the SDT rules for <code>||</code>, <code>&amp;&amp;</code>, <code>!</code>, and relational expressions, and then extend to if-then-else and while-do. A 10-mark answer should include the diagram above and work through a small example.</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= PROCEDURE CALLS ========================= -->
+<section id="s-procedure">
+<div class="section-header">
+<span class="section-num">Section 4.9</span>
+<h2>Procedure Calls</h2>
+<p>Translating the act of delegation — passing control, arguments, and receiving results</p>
+</div>
+
+<div class="subsection prose">
+<p>A procedure call is one of the most complex constructs to translate into intermediate code, because it involves multiple coordinated actions: evaluating and passing parameters, transferring control to the procedure body, allocating storage for the procedure's local variables, executing the procedure, returning the result (if any), and deallocating the local storage. The intermediate code for a procedure call typically uses three special instructions: <code>param x</code> (push parameter <code>x</code> onto the parameter list), <code>call p, n</code> (call procedure <code>p</code> with <code>n</code> parameters), and <code>return x</code> (return the value <code>x</code> to the caller). Some intermediate representations also use <code>begin_call</code> and <code>end_call</code> markers to delimit the parameter-passing sequence.</p>
+
+<p>For a procedure call like <code>f(a + b, c * d)</code>, the intermediate code is:</p>
+
+<pre><code>param a + b        // or: t1 = a + b; param t1
+param c * d        // or: t2 = c * d; param t2
+call f, 2          // call f with 2 parameters</code></pre>
+
+<p>The exact sequence depends on the parameter-passing convention. In <strong>call-by-value</strong>, the values of the arguments are computed and passed to the procedure, which receives copies. In <strong>call-by-reference</strong>, the addresses of the arguments are passed instead, allowing the procedure to modify the caller's variables. The intermediate code for call-by-reference would compute the addresses of the arguments and pass those addresses as parameters. For array arguments, the address of the first element (or the array base) is typically passed. The distinction between value and reference parameters affects both the intermediate code generation and the eventual target code, and it is a common topic for comparison-based exam questions.</p>
+
+<div class="box box-exam">
+<div class="box-title">✦ Exam Tip</div>
+<p>For a question on procedure calls in intermediate code, describe the sequence: (1) save caller's state, (2) evaluate and pass parameters using <code>param</code> instructions, (3) issue <code>call</code> instruction, (4) callee allocates activation record, (5) callee executes, (6) callee issues <code>return</code>, (7) caller retrieves result and resumes. Include the 3AC for a simple example like <code>result = f(a, b+c)</code>.</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= PART B ========================= -->
+<section id="part-b">
+<div class="section-header">
+<span class="section-num">Part B</span>
+<h2>Code Generation</h2>
+<p>From abstract intermediate forms to concrete machine instructions — the final act of compilation</p>
+</div>
+</section>
+
+<!-- ========================= DESIGN ISSUES ========================= -->
+<section id="s-design-issues">
+<div class="section-header">
+<span class="section-num">Section 4.10</span>
+<h2>Issues in the Design of a Code Generator</h2>
+<p>The engineering tensions that shape the last mile of compilation</p>
+</div>
+
+<div class="subsection prose">
+<p>The code generator is the final phase of a compiler, responsible for translating the intermediate representation into the target machine code. This seemingly straightforward task is fraught with design decisions that affect the correctness, speed, and size of the generated code. The principal design issues can be grouped into several categories, each representing a fundamental tension in compiler engineering.</p>
+
+<p><strong>Input to the code generator.</strong> The code generator receives the intermediate code produced by the front end (and possibly improved by the optimiser) along with information from the symbol table about the types, sizes, and storage locations of all variables. The intermediate code may be in the form of Three Address Code, a DAG, a syntax tree, or a linearised representation. The choice of intermediate representation affects the complexity of the code generator: a simple linear 3AC is easy to translate instruction-by-instruction, while a DAG representation enables the generator to detect and exploit common subexpressions.</p>
+
+<p><strong>Instruction selection.</strong> The target machine typically offers multiple ways to accomplish the same computation. For example, the operation <code>a + b</code> might be implemented as an <code>ADD</code> instruction (if both operands are in registers), or as a sequence involving <code>LOAD</code>, <code>ADD</code>, and <code>STORE</code> instructions (if the operands are in memory). The code generator must select an instruction sequence that is both correct and efficient. Good instruction selection can dramatically improve code quality; poor instruction selection can produce code that is many times slower than necessary. The challenge is that the "best" instruction sequence depends on the surrounding context — the values already in registers, the addressing modes available, and the instructions that follow.</p>
+
+<p><strong>Register allocation.</strong> Registers are the fastest storage in any computer, but they are also the scarcest. The code generator must decide which values to keep in registers at each point in the program and which to spill to memory. This is an NP-complete optimisation problem in its general form, so practical compilers use heuristics such as graph colouring or the simple "next-use" strategy. Register allocation has an enormous impact on performance: a program that keeps its frequently accessed variables in registers can be orders of magnitude faster than one that repeatedly loads and stores from memory.</p>
+
+<p><strong>Instruction ordering.</strong> The order in which instructions are executed affects not only correctness but also performance, particularly on modern processors with pipelined execution, branch prediction, and out-of-order execution. While instruction scheduling is primarily a back-end optimisation, even a simple code generator must produce a correct ordering of instructions that respects data dependencies.</p>
+
+<p><strong>Evaluation order.</strong> The order in which the operands of an expression are evaluated can affect the efficiency of the generated code. If one operand is already in a register and the other must be loaded from memory, it may be more efficient to evaluate the register operand first so that the register can be freed sooner. Choosing an optimal evaluation order is another NP-hard problem in general, but simple heuristics (such as evaluating the operand with the highest "cost" first) can yield significant improvements.</p>
+
+<div class="box box-memory">
+<div class="box-title">◆ Memory Anchor for Design Issues</div>
+<p>Remember the acronym <strong>IRIE</strong>: <strong>I</strong>nstruction selection, <strong>R</strong>egister allocation, <strong>I</strong>nstruction ordering, <strong>E</strong>valuation order. These four issues dominate every code generator design decision.</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= TARGET MACHINE ========================= -->
+<section id="s-target-machine">
+<div class="section-header">
+<span class="section-num">Section 4.11</span>
+<h2>The Target Machine</h2>
+<p>Understanding the hardware that will execute our generated code</p>
+</div>
+
+<div class="subsection prose">
+<p>A code generator must have a model of the target machine — its instruction set, registers, addressing modes, and memory architecture. University courses typically use a simplified target machine model to teach code generation without the overwhelming complexity of real architectures like x86 or ARM. The standard model, often called the "basic block machine," has the following characteristics:</p>
+
+<p><strong>Instruction set.</strong> The machine supports a set of instructions that closely mirror three-address code operations. Common instructions include: <code>LD reg, addr</code> (load a value from memory into a register), <code>ST addr, reg</code> (store a register value into memory), <code>ADD reg1, reg2, reg3</code> or <code>ADD reg1, reg2, addr</code> (addition), and similarly for <code>SUB</code>, <code>MUL</code>, <code>DIV</code>. Some instructions support an immediate operand (a constant embedded in the instruction), such as <code>ADD reg, reg, #5</code> (add the constant 5). Addressing modes include direct (the address is given explicitly), indexed (base + index register), and register indirect (the address is in a register).</p>
+
+<p><strong>Registers.</strong> The model typically has a small number of general-purpose registers, denoted R0, R1, R2, ..., Rn. All arithmetic and logical operations work on registers; memory is accessed only through load and store instructions. This load-store architecture is a simplification of RISC machines and makes the code generation algorithm easier to teach and understand. On a CISC machine, some arithmetic operations can have memory operands, which complicates instruction selection but can sometimes produce shorter code.</p>
+
+<p><strong>Cost model.</strong> Each instruction has an associated cost, typically measured in instruction count or clock cycles. The simplest cost model assigns cost 1 to every instruction. A more refined model might assign cost 2 to multiplication and division (since these operations take longer on most hardware) and cost 1 to loads, stores, and additions. The code generator aims to minimise the total cost of the instruction sequence for each basic block.</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg" style="max-width:560px">
+<text x="300" y="20" text-anchor="middle" font-family="'Playfair Display',serif" font-size="14" fill="#2c2418" font-weight="600">Simplified Target Machine Model</text>
+<!-- Registers -->
+<rect x="20" y="40" width="160" height="140" rx="8" fill="#f5edda" stroke="#d4a843" stroke-width="1.5"/>
+<text x="100" y="60" text-anchor="middle" font-family="'Playfair Display',serif" font-size="12" fill="#9a7a20" font-weight="600">Registers</text>
+<text x="100" y="80" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="11" fill="#2c2418">R0, R1, R2, R3</text>
+<text x="100" y="100" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="10" fill="#8a7e6d">General-purpose</text>
+<text x="100" y="118" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="10" fill="#8a7e6d">All arithmetic</text>
+<text x="100" y="136" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="10" fill="#8a7e6d">happens here</text>
+<!-- Instructions -->
+<rect x="220" y="40" width="170" height="140" rx="8" fill="#ddeae7" stroke="#2a6b5e" stroke-width="1.5"/>
+<text x="305" y="60" text-anchor="middle" font-family="'Playfair Display',serif" font-size="12" fill="#2a6b5e" font-weight="600">Instructions</text>
+<text x="305" y="82" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#2c2418">LD  reg, addr</text>
+<text x="305" y="98" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#2c2418">ST  addr, reg</text>
+<text x="305" y="114" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#2c2418">ADD/SUB/MUL/DIV</text>
+<text x="305" y="130" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#2c2418">MOV reg, reg</text>
+<text x="305" y="146" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#2c2418">JMP / conditional</text>
+<!-- Memory -->
+<rect x="430" y="40" width="150" height="140" rx="8" fill="#f0e0dc" stroke="#c44536" stroke-width="1.5"/>
+<text x="505" y="60" text-anchor="middle" font-family="'Playfair Display',serif" font-size="12" fill="#c44536" font-weight="600">Memory</text>
+<text x="505" y="82" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="10" fill="#2c2418">Variables</text>
+<text x="505" y="100" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="10" fill="#2c2418">Temporaries</text>
+<text x="505" y="118" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="10" fill="#2c2418">Arrays</text>
+<text x="505" y="136" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="10" fill="#2c2418">Stack frames</text>
+<!-- Arrows -->
+<line x1="180" y1="90" x2="220" y2="90" stroke="#2c2418" stroke-width="1" stroke-dasharray="4,3"/>
+<line x1="390" y1="90" x2="430" y2="90" stroke="#2c2418" stroke-width="1" stroke-dasharray="4,3"/>
+</svg>
+<div class="diagram-caption">Figure 4.3 — The simplified target machine model used in university-level code generation. All computation occurs in registers; memory is accessed only through explicit load/store instructions.</div>
+</div>
+</div>
+</section>
+
+<!-- ========================= RUN-TIME STORAGE MANAGEMENT ========================= -->
+<section id="s-storage">
+<div class="section-header">
+<span class="section-num">Section 4.12</span>
+<h2>Run-time Storage Management</h2>
+<p>How the compiler organises memory for code, data, stack, and heap</p>
+</div>
+
+<div class="subsection prose">
+<p>At runtime, the memory of a running program is typically divided into several regions: the <strong>code area</strong> (holding the compiled machine instructions), the <strong>static data area</strong> (holding global variables and constants whose addresses are known at compile time), the <strong>stack</strong> (holding activation records for procedure calls), and the <strong>heap</strong> (holding dynamically allocated data). The code generator must understand this layout because it determines how variables are addressed: a global variable might be at a fixed address in the static area, a local variable is at a known offset from the stack pointer within the current activation record, and a dynamically allocated object is accessed through a pointer stored on the stack or in a register.</p>
+
+<p>The <strong>activation record</strong> (also called a <strong>stack frame</strong>) is the data structure that the compiler allocates on the stack each time a procedure is called. A typical activation record contains, from bottom to top: the <strong>actual parameters</strong> passed by the caller, the <strong>return address</strong> (the address to which control should return when the procedure finishes), the <strong>saved frame pointer</strong> (the caller's base pointer, used to restore the stack after the call), the <strong>local variables</strong> of the procedure, the <strong>temporaries</strong> generated during computation, and the <strong>saved registers</strong> (registers that the callee must preserve). The exact layout varies by architecture and calling convention, but this general structure is nearly universal.</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 340 400" xmlns="http://www.w3.org/2000/svg" style="max-width:300px">
+<text x="170" y="20" text-anchor="middle" font-family="'Playfair Display',serif" font-size="13" fill="#2c2418" font-weight="600">Activation Record Layout</text>
+<!-- Stack grows downward arrow -->
+<line x1="300" y1="40" x2="300" y2="370" stroke="#8a7e6d" stroke-width="1" stroke-dasharray="4,3"/>
+<polygon points="300,375 295,365 305,365" fill="#8a7e6d"/>
+<text x="318" y="200" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="9" fill="#8a7e6d" transform="rotate(90,318,200)">stack grows ↓</text>
+
+<!-- High address (top) -->
+<rect x="40" y="40" width="230" height="35" rx="4" fill="#f0e0dc" stroke="#c44536" stroke-width="1.5"/>
+<text x="155" y="55" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#c44536">Actual Parameters</text>
+<text x="155" y="68" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="9" fill="#8a7e6d">passed by caller</text>
+
+<rect x="40" y="80" width="230" height="30" rx="4" fill="#f5edda" stroke="#d4a843" stroke-width="1.5"/>
+<text x="155" y="100" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#9a7a20">Return Address</text>
+
+<rect x="40" y="115" width="230" height="30" rx="4" fill="#f5edda" stroke="#d4a843" stroke-width="1.5"/>
+<text x="155" y="135" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#9a7a20">Saved Frame Pointer</text>
+
+<rect x="40" y="150" width="230" height="50" rx="4" fill="#ddeae7" stroke="#2a6b5e" stroke-width="1.5"/>
+<text x="155" y="172" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#2a6b5e">Local Variables</text>
+<text x="155" y="188" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="9" fill="#8a7e6d">int, float, arrays, etc.</text>
+
+<rect x="40" y="205" width="230" height="45" rx="4" fill="#f5edda" stroke="#d4a843" stroke-width="1.5"/>
+<text x="155" y="225" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#9a7a20">Temporaries</text>
+<text x="155" y="241" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="9" fill="#8a7e6d">compiler-generated t1, t2, ...</text>
+
+<rect x="40" y="255" width="230" height="35" rx="4" fill="#f0e0dc" stroke="#c44536" stroke-width="1.5"/>
+<text x="155" y="270" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#c44536">Saved Registers</text>
+<text x="155" y="283" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="9" fill="#8a7e6d">callee-saved regs</text>
+
+<!-- SP and FP labels -->
+<line x1="25" y1="290" x2="35" y2="290" stroke="#2c2418" stroke-width="2"/>
+<text x="15" y="294" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="10" fill="#c44536" font-weight="600">SP</text>
+<line x1="25" y1="150" x2="35" y2="150" stroke="#2c2418" stroke-width="2"/>
+<text x="15" y="154" text-anchor="end" font-family="'JetBrains Mono',monospace" font-size="10" fill="#2a6b5e" font-weight="600">FP</text>
+</svg>
+<div class="diagram-caption">Figure 4.4 — A typical activation record (stack frame) showing the layout of parameters, return address, saved frame pointer, local variables, temporaries, and saved registers. SP = Stack Pointer, FP = Frame Pointer.</div>
+</div>
+</div>
+</section>
+
+<!-- ========================= BASIC BLOCKS AND FLOW GRAPHS ========================= -->
+<section id="s-basic-blocks">
+<div class="section-header">
+<span class="section-num">Section 4.13</span>
+<h2>Basic Blocks &amp; Flow Graphs</h2>
+<p>Partitioning code into straight-line segments for analysis and optimisation</p>
+</div>
+
+<div class="subsection prose">
+<h3>What Is a Basic Block?</h3>
+
+<p>A <strong>basic block</strong> is a maximal sequence of three-address instructions with the property that control enters at the first instruction and leaves at the last instruction, with no branches or branch targets in between. In other words, once the first instruction of a basic block is executed, every subsequent instruction in the block is executed exactly once, in order, without any possibility of jumping in from outside or jumping out to somewhere else (except at the very end). This property makes basic blocks the natural unit for many analyses and optimisations: within a basic block, the flow of control is completely predictable, so the compiler can reason about the values of variables, the liveness of temporaries, and the availability of expressions without worrying about the complications introduced by branches.</p>
+
+<h3>Rules for Identifying Leaders</h3>
+
+<p>To partition a sequence of three-address code into basic blocks, the compiler first identifies the <strong>leaders</strong> — the first instructions of each basic block. The rules for identifying leaders are:</p>
+
+<ol class="step-list">
+<li>The <strong>first instruction</strong> in the intermediate code is a leader.</li>
+<li>Any instruction that is the <strong>target of a conditional or unconditional goto</strong> is a leader.</li>
+<li>Any instruction that <strong>immediately follows</strong> a conditional or unconditional goto is a leader.</li>
+</ol>
+
+<p>Once the leaders have been identified, each basic block consists of a leader and all instructions up to (but not including) the next leader. This three-rule algorithm is straightforward to apply and produces a partition of the intermediate code into non-overlapping basic blocks that cover every instruction exactly once.</p>
+
+<h3>Flow Graphs</h3>
+
+<p>A <strong>flow graph</strong> (or <strong>control flow graph</strong>, CFG) is a directed graph in which each node represents a basic block and each edge represents a possible transfer of control between blocks. There is an edge from block <code>B1</code> to block <code>B2</code> if <code>B2</code> can immediately follow <code>B1</code> in the execution of the program — that is, if the last instruction of <code>B1</code> is a goto that targets the first instruction of <code>B2</code>, or if <code>B2</code> immediately follows <code>B1</code> in the instruction sequence and <code>B1</code> does not end with an unconditional goto. The flow graph is the fundamental data structure for control flow analysis, data flow analysis, and many code optimisations.</p>
+
+<h4>Worked Example: Factorial Program</h4>
+
+<p>Consider the following factorial function and its three-address code:</p>
+
+<pre><code>// Source
+fact(n) {
+    int f = 1;
+    for (i = 2; i <= n; i++)
+        f = f * i;
+    return f;
+}
+
+// Three Address Code
+ 1:  f = 1
+ 2:  i = 2
+ 3:  if i > n goto 8
+ 4:  t1 = f * i
+ 5:  f = t1
+ 6:  i = i + 1
+ 7:  goto 3
+ 8:  return f</code></pre>
+
+<p>Applying the leader rules: <strong>Instruction 1</strong> is a leader (first instruction). <strong>Instruction 3</strong> is a leader (target of goto 7). <strong>Instruction 8</strong> is a leader (target of the conditional goto at instruction 3, and also follows the unconditional goto at instruction 7). This gives us three basic blocks:</p>
+
+<p><strong>B1:</strong> Instructions 1–2 (<code>f = 1; i = 2</code>) — the initialisation block.<br>
+<strong>B2:</strong> Instructions 3–7 (<code>if i > n goto 8; t1 = f*i; f = t1; i = i+1; goto 3</code>) — the loop block, containing both the condition test and the loop body.<br>
+<strong>B3:</strong> Instruction 8 (<code>return f</code>) — the exit block.</p>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 420 320" xmlns="http://www.w3.org/2000/svg" style="max-width:400px">
+<defs>
+<marker id="arr3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2c2418"/></marker>
+</defs>
+<text x="210" y="22" text-anchor="middle" font-family="'Playfair Display',serif" font-size="14" fill="#2c2418" font-weight="600">Flow Graph — Factorial Program</text>
+
+<!-- B1 -->
+<rect x="130" y="40" width="160" height="55" rx="6" fill="#ddeae7" stroke="#2a6b5e" stroke-width="1.5"/>
+<text x="210" y="58" text-anchor="middle" font-family="'Playfair Display',serif" font-size="12" fill="#2a6b5e" font-weight="600">B1 (Entry)</text>
+<text x="210" y="75" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#2c2418">f = 1</text>
+<text x="210" y="89" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#2c2418">i = 2</text>
+
+<!-- B2 -->
+<rect x="100" y="140" width="220" height="80" rx="6" fill="#f5edda" stroke="#d4a843" stroke-width="1.5"/>
+<text x="210" y="158" text-anchor="middle" font-family="'Playfair Display',serif" font-size="12" fill="#9a7a20" font-weight="600">B2 (Loop)</text>
+<text x="210" y="175" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#2c2418">if i > n goto B3</text>
+<text x="210" y="190" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#2c2418">t1 = f * i; f = t1</text>
+<text x="210" y="205" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="9" fill="#2c2418">i = i + 1; goto B2</text>
+
+<!-- B3 -->
+<rect x="140" y="270" width="140" height="35" rx="6" fill="#f0e0dc" stroke="#c44536" stroke-width="1.5"/>
+<text x="210" y="285" text-anchor="middle" font-family="'Playfair Display',serif" font-size="12" fill="#c44536" font-weight="600">B3 (Exit)</text>
+<text x="210" y="299" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#2c2418">return f</text>
+
+<!-- Edges -->
+<line x1="210" y1="95" x2="210" y2="135" class="fg-edge"/>
+
+<!-- B2 → B3 (true exit: i > n) -->
+<path d="M 320,195 Q 370,195 370,250 Q 370,287 280,287" fill="none" stroke="#c44536" stroke-width="1.5" marker-end="url(#arr3)"/>
+<text x="372" y="240" text-anchor="start" font-family="'Source Serif 4',serif" font-size="9" fill="#c44536">i > n</text>
+
+<!-- B2 → B2 (loop back: i <= n) -->
+<path d="M 100,180 Q 40,180 40,180 Q 40,180 40,140 Q 40,100 100,100" fill="none" stroke="#2a6b5e" stroke-width="1.5" marker-end="url(#arr3)"/>
+<text x="32" y="145" text-anchor="end" font-family="'Source Serif 4',serif" font-size="9" fill="#2a6b5e">i ≤ n</text>
+</svg>
+<div class="diagram-caption">Figure 4.5 — Control flow graph for the factorial program. B1 initialises, B2 contains the loop (condition + body), and B3 is the exit. Note the back edge from B2 to itself representing the loop.</div>
+</div>
+
+<p>The flow graph has three nodes (B1, B2, B3) and three edges: B1→B2 (fall-through after initialisation), B2→B2 (loop back when <code>i ≤ n</code>), and B2→B3 (exit when <code>i > n</code>). The edge B2→B2 is a <strong>back edge</strong>, which is the hallmark of a loop in the flow graph. Identifying back edges is the first step in loop detection and loop optimisation.</p>
+
+<div class="box box-exam">
+<div class="box-title">✦ PYQ Alert — Basic Blocks &amp; Flow Graphs</div>
+<p>"List the rules to construct basic blocks. Construct basic blocks and a flow graph for the given Three Address Code." — Apply the three leader rules systematically: (1) first instruction, (2) target of any goto, (3) instruction following any goto. Then group instructions between consecutive leaders into blocks. Draw the flow graph with edges based on control flow between blocks. For the factorial example, clearly identify the 3 blocks and 3 edges, and note the back edge indicating a loop.</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= NEXT-USE INFORMATION ========================= -->
+<section id="s-nextuse">
+<div class="section-header">
+<span class="section-num">Section 4.14</span>
+<h2>Next-use Information</h2>
+<p>Knowing which values will be needed again — the key to intelligent register allocation</p>
+</div>
+
+<div class="subsection prose">
+<p>When generating code for a basic block, the code generator must decide at each instruction whether a variable's value should be kept in a register or stored back to memory. This decision depends on whether the variable will be used again within the block, and if so, when. <strong>Next-use information</strong> (also called <strong>next-use analysis</strong> or <strong>liveness within a block</strong>) tells the compiler, for each variable at each point in the program, the next instruction that will read that variable's value. If a variable has no next use (it will not be read again before being overwritten), its register can be safely reclaimed for another value. If a variable has a near next use, it should be kept in a register if possible.</p>
+
+<p>The algorithm for computing next-use information processes each basic block <strong>backwards</strong>, from the last instruction to the first. This backwards scan is necessary because next-use is inherently a forward-looking property: to know when a variable is next used, we need to know what happens <em>after</em> the current instruction, not before. The algorithm maintains a table mapping each variable to its next use (instruction number) and whether it is live (will be used before being redefined). The steps are:</p>
+
+<ol class="step-list">
+<li>Initialise: for all variables, mark them as "not live" with no next use.</li>
+<li>For each instruction <code>i</code> in the block, <strong>from last to first</strong>:
+<br>(a) If instruction <code>i</code> is <code>x = y op z</code>: set the next-use information for instruction <code>i</code> as follows — for <code>x</code>: current next-use is "not live" (since <code>x</code> is being defined here); for <code>y</code> and <code>z</code>: their next-use is whatever is currently recorded (since they are being read here). Then update: mark <code>x</code> as "not live" with no next use, and mark <code>y</code> and <code>z</code> as "live" with next use at instruction <code>i</code>.
+<br>(b) For any instruction that reads a variable <code>v</code>: record the current next-use of <code>v</code> for this instruction, then update <code>v</code>'s next-use to this instruction and mark it live.
+<br>(c) For any instruction that writes a variable <code>v</code>: record the current next-use of <code>v</code> for this instruction, then mark <code>v</code> as not live with no next use.</li>
+</ol>
+
+<p>This algorithm is efficient — it makes a single backward pass through the basic block — and produces the complete next-use information needed by the code generator. The information is typically stored in a table alongside the intermediate code, with each instruction annotated with the next-use and liveness of every variable it references.</p>
+
+<div class="box box-tip">
+<div class="box-title">✦ Exam Tip</div>
+<p>Next-use analysis is often tested as part of a larger code generation question. The key points to convey are: (1) it is computed per basic block, (2) it is computed backwards, (3) it records when each variable is next read and whether it is live, (4) it drives register allocation decisions — a register holding a dead variable (no next use) can be immediately reclaimed.</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= SIMPLE CODE GENERATOR ========================= -->
+<section id="s-simple-cg">
+<div class="section-header">
+<span class="section-num">Section 4.15</span>
+<h2>A Simple Code Generator</h2>
+<p>Translating intermediate code to machine instructions, one statement at a time</p>
+</div>
+
+<div class="subsection prose">
+<h3>The Algorithm</h3>
+
+<p>The simple code generator processes each three-address instruction in a basic block and generates target machine instructions using a small set of registers. The generator maintains a <strong>register descriptor</strong> (tracking which values are currently in each register) and an <strong>address descriptor</strong> (tracking where the current value of each variable can be found — in a register, in memory, or both). For each instruction <code>x = y op z</code>, the generator follows a systematic procedure:</p>
+
+<ol class="step-list">
+<li><strong>Get y into a register.</strong> Call <code>getReg(y)</code> to find or allocate a register <code>Ry</code> for <code>y</code>. If <code>y</code> is already in a register, use that register. If not, emit <code>LD Ry, y</code>. If all registers are full, choose a register to spill based on next-use information (spill the register whose value has the farthest next use or no next use).</li>
+<li><strong>Perform the operation.</strong> If <code>z</code> is already in a register <code>Rz</code>, emit <code>OP Ry, Ry, Rz</code>. If <code>z</code> is a memory location and the instruction set supports memory operands, emit <code>OP Ry, Ry, z</code>. Otherwise, load <code>z</code> into a register first.</li>
+<li><strong>Update descriptors.</strong> Record that <code>x</code> is now in register <code>Ry</code>, and update the register descriptor to reflect that <code>Ry</code> contains <code>x</code>. If <code>y</code> or <code>z</code> are not live after this instruction (no next use), update the descriptors to indicate that their registers are available.</li>
+</ol>
+
+<p>After processing all instructions in the basic block, the generator must <strong>store</strong> any live variables that are only in registers (not yet in memory). This ensures that the values are preserved across block boundaries. The generator scans the register descriptor and emits <code>ST x, Rx</code> for every variable <code>x</code> that is live at the end of the block and whose current value is only in register <code>Rx</code>.</p>
+
+<h4>Worked Example</h4>
+
+<p>Generate target code for: <code>result = (A - B) * (A - C) * (B - C)</code>. Assume three registers R0, R1, R2 are available. The three-address code is:</p>
+
+<pre><code>t1 = A - B
+t2 = A - C
+t3 = t1 * t2
+t4 = B - C
+t5 = t3 * t4
+result = t5</code></pre>
+
+<p>Step-by-step code generation:</p>
+
+<div class="table-wrap">
+<table>
+<thead><tr><th>3AC Instruction</th><th>Generated Code</th><th>Register State</th></tr></thead>
+<tbody>
+<tr><td>t1 = A - B</td><td>LD R0, A<br>LD R1, B<br>SUB R0, R0, R1</td><td>R0=t1, R1=B</td></tr>
+<tr><td>t2 = A - C</td><td>LD R1, A<br>LD R2, C<br>SUB R1, R1, R2</td><td>R0=t1, R1=t2, R2=C</td></tr>
+<tr><td>t3 = t1 * t2</td><td>MUL R0, R0, R1</td><td>R0=t3, R1=t2, R2=C</td></tr>
+<tr><td>t4 = B - C</td><td>LD R1, B<br>SUB R1, R1, R2</td><td>R0=t3, R1=t4, R2=C</td></tr>
+<tr><td>t5 = t3 * t4</td><td>MUL R0, R0, R1</td><td>R0=t5</td></tr>
+<tr><td>result = t5</td><td>ST result, R0</td><td>R0=result</td></tr>
+</tbody>
+</table>
+</div>
+
+<p>The generated machine code sequence is: <code>LD R0, A; LD R1, B; SUB R0, R0, R1; LD R1, A; LD R2, C; SUB R1, R1, R2; MUL R0, R0, R1; LD R1, B; SUB R1, R1, R2; MUL R0, R0, R1; ST result, R0</code>. This is 11 instructions. A cleverer register allocator might avoid reloading <code>A</code> and <code>C</code> by reordering the computation, but the simple generator processes instructions sequentially and does not reorder.</p>
+
+<div class="box box-exam">
+<div class="box-title">✦ PYQ Alert — Simple Code Generation</div>
+<p>"Discuss simple code generation algorithms. Develop the target sequence using a code generation algorithm for the expression: <code>result = (A-B)*(A-C)*(B-C)</code>" — This exact expression has appeared in exams. Show the step-by-step process: 3AC generation, then instruction-by-instruction translation showing register state at each step. Use 3 registers and clearly show loads, operations, and stores.</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= REGISTER ALLOCATION AND ASSIGNMENT ========================= -->
+<section id="s-register">
+<div class="section-header">
+<span class="section-num">Section 4.16</span>
+<h2>Register Allocation &amp; Assignment</h2>
+<p>The art of keeping the most valuable data in the fastest storage</p>
+</div>
+
+<div class="subsection prose">
+<p><strong>Register allocation</strong> is the problem of deciding which program values should reside in registers at each point in the program. <strong>Register assignment</strong> is the related problem of deciding which specific register should hold each value. These two problems are closely intertwined and are among the most impactful optimisations a compiler can perform. The difference between good and poor register allocation can easily account for a factor of two or more in execution speed, because accessing a register is typically 10 to 100 times faster than accessing main memory.</p>
+
+<p>The simplest approach to register allocation is <strong>local allocation within a basic block</strong>, using next-use information as described in the previous section. The code generator maintains a fixed pool of registers and, for each instruction, decides which value to keep and which to spill based on when each value is next needed. A value with no next use can be immediately evicted; a value with a far-future next use is a better candidate for spilling than one needed in the very next instruction. This greedy strategy works well within a single basic block but does not consider the global picture — a value that is used frequently across multiple blocks might be spilled and reloaded repeatedly, generating unnecessary traffic between registers and memory.</p>
+
+<p>A more sophisticated approach is <strong>global register allocation</strong>, which considers the entire flow graph. The most widely used technique in production compilers is <strong>graph colouring</strong>. The idea is to construct an <strong>interference graph</strong> where each node represents a variable (or temporary) and each edge connects two variables that are simultaneously live at some point in the program — meaning they cannot share the same register. The register allocation problem then reduces to colouring the interference graph with <em>k</em> colours (where <em>k</em> is the number of available registers) such that no two adjacent nodes have the same colour. If the graph is <em>k</em>-colourable, each colour corresponds to a register, and the allocation is complete. If the graph is not <em>k</em>-colourable, some variables must be spilled to memory, and the process iterates.</p>
+
+<p>The graph colouring approach is elegant but NP-complete in general. Practical implementations use heuristic algorithms such as the Chaitin-Briggs algorithm, which simplifies the graph by repeatedly removing nodes with fewer than <em>k</em> neighbours (since such nodes can always be coloured), spilling nodes when no simplification is possible, and then reconstructing the coloured graph. This heuristic works remarkably well in practice and is the foundation of register allocation in GCC, LLVM, and most other production compilers.</p>
+
+<div class="box box-memory">
+<div class="box-title">◆ Memory Anchor</div>
+<p>Think of register allocation as seating guests at a dinner party with limited chairs (registers). Two guests who are "at the party at the same time" (simultaneously live) cannot share a chair. The interference graph records who conflicts with whom. Graph colouring assigns chairs so that no two conflicting guests sit in the same chair. If there aren't enough chairs, some guests must wait outside (be spilled to memory).</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= DAG REPRESENTATION ========================= -->
+<section id="s-dag">
+<div class="section-header">
+<span class="section-num">Section 4.17</span>
+<h2>DAG Representation of Basic Blocks</h2>
+<p>Trees that share — how directed acyclic graphs expose common subexpressions and enable optimisation</p>
+</div>
+
+<div class="subsection prose">
+<h3>What Is a DAG?</h3>
+
+<p>A <strong>Directed Acyclic Graph</strong> (DAG) for a basic block is a directed graph in which each interior node represents an operator (or a statement), each leaf node represents an identifier (variable or constant), and the children of each interior node are the operands of the operator. The crucial property that distinguishes a DAG from a syntax tree is <strong>sharing</strong>: if the same computation (same operator applied to the same operands) appears multiple times in a basic block, the DAG represents it with a single node that has multiple parents, rather than creating duplicate subtrees. This natural sharing makes the DAG the ideal representation for detecting common subexpressions within a basic block.</p>
+
+<p>The DAG also captures the relationships between definitions and uses of variables. If a variable is defined multiple times within a block, the DAG node for the most recent definition is the one that represents the variable's current value. This is implemented by attaching the variable name as a <strong>label</strong> to the node that computes its latest value, and removing that label from any earlier node. The DAG thus provides a complete picture of data flow within a basic block, making it possible to perform optimisations such as common subexpression elimination, dead code elimination, and constant folding in a single, unified framework.</p>
+
+<h4>Constructing a DAG — The Algorithm</h4>
+
+<p>To construct a DAG for a basic block, process each three-address instruction in order. For each instruction <code>x = y op z</code>:</p>
+
+<ol class="step-list">
+<li><strong>Find or create nodes for y and z.</strong> If <code>y</code> (or <code>z</code>) already has a node in the DAG (from a previous definition or as a leaf), use that node. Otherwise, create a new leaf node labelled <code>y</code> (or <code>z</code>).</li>
+<li><strong>Check for common subexpression.</strong> Look for an existing node in the DAG with operator <code>op</code> whose left child is the node for <code>y</code> and whose right child is the node for <code>z</code>. If such a node exists, reuse it (this is the common subexpression elimination). If not, create a new interior node.</li>
+<li><strong>Attach the result variable.</strong> Label the (new or reused) node with <code>x</code>. If <code>x</code> was previously labelled on another node, remove that label from the old node (since <code>x</code>'s value has been overwritten).</li>
+</ol>
+
+<h4>Worked Example 1: ((a*b) + (c-d)*(a*b)) + b</h4>
+
+<p>This expression contains the common subexpression <code>a*b</code>, which appears twice. The DAG construction proceeds as follows:</p>
+
+<pre><code>3AC (unoptimised):
+t1 = a * b
+t2 = c - d
+t3 = a * b       // common subexpression with t1
+t4 = t2 * t3
+t5 = t1 + t4
+t6 = t5 + b</code></pre>
+
+<p>When we encounter instruction 3 (<code>t3 = a * b</code>), the DAG already has a node for <code>a * b</code> (created for instruction 1). We reuse this node and simply label it with <code>t3</code> as well. The resulting DAG has 9 nodes instead of the 10 that a syntax tree would require, and the optimised 3AC derived from the DAG eliminates the redundant computation:</p>
+
+<pre><code>Optimised 3AC from DAG:
+t1 = a * b
+t2 = c - d
+t3 = t2 * t1
+t4 = t1 + t3
+t5 = t4 + b</code></pre>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 520 430" xmlns="http://www.w3.org/2000/svg" style="max-width:480px">
+<defs>
+<marker id="arr4" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2c2418"/></marker>
+</defs>
+<text x="260" y="20" text-anchor="middle" font-family="'Playfair Display',serif" font-size="13" fill="#2c2418" font-weight="600">DAG for ((a*b) + (c-d)*(a*b)) + b</text>
+
+<!-- Leaf nodes (row 0) -->
+<circle cx="80" cy="50" r="20" class="dag-node dag-leaf"/>
+<text x="80" y="54" class="dag-label">a</text>
+
+<circle cx="170" cy="50" r="20" class="dag-node dag-leaf"/>
+<text x="170" y="54" class="dag-label">b</text>
+
+<circle cx="340" cy="50" r="20" class="dag-node dag-leaf"/>
+<text x="340" y="54" class="dag-label">c</text>
+
+<circle cx="440" cy="50" r="20" class="dag-node dag-leaf"/>
+<text x="440" y="54" class="dag-label">d</text>
+
+<!-- Row 1: n1(*) and n2(-) -->
+<circle cx="125" cy="140" r="22" class="dag-node dag-op"/>
+<text x="125" y="144" class="dag-label" font-size="14">*</text>
+<text x="125" y="168" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8a7e6d" text-anchor="middle">a*b</text>
+
+<circle cx="390" cy="140" r="22" class="dag-node dag-op"/>
+<text x="390" y="144" class="dag-label" font-size="14">−</text>
+<text x="390" y="168" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8a7e6d" text-anchor="middle">c-d</text>
+
+<!-- Row 2: n3(*) -->
+<circle cx="258" cy="230" r="22" class="dag-node dag-op"/>
+<text x="258" y="234" class="dag-label" font-size="14">*</text>
+<text x="258" y="258" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8a7e6d" text-anchor="middle">(c-d)*(a*b)</text>
+
+<!-- Row 3: n4(+) -->
+<circle cx="190" cy="320" r="22" class="dag-node dag-op"/>
+<text x="190" y="324" class="dag-label" font-size="14">+</text>
+<text x="190" y="348" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8a7e6d" text-anchor="middle">(a*b)+...</text>
+
+<!-- Row 4: n5(+) -->
+<circle cx="230" cy="400" r="22" class="dag-node dag-op"/>
+<text x="230" y="404" class="dag-label" font-size="14">+</text>
+<text x="230" y="425" font-family="'JetBrains Mono',monospace" font-size="9" fill="#8a7e6d" text-anchor="middle">...+b</text>
+
+<!-- Edges: leaves to n1 -->
+<line x1="80" y1="70" x2="115" y2="120" class="dag-edge"/>
+<line x1="170" y1="70" x2="135" y2="120" class="dag-edge"/>
+
+<!-- Edges: leaves to n2 -->
+<line x1="340" y1="70" x2="380" y2="120" class="dag-edge"/>
+<line x1="440" y1="70" x2="400" y2="120" class="dag-edge"/>
+
+<!-- Edges: n1, n2 to n3 -->
+<line x1="125" y1="162" x2="245" y2="210" class="dag-edge"/>
+<line x1="390" y1="162" x2="271" y2="210" class="dag-edge"/>
+
+<!-- Edge: n1 to n4 (shared! n1 is reused) -->
+<line x1="125" y1="162" x2="180" y2="300" class="dag-edge" stroke="#c44536" stroke-width="1.8"/>
+
+<!-- Edge: n3 to n4 -->
+<line x1="258" y1="252" x2="200" y2="300" class="dag-edge"/>
+
+<!-- Edge: n4 to n5 -->
+<line x1="190" y1="342" x2="222" y2="380" class="dag-edge"/>
+
+<!-- Edge: b to n5 (long curved edge) -->
+<path d="M 170,70 C 170,200 230,300 230,378" fill="none" stroke="#2c2418" stroke-width="1.2" marker-end="url(#arr4)"/>
+
+<!-- Labels for shared nodes -->
+<text x="125" y="42" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="9" fill="#c44536" font-style="italic">shared (reused)</text>
+</svg>
+<div class="diagram-caption">Figure 4.6 — DAG for ((a*b) + (c-d)*(a*b)) + b. The node for <code>a*b</code> is shared between the two subexpressions, shown with a red edge. The leaf node <code>b</code> connects to both the <code>*</code> node and the final <code>+</code> node.</div>
+</div>
+
+<h4>Worked Example 2: (a - b) + c * (d / e)</h4>
+
+<p>This expression has no common subexpressions, so the DAG has the same structure as the syntax tree. The 3AC is:</p>
+
+<pre><code>t1 = a - b
+t2 = d / e
+t3 = c * t2
+t4 = t1 + t3</code></pre>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 420 350" xmlns="http://www.w3.org/2000/svg" style="max-width:400px">
+<defs><marker id="arr5" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2c2418"/></marker></defs>
+<text x="210" y="20" text-anchor="middle" font-family="'Playfair Display',serif" font-size="13" fill="#2c2418" font-weight="600">DAG for (a − b) + c * (d / e)</text>
+
+<!-- Leaves -->
+<circle cx="60" cy="55" r="18" class="dag-node dag-leaf"/><text x="60" y="59" class="dag-label">a</text>
+<circle cx="140" cy="55" r="18" class="dag-node dag-leaf"/><text x="140" y="59" class="dag-label">b</text>
+<circle cx="250" cy="55" r="18" class="dag-node dag-leaf"/><text x="250" y="59" class="dag-label">c</text>
+<circle cx="330" cy="55" r="18" class="dag-node dag-leaf"/><text x="330" y="59" class="dag-label">d</text>
+<circle cx="400" cy="55" r="18" class="dag-node dag-leaf"/><text x="400" y="59" class="dag-label">e</text>
+
+<!-- n1: a - b -->
+<circle cx="100" cy="140" r="20" class="dag-node dag-op"/><text x="100" y="144" class="dag-label" font-size="14">−</text>
+<line x1="60" y1="73" x2="90" y2="122" class="dag-edge"/>
+<line x1="140" y1="73" x2="110" y2="122" class="dag-edge"/>
+
+<!-- n2: d / e -->
+<circle cx="365" cy="140" r="20" class="dag-node dag-op"/><text x="365" y="144" class="dag-label" font-size="14">÷</text>
+<line x1="330" y1="73" x2="355" y2="122" class="dag-edge"/>
+<line x1="400" y1="73" x2="375" y2="122" class="dag-edge"/>
+
+<!-- n3: c * n2 -->
+<circle cx="280" cy="230" r="20" class="dag-node dag-op"/><text x="280" y="234" class="dag-label" font-size="14">*</text>
+<line x1="250" y1="73" x2="270" y2="212" class="dag-edge"/>
+<line x1="365" y1="160" x2="290" y2="212" class="dag-edge"/>
+
+<!-- n4: n1 + n3 -->
+<circle cx="190" cy="315" r="20" class="dag-node dag-op"/><text x="190" y="319" class="dag-label" font-size="14">+</text>
+<line x1="100" y1="160" x2="180" y2="297" class="dag-edge"/>
+<line x1="280" y1="250" x2="200" y2="297" class="dag-edge"/>
+</svg>
+<div class="diagram-caption">Figure 4.7 — DAG for (a − b) + c * (d / e). No common subexpressions exist, so the DAG is structurally identical to the syntax tree.</div>
+</div>
+
+<h4>Worked Example 3: Array Access Statements</h4>
+
+<p>Consider the following three-address statements inside a basic block:</p>
+
+<pre><code>t1 = 4 * i
+t2 = a[t1]
+t3 = 4 * i       // same as t1
+t4 = b[t3]
+t5 = t2 * t4
+t6 = prod + t5
+prod = t6</code></pre>
+
+<p>The common subexpression <code>4 * i</code> appears in both instructions 1 and 3. The DAG construction reuses the node for <code>4 * i</code>, and both array accesses <code>a[t1]</code> and <code>b[t3]</code> use the same index computation node. The optimised 3AC derived from this DAG is:</p>
+
+<pre><code>t1 = 4 * i
+t2 = a[t1]
+t3 = b[t1]       // reused t1 instead of recomputing 4*i
+t4 = t2 * t3
+t5 = prod + t4
+prod = t5</code></pre>
+
+<div class="diagram-wrap">
+<svg viewBox="0 0 400 380" xmlns="http://www.w3.org/2000/svg" style="max-width:380px">
+<defs><marker id="arr6" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2c2418"/></marker></defs>
+<text x="200" y="20" text-anchor="middle" font-family="'Playfair Display',serif" font-size="13" fill="#2c2418" font-weight="600">DAG for Array Access Statements</text>
+
+<!-- Leaves -->
+<circle cx="100" cy="55" r="18" class="dag-node dag-leaf"/><text x="100" y="59" class="dag-label">4</text>
+<circle cx="180" cy="55" r="18" class="dag-node dag-leaf"/><text x="180" y="59" class="dag-label">i</text>
+<circle cx="70" cy="145" r="18" class="dag-node dag-leaf"/><text x="70" y="149" class="dag-label">a</text>
+<circle cx="280" cy="145" r="18" class="dag-node dag-leaf"/><text x="280" y="149" class="dag-label">b</text>
+<circle cx="200" cy="55" r="18" class="dag-node dag-leaf"/><text x="200" y="59" class="dag-label">prod</text>
+
+<!-- n1: 4 * i -->
+<circle cx="140" cy="130" r="20" class="dag-node dag-op"/><text x="140" y="134" class="dag-label" font-size="14">*</text>
+<text x="140" y="156" font-family="'JetBrains Mono',monospace" font-size="8" fill="#c44536" text-anchor="middle">shared</text>
+<line x1="100" y1="73" x2="130" y2="112" class="dag-edge"/>
+<line x1="180" y1="73" x2="150" y2="112" class="dag-edge"/>
+
+<!-- n2: a[t1] -->
+<circle cx="100" cy="220" r="22" class="dag-node dag-op"/>
+<text x="100" y="216" class="dag-label" font-size="10">[]</text>
+<text x="100" y="230" class="dag-label" font-size="9">a</text>
+<line x1="70" y1="163" x2="92" y2="200" class="dag-edge"/>
+<line x1="140" y1="150" x2="108" y2="200" class="dag-edge" stroke="#c44536" stroke-width="1.5"/>
+
+<!-- n3: b[t1] -->
+<circle cx="260" cy="220" r="22" class="dag-node dag-op"/>
+<text x="260" y="216" class="dag-label" font-size="10">[]</text>
+<text x="260" y="230" class="dag-label" font-size="9">b</text>
+<line x1="280" y1="163" x2="268" y2="200" class="dag-edge"/>
+<line x1="140" y1="150" x2="252" y2="200" class="dag-edge" stroke="#c44536" stroke-width="1.5"/>
+
+<!-- n4: t2 * t3 -->
+<circle cx="180" cy="300" r="20" class="dag-node dag-op"/><text x="180" y="304" class="dag-label" font-size="14">*</text>
+<line x1="100" y1="242" x2="170" y2="282" class="dag-edge"/>
+<line x1="260" y1="242" x2="190" y2="282" class="dag-edge"/>
+
+<!-- n5: prod + n4 -->
+<circle cx="200" cy="355" r="20" class="dag-node dag-op"/><text x="200" y="359" class="dag-label" font-size="14">+</text>
+<line x1="200" y1="73" x2="200" y2="337" class="dag-edge"/>
+<line x1="180" y1="320" x2="195" y2="337" class="dag-edge"/>
+</svg>
+<div class="diagram-caption">Figure 4.8 — DAG for the array access 3AC. The <code>4*i</code> node is shared between both array accesses <code>a[4*i]</code> and <code>b[4*i]</code>, eliminating a redundant multiplication.</div>
+</div>
+
+<div class="box box-exam">
+<div class="box-title">✦ PYQ Alert — DAG Construction</div>
+<p>DAG construction questions appear frequently. For a 10-mark answer: (1) explain what a DAG is and how it differs from a syntax tree (sharing of common subexpressions), (2) state the construction algorithm (3 steps), (3) construct the DAG step by step, showing how each instruction is processed and where common subexpressions are detected, (4) derive the optimised 3AC from the DAG, (5) draw the DAG diagram. Always check for common subexpressions — this is the primary reason for using DAGs.</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= GENERATING CODE FROM DAGs ========================= -->
+<section id="s-code-from-dag">
+<div class="section-header">
+<span class="section-num">Section 4.18</span>
+<h2>Generating Code from DAGs</h2>
+<p>Walking the graph to emit instructions — the final synthesis</p>
+</div>
+
+<div class="subsection prose">
+<p>Once a DAG has been constructed for a basic block, the code generator can traverse the DAG to produce target code. The traversal is essentially a post-order walk: for each interior node, generate code for its children first (ensuring their values are available in registers), then generate the instruction for the node itself. The DAG naturally eliminates common subexpressions (since shared nodes are visited only once), so the generated code is automatically more efficient than code generated from the original linear 3AC.</p>
+
+<p>The algorithm for generating code from a DAG is as follows. First, perform a topological sort of the DAG nodes (this ensures that every node is processed after its children). Then, for each node in topological order:</p>
+
+<ol class="step-list">
+<li>If the node is a <strong>leaf</strong> (a variable or constant), no code needs to be generated — the value is either already in a register or can be loaded on demand when it is first used as an operand.</li>
+<li>If the node is an <strong>interior node</strong> with operator <code>op</code> and children pointing to nodes whose values are in registers <code>Ry</code> and <code>Rz</code>, emit <code>OP Rx, Ry, Rz</code> where <code>Rx</code> is the register assigned to this node. If a child's value is not in a register, emit a <code>LOAD</code> instruction first.</li>
+<li>If the node has <strong>variable labels</strong> attached (meaning it defines one or more variables), emit <code>STORE</code> instructions for any variables that are live at the end of the block and not already in memory. Variables that are not live need not be stored — their values are dead and can be discarded.</li>
+</ol>
+
+<p>The key advantage of generating code from a DAG (versus generating code directly from linear 3AC) is that the DAG has already performed common subexpression elimination and identified redundancies. The code generator simply walks the reduced graph, producing one instruction per interior node. For the DAG in Figure 4.6 (the expression <code>((a*b) + (c-d)*(a*b)) + b</code>), the code generator would produce instructions for 5 interior nodes (the two multiplications, the subtraction, and the two additions) instead of the 6 instructions in the unoptimised 3AC, because the shared <code>a*b</code> node generates code only once.</p>
+
+<p>In practice, the order in which the DAG nodes are evaluated affects register usage. If the code generator chooses a good evaluation order — one that minimises the number of values that must be live simultaneously — it can reduce register spilling. This is where the interplay between DAG traversal order and register allocation becomes important. Some compilers use a heuristic that evaluates the "heaviest" subtree first (the one requiring the most registers), ensuring that its register can be freed as soon as possible.</p>
+
+<div class="box box-tip">
+<div class="box-title">✦ Exam Tip — gencode() for 2D Array Iteration</div>
+<p>A PYQ asks to "Apply the gencode() function to design the machine code for a given program fragment iterating over 2D arrays." For a loop like <code>for(i=1;i&lt;=10;i++) for(j=1;j&lt;=10;j++) sum[i][j]=a[i][j]+b[i][j]</code>, the key steps are: (1) compute the address of each 2D array element using the formula <code>base + ((i-1)*10 + (j-1))*w</code>, (2) generate load-add-store sequences for each element, (3) recognise that the address computation for consecutive elements differs by a constant stride (which can be exploited by strength reduction optimisation, replacing multiplications with additions). Show the 3AC first, then the target code with register allocation.</p>
+</div>
+</div>
+</section>
+
+<!-- ========================= QUICK REVISION SHEET ========================= -->
+<section id="s-revision">
+<div class="section-header">
+<span class="section-num">Revision</span>
+<h2>Quick Revision Sheet</h2>
+<p>Everything you need, condensed for exam night</p>
+</div>
+
+<div class="rev-card">
+<h3 style="color:var(--accent);margin-bottom:1rem;font-family:'Playfair Display',serif">Three Address Code — Core Facts</h3>
+<p><strong>Form:</strong> <code>x = y op z</code> (at most one operator per instruction).<br>
+<strong>Temporaries:</strong> Compiler-generated names (t1, t2, ...) for intermediate results.<br>
+<strong>Instruction types:</strong> Assignment, copy, unary, conditional jump, unconditional jump, indexed access, pointer, procedure call/return.<br>
+<strong>Implementations:</strong> Quadruples (4 fields, self-contained), Triples (3 fields, position-referenced), Indirect Triples (pointer table + pool).<br>
+<strong>Key difference:</strong> Quadruples are easy to optimise; Triples save space but break on reordering; Indirect Triples combine both advantages.</p>
+</div>
+
+<div class="rev-card">
+<h3 style="color:var(--accent);margin-bottom:1rem;font-family:'Playfair Display',serif">Backpatching — Core Facts</h3>
+<p><strong>Purpose:</strong> Fill in jump targets that are unknown at emission time.<br>
+<strong>Three functions:</strong> <code>makelist(i)</code> — create list with one entry; <code>merge(p1,p2)</code> — concatenate lists; <code>backpatch(p,label)</code> — fill in target for all entries in list p.<br>
+<strong>Attributes:</strong> Each boolean expression has <code>.truelist</code> and <code>.falselist</code>.<br>
+<strong>For if-then-else:</strong> Backpatch true-list to S1 start, false-list to S2 start.<br>
+<strong>For while-do:</strong> Backpatch true-list to body start, backpatch body's nextlist back to condition start, use false-list as while's nextlist.</p>
+</div>
+
+<div class="rev-card">
+<h3 style="color:var(--accent);margin-bottom:1rem;font-family:'Playfair Display',serif">Basic Blocks &amp; Flow Graphs — Core Facts</h3>
+<p><strong>Basic block:</strong> Maximal sequence with single entry, single exit, no branches in between.<br>
+<strong>Leader rules:</strong> (1) First instruction, (2) Target of any goto, (3) Instruction following any goto.<br>
+<strong>Flow graph:</strong> Nodes = basic blocks, Edges = control flow between blocks.<br>
+<strong>Back edge:</strong> Edge to an ancestor in a DFS → indicates a loop.</p>
+</div>
+
+<div class="rev-card">
+<h3 style="color:var(--accent);margin-bottom:1rem;font-family:'Playfair Display',serif">DAG — Core Facts</h3>
+<p><strong>DAG vs Syntax Tree:</strong> DAG shares common subexpression nodes; tree duplicates them.<br>
+<strong>Construction:</strong> For each instruction, find/create operand nodes, check for existing operator node (CSE), label result.<br>
+<strong>Benefits:</strong> Common subexpression elimination, dead code detection, constant folding.<br>
+<strong>Code from DAG:</strong> Post-order traversal, one instruction per interior node.</p>
+</div>
+
+<div class="rev-card">
+<h3 style="color:var(--accent);margin-bottom:1rem;font-family:'Playfair Display',serif">Code Generation — Core Facts</h3>
+<p><strong>Design issues:</strong> Instruction selection, register allocation, instruction ordering, evaluation order.<br>
+<strong>Simple algorithm:</strong> For each 3AC instruction: get operands into registers, perform operation, update descriptors, store live results.<br>
+<strong>Register descriptors:</strong> Track what's in each register.<br>
+<strong>Address descriptors:</strong> Track where each variable's value is.<br>
+<strong>Next-use:</strong> Computed backwards per basic block; drives register spilling decisions.<br>
+<strong>Graph colouring:</strong> Global register allocation via interference graph; NP-complete, solved by heuristics (Chaitin-Briggs).</p>
+</div>
+
+<details>
+<summary>Most Commonly Confused Points</summary>
+<div class="details-body">
+<p><strong>1. Triples vs Indirect Triples:</strong> Triples use row positions as references and are fragile under reordering. Indirect triples add a pointer table that decouples ordering from the instruction pool, making reordering safe.</p>
+<p><strong>2. Backpatching vs Forward references:</strong> Backpatching handles <em>forward</em> jumps (jumps to labels that haven't been defined yet). It does not handle backward jumps, which are resolved immediately since the target is already known.</p>
+<p><strong>3. Basic block vs Extended basic block:</strong> A basic block has a single entry and single exit. An extended basic block allows multiple entries (from different predecessors) but maintains a single exit — used in some instruction scheduling algorithms.</p>
+<p><strong>4. DAG for a basic block vs DAG for an expression:</strong> A DAG for a basic block handles multiple assignments and can detect when a variable is redefined (by relabelling nodes). A DAG for a single expression is simpler — just a shared tree.</p>
+<p><strong>5. Register allocation vs Register assignment:</strong> Allocation decides <em>which values</em> get registers; assignment decides <em>which specific register</em> each value gets. Graph colouring does both simultaneously.</p>
+</div>
+</details>
+
+<details>
+<summary>How to Structure a 10-Mark Answer on Backpatching</summary>
+<div class="details-body">
+<p><strong>Para 1:</strong> Define backpatching and explain the problem it solves (forward jumps with unknown targets in single-pass code generation).</p>
+<p><strong>Para 2:</strong> Define the three functions: makelist, merge, backpatch. Explain what each does and what data structures they use.</p>
+<p><strong>Para 3:</strong> Explain the truelist and falselist attributes of boolean expressions.</p>
+<p><strong>Para 4:</strong> Show the SDT rules for E → E1 || E2 and E → E1 && E2. Explain how truelist and falselist are merged and backpatched.</p>
+<p><strong>Para 5:</strong> Show the SDT for if-then-else: how E's truelist is backpatched to S1, E's falselist to S2, and S1's nextlist jumps over S2.</p>
+<p><strong>Para 6:</strong> Show the SDT for while-do: how the loop back edge is created by backpatching S1's nextlist to the condition start.</p>
+<p><strong>Para 7:</strong> Draw a diagram showing the control flow for if-then-else and while-do with labelled edges.</p>
+<p><strong>Para 8:</strong> Conclude with a small worked example (e.g., <code>if(a<b || c<d) S1 else S2</code>).</p>
+</div>
+</details>
+
+<details>
+<summary>How to Draw DAGs Quickly in Exams</summary>
+<div class="details-body">
+<p><strong>Step 1:</strong> Write out the 3AC first. Identify all leaf nodes (variables and constants) and draw them in a row at the top.</p>
+<p><strong>Step 2:</strong> Process instructions in order. For each <code>t = a op b</code>, draw a node labelled <code>op</code> and connect it to the nodes for <code>a</code> and <code>b</code>.</p>
+<p><strong>Step 3:</strong> Before creating a new node, check if an identical node already exists (same operator, same children). If yes, reuse it — draw an extra edge from the existing node instead of creating a new one.</p>
+<p><strong>Step 4:</strong> Label each node with the temporary(s) or variable(s) it defines. If a variable is redefined, remove its label from the old node and add it to the new one.</p>
+<p><strong>Step 5:</strong> Draw edges from children to parents (top to bottom). Shared nodes will have multiple outgoing edges — this is the visual signature of common subexpression elimination.</p>
+<p><strong>Essential labels:</strong> Every node must be labelled with its operator (interior) or variable/constant (leaf). Annotations like "t1, t3" on shared nodes show which temporaries share the computation.</p>
+</div>
+</details>
+
+<details>
+<summary>Frequently Asked University Questions (Compiled from PYQs)</summary>
+<div class="details-body">
+<p><strong>2 marks:</strong> Define Three Address Code. What are the benefits of intermediate code? List the rules for constructing basic blocks. What is a DAG? Define next-use information.</p>
+<p><strong>5 marks:</strong> Explain quadruples, triples, and indirect triples with examples. What is backpatching? Explain the simple code generation algorithm. Explain register allocation and assignment. What are the design issues in code generation?</p>
+<p><strong>10 marks:</strong> Construct quadruples/triples/indirect triples for a given expression. Apply backpatching to write SDT for boolean and control flow statements. Construct a DAG for given 3AC statements. Translate switch-case to 3AC using backpatching. Generate target code for a given expression using the simple code generation algorithm. Construct basic blocks and flow graph for a given program.</p>
+<p><strong>15 marks:</strong> Explain intermediate code generation with all representations (3AC, quadruples, triples, indirect triples) with comprehensive examples. Explain backpatching with SDT for all boolean and control flow constructs with diagrams. Explain the complete code generation process including target machine, storage management, basic blocks, flow graphs, DAGs, and register allocation.</p>
+</div>
+</details>
+
+<details>
+<summary>What Professors Usually Expect</summary>
+<div class="details-body">
+<p><strong>1.</strong> Correct and complete 3AC generation — every temporary must be accounted for, every operator must be in a separate instruction.</p>
+<p><strong>2.</strong> Properly formatted tables for quadruples and triples — use the standard column headers and show all fields.</p>
+<p><strong>3.</strong> For backpatching: the SDT rules must use the correct attribute names (truelist, falselist, nextlist) and the three functions must be applied correctly.</p>
+<p><strong>4.</strong> For DAGs: the diagram must clearly show shared nodes (common subexpressions) with multiple parents. The optimised 3AC derived from the DAG must be shown.</p>
+<p><strong>5.</strong> For code generation: show the register state after each instruction. The professor wants to see that you understand register allocation, not just instruction selection.</p>
+<p><strong>6.</strong> Neat diagrams with labels. In handwritten exams, draw boxes for basic blocks and arrows for edges. Label each block with its instructions.</p>
+<p><strong>7.</strong> For long answers, always include: definition, motivation, mechanism, example, diagram, and advantages/disadvantages. This structure maximises marks.</p>
+</div>
+</details>
+
+</section>
+
+</div><!-- /.container -->
+
+<footer>
+<div class="ornament"></div>
+<p>Unit 4 — Intermediate Code Generation &amp; Code Generation</p>
+<p style="margin-top:.5rem;font-size:.78rem">Compiler Design TCS-601 &middot; Comprehensive Exam Preparation Guide</p>
+<p style="margin-top:.3rem;font-size:.72rem;color:#b0a898">Crafted for Indian university examinations &middot; Covering all PYQ patterns</p>
+</footer>
+
+<button class="back-top" id="backTop" title="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// Back to top button
+const btn = document.getElementById('backTop');
+window.addEventListener('scroll', () => {
+    btn.classList.toggle('visible', window.scrollY > 400);
+});
+
+// Smooth scroll for TOC links
+document.querySelectorAll('.toc-grid a').forEach(a => {
+    a.addEventListener('click', e => {
+        e.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+            const offset = document.querySelector('.toc').offsetHeight + 16;
+            const y = target.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }
+    });
+});
+
+// Intersection observer for section highlighting
+const sections = document.querySelectorAll('section[id]');
+const tocLinks = document.querySelectorAll('.toc-grid a');
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            tocLinks.forEach(link => {
+                link.style.color = link.getAttribute('href') === '#' + entry.target.id
+                    ? 'var(--accent)' : '';
+            });
+        }
+    });
+}, { rootMargin: '-80px 0px -60% 0px' });
+sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
