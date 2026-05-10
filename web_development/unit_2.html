@@ -1,0 +1,2177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 2 — JavaScript &amp; Advanced JavaScript · The Definitive Exam Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#faf6ee;--bg-alt:#f3ece0;--surface:#ffffff;--surface-alt:#f8f4eb;
+  --border:#d4c5a9;--border-light:#e8dfce;
+  --text:#2c1810;--text-secondary:#5a4a3a;--text-muted:#8b7d6d;
+  --accent:#c45a3c;--accent-light:#e87a5c;--accent-dark:#a04530;
+  --gold:#d4a843;--gold-light:#e8c567;
+  --green:#5b7065;--green-light:#7b9085;
+  --purple:#7b5e7b;
+  --code-bg:#2b2118;--code-text:#e8d5b5;
+  --code-kw:#e87a5c;--code-str:#d4a843;--code-cm:#7b7060;--code-fn:#7b9e8b;--code-num:#c48a5c;
+  --sidebar-bg:#f0e8d8;--shadow:rgba(44,24,16,0.08);
+  --radius:8px;
+}
+html{scroll-behavior:smooth;font-size:17px}
+body{
+  font-family:'Crimson Pro',Georgia,serif;color:var(--text);
+  background:var(--bg);line-height:1.72;overflow-x:hidden;
+  background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='60' height='60' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+}
+::selection{background:var(--gold);color:var(--text)}
+
+/* === PROGRESS BAR === */
+#progress-bar{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--gold));z-index:1000;width:0;transition:width .15s}
+
+/* === SIDEBAR === */
+#sidebar{
+  position:fixed;top:0;left:0;width:280px;height:100vh;
+  background:var(--sidebar-bg);border-right:1px solid var(--border);
+  overflow-y:auto;z-index:900;padding:2rem 1.2rem;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;
+  transition:transform .3s ease;
+}
+#sidebar::-webkit-scrollbar{width:5px}
+#sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+#sidebar .logo{
+  font-family:'Playfair Display',serif;font-size:1.1rem;font-weight:700;
+  color:var(--accent);text-align:center;margin-bottom:.3rem;letter-spacing:.02em;
+}
+#sidebar .logo-sub{
+  font-size:.72rem;text-align:center;color:var(--text-muted);
+  text-transform:uppercase;letter-spacing:.18em;margin-bottom:1.8rem;
+  border-bottom:1px solid var(--border);padding-bottom:1rem;
+}
+#sidebar nav a{
+  display:block;padding:.45rem .7rem;margin-bottom:.15rem;
+  font-size:.82rem;color:var(--text-secondary);text-decoration:none;
+  border-radius:5px;transition:all .2s;font-family:'Crimson Pro',serif;
+  border-left:2px solid transparent;
+}
+#sidebar nav a:hover,#sidebar nav a.active{
+  background:rgba(196,90,60,.08);color:var(--accent);
+  border-left-color:var(--accent);
+}
+#sidebar nav .nav-group-title{
+  font-family:'DM Mono',monospace;font-size:.65rem;
+  text-transform:uppercase;letter-spacing:.15em;color:var(--text-muted);
+  margin:1.2rem 0 .4rem .7rem;
+}
+.sidebar-toggle{
+  display:none;position:fixed;top:1rem;left:1rem;z-index:950;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:6px;padding:.5rem .7rem;cursor:pointer;
+  font-family:'DM Mono',monospace;font-size:.8rem;color:var(--text);
+  box-shadow:0 2px 8px var(--shadow);
+}
+
+/* === MAIN CONTENT === */
+#main{margin-left:280px;padding:0 3rem 4rem 3rem;max-width:920px}
+#main > .hero{padding:4rem 0 3rem;text-align:center;border-bottom:1px solid var(--border);margin-bottom:3rem}
+.hero h1{
+  font-family:'Playfair Display',serif;font-size:2.6rem;font-weight:800;
+  color:var(--text);line-height:1.2;letter-spacing:-.01em;margin-bottom:.6rem;
+}
+.hero .subtitle{
+  font-size:1.1rem;color:var(--text-muted);font-style:italic;max-width:540px;margin:0 auto;
+}
+.hero .deco{
+  width:60px;height:3px;background:var(--accent);margin:1.2rem auto 0;
+  border-radius:2px;
+}
+
+/* === SECTIONS === */
+section{margin-bottom:3.5rem;scroll-margin-top:2rem}
+section > h2{
+  font-family:'Playfair Display',serif;font-size:1.75rem;font-weight:700;
+  color:var(--text);margin-bottom:.3rem;padding-bottom:.5rem;
+  border-bottom:2px solid var(--accent);display:inline-block;
+}
+section > h2 .sec-num{
+  font-family:'DM Mono',monospace;font-size:.7rem;
+  color:var(--accent);letter-spacing:.1em;display:block;
+  margin-bottom:.2rem;text-transform:uppercase;
+}
+section > h3{
+  font-family:'Playfair Display',serif;font-size:1.25rem;font-weight:600;
+  color:var(--text-secondary);margin:2rem 0 .6rem;
+}
+section > h4{
+  font-family:'Playfair Display',serif;font-size:1.05rem;font-weight:600;
+  color:var(--accent);margin:1.5rem 0 .4rem;
+}
+p{margin-bottom:1rem;text-align:justify}
+
+/* === CODE BLOCKS === */
+.code-block{
+  position:relative;background:var(--code-bg);color:var(--code-text);
+  border-radius:var(--radius);padding:1.2rem 1.4rem;margin:1.2rem 0;
+  font-family:'DM Mono',monospace;font-size:.82rem;line-height:1.65;
+  overflow-x:auto;border:1px solid rgba(212,168,67,.15);
+  box-shadow:0 4px 16px rgba(0,0,0,.12);
+}
+.code-block .code-label{
+  position:absolute;top:0;right:0;background:var(--accent);
+  color:#fff;font-size:.6rem;padding:.2rem .6rem;border-radius:0 var(--radius) 0 6px;
+  text-transform:uppercase;letter-spacing:.1em;font-weight:500;
+}
+.code-block .copy-btn{
+  position:absolute;top:.5rem;right:.5rem;background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.15);color:var(--code-text);
+  font-size:.65rem;padding:.25rem .5rem;border-radius:4px;cursor:pointer;
+  font-family:'DM Mono',monospace;opacity:0;transition:opacity .2s;
+}
+.code-block:hover .copy-btn{opacity:1}
+.code-block .copy-btn:hover{background:rgba(255,255,255,.2)}
+.kw{color:var(--code-kw)}.str{color:var(--code-str)}.cm{color:var(--code-cm)}
+.fn{color:var(--code-fn)}.num{color:var(--code-num)}.op{color:#c9b896}
+
+code{
+  font-family:'DM Mono',monospace;font-size:.85em;
+  background:var(--bg-alt);padding:.1em .35em;border-radius:3px;
+  color:var(--accent-dark);
+}
+
+/* === CARDS & BOXES === */
+.card{
+  background:var(--surface);border:1px solid var(--border-light);
+  border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0;
+  box-shadow:0 2px 12px var(--shadow);
+}
+.exam-tip{
+  background:linear-gradient(135deg,#fdf6ed,#faf0dd);
+  border-left:4px solid var(--gold);border-radius:0 var(--radius) var(--radius) 0;
+  padding:1.2rem 1.4rem;margin:1.5rem 0;
+}
+.exam-tip .tip-title{
+  font-family:'DM Mono',monospace;font-size:.7rem;
+  text-transform:uppercase;letter-spacing:.15em;color:var(--gold);
+  margin-bottom:.5rem;font-weight:500;
+}
+.pullquote{
+  font-family:'Playfair Display',serif;font-style:italic;font-size:1.25rem;
+  color:var(--accent);border-left:3px solid var(--accent);
+  padding:.8rem 0 .8rem 1.5rem;margin:2rem 0;
+  line-height:1.55;
+}
+.sidenote{
+  float:right;width:220px;margin:0 0 1rem 1.5rem;padding:1rem;
+  background:var(--surface-alt);border:1px dashed var(--border);
+  border-radius:var(--radius);font-size:.82rem;color:var(--text-muted);
+  font-style:italic;
+}
+.sidenote::before{
+  content:'Marginalia';display:block;font-family:'DM Mono',monospace;
+  font-size:.6rem;text-transform:uppercase;letter-spacing:.15em;
+  color:var(--accent);margin-bottom:.4rem;font-style:normal;
+}
+.memory-box{
+  background:linear-gradient(135deg,#f0f5f2,#e8f0eb);
+  border:1px solid var(--green-light);border-radius:var(--radius);
+  padding:1.2rem 1.4rem;margin:1.5rem 0;
+}
+.memory-box .mem-title{
+  font-family:'DM Mono',monospace;font-size:.7rem;
+  text-transform:uppercase;letter-spacing:.15em;color:var(--green);
+  margin-bottom:.5rem;font-weight:500;
+}
+.warning-box{
+  background:linear-gradient(135deg,#fdf2f0,#fae8e4);
+  border:1px solid var(--accent-light);border-radius:var(--radius);
+  padding:1.2rem 1.4rem;margin:1.5rem 0;
+}
+
+/* === TABLES === */
+table{
+  width:100%;border-collapse:collapse;margin:1.5rem 0;
+  font-size:.9rem;
+}
+th{
+  font-family:'Playfair Display',serif;font-weight:600;
+  background:var(--bg-alt);text-align:left;padding:.7rem .8rem;
+  border-bottom:2px solid var(--accent);color:var(--text);
+}
+td{
+  padding:.6rem .8rem;border-bottom:1px solid var(--border-light);
+  vertical-align:top;
+}
+tr:nth-child(even){background:var(--surface-alt)}
+
+/* === DETAILS/SUMMARY (Exam Questions) === */
+details{
+  background:var(--surface);border:1px solid var(--border-light);
+  border-radius:var(--radius);margin:.8rem 0;overflow:hidden;
+}
+details[open]{box-shadow:0 2px 10px var(--shadow)}
+summary{
+  padding:.8rem 1rem;cursor:pointer;font-family:'Playfair Display',serif;
+  font-weight:600;font-size:.95rem;color:var(--text-secondary);
+  list-style:none;display:flex;align-items:center;gap:.6rem;
+  transition:background .2s;
+}
+summary:hover{background:var(--surface-alt)}
+summary::before{
+  content:'▸';color:var(--accent);font-size:1.1rem;transition:transform .2s;
+}
+details[open] summary::before{transform:rotate(90deg)}
+summary::-webkit-details-marker{display:none}
+details .details-body{padding:0 1rem 1rem;border-top:1px solid var(--border-light)}
+
+/* === SVG DIAGRAMS === */
+.diagram-wrap{
+  background:var(--surface);border:1px solid var(--border-light);
+  border-radius:var(--radius);padding:1.5rem;margin:1.5rem 0;
+  box-shadow:0 2px 12px var(--shadow);text-align:center;overflow-x:auto;
+}
+.diagram-wrap svg{max-width:100%;height:auto}
+.diagram-caption{
+  font-size:.8rem;color:var(--text-muted);font-style:italic;
+  margin-top:.8rem;
+}
+
+/* === INLINE SVG ANNOTATIONS === */
+.svg-label{font-family:'DM Mono',monospace;font-size:11px;fill:var(--text)}
+.svg-node-label{font-family:'DM Mono',monospace;font-size:12px;fill:var(--text);text-anchor:middle}
+.svg-line{stroke:var(--border);stroke-width:1.5}
+
+/* === BACK TO TOP === */
+#back-top{
+  position:fixed;bottom:2rem;right:2rem;width:44px;height:44px;
+  background:var(--accent);color:#fff;border:none;border-radius:50%;
+  font-size:1.2rem;cursor:pointer;opacity:0;transition:all .3s;
+  box-shadow:0 3px 12px rgba(196,90,60,.3);z-index:800;
+  display:flex;align-items:center;justify-content:center;
+}
+#back-top.visible{opacity:1}
+#back-top:hover{background:var(--accent-dark);transform:translateY(-2px)}
+
+/* === REVISION CARDS === */
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;margin:1.5rem 0}
+.rev-card{
+  background:var(--surface);border:1px solid var(--border-light);
+  border-radius:var(--radius);padding:1.2rem;
+  border-top:3px solid var(--gold);
+  box-shadow:0 2px 8px var(--shadow);
+}
+.rev-card h5{
+  font-family:'Playfair Display',serif;font-size:.9rem;font-weight:600;
+  color:var(--text);margin-bottom:.4rem;
+}
+.rev-card p{font-size:.85rem;color:var(--text-secondary);margin:0}
+
+/* === FOOTER === */
+footer{
+  text-align:center;padding:2rem 0;margin-top:3rem;
+  border-top:1px solid var(--border);color:var(--text-muted);
+  font-size:.8rem;font-style:italic;
+}
+
+/* === RESPONSIVE === */
+@media(max-width:1024px){
+  #sidebar{transform:translateX(-100%)}
+  #sidebar.open{transform:translateX(0)}
+  .sidebar-toggle{display:block}
+  #main{margin-left:0;padding:0 1.5rem 3rem}
+}
+@media(max-width:600px){
+  html{font-size:15px}
+  .hero h1{font-size:1.8rem}
+  #main{padding:0 1rem 2rem}
+  .sidenote{float:none;width:100%;margin:1rem 0}
+  .rev-grid{grid-template-columns:1fr}
+}
+
+/* === PRINT === */
+@media print{
+  #sidebar,.sidebar-toggle,#back-top,#progress-bar,.copy-btn{display:none!important}
+  #main{margin-left:0;padding:0;max-width:100%}
+  body{background:#fff;font-size:12pt}
+  .code-block{break-inside:avoid;border:1px solid #ccc;background:#f5f5f5!important;color:#000!important}
+  .kw{color:#c45a3c!important}.str{color:#8b6914!important}.cm{color:#888!important}
+  details{break-inside:avoid}
+  details[open] .details-body{display:block}
+}
+
+/* === ANIMATIONS === */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.animate-in{opacity:0;animation:fadeUp .5s ease forwards}
+.delay-1{animation-delay:.1s}.delay-2{animation-delay:.2s}.delay-3{animation-delay:.3s}
+
+/* === FLOW DIAGRAM HELPERS === */
+.flow-step{
+  display:flex;align-items:center;gap:1rem;margin:.6rem 0;
+}
+.flow-num{
+  width:28px;height:28px;border-radius:50%;background:var(--accent);
+  color:#fff;font-family:'DM Mono',monospace;font-size:.75rem;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.flow-arrow{
+  text-align:center;color:var(--text-muted);font-size:1.2rem;margin:.2rem 0;
+}
+</style>
+</head>
+<body>
+
+<!-- Progress Bar -->
+<div id="progress-bar"></div>
+
+<!-- Sidebar Toggle (mobile) -->
+<button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle navigation">☰</button>
+
+<!-- ============================================================ -->
+<!-- SIDEBAR NAVIGATION -->
+<!-- ============================================================ -->
+<aside id="sidebar">
+  <div class="logo">Unit 2</div>
+  <div class="logo-sub">JavaScript &amp; Advanced JS</div>
+  <nav>
+    <div class="nav-group-title">Foundations</div>
+    <a href="#sec-intro">The Language of the Browser</a>
+    <a href="#sec-vars">Variables &amp; Data Types</a>
+    <a href="#sec-func">Functions</a>
+    <a href="#sec-control">Control Flow &amp; Loops</a>
+    <a href="#sec-popup">Pop-up Boxes</a>
+
+    <div class="nav-group-title">Objects &amp; Built-ins</div>
+    <a href="#sec-objects">JavaScript Objects</a>
+    <a href="#sec-builtins">Built-in Objects</a>
+
+    <div class="nav-group-title">The Browser Environment</div>
+    <a href="#sec-events">Event Handling</a>
+    <a href="#sec-dom">The Document Object Model</a>
+    <a href="#sec-dommanip">DOM Manipulation</a>
+
+    <div class="nav-group-title">Forms, Validation &amp; Data</div>
+    <a href="#sec-forms">Forms &amp; Validation</a>
+    <a href="#sec-regex">Regular Expressions</a>
+    <a href="#sec-json">JSON</a>
+
+    <div class="nav-group-title">Exam Mastery</div>
+    <a href="#sec-exam">Exam Hub &amp; Revision</a>
+  </nav>
+</aside>
+
+<!-- ============================================================ -->
+<!-- MAIN CONTENT -->
+<!-- ============================================================ -->
+<div id="main">
+
+<!-- HERO -->
+<div class="hero">
+  <h1>JavaScript &amp; Advanced JavaScript</h1>
+  <p class="subtitle">A handcrafted, deeply explanatory guide crafted for Indian university examinations — from first principles to exam mastery.</p>
+  <div class="deco"></div>
+</div>
+
+<!-- ========================================================== -->
+<!-- SECTION 1: INTRODUCTION -->
+<!-- ========================================================== -->
+<section id="sec-intro">
+  <h2><span class="sec-num">Section I</span>The Language of the Browser</h2>
+
+  <p>Before we write a single line of code, it is worth pausing to understand the conceptual landscape that JavaScript inhabits, because a student who grasps <em>why</em> JavaScript exists will find it far easier to remember <em>how</em> it works. In the early days of the World Wide Web, HTML was responsible for structuring content — paragraphs, headings, lists, images — while CSS (Cascading Style Sheets) gradually took on the role of styling that content: colours, fonts, spacing, layout. But neither of these languages could make a web page <em>do</em> anything. A page written purely in HTML and CSS is a static document; it cannot respond to a button click, validate a form before submission, display a clock that updates every second, or fetch new data without reloading. Something else was needed — a lightweight programming language that could be embedded directly within a web page and executed by the browser itself, without requiring any server-side processing or compilation step. That language, born at Netscape in 1995 under the hands of Brendan Eich in roughly ten days, was originally called Mocha, then LiveScript, and finally JavaScript (a marketing decision to ride the popularity of Java at the time, despite the two languages sharing very little in common).</p>
+
+  <p>JavaScript is classified as a <strong>client-side scripting language</strong>. The phrase "client-side" means that the code runs on the user's own machine (the client, typically inside a web browser like Chrome, Firefox, or Edge), as opposed to "server-side" languages like PHP, Python, or Java Servlets that execute on the web server before the page is sent to the user. The word "scripting" distinguishes it from compiled languages — JavaScript code is interpreted (or just-in-time compiled) line by line at runtime, rather than being compiled into machine code beforehand. This has enormous practical consequences: a web developer can write JavaScript, embed it in an HTML page, open that page in a browser, and immediately see the results. There is no compilation step, no binary to build, no deployment pipeline. This immediacy is part of what made JavaScript so popular, and it is also why JavaScript is the first programming language many students encounter in a web development course.</p>
+
+  <h3>How JavaScript Enters an HTML Page</h3>
+
+  <p>There are three ways to include JavaScript in a web page, and understanding all three is essential because exam questions frequently ask about the distinction. The first and most straightforward method is <strong>inline scripting</strong>, where JavaScript code is placed directly inside an HTML element's event attribute — for example, writing <code>onclick="alert('Hello')"</code> inside a button tag. While this is convenient for trivial demonstrations, it mixes behaviour with structure and is widely discouraged in professional practice. The second method is <strong>internal scripting</strong>, where a <code>&lt;script&gt;</code> block is placed within the HTML document (typically at the end of the <code>&lt;body&gt;</code> or within the <code>&lt;head&gt;</code>) and contains the JavaScript code directly. The third method is <strong>external scripting</strong>, where the JavaScript code lives in a separate file with a <code>.js</code> extension (for example, <code>app.js</code>), and this file is linked into the HTML using <code>&lt;script src="app.js"&gt;&lt;/script&gt;</code>. A crucial exam point: the external <code>.js</code> file must <em>not</em> contain the <code>&lt;script&gt;</code> tags themselves — those tags belong in the HTML document, and the <code>src</code> attribute tells the browser where to find the code file. This is a common True/False question in university exams, and the answer is False: the external JavaScript file should contain only pure JavaScript, without any <code>&lt;script&gt;</code> tags.</p>
+
+  <div class="code-block">
+    <span class="code-label">HTML</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">&lt;!-- Internal JavaScript --&gt;</span>
+<span class="op">&lt;</span><span class="kw">script</span><span class="op">&gt;</span>
+  <span class="fn">alert</span>(<span class="str">"This runs immediately!"</span>);
+<span class="op">&lt;/</span><span class="kw">script</span><span class="op">&gt;</span>
+
+<span class="cm">&lt;!-- External JavaScript --&gt;</span>
+<span class="op">&lt;</span><span class="kw">script</span> <span class="fn">src</span>=<span class="str">"app.js"</span><span class="op">&gt;&lt;/</span><span class="kw">script</span><span class="op">&gt;</span>
+<span class="cm">&lt;!-- Note: The src attribute and inline code
+       should NOT be used in the same script tag. --&gt;</span></pre>
+  </div>
+
+  <h3>The Execution Context</h3>
+
+  <p>When a browser encounters a <code>&lt;script&gt;</code> tag, it pauses rendering of the HTML below that point, downloads the script (if external), parses it, and then executes it. This is why placing scripts at the very end of the <code>&lt;body&gt;</code> is considered good practice — by that point, all the HTML elements above have been parsed and are available in the DOM for the script to interact with. If a script in the <code>&lt;head&gt;</code> tries to access a <code>&lt;div&gt;</code> that hasn't been rendered yet, it will find <code>null</code>. This is not merely an abstract point; it is the source of a remarkably common bug that students encounter in lab exams and that examiners love to ask about. Modern HTML provides the <code>defer</code> and <code>async</code> attributes on script tags to manage loading behaviour, but for most university syllabi, understanding the basic placement strategy suffices.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrowR" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#c45a3c"/></marker>
+      </defs>
+      <rect x="10" y="60" width="110" height="50" rx="6" fill="#faf6ee" stroke="#c45a3c" stroke-width="1.5"/>
+      <text x="65" y="82" text-anchor="middle" class="svg-node-label" font-size="11">JS Source</text>
+      <text x="65" y="98" text-anchor="middle" class="svg-node-label" font-size="10" fill="#8b7d6d">(.js file)</text>
+      <line x1="120" y1="85" x2="160" y2="85" stroke="#c45a3c" stroke-width="1.5" marker-end="url(#arrowR)"/>
+      <rect x="160" y="60" width="100" height="50" rx="6" fill="#faf6ee" stroke="#d4a843" stroke-width="1.5"/>
+      <text x="210" y="82" text-anchor="middle" class="svg-node-label" font-size="11">Parser</text>
+      <text x="210" y="98" text-anchor="middle" class="svg-node-label" font-size="10" fill="#8b7d6d">Syntax check</text>
+      <line x1="260" y1="85" x2="300" y2="85" stroke="#c45a3c" stroke-width="1.5" marker-end="url(#arrowR)"/>
+      <rect x="300" y="60" width="100" height="50" rx="6" fill="#faf6ee" stroke="#5b7065" stroke-width="1.5"/>
+      <text x="350" y="82" text-anchor="middle" class="svg-node-label" font-size="11">AST</text>
+      <text x="350" y="98" text-anchor="middle" class="svg-node-label" font-size="10" fill="#8b7d6d">Abstract tree</text>
+      <line x1="400" y1="85" x2="440" y2="85" stroke="#c45a3c" stroke-width="1.5" marker-end="url(#arrowR)"/>
+      <rect x="440" y="60" width="110" height="50" rx="6" fill="#faf6ee" stroke="#7b5e7b" stroke-width="1.5"/>
+      <text x="495" y="82" text-anchor="middle" class="svg-node-label" font-size="11">Interpreter</text>
+      <text x="495" y="98" text-anchor="middle" class="svg-node-label" font-size="10" fill="#8b7d6d">Bytecode</text>
+      <line x1="550" y1="85" x2="590" y2="85" stroke="#c45a3c" stroke-width="1.5" marker-end="url(#arrowR)"/>
+      <rect x="590" y="60" width="100" height="50" rx="6" fill="#fdf6ed" stroke="#c45a3c" stroke-width="1.5"/>
+      <text x="640" y="82" text-anchor="middle" class="svg-node-label" font-size="11">Execution</text>
+      <text x="640" y="98" text-anchor="middle" class="svg-node-label" font-size="10" fill="#8b7d6d">Output / DOM</text>
+      <text x="350" y="155" text-anchor="middle" font-family="'Crimson Pro',serif" font-size="12" fill="#8b7d6d" font-style="italic">Fig 1: How a JavaScript engine processes code</text>
+    </svg>
+    <p class="diagram-caption">The browser's JavaScript engine (such as V8 in Chrome or SpiderMonkey in Firefox) parses source code into an Abstract Syntax Tree, converts it to bytecode via an interpreter, and then executes it — often with a JIT compiler optimising hot paths.</p>
+  </div>
+
+  <div class="exam-tip">
+    <div class="tip-title">Exam Tip</div>
+    <p style="margin:0">If asked "What is client-side scripting?", write: <em>"Client-side scripting refers to programs that execute on the user's browser rather than on the web server. JavaScript is the most widely used client-side scripting language. It allows dynamic interaction — form validation, DOM manipulation, animations — without a page reload. The code is downloaded as part of the HTML and interpreted by the browser's JavaScript engine."</em> This covers the definition, the example, the capability, and the mechanism — exactly what examiners look for in a 5-mark answer.</p>
+  </div>
+</section>
+
+<!-- ========================================================== -->
+<!-- SECTION 2: VARIABLES & DATA TYPES -->
+<!-- ========================================================== -->
+<section id="sec-vars">
+  <h2><span class="sec-num">Section II</span>Variables &amp; Data Types</h2>
+
+  <p>A variable, at its most fundamental level, is a named container for storing a piece of data. When you write <code>let age = 21;</code>, you are instructing the JavaScript engine to reserve a small region of memory, associate the label <code>age</code> with that region, and store the value <code>21</code> there. Later in the program, whenever you refer to <code>age</code>, the engine retrieves the value from that memory location. This concept — named storage — is the bedrock of all programming, and yet it is worth stating explicitly because students sometimes treat variables as abstract mathematical symbols rather than what they actually are: addresses in the computer's memory that hold values which can change over the lifetime of the program.</p>
+
+  <h3>Declaring Variables: var, let, and const</h3>
+
+  <p>JavaScript offers three keywords for declaring variables, and the differences between them are a perennial favourite in university examinations. The oldest is <code>var</code>, which has existed since the language's inception. A <code>var</code> declaration is <strong>function-scoped</strong>, meaning that if you declare a variable with <code>var</code> inside a function, it is visible throughout that entire function — even in parts of the function that come before the declaration, due to a behaviour called <strong>hoisting</strong>. Hoisting means that the JavaScript engine, during the parsing phase, moves all <code>var</code> declarations to the top of their containing function (or to the global scope if declared outside any function). The variable exists from the beginning of the function, but its value is <code>undefined</code> until the assignment statement is actually reached during execution. This behaviour, while historically important, leads to subtle bugs, which is why modern JavaScript introduced <code>let</code> and <code>const</code> in the ES6 (ECMAScript 2015) specification.</p>
+
+  <p>The <code>let</code> keyword declares a variable that is <strong>block-scoped</strong>. A block is any section of code enclosed in curly braces <code>{}</code> — an <code>if</code> block, a <code>for</code> loop, or simply a standalone block. A variable declared with <code>let</code> inside a block is not accessible outside that block, which is almost always the behaviour programmers actually want. Unlike <code>var</code>, a <code>let</code> variable is hoisted to the top of its block but is placed in a "temporal dead zone" — it cannot be accessed before its declaration line, and doing so throws a <code>ReferenceError</code>. The <code>const</code> keyword is similar to <code>let</code> in its scoping rules, but adds the constraint that the variable cannot be reassigned after its initial assignment. It is crucial to understand that <code>const</code> does not make a value immutable — if the variable holds an object or array, the contents of that object or array can still be modified; only the binding (the association between the variable name and the value) is constant.</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// var — function-scoped, hoisted</span>
+<span class="kw">function</span> <span class="fn">exampleVar</span>() {
+  <span class="fn">console</span>.<span class="fn">log</span>(x);  <span class="cm">// undefined (hoisted, not an error)</span>
+  <span class="kw">var</span> x = <span class="num">10</span>;
+  <span class="fn">console</span>.<span class="fn">log</span>(x);  <span class="cm">// 10</span>
+}
+
+<span class="cm">// let — block-scoped, temporal dead zone</span>
+<span class="kw">function</span> <span class="fn">exampleLet</span>() {
+  <span class="cm">// console.log(y); // ReferenceError!</span>
+  <span class="kw">let</span> y = <span class="num">20</span>;
+  <span class="fn">console</span>.<span class="fn">log</span>(y);  <span class="cm">// 20</span>
+  <span class="kw">if</span> (<span class="num">true</span>) {
+    <span class="kw">let</span> z = <span class="num">30</span>;
+    <span class="fn">console</span>.<span class="fn">log</span>(z);  <span class="cm">// 30</span>
+  }
+  <span class="cm">// console.log(z); // ReferenceError! z is block-scoped</span>
+}
+
+<span class="cm">// const — block-scoped, cannot reassign</span>
+<span class="kw">const</span> PI = <span class="num">3.14159</span>;
+<span class="cm">// PI = 3.14; // TypeError: Assignment to constant variable</span>
+
+<span class="kw">const</span> arr = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>];
+arr.<span class="fn">push</span>(<span class="num">4</span>);    <span class="cm">// OK — modifying contents, not reassigning</span>
+<span class="fn">console</span>.<span class="fn">log</span>(arr); <span class="cm">// [1, 2, 3, 4]</span></pre>
+  </div>
+
+ <div class="diagram-wrap">
+    <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+      <rect x="40" y="20" width="620" height="280" rx="10" fill="none" stroke="#c45a3c" stroke-width="2" stroke-dasharray="6,3"/>
+      <text x="60" y="50" font-family="'DM Mono',monospace" font-size="13" fill="#c45a3c" font-weight="600">Global Scope</text>
+      
+      <rect x="70" y="65" width="150" height="36" rx="5" fill="#fdf6ed" stroke="#d4a843" stroke-width="1.5"/>
+      <text x="145" y="88" text-anchor="middle" font-family="'DM Mono',monospace" font-size="11">var name = "Amit"</text>
+      
+      <rect x="70" y="110" width="150" height="36" rx="5" fill="#f5f0f5" stroke="#7b5e7b" stroke-width="1.5"/>
+      <text x="145" y="133" text-anchor="middle" font-family="'DM Mono',monospace" font-size="11">const PI = 3.14</text>
+
+      <rect x="280" y="55" width="350" height="120" rx="8" fill="none" stroke="#5b7065" stroke-width="1.5"/>
+      <text x="300" y="78" font-family="'DM Mono',monospace" font-size="12" fill="#5b7065" font-weight="600">Function Scope</text>
+      <rect x="300" y="90" width="150" height="36" rx="5" fill="#f0f5f2" stroke="#5b7065" stroke-width="1"/>
+      <text x="375" y="113" text-anchor="middle" font-family="'DM Mono',monospace" font-size="11">var total = 0</text>
+
+      <rect x="310" y="132" width="160" height="36" rx="5" fill="#f5f0f5" stroke="#7b5e7b" stroke-width="1.5"/>
+      <text x="390" y="155" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#7b5e7b">Block Scope { let i }</text>
+
+      <rect x="280" y="195" width="350" height="90" rx="8" fill="none" stroke="#7b5e7b" stroke-width="1.5"/>
+      <text x="300" y="218" font-family="'DM Mono',monospace" font-size="12" fill="#7b5e7b" font-weight="600">Block Scope (if/for)</text>
+      <rect x="300" y="228" width="200" height="36" rx="5" fill="#f5f0f5" stroke="#7b5e7b" stroke-width="1"/>
+      <text x="400" y="251" text-anchor="middle" font-family="'DM Mono',monospace" font-size="11">let count = 0 (block-limited)</text>
+
+      <rect x="70" y="220" width="14" height="14" rx="3" fill="#fdf6ed" stroke="#d4a843" stroke-width="1"/>
+      <text x="92" y="232" font-family="'Crimson Pro',serif" font-size="11" fill="#5a4a3a">var — function-scoped</text>
+      <rect x="70" y="242" width="14" height="14" rx="3" fill="#f5f0f5" stroke="#7b5e7b" stroke-width="1"/>
+      <text x="92" y="254" font-family="'Crimson Pro',serif" font-size="11" fill="#5a4a3a">let/const — block-scoped</text>
+
+    </svg>
+</div>
+
+
+  <h3>Data Types</h3>
+
+  <p>JavaScript is a <strong>dynamically typed</strong> language, which means that a variable does not have a fixed type — you can assign a number to it, then later assign a string, and the language will not complain. The primitive data types in JavaScript are: <strong>Number</strong> (which handles both integers and floating-point numbers, unlike languages like Java that distinguish between <code>int</code> and <code>float</code>), <strong>String</strong> (text enclosed in single quotes, double quotes, or backticks for template literals), <strong>Boolean</strong> (<code>true</code> or <code>false</code>), <strong>Undefined</strong> (a variable that has been declared but not yet assigned a value), <strong>Null</strong> (an intentional absence of any value), <strong>Symbol</strong> (a unique and immutable identifier, introduced in ES6), and <strong>BigInt</strong> (for arbitrarily large integers). Everything that is not a primitive is an <strong>Object</strong> — including arrays, functions, and regular expressions. The <code>typeof</code> operator can be used to check the type of a variable at runtime, and this is a common tool in exam questions.</p>
+
+  <table>
+    <thead>
+      <tr><th>Type</th><th>Example</th><th>typeof Result</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Number</td><td><code>42</code>, <code>3.14</code></td><td><code>"number"</code></td><td>Integers and floats, unified</td></tr>
+      <tr><td>String</td><td><code>"hello"</code>, <code>'world'</code></td><td><code>"string"</code></td><td>Text data, immutable</td></tr>
+      <tr><td>Boolean</td><td><code>true</code>, <code>false</code></td><td><code>"boolean"</code></td><td>Logical values</td></tr>
+      <tr><td>Undefined</td><td><code>let x;</code></td><td><code>"undefined"</code></td><td>Declared but unassigned</td></tr>
+      <tr><td>Null</td><td><code>let x = null;</code></td><td><code>"object"</code> (bug!)</td><td>Intentional absence of value</td></tr>
+      <tr><td>Object</td><td><code>{a: 1}</code></td><td><code>"object"</code></td><td>Collection of key-value pairs</td></tr>
+      <tr><td>Array</td><td><code>[1, 2, 3]</code></td><td><code>"object"</code></td><td>Ordered collection (special object)</td></tr>
+      <tr><td>Function</td><td><code>function(){}</code></td><td><code>"function"</code></td><td>Callable object</td></tr>
+    </tbody>
+  </table>
+
+  <div class="memory-box">
+    <div class="mem-title">Memory Anchor</div>
+    <p style="margin:0">The <code>typeof null</code> returning <code>"object"</code> is a well-known bug in JavaScript that has persisted since the language's first implementation for backward compatibility. Examiners love this as a True/False or short-answer question. Remember: <code>typeof null === "object"</code> is true, but null is <em>not</em> actually an object — it is a primitive. This is a historical artefact, not intentional design.</p>
+  </div>
+
+  <details>
+    <summary>Frequently Asked: Explain the concept of variables in JavaScript and their scopes</summary>
+    <div class="details-body">
+      <p>A strong 10-mark answer should begin with a definition of variables as named memory locations, explain the three declaration keywords (<code>var</code>, <code>let</code>, <code>const</code>), define the term "scope" as the region of code where a variable is accessible, then systematically explain global scope (variables declared outside any function or block, accessible everywhere), function scope (variables declared with <code>var</code> inside a function, accessible anywhere within that function), and block scope (variables declared with <code>let</code> or <code>const</code> inside a block <code>{}</code>, accessible only within that block). Include a discussion of hoisting — how <code>var</code> declarations are moved to the top of their function during parsing — and contrast this with the temporal dead zone behaviour of <code>let</code> and <code>const</code>. A code example demonstrating each scope will earn additional marks. Conclude with a recommendation to prefer <code>const</code> by default and <code>let</code> when reassignment is needed, avoiding <code>var</code> in modern code.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ========================================================== -->
+<!-- SECTION 3: FUNCTIONS -->
+<!-- ========================================================== -->
+<section id="sec-func">
+  <h2><span class="sec-num">Section III</span>Functions</h2>
+
+  <p>A function is a reusable block of code designed to perform a particular task. The concept is analogous to a recipe in a cookbook: the recipe itself is a set of instructions (the function body), it may require certain ingredients (parameters), and it may produce a dish at the end (a return value). You write the recipe once, and then you can cook the dish as many times as you like by following the instructions each time (calling the function). Functions serve two essential purposes in programming: they <strong>organise code into logical units</strong>, making programs easier to read, debug, and maintain; and they <strong>eliminate repetition</strong>, since the same logic can be invoked multiple times without being rewritten. In the context of university examinations, functions appear in nearly every programming question — whether the examiner asks you to write a factorial calculator, a string manipulation routine, or an event handler — and a student who understands functions deeply will find the entire subject of JavaScript far more approachable.</p>
+
+  <h3>Function Declaration</h3>
+
+  <p>The most traditional way to define a function is through a <strong>function declaration</strong>, which uses the <code>function</code> keyword followed by a name, a parenthesised parameter list, and a body enclosed in curly braces. A key property of function declarations is that they are <strong>hoisted</strong>, meaning they can be called before the line where they appear in the source code — the engine lifts the entire function definition to the top during parsing. This is different from function expressions, which are not hoisted (or, more precisely, the variable they are assigned to is hoisted but its value is <code>undefined</code> until the assignment is reached). Parameters act as placeholders that receive values (called <strong>arguments</strong>) when the function is called. If a function is called with fewer arguments than it has parameters, the missing parameters receive the value <code>undefined</code>. If called with more arguments than parameters, the extra values are simply ignored (though they can be accessed through the special <code>arguments</code> object in non-arrow functions).</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// Function Declaration — hoisted, can be called before definition</span>
+<span class="kw">function</span> <span class="fn">calculateFactorial</span>(n) {
+  <span class="kw">if</span> (n &lt;= <span class="num">1</span>) <span class="kw">return</span> <span class="num">1</span>;
+  <span class="kw">return</span> n * <span class="fn">calculateFactorial</span>(n - <span class="num">1</span>);
+}
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">calculateFactorial</span>(<span class="num">5</span>)); <span class="cm">// 120</span>
+
+<span class="cm">// Function Expression — not hoisted</span>
+<span class="kw">const</span> <span class="fn">greet</span> = <span class="kw">function</span>(name) {
+  <span class="kw">return</span> <span class="str">"Hello, "</span> + name + <span class="str">"!"</span>;
+};
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">greet</span>(<span class="str">"Priya"</span>)); <span class="cm">// "Hello, Priya!"</span>
+
+<span class="cm">// Arrow Function (ES6) — concise syntax, no own 'this'</span>
+<span class="kw">const</span> <span class="fn">add</span> = (a, b) =&gt; a + b;
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">add</span>(<span class="num">3</span>, <span class="num">7</span>)); <span class="cm">// 10</span>
+
+<span class="cm">// Default Parameters</span>
+<span class="kw">function</span> <span class="fn">power</span>(base, exponent = <span class="num">2</span>) {
+  <span class="kw">return</span> Math.<span class="fn">pow</span>(base, exponent);
+}
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">power</span>(<span class="num">3</span>));    <span class="cm">// 9  (default exponent = 2)</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">power</span>(<span class="num">2</span>, <span class="num">10</span>)); <span class="cm">// 1024</span></pre>
+  </div>
+
+  <p>An important variation introduced in ES6 is the <strong>arrow function</strong>, which provides a shorter syntax and, critically, does not have its own <code>this</code> binding — it inherits <code>this</code> from the enclosing lexical scope. This property makes arrow functions particularly useful inside callbacks and event handlers, though it also means they cannot be used as constructors. For most university exam purposes, students should be comfortable with function declarations, function expressions, and the basic arrow function syntax. The recursive factorial example above is especially important, as "write a program to compute the factorial of a number" is one of the most frequently asked questions in Unit 2 examinations across Indian universities.</p>
+
+  <div class="exam-tip">
+    <div class="tip-title">Exam-Writing Strategy: Functions</div>
+    <p style="margin:0">When asked to write a JavaScript function in an exam, always: (1) declare the function with a meaningful name, (2) specify parameters, (3) write the logic with clear comments, (4) include a <code>return</code> statement, and (5) demonstrate the function with a sample call and expected output. This five-step structure earns full marks and shows the examiner that you understand both the syntax and the purpose.</p>
+  </div>
+
+  <details>
+    <summary>PYQ: Write a JavaScript program to take a number using prompt and output its factorial using alert</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button">
+<pre><span class="kw">function</span> <span class="fn">calculateFactorial</span>() {
+  <span class="kw">let</span> num = <span class="fn">parseInt</span>(<span class="fn">prompt</span>(<span class="str">"Enter a positive integer:"</span>));
+  <span class="kw">if</span> (<span class="fn">isNaN</span>(num) || num &lt; <span class="num">0</span>) {
+    <span class="fn">alert</span>(<span class="str">"Please enter a valid positive integer."</span>);
+    <span class="kw">return</span>;
+  }
+  <span class="kw">let</span> factorial = <span class="num">1</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">1</span>; i &lt;= num; i++) {
+    factorial = factorial * i;
+  }
+  <span class="fn">alert</span>(<span class="str">"Factorial of "</span> + num + <span class="str">" is: "</span> + factorial);
+}
+<span class="fn">calculateFactorial</span>();</pre>
+      </div>
+      <p>This program demonstrates the use of <code>prompt()</code> for user input, <code>parseInt()</code> for type conversion from string to integer, input validation with <code>isNaN()</code>, a <code>for</code> loop for iterative computation, and <code>alert()</code> for displaying the result. In an exam, write each of these elements and explain what they do — this transforms a 2-mark code question into a 5-mark answer.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>PYQ: Write a JavaScript program to take a number using prompt and output a multiplication table using alert</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="kw">function</span> <span class="fn">showTable</span>() {
+  <span class="kw">let</span> num = <span class="fn">parseInt</span>(<span class="fn">prompt</span>(<span class="str">"Enter a number:"</span>));
+  <span class="kw">let</span> table = <span class="str">""</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">1</span>; i &lt;= <span class="num">10</span>; i++) {
+    table += num + <span class="str">" × "</span> + i + <span class="str">" = "</span> + (num * i) + <span class="str">"\n"</span>;
+  }
+  <span class="fn">alert</span>(table);
+}
+<span class="fn">showTable</span>();</pre>
+      </div>
+      <p>The newline character <code>\n</code> inside the <code>alert()</code> string causes each line of the multiplication table to appear on a separate line within the alert box. This is a subtle but important detail — in an exam, explicitly mention that you are using <code>\n</code> for line breaks within the alert dialog.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ========================================================== -->
+<!-- SECTION 4: CONTROL FLOW & LOOPS -->
+<!-- ========================================================== -->
+<section id="sec-control">
+  <h2><span class="sec-num">Section IV</span>Control Flow &amp; Loops</h2>
+
+  <p>Without control flow, a program would execute its statements strictly from top to bottom, one after another, like a person reading a book from the first page to the last without skipping ahead or going back. Control flow statements allow a program to make decisions (<em>"if the user's age is less than 18, deny access"</em>) and to repeat actions (<em>"keep asking for a password until the user gets it right"</em>). These two capabilities — branching and looping — are what transform a linear sequence of instructions into a genuinely useful program. In JavaScript, branching is achieved through <code>if</code>/<code>else if</code>/<code>else</code> statements and the <code>switch</code> statement, while looping is handled by <code>for</code>, <code>while</code>, and <code>do...while</code> loops.</p>
+
+  <h3>Conditional Statements</h3>
+
+  <p>The <code>if</code> statement evaluates a condition (an expression that resolves to <code>true</code> or <code>false</code>) and executes a block of code only if the condition is true. The optional <code>else</code> clause provides an alternative path when the condition is false, and <code>else if</code> allows testing multiple conditions in sequence. JavaScript's concept of "truthy" and "falsy" values is important here: certain values — such as <code>0</code>, <code>""</code> (empty string), <code>null</code>, <code>undefined</code>, <code>NaN</code>, and <code>false</code> itself — are considered "falsy" and will cause an <code>if</code> condition to fail, while all other values are "truthy". This means <code>if ("hello")</code> executes its block (because a non-empty string is truthy), while <code>if (0)</code> does not.</p>
+
+  <p>The <code>switch</code> statement is an alternative to a long chain of <code>else if</code> blocks when comparing a single expression against multiple possible values. Each <code>case</code> specifies a value to compare against, and the <code>break</code> statement prevents "fall-through" — the execution of subsequent cases after a match is found. The <code>default</code> case handles any value that does not match any listed case. A common mistake among students is omitting <code>break</code>, which causes the program to continue executing the next case's code regardless of whether it matches — this is almost always a bug, not intentional fall-through.</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// if / else if / else</span>
+<span class="kw">let</span> marks = <span class="fn">parseInt</span>(<span class="fn">prompt</span>(<span class="str">"Enter marks:"</span>));
+
+<span class="kw">if</span> (marks &gt;= <span class="num">90</span>) {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Grade: A+"</span>);
+} <span class="kw">else if</span> (marks &gt;= <span class="num">80</span>) {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Grade: A"</span>);
+} <span class="kw">else if</span> (marks &gt;= <span class="num">70</span>) {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Grade: B"</span>);
+} <span class="kw">else</span> {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Grade: C or below"</span>);
+}
+
+<span class="cm">// switch statement</span>
+<span class="kw">let</span> day = <span class="str">"Monday"</span>;
+<span class="kw">switch</span> (day) {
+  <span class="kw">case</span> <span class="str">"Monday"</span>:
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Start of work week"</span>);
+    <span class="kw">break</span>;
+  <span class="kw">case</span> <span class="str">"Friday"</span>:
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Almost weekend!"</span>);
+    <span class="kw">break</span>;
+  <span class="kw">default</span>:
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Regular day"</span>);
+}</pre>
+  </div>
+
+  <h3>Loops and Repetition</h3>
+
+  <p>Loops allow a block of code to execute repeatedly as long as a specified condition remains true. The <code>for</code> loop is the most commonly used loop when the number of iterations is known in advance — it consists of three parts within its parentheses: an initialiser (executed once before the loop begins), a condition (checked before each iteration), and an updater (executed after each iteration). The <code>while</code> loop checks its condition before each iteration and is appropriate when the number of iterations is not known beforehand — for example, reading user input until a valid value is entered. The <code>do...while</code> loop is similar to <code>while</code>, but guarantees that the loop body executes at least once because the condition is checked <em>after</em> each iteration rather than before. This distinction — "check then act" versus "act then check" — is a fundamental concept that appears in exam questions in various forms.</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// for loop — known number of iterations</span>
+<span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">1</span>; i &lt;= <span class="num">5</span>; i++) {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Iteration "</span> + i);
+}
+
+<span class="cm">// while loop — condition checked before each iteration</span>
+<span class="kw">let</span> count = <span class="num">0</span>;
+<span class="kw">while</span> (count &lt; <span class="num">3</span>) {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Count is "</span> + count);
+  count++;
+}
+
+<span class="cm">// do...while — executes at least once</span>
+<span class="kw">let</span> input;
+<span class="kw">do</span> {
+  input = <span class="fn">prompt</span>(<span class="str">"Type 'quit' to exit:"</span>);
+} <span class="kw">while</span> (input !== <span class="str">"quit"</span>);
+
+<span class="cm">// for...in — iterates over object properties</span>
+<span class="kw">let</span> student = { name: <span class="str">"Arjun"</span>, age: <span class="num">21</span>, dept: <span class="str">"CSE"</span> };
+<span class="kw">for</span> (<span class="kw">let</span> key <span class="kw">in</span> student) {
+  <span class="fn">console</span>.<span class="fn">log</span>(key + <span class="str">": "</span> + student[key]);
+}
+
+<span class="cm">// for...of — iterates over iterable values (arrays, strings)</span>
+<span class="kw">let</span> fruits = [<span class="str">"Apple"</span>, <span class="str">"Banana"</span>, <span class="str">"Cherry"</span>];
+<span class="kw">for</span> (<span class="kw">let</span> fruit <span class="kw">of</span> fruits) {
+  <span class="fn">console</span>.<span class="fn">log</span>(fruit);
+}</pre>
+  </div>
+
+  <div class="memory-box">
+    <div class="mem-title">Memory Anchor — for...in vs for...of</div>
+    <p style="margin:0"><strong>for...in</strong> iterates over <em>keys</em> (property names or indices) — think "in" as in "inside the object's keys". <strong>for...of</strong> iterates over <em>values</em> — think "of" as in "the values of the collection". A mnemonic: <strong>in → index/key</strong>, <strong>of → value</strong>. This distinction is frequently asked in exams.</p>
+  </div>
+
+  <details>
+    <summary>PYQ: Write a JavaScript function that takes an array of numbers and returns the sum of all even numbers</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="kw">function</span> <span class="fn">sumEvenNumbers</span>(arr) {
+  <span class="kw">let</span> sum = <span class="num">0</span>;
+  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="num">0</span>; i &lt; arr.length; i++) {
+    <span class="kw">if</span> (arr[i] % <span class="num">2</span> === <span class="num">0</span>) {
+      sum += arr[i];
+    }
+  }
+  <span class="kw">return</span> sum;
+}
+
+<span class="cm">// Example usage</span>
+<span class="kw">let</span> numbers = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>, <span class="num">5</span>, <span class="num">6</span>, <span class="num">7</span>, <span class="num">8</span>];
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">sumEvenNumbers</span>(numbers)); <span class="cm">// 20 (2+4+6+8)</span></pre>
+      </div>
+      <p>The modulus operator <code>%</code> returns the remainder of division. If <code>arr[i] % 2 === 0</code>, the number is even. This pattern — iterate, check condition, accumulate — is fundamental and appears in many exam variants (sum of odd numbers, sum of numbers divisible by 3, product of even numbers, etc.).</p>
+    </div>
+  </details>
+</section>
+
+<!-- ========================================================== -->
+<!-- SECTION 5: POP-UP BOXES -->
+<!-- ========================================================== -->
+<section id="sec-popup">
+  <h2><span class="sec-num">Section V</span>Pop-up Boxes</h2>
+
+  <p>JavaScript provides three built-in functions for displaying simple dialog boxes — small modal windows that appear on top of the web page and demand the user's attention before they can interact with anything else. These are <code>alert()</code>, <code>prompt()</code>, and <code>confirm()</code>. While they are rarely used in production web applications (custom modal dialogs built with HTML and CSS are preferred because they offer more control over appearance and behaviour), they are extremely important in university examinations because they are the simplest way to demonstrate user interaction, input/output, and the relationship between JavaScript and the browser environment. Moreover, many exam questions specifically ask students to write programs using pop-up boxes, and understanding how they work is a prerequisite for understanding more complex interaction patterns.</p>
+
+  <p>The <code>alert()</code> function displays a message in a dialog box with a single "OK" button. It takes one argument — the message to display — and does not return a meaningful value. The <code>prompt()</code> function displays a dialog box with a message, an input field where the user can type text, and "OK" and "Cancel" buttons. It returns the text the user typed as a string if they click "OK", or <code>null</code> if they click "Cancel". A critical detail that students frequently overlook is that <code>prompt()</code> always returns a <em>string</em>, not a number — if you need to perform arithmetic on the input, you must first convert it using <code>parseInt()</code> or <code>parseFloat()</code>. The <code>confirm()</code> function displays a dialog with a message and "OK" and "Cancel" buttons, returning <code>true</code> if the user clicks "OK" and <code>false</code> if they click "Cancel". It is typically used to ask the user to confirm or deny an action.</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// alert() — displays a message, user clicks OK</span>
+<span class="fn">alert</span>(<span class="str">"Welcome to our website!"</span>);
+
+<span class="cm">// prompt() — asks for input, returns a string (or null)</span>
+<span class="kw">let</span> userName = <span class="fn">prompt</span>(<span class="str">"What is your name?"</span>);
+<span class="fn">console</span>.<span class="fn">log</span>(userName); <span class="cm">// e.g., "Rahul" or null if Cancel</span>
+
+<span class="cm">// confirm() — asks for confirmation, returns true/false</span>
+<span class="kw">let</span> isSure = <span class="fn">confirm</span>(<span class="str">"Are you sure you want to delete?"</span>);
+<span class="kw">if</span> (isSure) {
+  <span class="fn">alert</span>(<span class="str">"Deleted!"</span>);
+} <span class="kw">else</span> {
+  <span class="fn">alert</span>(<span class="str">"Cancelled."</span>);
+}
+
+<span class="cm">// Combining all three — PYQ pattern</span>
+<span class="kw">let</span> a = <span class="fn">parseInt</span>(<span class="fn">prompt</span>(<span class="str">"Enter first number:"</span>));
+<span class="kw">let</span> b = <span class="fn">parseInt</span>(<span class="fn">prompt</span>(<span class="str">"Enter second number:"</span>));
+<span class="kw">let</span> add = <span class="fn">confirm</span>(<span class="str">"Add these numbers?"</span>);
+<span class="kw">if</span> (add) {
+  <span class="fn">alert</span>(<span class="str">"Sum: "</span> + (a + b));
+}</pre>
+  </div>
+
+  <div class="exam-tip">
+    <div class="tip-title">Common PYQ Pattern</div>
+    <p style="margin:0">The question "Take a number using prompt and add another using confirm to output their sum" means: use <code>prompt()</code> to get both numbers, then use <code>confirm()</code> to ask the user whether they want to proceed with the addition, and display the result using <code>alert()</code>. Many students misunderstand this question and try to use <code>confirm()</code> to get a number — remember, <code>confirm()</code> only returns <code>true</code> or <code>false</code>.</p>
+  </div>
+</section>
+
+<!-- ========================================================== -->
+<!-- SECTION 6: OBJECTS -->
+<!-- ========================================================== -->
+<section id="sec-objects">
+  <h2><span class="sec-num">Section VI</span>JavaScript Objects</h2>
+
+  <p>An object in JavaScript is a collection of related data and functionality, organised as key-value pairs. If a variable is a single labelled box, an object is a filing cabinet — it contains multiple drawers (properties), each identified by a label (key) and containing something (a value). The values can be any data type: numbers, strings, booleans, arrays, or even other objects (allowing nested, hierarchical structures). When a value is a function, it is called a <strong>method</strong> of the object, and it represents an action that the object can perform. Objects are the central organising principle of JavaScript — even arrays and functions are technically objects under the hood — and a thorough understanding of how to create, access, modify, and use objects is indispensable for any student studying web development.</p>
+
+  <h3>Creating Objects</h3>
+
+  <p>The most common way to create an object is through an <strong>object literal</strong>, which uses curly braces <code>{}</code> containing zero or more key-value pairs separated by commas. Each key is a string (though the quotes can be omitted if the key is a valid identifier), followed by a colon, followed by the value. Properties are accessed using either <strong>dot notation</strong> (<code>object.property</code>) or <strong>bracket notation</strong> (<code>object["property"]</code>). Dot notation is more concise and readable, but bracket notation is required when the property name contains special characters, spaces, or is stored in a variable. Methods are defined as function-valued properties, and inside a method, the keyword <code>this</code> refers to the object that owns the method — allowing the method to access other properties of the same object.</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// Object literal — the most common way to create an object</span>
+<span class="kw">let</span> student = {
+  name: <span class="str">"Priya Sharma"</span>,
+  age: <span class="num">21</span>,
+  grade: <span class="str">"A"</span>,
+  rollNo: <span class="str">"CSE2023045"</span>,
+  <span class="cm">// Method — a function stored as a property</span>
+  <span class="fn">displayDetails</span>: <span class="kw">function</span>() {
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Name: "</span> + <span class="kw">this</span>.name);
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Age: "</span> + <span class="kw">this</span>.age);
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Grade: "</span> + <span class="kw">this</span>.grade);
+    <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Roll No: "</span> + <span class="kw">this</span>.rollNo);
+  }
+};
+
+<span class="cm">// Accessing properties</span>
+<span class="fn">console</span>.<span class="fn">log</span>(student.name);          <span class="cm">// "Priya Sharma" (dot notation)</span>
+<span class="fn">console</span>.<span class="fn">log</span>(student[<span class="str">"age"</span>]);         <span class="cm">// 21 (bracket notation)</span>
+
+<span class="cm">// Modifying properties</span>
+student.age = <span class="num">22</span>;
+student.branch = <span class="str">"Computer Science"</span>;  <span class="cm">// Adding a new property</span>
+
+<span class="cm">// Calling the method</span>
+student.<span class="fn">displayDetails</span>();
+<span class="cm">// Output:
+// Name: Priya Sharma
+// Age: 22
+// Grade: A
+// Roll No: CSE2023045</span>
+
+<span class="cm">// Deleting a property</span>
+<span class="kw">delete</span> student.grade;</pre>
+  </div>
+
+  <p>The <code>this</code> keyword deserves special attention because it is one of the most conceptually tricky aspects of JavaScript. Inside an object method, <code>this</code> refers to the object itself, allowing the method to access sibling properties. However, the value of <code>this</code> is determined by <em>how</em> a function is called, not where it is defined — a behaviour called "dynamic binding". If a method is extracted from an object and called independently (assigned to a variable and then invoked), <code>this</code> may no longer refer to the original object. Arrow functions, as noted earlier, do not have their own <code>this</code>; they capture the <code>this</code> value of the enclosing scope, which makes them useful inside methods but also means they cannot be used as object methods in the traditional sense.</p>
+
+  <h3>The <code>new Object()</code> Constructor</h3>
+
+  <p>Besides object literals, objects can also be created using the <code>new Object()</code> constructor, which produces an empty object to which properties can then be added one by one. While this approach is valid, the object literal syntax is generally preferred for its brevity and clarity. There is also the more advanced pattern of using constructor functions or ES6 classes to create "blueprints" for objects — defining a function that initialises properties using <code>this</code>, and then creating new instances using the <code>new</code> keyword. For university examinations, students should be comfortable with object literals, property access and modification, method definition, and the role of <code>this</code>.</p>
+
+  <details>
+    <summary>PYQ: Create a JavaScript object called student with properties and a method to display details</summary>
+    <div class="details-body">
+      <p>The code example above directly addresses this question. In an exam, ensure you demonstrate: (1) object creation with the literal syntax, (2) at least four properties of different data types, (3) at least one method that uses <code>this</code> to access object properties, (4) accessing properties using both dot and bracket notation, and (5) modifying a property and showing the updated value. Each of these earns marks.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ========================================================== -->
+<!-- SECTION 7: BUILT-IN OBJECTS -->
+<!-- ========================================================== -->
+<section id="sec-builtins">
+  <h2><span class="sec-num">Section VII</span>Built-in Objects</h2>
+
+  <p>JavaScript ships with a rich set of built-in objects that provide essential functionality for working with dates, mathematics, text, and collections. These objects are always available in any JavaScript environment — you do not need to import or install anything. Understanding these built-in objects is crucial for exams because many PYQs ask students to manipulate dates, format strings, sort arrays, or perform mathematical calculations, and the examiner expects the use of these standard objects rather than hand-written solutions.</p>
+
+  <h3>The Date Object</h3>
+
+  <p>The <code>Date</code> object represents a single moment in time and provides methods for getting and setting the year, month, day, hour, minute, second, and millisecond. Creating a new <code>Date</code> object with <code>new Date()</code> (no arguments) produces an object representing the current date and time. Individual components can be extracted using methods like <code>getFullYear()</code>, <code>getMonth()</code> (returns 0-11, not 1-12 — a common source of bugs), <code>getDate()</code> (day of the month), <code>getHours()</code>, <code>getMinutes()</code>, and <code>getSeconds()</code>. A frequently asked exam question involves formatting a date in DD/MM/YYYY format, which requires padding single-digit values with a leading zero and accounting for the zero-based month.</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// Creating Date objects</span>
+<span class="kw">let</span> now = <span class="kw">new</span> <span class="fn">Date</span>();                 <span class="cm">// Current date &amp; time</span>
+<span class="kw">let</span> specific = <span class="kw">new</span> <span class="fn">Date</span>(<span class="str">"2025-01-15"</span>); <span class="cm">// Specific date</span>
+<span class="kw">let</span> custom = <span class="kw">new</span> <span class="fn">Date</span>(<span class="num">2025</span>, <span class="num">0</span>, <span class="num">15</span>, <span class="num">10</span>, <span class="num">30</span>); <span class="cm">// Jan 15, 2025 10:30</span>
+
+<span class="cm">// Getting components</span>
+<span class="fn">console</span>.<span class="fn">log</span>(now.<span class="fn">getFullYear</span>());  <span class="cm">// 2025</span>
+<span class="fn">console</span>.<span class="fn">log</span>(now.<span class="fn">getMonth</span>());     <span class="cm">// 0-11 (0 = January!)</span>
+<span class="fn">console</span>.<span class="fn">log</span>(now.<span class="fn">getDate</span>());      <span class="cm">// 1-31 (day of month)</span>
+<span class="fn">console</span>.<span class="fn">log</span>(now.<span class="fn">getDay</span>());       <span class="cm">// 0-6 (0 = Sunday)</span>
+<span class="fn">console</span>.<span class="fn">log</span>(now.<span class="fn">getHours</span>());     <span class="cm">// 0-23</span>
+<span class="fn">console</span>.<span class="fn">log</span>(now.<span class="fn">getMinutes</span>());   <span class="cm">// 0-59</span>
+<span class="fn">console</span>.<span class="fn">log</span>(now.<span class="fn">getSeconds</span>());   <span class="cm">// 0-59</span>
+
+<span class="cm">// Formatting as DD/MM/YYYY</span>
+<span class="kw">function</span> <span class="fn">formatDate</span>(date) {
+  <span class="kw">let</span> d = date.<span class="fn">getDate</span>();
+  <span class="kw">let</span> m = date.<span class="fn">getMonth</span>() + <span class="num">1</span>; <span class="cm">// +1 because months are 0-indexed</span>
+  <span class="kw">let</span> y = date.<span class="fn">getFullYear</span>();
+  <span class="cm">// Pad single digits with leading zero</span>
+  d = d &lt; <span class="num">10</span> ? <span class="str">"0"</span> + d : d;
+  m = m &lt; <span class="num">10</span> ? <span class="str">"0"</span> + m : m;
+  <span class="kw">return</span> d + <span class="str">"/"</span> + m + <span class="str">"/"</span> + y;
+}
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">formatDate</span>(now)); <span class="cm">// e.g., "05/03/2025"</span>
+
+<span class="cm">// Displaying date and time</span>
+<span class="kw">function</span> <span class="fn">displayDateTime</span>() {
+  <span class="kw">let</span> now = <span class="kw">new</span> <span class="fn">Date</span>();
+  <span class="kw">let</span> dateStr = <span class="str">"Date: "</span> + <span class="fn">formatDate</span>(now);
+  <span class="kw">let</span> timeStr = <span class="str">"Time: "</span> + now.<span class="fn">getHours</span>() + <span class="str">"/"</span>
+    + now.<span class="fn">getMinutes</span>() + <span class="str">"/"</span> + now.<span class="fn">getSeconds</span>();
+  <span class="fn">console</span>.<span class="fn">log</span>(dateStr + <span class="str">", "</span> + timeStr);
+}
+<span class="fn">displayDateTime</span>();</pre>
+  </div>
+
+  <h3>The Math Object</h3>
+
+  <p>The <code>Math</code> object is a static object — you do not create an instance of it with <code>new</code>; you simply use its methods and properties directly. It provides mathematical constants like <code>Math.PI</code> (≈ 3.14159) and <code>Math.E</code> (≈ 2.718), as well as functions like <code>Math.round()</code> (rounds to nearest integer), <code>Math.floor()</code> (rounds down), <code>Math.ceil()</code> (rounds up), <code>Math.abs()</code> (absolute value), <code>Math.sqrt()</code> (square root), <code>Math.pow(base, exponent)</code> (exponentiation), and <code>Math.random()</code> (generates a random floating-point number between 0 inclusive and 1 exclusive). The <code>Math.random()</code> function is particularly important for exam questions that ask for random number generation within a specific range.</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// Random number between 1 and 10 (inclusive)</span>
+<span class="kw">let</span> randomNum = Math.<span class="fn">floor</span>(Math.<span class="fn">random</span>() * <span class="num">10</span>) + <span class="num">1</span>;
+<span class="fn">console</span>.<span class="fn">log</span>(randomNum); <span class="cm">// 1 to 10</span>
+
+<span class="cm">// Formula for random integer between min and max:</span>
+<span class="cm">// Math.floor(Math.random() * (max - min + 1)) + min</span>
+
+<span class="cm">// Useful Math methods</span>
+Math.<span class="fn">max</span>(<span class="num">10</span>, <span class="num">25</span>, <span class="num">8</span>);   <span class="cm">// 25</span>
+Math.<span class="fn">min</span>(<span class="num">10</span>, <span class="num">25</span>, <span class="num">8</span>);   <span class="cm">// 8</span>
+Math.<span class="fn">sqrt</span>(<span class="num">144</span>);         <span class="cm">// 12</span>
+Math.<span class="fn">pow</span>(<span class="num">2</span>, <span class="num">10</span>);        <span class="cm">// 1024</span>
+Math.<span class="fn">abs</span>(-<span class="num">42</span>);          <span class="cm">// 42</span>
+Math.<span class="fn">floor</span>(<span class="num">3.7</span>);        <span class="cm">// 3</span>
+Math.<span class="fn">ceil</span>(<span class="num">3.2</span>);         <span class="cm">// 4</span>
+Math.<span class="fn">round</span>(<span class="num">3.5</span>);        <span class="cm">// 4</span></pre>
+  </div>
+
+  <h3>String &amp; Array Objects</h3>
+
+  <p>Strings in JavaScript are immutable — once created, their content cannot be changed. String methods like <code>toUpperCase()</code>, <code>toLowerCase()</code>, <code>substring()</code>, <code>indexOf()</code>, <code>replace()</code>, <code>split()</code>, and <code>trim()</code> all return <em>new</em> strings rather than modifying the original. Arrays are ordered collections with methods like <code>push()</code> (add to end), <code>pop()</code> (remove from end), <code>shift()</code> (remove from beginning), <code>unshift()</code> (add to beginning), <code>splice()</code> (add/remove at any position), <code>sort()</code> (sort in place), <code>reverse()</code>, <code>indexOf()</code>, <code>includes()</code>, <code>map()</code> (transform each element), <code>filter()</code> (select elements matching a condition), and <code>reduce()</code> (accumulate a single result). The <code>sort()</code> method, by default, sorts elements as strings (lexicographic order), which means <code>[10, 9, 2, 100].sort()</code> produces <code>[10, 100, 2, 9]</code> — not the numeric order students typically expect. To sort numerically, a comparison function must be provided: <code>arr.sort((a, b) => a - b)</code> for ascending, <code>arr.sort((a, b) => b - a)</code> for descending.</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// String methods — PYQ: Convert to uppercase/lowercase on events</span>
+<span class="kw">let</span> str = <span class="str">"  Hello, World!  "</span>;
+str.<span class="fn">toUpperCase</span>();    <span class="cm">// "  HELLO, WORLD!  "</span>
+str.<span class="fn">toLowerCase</span>();    <span class="cm">// "  hello, world!  "</span>
+str.<span class="fn">trim</span>();           <span class="cm">// "Hello, World!"</span>
+str.<span class="fn">indexOf</span>(<span class="str">"World"</span>); <span class="cm">// 9</span>
+str.<span class="fn">substring</span>(<span class="num">2</span>, <span class="num">7</span>); <span class="cm">// "Hello"</span>
+
+<span class="cm">// Array sorting — descending order (PYQ)</span>
+<span class="kw">function</span> <span class="fn">sortDescending</span>(arr) {
+  <span class="kw">return</span> arr.<span class="fn">slice</span>().<span class="fn">sort</span>(<span class="kw">function</span>(a, b) {
+    <span class="kw">return</span> b - a;
+  });
+}
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">sortDescending</span>([<span class="num">5</span>, <span class="num">2</span>, <span class="num">8</span>, <span class="num">1</span>, <span class="num">9</span>])); <span class="cm">// [9, 8, 5, 2, 1]</span>
+
+<span class="cm">// setInterval and setTimeout (PYQ — timer clock)</span>
+<span class="cm">// setTimeout(fn, delay)  — runs fn ONCE after delay ms</span>
+<span class="cm">// setInterval(fn, delay) — runs fn REPEATEDLY every delay ms</span>
+<span class="kw">let</span> timerId = <span class="fn">setInterval</span>(<span class="kw">function</span>() {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"Current time: "</span> + <span class="kw">new</span> <span class="fn">Date</span>().<span class="fn">toLocaleTimeString</span>());
+}, <span class="num">1000</span>); <span class="cm">// Updates every 1 second</span>
+
+<span class="cm">// To stop the interval:</span>
+<span class="cm">// clearInterval(timerId);</span>
+
+<span class="cm">// setTimeout example — fires once after 3 seconds</span>
+<span class="fn">setTimeout</span>(<span class="kw">function</span>() {
+  <span class="fn">console</span>.<span class="fn">log</span>(<span class="str">"This appears after 3 seconds!"</span>);
+}, <span class="num">3000</span>);</pre>
+  </div>
+
+  <div class="exam-tip">
+    <div class="tip-title">Timer PYQ — The Live Clock</div>
+    <p style="margin:0">A very common PYQ asks you to "display a timer clock on a webpage using <code>setInterval()</code> and <code>setTimeout()</code>." The solution involves creating an HTML element (like a <code>&lt;div id="clock"&gt;</code>), then using <code>setInterval()</code> to update its content every second with the current time. Explain that <code>setInterval()</code> repeatedly calls a function at a fixed interval, while <code>setTimeout()</code> calls a function once after a delay. The IDs returned by both can be passed to <code>clearInterval()</code> and <code>clearTimeout()</code> respectively to stop the scheduled execution.</p>
+  </div>
+
+  <details>
+    <summary>PYQ: Explain setInterval, clearInterval, setTimeout, and clearTimeout</summary>
+    <div class="details-body">
+      <p><strong>setTimeout(callback, delay)</strong> schedules a function to execute once after the specified delay (in milliseconds). It returns a numeric timer ID. <strong>clearTimeout(id)</strong> cancels a previously scheduled timeout before it fires, using the ID returned by <code>setTimeout</code>. <strong>setInterval(callback, delay)</strong> schedules a function to execute repeatedly, with the specified delay between each invocation. It also returns a timer ID. <strong>clearInterval(id)</strong> stops the repeated execution. Both functions are methods of the <code>window</code> object (the global object in browsers). A practical example: implementing a countdown timer that displays 10, 9, 8... and then shows "Time's up!" — the countdown uses <code>setInterval</code>, and when it reaches zero, <code>clearInterval</code> stops it and optionally <code>setTimeout</code> triggers a delayed message.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ========================================================== -->
+<!-- SECTION 8: EVENT HANDLING -->
+<!-- ========================================================== -->
+<section id="sec-events">
+  <h2><span class="sec-num">Section VIII</span>Event Handling</h2>
+
+  <p>An event, in the context of web development, is any occurrence that the browser can detect and respond to: a user clicking a button, pressing a key, moving the mouse, submitting a form, a page finishing loading, an image completing its download, or even the browser window being resized. Event handling is the mechanism by which JavaScript code is connected to these occurrences, allowing the programmer to specify what should happen in response to each one. Without event handling, JavaScript would have no way to know when the user interacts with the page — it would simply run its code from top to bottom and finish. Events are the bridge between the static structure of HTML and the dynamic behaviour of JavaScript, and they are the foundation of every interactive web application.</p>
+
+  <h3>How Events Are Connected to Elements</h3>
+
+  <p>There are three ways to attach event handlers to HTML elements, and each has historical and practical significance. The first is <strong>inline event handling</strong>, where the handler is written directly as an HTML attribute: <code>&lt;button onclick="handleClick()"&gt;Click&lt;/button&gt;</code>. While simple, this approach mixes HTML structure with JavaScript behaviour and is generally discouraged. The second approach uses <strong>DOM property assignment</strong>: selecting an element in JavaScript and assigning a function to its event property, such as <code>element.onclick = function() { ... }</code>. This is cleaner but has the limitation that only one handler can be assigned per event per element — assigning a new function replaces the previous one. The third and most modern approach is <strong><code>addEventListener()</code></strong>, which allows multiple handlers to be attached to the same event on the same element, and provides fine-grained control over event propagation. This is the recommended approach in professional development and the one students should primarily demonstrate in exams.</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// Method 1: Inline (in HTML attribute)</span>
+<span class="cm">// &lt;button onclick="alert('Clicked!')"&gt;Click&lt;/button&gt;</span>
+
+<span class="cm">// Method 2: DOM property</span>
+<span class="kw">let</span> btn = document.<span class="fn">getElementById</span>(<span class="str">"myBtn"</span>);
+btn.onclick = <span class="kw">function</span>() {
+  <span class="fn">alert</span>(<span class="str">"Clicked via property!"</span>);
+};
+
+<span class="cm">// Method 3: addEventListener (recommended)</span>
+btn.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, <span class="kw">function</span>() {
+  <span class="fn">alert</span>(<span class="str">"Handler 1 fired!"</span>);
+});
+btn.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, <span class="kw">function</span>() {
+  <span class="fn">alert</span>(<span class="str">"Handler 2 also fired!"</span>);
+});
+<span class="cm">// Both handlers execute — unlike property assignment</span></pre>
+  </div>
+
+  <h3>Common Event Types</h3>
+
+  <table>
+    <thead>
+      <tr><th>Event</th><th>Trigger</th><th>Common Use</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>click</code></td><td>Mouse click on element</td><td>Buttons, links, interactive elements</td></tr>
+      <tr><td><code>dblclick</code></td><td>Double-click</td><td>Edit-in-place interfaces</td></tr>
+      <tr><td><code>mouseover</code></td><td>Mouse enters element</td><td>Hover effects, tooltips</td></tr>
+      <tr><td><code>mouseout</code></td><td>Mouse leaves element</td><td>Hide tooltips</td></tr>
+      <tr><td><code>keydown</code></td><td>Key pressed down</td><td>Keyboard shortcuts, game input</td></tr>
+      <tr><td><code>keyup</code></td><td>Key released</td><td>Real-time search, input formatting</td></tr>
+      <tr><td><code>focus</code></td><td>Element gains focus</td><td>Highlight active input (PYQ)</td></tr>
+      <tr><td><code>blur</code></td><td>Element loses focus</td><td>Validate on leaving field (PYQ)</td></tr>
+      <tr><td><code>submit</code></td><td>Form submitted</td><td>Form validation</td></tr>
+      <tr><td><code>change</code></td><td>Input value changes</td><td>Dropdown selection, file upload</td></tr>
+      <tr><td><code>load</code></td><td>Page/resource loaded</td><td>Initialise after DOM ready</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Event Propagation: Capture, Target, and Bubble</h3>
+
+  <p>When an event occurs on an element that is nested inside other elements — for instance, a <code>&lt;button&gt;</code> inside a <code>&lt;div&gt;</code> inside the <code>&lt;body&gt;</code> — the event does not simply fire on the button and stop. Instead, the browser implements a three-phase propagation model that determines the order in which event handlers on ancestor elements are triggered. In the <strong>capture phase</strong>, the event travels downward from the <code>window</code> through the document, through each ancestor element, toward the target. In the <strong>target phase</strong>, the event reaches the actual element that was interacted with. In the <strong>bubbling phase</strong>, the event travels back upward through the ancestors toward the <code>window</code>. By default, event handlers registered with <code>addEventListener()</code> fire during the bubbling phase. To fire during the capture phase instead, pass <code>true</code> as the third argument: <code>element.addEventListener("click", handler, true)</code>. The event object, accessible as the first parameter to the handler function, contains a <code>stopPropagation()</code> method that prevents the event from continuing to propagate — useful when you want to handle an event at one level without triggering handlers at higher levels.</p>
+
+<div class="diagram-wrap">
+    <svg viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arrDown" markerWidth="8" markerHeight="6" refX="4" refY="6" orient="auto"><path d="M0,0 L8,0 L4,6 Z" fill="#c45a3c"/></marker>
+        <marker id="arrUp" markerWidth="8" markerHeight="6" refX="4" refY="0" orient="auto"><path d="M0,6 L8,6 L4,0 Z" fill="#5b7065"/></marker>
+      </defs>
+      
+      <rect x="50" y="20" width="500" height="360" rx="10" fill="none" stroke="#d4c5a9" stroke-width="2"/>
+      <text x="70" y="50" font-family="'DM Mono',monospace" font-size="13" fill="#d4a843" font-weight="600">window / document</text>
+      
+      <rect x="90" y="65" width="420" height="280" rx="8" fill="none" stroke="#c45a3c" stroke-width="1.5"/>
+      <text x="110" y="90" font-family="'DM Mono',monospace" font-size="12" fill="#c45a3c">&lt;div&gt;</text>
+      
+      <rect x="130" y="100" width="340" height="200" rx="6" fill="none" stroke="#5b7065" stroke-width="1.5"/>
+      <text x="150" y="125" font-family="'DM Mono',monospace" font-size="12" fill="#5b7065">&lt;ul&gt;</text>
+      
+      <rect x="170" y="135" width="260" height="120" rx="5" fill="#fdf6ed" stroke="#c45a3c" stroke-width="2"/>
+      <text x="190" y="160" font-family="'DM Mono',monospace" font-size="12" fill="#c45a3c" font-weight="600">&lt;li&gt; — TARGET</text>
+      <text x="190" y="180" font-family="'DM Mono',monospace" font-size="11" fill="#8b7d6d">event.target</text>
+
+      <text x="570" y="45" font-family="'DM Mono',monospace" font-size="11" fill="#c45a3c" font-weight="600">① CAPTURE</text>
+      <line x1="590" y1="55" x2="590" y2="85" stroke="#c45a3c" stroke-width="2" marker-end="url(#arrDown)"/>
+      <text x="598" y="75" font-family="'DM Mono',monospace" font-size="9" fill="#c45a3c">window→div</text>
+      
+      <line x1="590" y1="95" x2="590" y2="125" stroke="#c45a3c" stroke-width="2" marker-end="url(#arrDown)"/>
+      <text x="598" y="115" font-family="'DM Mono',monospace" font-size="9" fill="#c45a3c">div→ul</text>
+      
+      <line x1="590" y1="135" x2="590" y2="175" stroke="#c45a3c" stroke-width="2" marker-end="url(#arrDown)"/>
+      <text x="598" y="160" font-family="'DM Mono',monospace" font-size="9" fill="#c45a3c">ul→li</text>
+
+      <circle cx="590" cy="210" r="14" fill="#d4a843" stroke="#b8922e" stroke-width="1.5"/>
+      <text x="590" y="215" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#2c1810" font-weight="600">②</text>
+      <text x="615" y="215" font-family="'DM Mono',monospace" font-size="11" fill="#d4a843" font-weight="600">TARGET</text>
+
+      <text x="570" y="255" font-family="'DM Mono',monospace" font-size="11" fill="#5b7065" font-weight="600">③ BUBBLE</text>
+      
+      <line x1="590" y1="290" x2="590" y2="260" stroke="#5b7065" stroke-width="2" marker-end="url(#arrUp)" stroke-dasharray="5,3"/>
+      <text x="598" y="280" font-family="'DM Mono',monospace" font-size="9" fill="#5b7065">li→ul</text>
+      
+      <line x1="590" y1="335" x2="590" y2="305" stroke="#5b7065" stroke-width="2" marker-end="url(#arrUp)" stroke-dasharray="5,3"/>
+      <text x="598" y="325" font-family="'DM Mono',monospace" font-size="9" fill="#5b7065">ul→div</text>
+      
+      <line x1="590" y1="380" x2="590" y2="350" stroke="#5b7065" stroke-width="2" marker-end="url(#arrUp)" stroke-dasharray="5,3"/>
+      <text x="598" y="370" font-family="'DM Mono',monospace" font-size="9" fill="#5b7065">div→window</text>
+
+      <text x="350" y="410" text-anchor="middle" font-family="'Crimson Pro',serif" font-size="12" fill="#8b7d6d" font-style="italic">Fixed Fig 3: Logical Event Propagation Flow</text>
+    </svg>
+</div>
+
+
+  <details>
+    <summary>PYQ: Explain event handling and write a program to hide email addresses</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// Event handler to partially hide email addresses</span>
+<span class="cm">// "user@example.com" → "u***@e******.com"</span>
+
+<span class="kw">function</span> <span class="fn">hideEmail</span>(email) {
+  <span class="kw">let</span> parts = email.<span class="fn">split</span>(<span class="str">"@"</span>);
+  <span class="kw">let</span> username = parts[<span class="num">0</span>];
+  <span class="kw">let</span> domain = parts[<span class="num">1</span>];
+
+  <span class="cm">// Mask username: show only first character</span>
+  <span class="kw">let</span> hiddenUser = username[<span class="num">0</span>] + <span class="str">"*"</span>.<span class="fn">repeat</span>(username.length - <span class="num">1</span>);
+
+  <span class="cm">// Mask domain: show first char and extension</span>
+  <span class="kw">let</span> dotIndex = domain.<span class="fn">indexOf</span>(<span class="str">"."</span>);
+  <span class="kw">let</span> domainName = domain.<span class="fn">substring</span>(<span class="num">0</span>, dotIndex);
+  <span class="kw">let</span> extension = domain.<span class="fn">substring</span>(dotIndex);
+  <span class="kw">let</span> hiddenDomain = domainName[<span class="num">0</span>] + <span class="str">"*"</span>.<span class="fn">repeat</span>(domainName.length - <span class="num">1</span>) + extension;
+
+  <span class="kw">return</span> hiddenUser + <span class="str">"@"</span> + hiddenDomain;
+}
+
+<span class="cm">// HTML: &lt;p id="email"&gt;user@example.com&lt;/p&gt;</span>
+<span class="cm">//       &lt;button id="hideBtn"&gt;Hide Email&lt;/button&gt;</span>
+
+document.<span class="fn">getElementById</span>(<span class="str">"hideBtn"</span>).<span class="fn">addEventListener</span>(<span class="str">"click"</span>, <span class="kw">function</span>() {
+  <span class="kw">let</span> emailEl = document.<span class="fn">getElementById</span>(<span class="str">"email"</span>);
+  <span class="kw">let</span> original = emailEl.textContent;
+  emailEl.textContent = <span class="fn">hideEmail</span>(original);
+});</pre>
+      </div>
+      <p>This answer demonstrates event handling with <code>addEventListener</code>, string manipulation with <code>split</code>, <code>substring</code>, and <code>indexOf</code>, array access, and DOM content modification. It directly addresses the PYQ while also touching on related concepts that earn additional marks.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>PYQ: Write JavaScript to convert a string to uppercase on onfocus() and lowercase on onblur()</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">JavaScript + HTML</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">&lt;!-- HTML --&gt;</span>
+<span class="op">&lt;</span><span class="kw">input</span> <span class="fn">type</span>=<span class="str">"text"</span> <span class="fn">id</span>=<span class="str">"myInput"</span> <span class="fn">value</span>=<span class="str">"hello world"</span><span class="op">&gt;</span>
+
+<span class="op">&lt;</span><span class="kw">script</span><span class="op">&gt;</span>
+<span class="kw">let</span> input = document.<span class="fn">getElementById</span>(<span class="str">"myInput"</span>);
+
+<span class="cm">// When the input field receives focus (user clicks into it)</span>
+input.<span class="fn">addEventListener</span>(<span class="str">"focus"</span>, <span class="kw">function</span>() {
+  <span class="kw">this</span>.value = <span class="kw">this</span>.value.<span class="fn">toUpperCase</span>();
+});
+
+<span class="cm">// When the input field loses focus (user clicks away)</span>
+input.<span class="fn">addEventListener</span>(<span class="str">"blur"</span>, <span class="kw">function</span>() {
+  <span class="kw">this</span>.value = <span class="kw">this</span>.value.<span class="fn">toLowerCase</span>();
+});
+<span class="op">&lt;/</span><span class="kw">script</span><span class="op">&gt;</span></pre>
+      </div>
+      <p>The <code>focus</code> event fires when an element receives focus (via click or Tab key), and <code>blur</code> fires when focus leaves. The <code>this</code> keyword inside the handler refers to the element the event is attached to, providing direct access to its <code>value</code> property. Note that <code>toUpperCase()</code> and <code>toLowerCase()</code> return new strings — JavaScript strings are immutable.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ========================================================== -->
+<!-- SECTION 9: THE DOM -->
+<!-- ========================================================== -->
+<section id="sec-dom">
+  <h2><span class="sec-num">Section IX</span>The Document Object Model</h2>
+
+  <p>When a browser loads an HTML document, it does not simply render the text onto the screen and forget about the structure. Instead, it parses the HTML and constructs an internal, hierarchical, tree-like representation of the document called the <strong>Document Object Model</strong>, or <strong>DOM</strong>. The DOM is a programming interface — it transforms the static HTML markup into a living structure of objects that JavaScript can read, traverse, and modify. Every HTML element — every <code>&lt;div&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;a&gt;</code> — becomes a node in this tree, and JavaScript can access any node, change its content, alter its attributes, modify its styling, add new children, or remove it entirely. This is what makes modern web applications possible: the HTML provides the initial structure, and JavaScript, through the DOM, transforms that structure dynamically in response to user actions, server responses, or the passage of time.</p>
+
+  <h3>The DOM Tree Structure</h3>
+
+  <p>Consider a simple HTML document containing a heading, a paragraph, and a <code>&lt;div&gt;</code> with some content. The browser converts this into a tree where the root node is the <code>document</code> object, its child is the <code>&lt;html&gt;</code> element, which in turn has two children: <code>&lt;head&gt;</code> (containing <code>&lt;title&gt;</code>) and <code>&lt;body&gt;</code> (containing the <code>&lt;h1&gt;</code>, <code>&lt;p&gt;</code>, and <code>&lt;div&gt;</code>). Each element in this tree is a <strong>node</strong>, and nodes are connected by parent-child relationships. The topmost node (<code>document</code>) is the root, nodes with no children are leaf nodes, and nodes at the same level under the same parent are siblings. This tree structure is not merely a conceptual metaphor — it is a literal data structure maintained in the browser's memory, and every DOM method you call in JavaScript navigates or modifies this structure.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 750 370" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="nShadow" x="-5%" y="-5%" width="115%" height="115%"><feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#2c1810" flood-opacity="0.08"/></filter>
+      </defs>
+      <!-- Connecting lines -->
+      <line x1="375" y1="48" x2="375" y2="82" stroke="#c4956a" stroke-width="1.5"/>
+      <line x1="375" y1="118" x2="195" y2="155" stroke="#c4956a" stroke-width="1.5"/>
+      <line x1="375" y1="118" x2="555" y2="155" stroke="#c4956a" stroke-width="1.5"/>
+      <line x1="195" y1="191" x2="195" y2="228" stroke="#c4956a" stroke-width="1.5"/>
+      <line x1="555" y1="191" x2="400" y2="228" stroke="#c4956a" stroke-width="1.5"/>
+      <line x1="555" y1="191" x2="555" y2="228" stroke="#c4956a" stroke-width="1.5"/>
+      <line x1="555" y1="191" x2="690" y2="228" stroke="#c4956a" stroke-width="1.5"/>
+      <line x1="690" y1="264" x2="690" y2="300" stroke="#c4956a" stroke-width="1.5"/>
+      <!-- Nodes -->
+      <rect x="315" y="15" width="120" height="33" rx="6" fill="#d4a843" stroke="#b8922e" stroke-width="1.5" filter="url(#nShadow)"/>
+      <text x="375" y="37" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810" font-weight="600">document</text>
+      <rect x="315" y="82" width="120" height="33" rx="6" fill="#faf6ee" stroke="#c45a3c" stroke-width="1.5" filter="url(#nShadow)"/>
+      <text x="375" y="104" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810">&lt;html&gt;</text>
+      <rect x="135" y="155" width="120" height="33" rx="6" fill="#faf6ee" stroke="#5b7065" stroke-width="1.5" filter="url(#nShadow)"/>
+      <text x="195" y="177" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810">&lt;head&gt;</text>
+      <rect x="495" y="155" width="120" height="33" rx="6" fill="#faf6ee" stroke="#5b7065" stroke-width="1.5" filter="url(#nShadow)"/>
+      <text x="555" y="177" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810">&lt;body&gt;</text>
+      <rect x="135" y="228" width="120" height="33" rx="6" fill="#f0e8d8" stroke="#8b7355" stroke-width="1" filter="url(#nShadow)"/>
+      <text x="195" y="250" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810">&lt;title&gt;</text>
+      <rect x="340" y="228" width="120" height="33" rx="6" fill="#f0e8d8" stroke="#8b7355" stroke-width="1" filter="url(#nShadow)"/>
+      <text x="400" y="250" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810">&lt;h1&gt;</text>
+      <rect x="495" y="228" width="120" height="33" rx="6" fill="#f0e8d8" stroke="#8b7355" stroke-width="1" filter="url(#nShadow)"/>
+      <text x="555" y="250" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810">&lt;p&gt;</text>
+      <rect x="630" y="228" width="120" height="33" rx="6" fill="#f0e8d8" stroke="#8b7355" stroke-width="1" filter="url(#nShadow)"/>
+      <text x="690" y="250" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810">&lt;div&gt;</text>
+      <rect x="630" y="300" width="120" height="33" rx="6" fill="#f0e8d8" stroke="#8b7355" stroke-width="1" filter="url(#nShadow)"/>
+      <text x="690" y="322" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810">&lt;script&gt;</text>
+      <text x="375" y="365" text-anchor="middle" font-family="'Crimson Pro',serif" font-size="12" fill="#8b7d6d" font-style="italic">Fig 4: The DOM tree — a hierarchical representation of an HTML document</text>
+    </svg>
+  </div>
+
+  <h3>The Browser Object Model and the Window Object</h3>
+
+  <p>The DOM exists within a larger framework called the <strong>Browser Object Model</strong> (BOM), at the top of which sits the <code>window</code> object. The <code>window</code> object represents the browser window itself and serves as the global scope — all global JavaScript variables and functions are actually properties and methods of <code>window</code>. This is why <code>alert("hello")</code> works without any prefix: it is actually <code>window.alert("hello")</code>. The <code>window</code> object contains several important child objects: <code>document</code> (the DOM), <code>navigator</code> (information about the browser), <code>location</code> (the current URL), <code>history</code> (the browsing history), and <code>screen</code> (the user's display properties).</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <filter id="bShadow" x="-5%" y="-5%" width="115%" height="115%"><feDropShadow dx="1" dy="2" stdDeviation="2" flood-color="#2c1810" flood-opacity="0.08"/></filter>
+      </defs>
+      <!-- Lines -->
+      <line x1="350" y1="58" x2="100" y2="108" stroke="#c4956a" stroke-width="1.5"/>
+      <line x1="350" y1="58" x2="250" y2="108" stroke="#c4956a" stroke-width="1.5"/>
+      <line x1="350" y1="58" x2="390" y2="108" stroke="#c4956a" stroke-width="1.5"/>
+      <line x1="350" y1="58" x2="510" y2="108" stroke="#c4956a" stroke-width="1.5"/>
+      <line x1="350" y1="58" x2="630" y2="108" stroke="#c4956a" stroke-width="1.5"/>
+      <!-- Document sub-children -->
+      <line x1="100" y1="144" x2="40" y2="185" stroke="#c4956a" stroke-width="1"/>
+      <line x1="100" y1="144" x2="100" y2="185" stroke="#c4956a" stroke-width="1"/>
+      <line x1="100" y1="144" x2="160" y2="185" stroke="#c4956a" stroke-width="1"/>
+      <!-- window -->
+      <rect x="290" y="25" width="120" height="33" rx="6" fill="#d4a843" stroke="#b8922e" stroke-width="1.5" filter="url(#bShadow)"/>
+      <text x="350" y="47" text-anchor="middle" font-family="'DM Mono',monospace" font-size="13" fill="#2c1810" font-weight="700">window</text>
+      <!-- Children -->
+      <rect x="40" y="108" width="120" height="33" rx="6" fill="#faf6ee" stroke="#c45a3c" stroke-width="1.5" filter="url(#bShadow)"/>
+      <text x="100" y="130" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810">document</text>
+      <rect x="190" y="108" width="120" height="33" rx="6" fill="#faf6ee" stroke="#5b7065" stroke-width="1.5" filter="url(#bShadow)"/>
+      <text x="250" y="130" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810">navigator</text>
+      <rect x="330" y="108" width="120" height="33" rx="6" fill="#faf6ee" stroke="#5b7065" stroke-width="1.5" filter="url(#bShadow)"/>
+      <text x="390" y="130" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810">history</text>
+      <rect x="450" y="108" width="120" height="33" rx="6" fill="#faf6ee" stroke="#5b7065" stroke-width="1.5" filter="url(#bShadow)"/>
+      <text x="510" y="130" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810">location</text>
+      <rect x="570" y="108" width="120" height="33" rx="6" fill="#faf6ee" stroke="#5b7065" stroke-width="1.5" filter="url(#bShadow)"/>
+      <text x="630" y="130" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#2c1810">screen</text>
+      <!-- document sub-children -->
+      <rect x="5" y="185" width="70" height="28" rx="5" fill="#f0e8d8" stroke="#8b7355" stroke-width="1"/>
+      <text x="40" y="204" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#2c1810">forms[]</text>
+      <rect x="65" y="185" width="70" height="28" rx="5" fill="#f0e8d8" stroke="#8b7355" stroke-width="1"/>
+      <text x="100" y="204" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#2c1810">images[]</text>
+      <rect x="125" y="185" width="70" height="28" rx="5" fill="#f0e8d8" stroke="#8b7355" stroke-width="1"/>
+      <text x="160" y="204" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#2c1810">links[]</text>
+
+      <!-- Navigator properties -->
+      <text x="250" y="175" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8b7d6d">.appName .appVersion</text>
+      <text x="250" y="190" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8b7d6d">.userAgent .platform</text>
+      <text x="250" y="205" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8b7d6d">.language .cookieEnabled</text>
+
+      <text x="350" y="260" text-anchor="middle" font-family="'Crimson Pro',serif" font-size="12" fill="#8b7d6d" font-style="italic">Fig 5: The Browser Object Model — window and its child objects</text>
+    </svg>
+  </div>
+
+  <h3>The Navigator Object in Detail</h3>
+
+  <p>The <code>navigator</code> object provides information about the browser environment and is accessed via <code>window.navigator</code> (or simply <code>navigator</code>, since <code>window</code> is the global object). Its properties include <code>navigator.appName</code> (the name of the browser, typically returning "Netscape" for historical reasons in all modern browsers), <code>navigator.appVersion</code> (version information), <code>navigator.userAgent</code> (a detailed string identifying the browser, operating system, and rendering engine), <code>navigator.platform</code> (the operating system platform, such as "Win32" or "MacIntel"), <code>navigator.language</code> (the browser's preferred language, e.g., "en-US"), <code>navigator.cookieEnabled</code> (returns <code>true</code> if cookies are enabled), and <code>navigator.onLine</code> (returns <code>true</code> if the browser is connected to the internet). While the <code>navigator</code> object is not as heavily tested as the <code>document</code> object, it appears in theory questions about the BOM, and students should be able to list its key properties and explain their purpose.</p>
+
+  <details>
+    <summary>PYQ: What does DOM stand for? Explain the topmost objects in the DOM</summary>
+    <div class="details-body">
+      <p><strong>DOM stands for Document Object Model.</strong> It is a platform-independent, language-neutral interface that treats an HTML or XML document as a tree structure, where each node represents a part of the document (an element, attribute, or piece of text). The topmost object in the DOM hierarchy is the <code>window</code> object, which represents the browser window and serves as the global execution context. Below <code>window</code>, the <code>document</code> object represents the HTML document itself and provides methods for accessing and manipulating elements — such as <code>getElementById()</code>, <code>querySelector()</code>, <code>createElement()</code>, and <code>write()</code>. The <code>document</code> object's properties include <code>document.title</code> (the page title), <code>document.URL</code> (the page address), <code>document.body</code> (the <code>&lt;body&gt;</code> element), and <code>document.forms</code> (a collection of all forms in the document). Other important top-level objects include <code>navigator</code> (browser information), <code>location</code> (URL information and navigation), <code>history</code> (browsing history), and <code>screen</code> (display properties). Together, these objects form the Browser Object Model, within which the DOM (<code>document</code>) is the most frequently used component.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ========================================================== -->
+<!-- SECTION 10: DOM MANIPULATION -->
+<!-- ========================================================== -->
+<section id="sec-dommanip">
+  <h2><span class="sec-num">Section X</span>DOM Manipulation</h2>
+
+  <p>The true power of the DOM lies in its manipulability — the ability of JavaScript to dynamically change the content, structure, and styling of a web page after it has loaded. DOM manipulation is what transforms a static HTML document into a living, responsive application. When you click "Like" on a social media post and the heart icon turns red, when a form highlights an empty required field in red, when new items appear in a shopping cart without the page reloading — all of these are achieved through DOM manipulation. Understanding how to find, create, modify, and remove DOM elements is arguably the most practically important skill in client-side JavaScript, and it is tested extensively in university exams through both code-writing and theory questions.</p>
+
+  <h3>Finding Elements</h3>
+
+  <p>Before you can modify an element, you need to find it in the DOM tree. The two most commonly used methods are <code>document.getElementById("id")</code>, which returns the single element with the specified <code>id</code> attribute (or <code>null</code> if no match is found), and <code>document.querySelector("selector")</code>, which uses CSS selector syntax to find the first matching element. For multiple elements, <code>document.querySelectorAll("selector")</code> returns a static NodeList of all matching elements, while <code>document.getElementsByClassName("class")</code> and <code>document.getElementsByTagName("tag")</code> return live HTMLCollections that automatically update when the DOM changes. The modern preference is for <code>querySelector</code> and <code>querySelectorAll</code> because they accept any valid CSS selector — class selectors (".myClass"), tag selectors ("div"), attribute selectors ("[type='text']"), and complex combinators ("div > p:first-child") — providing a single, flexible API for element selection.</p>
+
+  <h3>Modifying Content and Attributes</h3>
+
+  <p>Once an element is found, its content can be changed through several properties. The <code>innerHTML</code> property gets or sets the HTML content inside an element — including tags, which means it can inject formatted content but also introduces a security risk (XSS — cross-site scripting) if used with unvalidated user input. The <code>textContent</code> property gets or sets only the plain text content, stripping any HTML tags, making it safer for displaying user-provided text. The <code>innerText</code> property is similar to <code>textContent</code> but is aware of CSS styling (it won't return text hidden with <code>display: none</code>). Attributes like <code>src</code>, <code>href</code>, <code>class</code>, and <code>id</code> can be read and modified using <code>element.getAttribute("name")</code> and <code>element.setAttribute("name", "value")</code>, or directly through properties like <code>element.src</code> and <code>element.className</code>. The <code>classList</code> API provides methods for adding (<code>add()</code>), removing (<code>remove()</code>), and toggling (<code>toggle()</code>) CSS classes, which is the recommended way to change an element's styling in response to events.</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// Finding elements</span>
+<span class="kw">let</span> heading = document.<span class="fn">getElementById</span>(<span class="str">"mainTitle"</span>);
+<span class="kw">let</span> firstPara = document.<span class="fn">querySelector</span>(<span class="str">"p.intro"</span>);
+<span class="kw">let</span> allItems = document.<span class="fn">querySelectorAll</span>(<span class="str">".list-item"</span>);
+
+<span class="cm">// Modifying content</span>
+heading.textContent = <span class="str">"New Title"</span>;           <span class="cm">// Plain text only</span>
+firstPara.innerHTML = <span class="str">"&lt;em&gt;Styled&lt;/em&gt; text"</span>; <span class="cm">// HTML content</span>
+
+<span class="cm">// Modifying attributes</span>
+<span class="kw">let</span> img = document.<span class="fn">getElementById</span>(<span class="str">"photo"</span>);
+img.<span class="fn">setAttribute</span>(<span class="str">"src"</span>, <span class="str">"new-photo.jpg"</span>);
+img.<span class="fn">setAttribute</span>(<span class="str">"alt"</span>, <span class="str">"Updated photo"</span>);
+
+<span class="cm">// Modifying styles</span>
+heading.style.color = <span class="str">"#c45a3c"</span>;
+heading.style.fontSize = <span class="str">"2rem"</span>;
+
+<span class="cm">// Using classList (preferred approach)</span>
+heading.classList.<span class="fn">add</span>(<span class="str">"highlight"</span>);
+heading.classList.<span class="fn">remove</span>(<span class="str">"old-style"</span>);
+heading.classList.<span class="fn">toggle</span>(<span class="str">"active"</span>);</pre>
+  </div>
+
+  <h3>Creating and Removing Elements</h3>
+
+  <p>New elements are created with <code>document.createElement("tagName")</code>, which produces a new element node that is not yet part of the document tree. To make it visible, it must be inserted into the tree using methods like <code>parent.appendChild(newElement)</code> (adds as the last child), <code>parent.insertBefore(newElement, referenceElement)</code> (adds before a specific child), or <code>parent.append()</code> / <code>parent.prepend()</code> (more modern alternatives). To remove an element, use <code>element.remove()</code> (modern) or <code>parent.removeChild(child)</code> (older approach). The combination of <code>createElement</code>, content assignment, and <code>appendChild</code> is the standard pattern for dynamically adding content — for example, adding items to a list or messages to a chat window.</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// Creating a new element and adding it to the page</span>
+<span class="kw">let</span> newDiv = document.<span class="fn">createElement</span>(<span class="str">"div"</span>);
+newDiv.textContent = <span class="str">"I was created by JavaScript!"</span>;
+newDiv.classList.<span class="fn">add</span>(<span class="str">"dynamic-box"</span>);
+document.body.<span class="fn">appendChild</span>(newDiv);
+
+<span class="cm">// Creating a list item</span>
+<span class="kw">let</span> li = document.<span class="fn">createElement</span>(<span class="str">"li"</span>);
+li.textContent = <span class="str">"New item"</span>;
+document.<span class="fn">getElementById</span>(<span class="str">"myList"</span>).<span class="fn">appendChild</span>(li);
+
+<span class="cm">// Removing an element</span>
+<span class="kw">let</span> oldElement = document.<span class="fn">getElementById</span>(<span class="str">"toRemove"</span>);
+oldElement.<span class="fn">remove</span>(); <span class="cm">// Modern approach</span></pre>
+  </div>
+
+  <details>
+    <summary>PYQ: Modify and show the content of a paragraph using two DOM methods</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">HTML + JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="op">&lt;</span><span class="kw">p</span> <span class="fn">id</span>=<span class="str">"myPara"</span><span class="op">&gt;</span>This is the original dummy text.<span class="op">&lt;/</span><span class="kw">p</span><span class="op">&gt;</span>
+<span class="op">&lt;</span><span class="kw">button</span> <span class="fn">id</span>=<span class="str">"changeBtn"</span><span class="op">&gt;</span>Modify Content<span class="op">&lt;/</span><span class="kw">button</span><span class="op">&gt;</span>
+
+<span class="op">&lt;</span><span class="kw">script</span><span class="op">&gt;</span>
+document.<span class="fn">getElementById</span>(<span class="str">"changeBtn"</span>).<span class="fn">addEventListener</span>(<span class="str">"click"</span>, <span class="kw">function</span>() {
+  <span class="cm">// Method 1: getElementById to find the element</span>
+  <span class="kw">let</span> para = document.<span class="fn">getElementById</span>(<span class="str">"myPara"</span>);
+
+  <span class="cm">// Method 2: innerHTML to modify its content</span>
+  para.innerHTML = <span class="str">"&lt;strong&gt;Modified!&lt;/strong&gt; The content has been updated using DOM methods.&lt;br&gt;&lt;em&gt;— Changed via JavaScript&lt;/em&gt;"</span>;
+});
+<span class="op">&lt;/</span><span class="kw">script</span><span class="op">&gt;</span></pre>
+      </div>
+      <p>This answer demonstrates two DOM methods: <code>getElementById()</code> (for finding) and <code>innerHTML</code> (for modifying). The question asks for "any two JavaScript DOM methods" — good alternatives include <code>querySelector()</code>, <code>textContent</code>, <code>setAttribute()</code>, or <code>createElement()</code> + <code>appendChild()</code>.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ========================================================== -->
+<!-- SECTION 11: FORMS & VALIDATION -->
+<!-- ========================================================== -->
+<section id="sec-forms">
+  <h2><span class="sec-num">Section XI</span>Forms &amp; Validation</h2>
+
+  <p>Forms are the primary mechanism through which users submit data to a web application — from login credentials and search queries to registration details and payment information. Form validation is the process of checking whether the data entered by the user meets certain criteria before it is processed or sent to the server. Without validation, a user could submit an empty registration form, enter alphabetic characters in a phone number field, or provide an email address without an "@" symbol. While server-side validation is essential for security (as it cannot be bypassed by disabling JavaScript), client-side validation with JavaScript provides immediate feedback to the user, improving the experience by catching errors before the form is submitted and avoiding a round-trip to the server. In university examinations, form validation is one of the most heavily tested topics — it combines DOM access, event handling, string methods, regular expressions, and conditional logic into a single, comprehensive question.</p>
+
+  <h3>Accessing Form Elements</h3>
+
+  <p>Form elements can be accessed through the DOM just like any other HTML element, using <code>document.getElementById()</code>, <code>document.querySelector()</code>, or <code>document.forms</code> (a collection of all forms on the page). Each form input element has a <code>value</code> property that contains the current text entered by the user. For select (dropdown) elements, <code>selectedIndex</code> and <code>options</code> provide access to the selected option. The <code>focus()</code> method programmatically places the cursor inside an input field (triggering the <code>focus</code> event), and the <code>blur()</code> method removes focus (triggering the <code>blur</code> event). The <code>submit</code> event fires when the form is submitted, and calling <code>event.preventDefault()</code> inside the handler prevents the default submission behaviour (the page reload), allowing JavaScript to validate the data first.</p>
+
+  <h3>Client-Side vs. Server-Side Validation</h3>
+
+  <p>This distinction is a common exam question. <strong>Client-side validation</strong> occurs in the browser using JavaScript before the form data is sent to the server. It is fast (no network round-trip), provides instant feedback, and reduces server load. However, it is <strong>not secure</strong> on its own, because a knowledgeable user can bypass it by disabling JavaScript, modifying the DOM, or sending requests directly to the server using tools like cURL or Postman. <strong>Server-side validation</strong> occurs on the server after the data is received. It is secure because the user cannot interfere with server-side code, but it requires a network round-trip (submitting the form, waiting for the server to respond) and provides a less responsive user experience. The professional best practice is to <strong>always perform both</strong>: client-side validation for user experience, and server-side validation for security. In an exam, make this point clearly — examiners want to see that you understand why server-side validation is more secure and why both are needed.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 260" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="fArrow" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#c45a3c"/></marker>
+      </defs>
+      <!-- Start -->
+      <rect x="30" y="100" width="90" height="40" rx="20" fill="#fdf6ed" stroke="#c45a3c" stroke-width="1.5"/>
+      <text x="75" y="125" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#2c1810">Start</text>
+      <line x1="120" y1="120" x2="155" y2="120" stroke="#c45a3c" stroke-width="1.5" marker-end="url(#fArrow)"/>
+      <!-- Get Input -->
+      <rect x="155" y="100" width="110" height="40" rx="5" fill="#faf6ee" stroke="#5b7065" stroke-width="1.5"/>
+      <text x="210" y="125" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#2c1810">Get form input</text>
+      <line x1="265" y1="120" x2="300" y2="120" stroke="#c45a3c" stroke-width="1.5" marker-end="url(#fArrow)"/>
+      <!-- Validate? (diamond) -->
+      <polygon points="350,85 400,120 350,155 300,120" fill="#f5f0f5" stroke="#7b5e7b" stroke-width="1.5"/>
+      <text x="350" y="117" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#2c1810">Valid?</text>
+      <text x="350" y="130" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#2c1810">regex check</text>
+      <!-- No → Show Error -->
+      <line x1="300" y1="120" x2="190" y2="190" stroke="#c45a3c" stroke-width="1.5" marker-end="url(#fArrow)"/>
+      <text x="230" y="160" font-family="'DM Mono',monospace" font-size="10" fill="#c45a3c" font-weight="600">No</text>
+      <rect x="130" y="190" width="120" height="35" rx="5" fill="#fdf2f0" stroke="#c45a3c" stroke-width="1.5"/>
+      <text x="190" y="212" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#c45a3c">Show error msg</text>
+      <!-- Yes → Submit -->
+      <line x1="400" y1="120" x2="470" y2="120" stroke="#5b7065" stroke-width="1.5" marker-end="url(#fArrow)"/>
+      <text x="430" y="112" font-family="'DM Mono',monospace" font-size="10" fill="#5b7065" font-weight="600">Yes</text>
+      <rect x="470" y="100" width="110" height="40" rx="5" fill="#f0f5f2" stroke="#5b7065" stroke-width="1.5"/>
+      <text x="525" y="125" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#2c1810">Submit form</text>
+      <line x1="580" y1="120" x2="620" y2="120" stroke="#5b7065" stroke-width="1.5" marker-end="url(#fArrow)"/>
+      <!-- End -->
+      <rect x="620" y="100" width="60" height="40" rx="20" fill="#f0f5f2" stroke="#5b7065" stroke-width="1.5"/>
+      <text x="650" y="125" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#2c1810">End</text>
+
+      <text x="350" y="250" text-anchor="middle" font-family="'Crimson Pro',serif" font-size="12" fill="#8b7d6d" font-style="italic">Fig 6: Form validation flowchart — the decision logic for input checking</text>
+    </svg>
+  </div>
+
+  <h3>Registration Form Validation — The Complete PYQ</h3>
+
+  <p>This is the single most important programming question in Unit 2 across Indian university exams. The question typically asks you to validate a registration form with multiple fields, each with specific rules. Below is a comprehensive solution that validates First Name (alphabets only, length greater than 6), Password (first letter capital, at least one number, at least one special character, length greater than 6), Email (valid pattern), Mobile Number (exactly 10 digits), and Address (not empty).</p>
+
+  <div class="code-block">
+    <span class="code-label">HTML + JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="op">&lt;</span><span class="kw">form</span> <span class="fn">id</span>=<span class="str">"regForm"</span> <span class="fn">onsubmit</span>=<span class="str">"return validateForm()"</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="kw">label</span><span class="op">&gt;</span>First Name:<span class="op">&lt;/</span><span class="kw">label</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="kw">input</span> <span class="fn">type</span>=<span class="str">"text"</span> <span class="fn">id</span>=<span class="str">"fname"</span><span class="op">&gt;&lt;</span><span class="kw">br</span><span class="op">&gt;</span>
+
+  <span class="op">&lt;</span><span class="kw">label</span><span class="op">&gt;</span>Password:<span class="op">&lt;/</span><span class="kw">label</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="kw">input</span> <span class="fn">type</span>=<span class="str">"password"</span> <span class="fn">id</span>=<span class="str">"pwd"</span><span class="op">&gt;&lt;</span><span class="kw">br</span><span class="op">&gt;</span>
+
+  <span class="op">&lt;</span><span class="kw">label</span><span class="op">&gt;</span>Email:<span class="op">&lt;/</span><span class="kw">label</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="kw">input</span> <span class="fn">type</span>=<span class="str">"text"</span> <span class="fn">id</span>=<span class="str">"email"</span><span class="op">&gt;&lt;</span><span class="kw">br</span><span class="op">&gt;</span>
+
+  <span class="op">&lt;</span><span class="kw">label</span><span class="op">&gt;</span>Mobile:<span class="op">&lt;/</span><span class="kw">label</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="kw">input</span> <span class="fn">type</span>=<span class="str">"text"</span> <span class="fn">id</span>=<span class="str">"mobile"</span><span class="op">&gt;&lt;</span><span class="kw">br</span><span class="op">&gt;</span>
+
+  <span class="op">&lt;</span><span class="kw">label</span><span class="op">&gt;</span>Address:<span class="op">&lt;/</span><span class="kw">label</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="kw">textarea</span> <span class="fn">id</span>=<span class="str">"address"</span><span class="op">&gt;&lt;/</span><span class="kw">textarea</span><span class="op">&gt;&lt;</span><span class="kw">br</span><span class="op">&gt;</span>
+
+  <span class="op">&lt;</span><span class="kw">button</span> <span class="fn">type</span>=<span class="str">"submit"</span><span class="op">&gt;</span>Register<span class="op">&lt;/</span><span class="kw">button</span><span class="op">&gt;</span>
+<span class="op">&lt;/</span><span class="kw">form</span><span class="op">&gt;</span>
+
+<span class="op">&lt;</span><span class="kw">script</span><span class="op">&gt;</span>
+<span class="kw">function</span> <span class="fn">validateForm</span>() {
+  <span class="kw">let</span> fname = document.<span class="fn">getElementById</span>(<span class="str">"fname"</span>).value;
+  <span class="kw">let</span> pwd = document.<span class="fn">getElementById</span>(<span class="str">"pwd"</span>).value;
+  <span class="kw">let</span> email = document.<span class="fn">getElementById</span>(<span class="str">"email"</span>).value;
+  <span class="kw">let</span> mobile = document.<span class="fn">getElementById</span>(<span class="str">"mobile"</span>).value;
+  <span class="kw">let</span> address = document.<span class="fn">getElementById</span>(<span class="str">"address"</span>).value;
+
+  <span class="cm">// 1. First Name: alphabets only, length > 6</span>
+  <span class="kw">let</span> nameRegex = /^[A-Za-z]{7,}$/;
+  <span class="kw">if</span> (!nameRegex.<span class="fn">test</span>(fname)) {
+    <span class="fn">alert</span>(<span class="str">"First name must contain only alphabets and be longer than 6 characters."</span>);
+    <span class="kw">return</span> <span class="num">false</span>;
+  }
+
+  <span class="cm">// 2. Password: first letter capital, one number,</span>
+  <span class="cm">//    one special char, length > 6</span>
+  <span class="kw">let</span> pwdRegex = /^[A-Z](?=.*\d)(?=.*[!@#$%^&amp;*]).{6,}$/;
+  <span class="kw">if</span> (!pwdRegex.<span class="fn">test</span>(pwd)) {
+    <span class="fn">alert</span>(<span class="str">"Password: first letter capital, include one number, one special char, length > 6."</span>);
+    <span class="kw">return</span> <span class="num">false</span>;
+  }
+
+  <span class="cm">// 3. Email: valid pattern</span>
+  <span class="kw">let</span> emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  <span class="kw">if</span> (!emailRegex.<span class="fn">test</span>(email)) {
+    <span class="fn">alert</span>(<span class="str">"Please enter a valid email address."</span>);
+    <span class="kw">return</span> <span class="num">false</span>;
+  }
+
+  <span class="cm">// 4. Mobile: exactly 10 digits</span>
+  <span class="kw">let</span> mobileRegex = /^\d{10}$/;
+  <span class="kw">if</span> (!mobileRegex.<span class="fn">test</span>(mobile)) {
+    <span class="fn">alert</span>(<span class="str">"Mobile number must be exactly 10 digits."</span>);
+    <span class="kw">return</span> <span class="num">false</span>;
+  }
+
+  <span class="cm">// 5. Address: not empty</span>
+  <span class="kw">if</span> (address.<span class="fn">trim</span>() === <span class="str">""</span>) {
+    <span class="fn">alert</span>(<span class="str">"Address cannot be empty."</span>);
+    <span class="kw">return</span> <span class="num">false</span>;
+  }
+
+  <span class="fn">alert</span>(<span class="str">"Registration successful!"</span>);
+  <span class="kw">return</span> <span class="num">true</span>;
+}
+<span class="op">&lt;/</span><span class="kw">script</span><span class="op">&gt;</span></pre>
+  </div>
+
+  <div class="exam-tip">
+    <div class="tip-title">How to Write This in an Exam (10–15 Marks)</div>
+    <p style="margin:0">Structure your answer in four parts: (1) Explain what form validation is and why it is needed (2–3 sentences). (2) List the validation rules for each field. (3) Write the complete HTML form with all input fields. (4) Write the JavaScript validation function with a regex for each field, including comments. Conclude by explaining the difference between client-side and server-side validation. This structure will consistently earn full marks for a 15-mark question.</p>
+  </div>
+
+  <details>
+    <summary>PYQ: Vote eligibility — age ≥ 18 and nationality is Indian</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="kw">function</span> <span class="fn">checkEligibility</span>() {
+  <span class="kw">let</span> name = document.<span class="fn">getElementById</span>(<span class="str">"name"</span>).value;
+  <span class="kw">let</span> age = <span class="fn">parseInt</span>(document.<span class="fn">getElementById</span>(<span class="str">"age"</span>).value);
+  <span class="kw">let</span> nationality = document.<span class="fn">getElementById</span>(<span class="str">"nationality"</span>).value;
+
+  <span class="kw">if</span> (age &gt;= <span class="num">18</span> &amp;&amp; nationality.toLowerCase() === <span class="str">"indian"</span>) {
+    <span class="fn">alert</span>(name + <span class="str">", you are eligible to vote!"</span>);
+  } <span class="kw">else</span> <span class="kw">if</span> (age &lt; <span class="num">18</span>) {
+    <span class="fn">alert</span>(name + <span class="str">", you must be at least 18 to vote."</span>);
+  } <span class="kw">else</span> {
+    <span class="fn">alert</span>(name + <span class="str">", only Indian nationals can vote in Indian elections."</span>);
+  }
+}</pre>
+      </div>
+      <p>Notice the use of <code>toLowerCase()</code> to make the nationality comparison case-insensitive — this prevents "indian", "Indian", and "INDIAN" from failing. In an exam, mentioning this detail demonstrates attention to real-world usability.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ========================================================== -->
+<!-- SECTION 12: REGULAR EXPRESSIONS -->
+<!-- ========================================================== -->
+<section id="sec-regex">
+  <h2><span class="sec-num">Section XII</span>Regular Expressions</h2>
+
+  <p>A regular expression (often abbreviated as "regex" or "regexp") is a sequence of characters that defines a search pattern. It is, in essence, a miniature language for describing text patterns — "a string that starts with a capital letter, contains only alphabetic characters, and is at least seven characters long" can be expressed as the regex <code>/^[A-Za-z]{7,}$/</code>. Regular expressions are used in JavaScript (and many other languages) for pattern matching, searching, and replacing text. In the context of web development, their most common application is form validation — checking whether user input conforms to expected formats like email addresses, phone numbers, passwords, and names. While regex syntax can appear intimidating at first, the core concepts are straightforward and can be mastered with a relatively small set of building blocks.</p>
+
+  <h3>Regex Syntax — The Essential Building Blocks</h3>
+
+  <table>
+    <thead>
+      <tr><th>Pattern</th><th>Meaning</th><th>Example Match</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>.</code></td><td>Any single character (except newline)</td><td><code>a</code>, <code>Z</code>, <code>3</code></td></tr>
+      <tr><td><code>\d</code></td><td>Any digit (0–9)</td><td><code>5</code></td></tr>
+      <tr><td><code>\w</code></td><td>Any word character (letter, digit, underscore)</td><td><code>a</code>, <code>3</code>, <code>_</code></td></tr>
+      <tr><td><code>\s</code></td><td>Any whitespace (space, tab, newline)</td><td><code> </code></td></tr>
+      <tr><td><code>[abc]</code></td><td>Any one of a, b, or c</td><td><code>a</code></td></tr>
+      <tr><td><code>[A-Z]</code></td><td>Any uppercase letter</td><td><code>M</code></td></tr>
+      <tr><td><code>[0-9]</code></td><td>Any digit (equivalent to <code>\d</code>)</td><td><code>7</code></td></tr>
+      <tr><td><code>^</code></td><td>Start of string</td><td>—</td></tr>
+      <tr><td><code>$</code></td><td>End of string</td><td>—</td></tr>
+      <tr><td><code>*</code></td><td>0 or more occurrences</td><td><code>ab*c</code> matches <code>ac</code>, <code>abc</code>, <code>abbc</code></td></tr>
+      <tr><td><code>+</code></td><td>1 or more occurrences</td><td><code>ab+c</code> matches <code>abc</code>, <code>abbc</code>, not <code>ac</code></td></tr>
+      <tr><td><code>?</code></td><td>0 or 1 occurrence (optional)</td><td><code>colou?r</code> matches <code>color</code> and <code>colour</code></td></tr>
+      <tr><td><code>{n}</code></td><td>Exactly n occurrences</td><td><code>\d{10}</code> matches ten digits</td></tr>
+      <tr><td><code>{n,}</code></td><td>n or more occurrences</td><td><code>\d{7,}</code> matches seven or more digits</td></tr>
+      <tr><td><code>{n,m}</code></td><td>Between n and m occurrences</td><td><code>\d{3,5}</code> matches 3, 4, or 5 digits</td></tr>
+      <tr><td><code>(?=...)</code></td><td>Lookahead (positive)</td><td>Used for password rules</td></tr>
+      <tr><td><code>|</code></td><td>OR (alternation)</td><td><code>cat|dog</code> matches <code>cat</code> or <code>dog</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Regex in JavaScript</h3>
+
+  <p>In JavaScript, a regex can be created using either the literal syntax (<code>/pattern/flags</code>) or the <code>RegExp</code> constructor (<code>new RegExp("pattern")</code>). The literal syntax is more common and slightly more efficient. The two most important string methods for regex are <code>test()</code> (called on the regex object, returns <code>true</code> or <code>false</code>) and <code>match()</code> (called on the string, returns the matched text or <code>null</code>). The <code>test()</code> method is used in nearly every form validation example. Flags include <code>i</code> (case-insensitive matching), <code>g</code> (global — find all matches, not just the first), and <code>m</code> (multiline — treat <code>^</code> and <code>$</code> as matching line boundaries).</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// Creating regex patterns</span>
+<span class="kw">let</span> pattern1 = /^[A-Z][a-z]+$/;        <span class="cm">// Literal syntax</span>
+<span class="kw">let</span> pattern2 = <span class="kw">new</span> <span class="fn">RegExp</span>(<span class="str">"^[A-Z][a-z]+$"</span>); <span class="cm">// Constructor</span>
+
+<span class="cm">// test() — returns true or false</span>
+pattern1.<span class="fn">test</span>(<span class="str">"Hello"</span>);   <span class="cm">// true</span>
+pattern1.<span class="fn">test</span>(<span class="str">"hello"</span>);   <span class="cm">// false (doesn't start with uppercase)</span>
+pattern1.<span class="fn">test</span>(<span class="str">"HELLO"</span>);   <span class="cm">// false (no lowercase after first char)</span>
+
+<span class="cm">// Common validation patterns</span>
+<span class="kw">let</span> emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+emailPattern.<span class="fn">test</span>(<span class="str">"user@example.com"</span>);  <span class="cm">// true</span>
+emailPattern.<span class="fn">test</span>(<span class="str">"invalid-email"</span>);      <span class="cm">// false</span>
+
+<span class="kw">let</span> mobilePattern = /^[6-9]\d{9}$/;  <span class="cm">// Indian mobile: starts 6-9, 10 digits</span>
+mobilePattern.<span class="fn">test</span>(<span class="str">"9876543210"</span>);       <span class="cm">// true</span>
+mobilePattern.<span class="fn">test</span>(<span class="str">"1234567890"</span>);       <span class="cm">// false (starts with 1)</span>
+
+<span class="cm">// Password: capital first, one digit, one special, length > 6</span>
+<span class="kw">let</span> pwdPattern = /^[A-Z](?=.*\d)(?=.*[!@#$%^&amp;*]).{6,}$/;
+pwdPattern.<span class="fn">test</span>(<span class="str">"Abc@1234"</span>);  <span class="cm">// true</span>
+pwdPattern.<span class="fn">test</span>(<span class="str">"abc@1234"</span>);  <span class="cm">// false (first letter not capital)</span></pre>
+  </div>
+
+  <div class="memory-box">
+    <div class="mem-title">Understanding the Password Regex</div>
+    <p style="margin:0">The pattern <code>/^[A-Z](?=.*\d)(?=.*[!@#$%^&amp;*]).{6,}$/</code> works as follows: <code>^[A-Z]</code> anchors the first character to be an uppercase letter. <code>(?=.*\d)</code> is a positive lookahead that asserts "somewhere ahead in the string, there is at least one digit" — it does not consume characters, it only checks. Similarly, <code>(?=.*[!@#$%^&amp;*])</code> asserts the presence of at least one special character. Finally, <code>.{6,}</code> matches any six or more characters (the lookaheads have already ensured the digit and special character requirements). The <code>$</code> anchors the end. This is the most complex regex pattern typically asked in university exams, and being able to explain each part will earn significant marks.</p>
+  </div>
+</section>
+
+<!-- ========================================================== -->
+<!-- SECTION 13: JSON -->
+<!-- ========================================================== -->
+<section id="sec-json">
+  <h2><span class="sec-num">Section XIII</span>JSON</h2>
+
+  <p>JSON — pronounced "Jason," standing for <strong>JavaScript Object Notation</strong> — is a lightweight, text-based data interchange format that has become the dominant standard for transmitting structured data between a web server and a web browser. The format was derived from JavaScript's object literal syntax, and its inventor, Douglas Crockford, originally promoted it as a way to serialise JavaScript objects for transmission. However, JSON is language-independent — virtually every modern programming language provides libraries for generating and parsing JSON, and it is used not only in web development but also in configuration files, APIs (Application Programming Interfaces), and data storage systems like MongoDB. The reason JSON became so popular is its simplicity: compared to XML (its main historical competitor), JSON is far more concise, easier for humans to read and write, and faster for machines to parse.</p>
+
+  <h3>JSON Syntax</h3>
+
+  <p>JSON syntax is remarkably straightforward because it is a strict subset of JavaScript object literal syntax, with a few important restrictions. A JSON object is enclosed in curly braces <code>{}</code> and contains zero or more key-value pairs separated by commas. Keys <em>must</em> be strings enclosed in double quotes (single quotes are not valid in JSON, even though they work in JavaScript object literals). Values can be strings (in double quotes), numbers (integer or floating-point), booleans (<code>true</code> or <code>false</code>), <code>null</code>, arrays (enclosed in square brackets <code>[]</code>), or other objects. A JSON array is an ordered list of values enclosed in square brackets. Critically, JSON cannot contain functions, comments, or undefined values — it is purely a data format, not a programming construct.</p>
+
+  <div class="code-block">
+    <span class="code-label">JSON</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// A JSON object</span>
+{
+  <span class="str">"name"</span>: <span class="str">"Priya Sharma"</span>,
+  <span class="str">"age"</span>: <span class="num">21</span>,
+  <span class="str">"isStudent"</span>: <span class="num">true</span>,
+  <span class="str">"grades"</span>: [<span class="str">"A"</span>, <span class="str">"B+"</span>, <span class="str">"A"</span>],
+  <span class="str">"address"</span>: {
+    <span class="str">"city"</span>: <span class="str">"Mumbai"</span>,
+    <span class="str">"state"</span>: <span class="str">"Maharashtra"</span>,
+    <span class="str">"pincode"</span>: <span class="str">"400001"</span>
+  },
+  <span class="str">"scholarship"</span>: <span class="num">null</span>
+}</pre>
+  </div>
+
+  <h3>JSON.parse() and JSON.stringify()</h3>
+
+  <p>JavaScript provides two essential methods for working with JSON data. <strong><code>JSON.stringify()</code></strong> converts a JavaScript object or value into a JSON string — a process called <strong>serialisation</strong>. This is necessary when sending data to a server (via HTTP requests) or storing it in a format that requires text (like <code>localStorage</code>). <strong><code>JSON.parse()</code></strong> converts a JSON string back into a JavaScript object — a process called <strong>deserialisation</strong>. This is used when receiving JSON data from a server (as a response to an API call) and needing to work with it as a native JavaScript object. Understanding the distinction between these two operations — and knowing when each is needed — is a common exam question.</p>
+
+  <div class="code-block">
+    <span class="code-label">JavaScript</span>
+    <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// JavaScript object → JSON string (serialisation)</span>
+<span class="kw">let</span> student = {
+  name: <span class="str">"Rahul"</span>,
+  age: <span class="num">22</span>,
+  subjects: [<span class="str">"Math"</span>, <span class="str">"Physics"</span>]
+};
+
+<span class="kw">let</span> jsonString = JSON.<span class="fn">stringify</span>(student);
+<span class="fn">console</span>.<span class="fn">log</span>(jsonString);
+<span class="cm">// '{"name":"Rahul","age":22,"subjects":["Math","Physics"]}'</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="kw">typeof</span> jsonString); <span class="cm">// "string"</span>
+
+<span class="cm">// JSON string → JavaScript object (deserialisation)</span>
+<span class="kw">let</span> parsed = JSON.<span class="fn">parse</span>(jsonString);
+<span class="fn">console</span>.<span class="fn">log</span>(parsed.name);        <span class="cm">// "Rahul"</span>
+<span class="fn">console</span>.<span class="fn">log</span>(parsed.subjects[<span class="num">0</span>]); <span class="cm">// "Math"</span>
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="kw">typeof</span> parsed);      <span class="cm">// "object"</span></pre>
+  </div>
+
+  <h3>JSON vs. XML</h3>
+
+  <p>This comparison is a staple of university exams and appears in virtually every web technology question paper. XML (eXtensible Markup Language) was the dominant data interchange format before JSON rose to prominence, and understanding why JSON largely replaced XML in web development demonstrates a student's grasp of practical engineering tradeoffs. XML uses tags to structure data (similar to HTML), is more verbose, supports attributes, namespaces, schemas, and comments, and is well-suited for document-centric data (like configuration files with mixed content and metadata). JSON is more concise (typically 30–50% fewer characters than the equivalent XML), faster to parse, natively maps to the data structures used by JavaScript (and most modern languages), and is the standard format for RESTful APIs. XML retains advantages in enterprise systems, SOAP-based web services, and scenarios requiring schema validation or complex document structures, but for data interchange in web applications, JSON has become the clear winner.</p>
+
+  <table>
+    <thead>
+      <tr><th>Feature</th><th>JSON</th><th>XML</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Format</td><td>Key-value pairs, arrays</td><td>Tag-based markup</td></tr>
+      <tr><td>Verbosity</td><td>Concise</td><td>Verbose (closing tags)</td></tr>
+      <tr><td>Data types</td><td>String, number, boolean, null, array, object</td><td>All data is text (string)</td></tr>
+      <tr><td>Arrays</td><td>Native support</td><td>No native array concept</td></tr>
+      <tr><td>Parsing speed</td><td>Faster (native JS support)</td><td>Slower (requires XML parser)</td></tr>
+      <tr><td>Readability</td><td>Easy for humans</td><td>Moderate</td></tr>
+      <tr><td>Comments</td><td>Not supported</td><td>Supported</td></tr>
+      <tr><td>Schema validation</td><td>JSON Schema (less common)</td><td>XSD, DTD (mature)</td></tr>
+      <tr><td>Use in APIs</td><td>REST (standard)</td><td>SOAP (enterprise)</td></tr>
+      <tr><td>File extension</td><td><code>.json</code></td><td><code>.xml</code></td></tr>
+    </tbody>
+  </table>
+
+  <div class="exam-tip">
+    <div class="tip-title">Exam-Writing Strategy: JSON vs XML</div>
+    <p style="margin:0">When asked "Is JSON better than XML?", begin by acknowledging that "better" depends on context. For web data interchange, JSON is preferred due to conciseness, speed, and native JavaScript compatibility. For enterprise document processing, XML may be more appropriate due to schema validation and richer metadata support. Then provide a comparison table. This balanced answer demonstrates critical thinking and earns higher marks than a one-sided declaration.</p>
+  </div>
+
+  <details>
+    <summary>PYQ: Define JSON and explain its purpose in web development with syntax examples</summary>
+    <div class="details-body">
+      <p><strong>Definition:</strong> JSON (JavaScript Object Notation) is a lightweight, text-based, language-independent data interchange format derived from JavaScript object syntax. It uses human-readable text to transmit data objects consisting of key-value pairs and arrays.</p>
+      <p><strong>Purpose:</strong> JSON serves three primary roles in web development. First, it is the standard format for transmitting data between client and server in AJAX (Asynchronous JavaScript and XML) requests — despite the name, modern AJAX primarily uses JSON, not XML. Second, it is used for configuration files (like <code>package.json</code> in Node.js projects). Third, it is the native format for <code>localStorage</code> and <code>sessionStorage</code>, which store data as JSON strings in the browser.</p>
+      <p><strong>Syntax rules:</strong> Keys must be double-quoted strings. Values can be strings, numbers, booleans, null, arrays, or objects. Commas separate pairs/items. No trailing commas. No comments. No functions or undefined values. Include a JSON example and demonstrate <code>JSON.stringify()</code> and <code>JSON.parse()</code> with code.</p>
+    </div>
+  </details>
+</section>
+
+<!-- ========================================================== -->
+<!-- SECTION 14: EXAM MASTERY HUB -->
+<!-- ========================================================== -->
+<section id="sec-exam">
+  <h2><span class="sec-num">Section XIV</span>Exam Mastery Hub</h2>
+
+  <p>This section consolidates everything above into rapid-revision format, structured specifically for the night-before-the-exam scenario and for quick concept refreshers during study sessions. Each card, table, and summary below is designed to trigger instant recall of the detailed explanations in earlier sections.</p>
+
+  <h3>Quick Revision: Key Definitions</h3>
+
+  <div class="rev-grid">
+    <div class="rev-card">
+      <h5>Client-Side Scripting</h5>
+      <p>Code executed in the user's browser. JavaScript is the primary client-side language. Enables dynamic interaction without server round-trips.</p>
+    </div>
+    <div class="rev-card">
+      <h5>Variable Scope</h5>
+      <p><strong>var</strong>: function-scoped, hoisted. <strong>let</strong>: block-scoped, temporal dead zone. <strong>const</strong>: block-scoped, cannot reassign.</p>
+    </div>
+    <div class="rev-card">
+      <h5>DOM</h5>
+      <p>Document Object Model — tree representation of HTML. <code>document</code> is the root. Nodes are elements, attributes, text.</p>
+    </div>
+    <div class="rev-card">
+      <h5>Event Bubbling</h5>
+      <p>Events travel up from target to window (default). Capture phase goes down. Use <code>stopPropagation()</code> to stop.</p>
+    </div>
+    <div class="rev-card">
+      <h5>JSON</h5>
+      <p>JavaScript Object Notation. Keys in double quotes. <code>JSON.stringify()</code> → string. <code>JSON.parse()</code> → object.</p>
+    </div>
+    <div class="rev-card">
+      <h5>Regex Anchors</h5>
+      <p><code>^</code> = start of string. <code>$</code> = end of string. <code>\d</code> = digit. <code>\w</code> = word char. <code>{n,m}</code> = repetition range.</p>
+    </div>
+    <div class="rev-card">
+      <h5>setInterval vs setTimeout</h5>
+      <p><code>setTimeout</code>: runs ONCE after delay. <code>setInterval</code>: runs REPEATEDLY. Both return IDs for <code>clear*</code>.</p>
+    </div>
+    <div class="rev-card">
+      <h5>Client vs Server Validation</h5>
+      <p>Client: fast, UX-friendly, bypassable. Server: secure, necessary. Always use BOTH.</p>
+    </div>
+  </div>
+
+  <h3>Most Likely Exam Questions (2-Mark, 5-Mark, 10-Mark, 15-Mark)</h3>
+
+  <div class="card">
+    <h4 style="margin-top:0">2-Mark Questions (Short Answer)</h4>
+    <ol>
+      <li>What is client-side scripting?</li>
+      <li>Difference between <code>alert()</code>, <code>prompt()</code>, and <code>confirm()</code>.</li>
+      <li>What does DOM stand for?</li>
+      <li>Define JSON.</li>
+      <li>What is event bubbling?</li>
+      <li>Difference between <code>var</code>, <code>let</code>, and <code>const</code>.</li>
+      <li>What is the output of <code>typeof null</code>?</li>
+      <li>Is the external JavaScript file required to contain the <code>&lt;script&gt;</code> tag? (Answer: False)</li>
+      <li>What is the difference between <code>innerHTML</code> and <code>textContent</code>?</li>
+      <li>What are <code>setInterval</code> and <code>clearInterval</code>?</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">5-Mark Questions (Descriptive)</h4>
+    <ol>
+      <li>Explain variables and their scopes in JavaScript with examples.</li>
+      <li>Explain the DOM with a diagram.</li>
+      <li>Difference between JSON and XML (with table).</li>
+      <li>Explain event handling in JavaScript with an example.</li>
+      <li>Write a JavaScript program to display current date and time in DD/MM/YYYY format.</li>
+      <li>Explain the Navigator object in detail.</li>
+      <li>Describe client-side vs server-side validation.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">10-Mark Questions (Long Answer / Programming)</h4>
+    <ol>
+      <li>Write JavaScript to validate a Registration form with all fields using regular expressions.</li>
+      <li>Explain DOM manipulation with methods and write code to modify paragraph content.</li>
+      <li>Create a JavaScript object with properties and methods; demonstrate access and modification.</li>
+      <li>Write a program to display a timer clock using <code>setInterval</code> and <code>setTimeout</code>.</li>
+      <li>Explain event propagation (capture, target, bubble) with a diagram.</li>
+      <li>Write a JavaScript calculator with various predefined functions and objects.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">15-Mark Questions (Comprehensive)</h4>
+    <ol>
+      <li>Explain JavaScript variables, functions, control flow, and pop-up boxes. Include at least three complete programs with output. [Covers entire basics]</li>
+      <li>Explain the DOM, Browser Object Model, and event handling. Include the Navigator object, event propagation diagram, and a complete event-driven application. [Covers DOM + Events]</li>
+      <li>Write a complete Registration Form with HTML, CSS-styled validation messages, and JavaScript validation using regular expressions for all fields. Explain client-side vs server-side validation. [Covers Forms + Regex + Validation]</li>
+    </ol>
+  </div>
+
+  <h3>How to Structure a 10-Mark Answer</h3>
+
+  <div class="card" style="border-left:4px solid var(--accent)">
+    <p><strong>Step 1 — Definition/Introduction (2 sentences):</strong> Start by defining the concept in your own words. State why it is important.</p>
+    <p><strong>Step 2 — Theory/Explanation (1 paragraph, 5–8 sentences):</strong> Explain the concept in detail. Cover all sub-components. Use technical terminology correctly.</p>
+    <p><strong>Step 3 — Diagram (if applicable):</strong> Draw a neat, labelled diagram. Give it a figure number and caption. Refer to it in your explanation.</p>
+    <p><strong>Step 4 — Code Example (complete, commented):</strong> Write the full program. Add comments explaining each section. Use meaningful variable names.</p>
+    <p><strong>Step 5 — Output/Result:</strong> Show what the program produces (either actual output or described output).</p>
+    <p><strong>Step 6 — Advantages/Disadvantages or Comparison (if applicable):</strong> Add a brief note on tradeoffs, or compare with related concepts.</p>
+    <p style="margin:0"><strong>Step 7 — Conclusion (1 sentence):</strong> A brief wrap-up connecting the concept to its practical use.</p>
+  </div>
+
+  <h3>How to Draw Key Diagrams in Exams</h3>
+
+  <div class="card">
+    <h4 style="margin-top:0">DOM Tree Diagram</h4>
+    <p>Draw a tree with <strong>document</strong> at the root. Branch to <strong>&lt;html&gt;</strong>. From <strong>&lt;html&gt;</strong>, branch left to <strong>&lt;head&gt;</strong> and right to <strong>&lt;body&gt;</strong>. From <strong>&lt;head&gt;</strong>, branch to <strong>&lt;title&gt;</strong>. From <strong>&lt;body&gt;</strong>, branch to <strong>&lt;h1&gt;</strong>, <strong>&lt;p&gt;</strong>, and <strong>&lt;div&gt;</strong>. Label each node. Use rectangles for nodes and straight lines for connections. Essential labels: document, &lt;html&gt;, &lt;head&gt;, &lt;body&gt;, &lt;title&gt;, &lt;h1&gt;, &lt;p&gt;, &lt;div&gt;.</p>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Browser Object Model Diagram</h4>
+    <p>Draw <strong>window</strong> at the top. Branch to five children: <strong>document</strong>, <strong>navigator</strong>, <strong>history</strong>, <strong>location</strong>, <strong>screen</strong>. From <strong>document</strong>, branch to <strong>forms[]</strong>, <strong>images[]</strong>, <strong>links[]</strong>. Under <strong>navigator</strong>, list properties: <code>.appName</code>, <code>.userAgent</code>, <code>.platform</code>, <code>.cookieEnabled</code>.</p>
+  </div>
+
+  <div class="card">
+    <h4 style="margin-top:0">Event Flow Diagram</h4>
+    <p>Draw nested rectangles: outermost = window/document, then &lt;div&gt;, then &lt;ul&gt;, then &lt;li&gt; (TARGET) innermost. On the right side, draw a downward arrow labelled "① Capture" (window → div → ul → li). Draw a circle at li labelled "② Target". Draw an upward dashed arrow labelled "③ Bubble" (li → ul → div → window).</p>
+  </div>
+
+  <h3>Commonly Confused Points</h3>
+
+  <table>
+    <thead>
+      <tr><th>Confusion</th><th>Clarification</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>innerHTML</code> vs <code>textContent</code></td><td><code>innerHTML</code> parses HTML tags; <code>textContent</code> treats everything as plain text (safer)</td></tr>
+      <tr><td><code>getMonth()</code> returns 0–11</td><td>January = 0, December = 11. Always add +1 for display.</td></tr>
+      <tr><td><code>typeof null</code> = "object"</td><td>Historical bug, not intentional. Null is a primitive.</td></tr>
+      <tr><td><code>==</code> vs <code>===</code></td><td><code>==</code> compares with type coercion; <code>===</code> compares without (strict equality)</td></tr>
+      <tr><td><code>sort()</code> is lexicographic by default</td><td><code>[10,2,100].sort()</code> → <code>[10,100,2]</code>. Pass <code>(a,b)=>a-b</code> for numeric sort.</td></tr>
+      <tr><td><code>prompt()</code> returns string</td><td>Always wrap in <code>parseInt()</code> or <code>parseFloat()</code> for arithmetic</td></tr>
+      <tr><td><code>const</code> doesn't mean immutable</td><td>Object/array contents can change; only the binding is constant</td></tr>
+      <tr><td>for...in vs for...of</td><td><code>in</code> = keys/indices; <code>of</code> = values</td></tr>
+      <tr><td>External .js file has no &lt;script&gt; tags</td><td>The HTML has <code>&lt;script src="file.js"&gt;</code>; the .js file has pure JS only</td></tr>
+      <tr><td><code>confirm()</code> doesn't return a number</td><td>Returns <code>true</code> (OK) or <code>false</code> (Cancel)</td></tr>
+    </tbody>
+  </table>
+
+  <h3>Mnemonics &amp; Memory Tricks</h3>
+
+  <div class="memory-box">
+    <div class="mem-title">Quick Recall Mnemonics</div>
+    <p><strong>VBLC</strong> — Variables, Built-in objects, Loops/conditions, Client-side: the four pillars of Unit 2 basics.</p>
+    <p><strong>DOME</strong> — DOM: Document Object Manipulation/Exploration.</p>
+    <p><strong>CTB</strong> — Capture → Target → Bubble: the three phases of event propagation (remember as "Catch The Ball").</p>
+    <p><strong>SPCA</strong> — Stringify Produces text (JSON→string), Create Accepts text (string→JSON): <code>JSON.stringify()</code> and <code>JSON.parse()</code>.</p>
+    <p><strong>"Zero-indexed months"</strong> — JavaScript months start at 0. January is 0, not 1. Remember: "JS months are zero, which is zero fun."</p>
+    <p style="margin-bottom:0"><strong>"for-in = index, for-of = value"</strong> — "in" has 2 letters like "key"; "of" has 2 letters like "val(ue)". Or simply: in→inside the object (keys), of→of the collection (values).</p>
+  </div>
+
+  <h3>Complete PYQ Program Bank</h3>
+
+  <details>
+    <summary>Display current date and time in DD/MM/YYYY, HH/MM/SS format</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="kw">function</span> <span class="fn">displayDateTime</span>() {
+  <span class="kw">let</span> now = <span class="kw">new</span> <span class="fn">Date</span>();
+  <span class="kw">let</span> d = now.<span class="fn">getDate</span>();
+  <span class="kw">let</span> m = now.<span class="fn">getMonth</span>() + <span class="num">1</span>;
+  <span class="kw">let</span> y = now.<span class="fn">getFullYear</span>();
+  <span class="kw">let</span> h = now.<span class="fn">getHours</span>();
+  <span class="kw">let</span> min = now.<span class="fn">getMinutes</span>();
+  <span class="kw">let</span> s = now.<span class="fn">getSeconds</span>();
+
+  d = d &lt; <span class="num">10</span> ? <span class="str">"0"</span> + d : d;
+  m = m &lt; <span class="num">10</span> ? <span class="str">"0"</span> + m : m;
+  h = h &lt; <span class="num">10</span> ? <span class="str">"0"</span> + h : h;
+  min = min &lt; <span class="num">10</span> ? <span class="str">"0"</span> + min : min;
+  s = s &lt; <span class="num">10</span> ? <span class="str">"0"</span> + s : s;
+
+  <span class="kw">let</span> dateStr = <span class="str">"Date: "</span> + d + <span class="str">"/"</span> + m + <span class="str">"/"</span> + y;
+  <span class="kw">let</span> timeStr = <span class="str">"Time: "</span> + h + <span class="str">"/"</span> + min + <span class="str">"/"</span> + s;
+  <span class="fn">alert</span>(dateStr + <span class="str">", "</span> + timeStr);
+}
+<span class="fn">displayDateTime</span>();</pre>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Live timer clock using setInterval</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="cm">// HTML: &lt;div id="clock"&gt;&lt;/div&gt;</span>
+
+<span class="kw">function</span> <span class="fn">updateClock</span>() {
+  <span class="kw">let</span> now = <span class="kw">new</span> <span class="fn">Date</span>();
+  <span class="kw">let</span> timeStr = now.<span class="fn">toLocaleTimeString</span>();
+  document.<span class="fn">getElementById</span>(<span class="str">"clock"</span>).textContent = timeStr;
+}
+
+<span class="cm">// Update every 1 second</span>
+<span class="fn">setInterval</span>(updateClock, <span class="num">1000</span>);
+
+<span class="cm">// Initial call to avoid 1-second delay</span>
+<span class="fn">updateClock</span>();</pre>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Project selection list with student display and CSS styling</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">HTML + JavaScript + CSS</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="op">&lt;</span><span class="kw">select</span> <span class="fn">id</span>=<span class="str">"projectSelect"</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="kw">option</span> <span class="fn">value</span>=<span class="str">""</span><span class="op">&gt;</span>-- Select Project --<span class="op">&lt;/</span><span class="kw">option</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="kw">option</span> <span class="fn">value</span>=<span class="str">"p1"</span><span class="op">&gt;</span>Web Portal<span class="op">&lt;/</span><span class="kw">option</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="kw">option</span> <span class="fn">value</span>=<span class="str">"p2"</span><span class="op">&gt;</span>Mobile App<span class="op">&lt;/</span><span class="kw">option</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="kw">option</span> <span class="fn">value</span>=<span class="str">"p3"</span><span class="op">&gt;</span>Database System<span class="op">&lt;/</span><span class="kw">option</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="kw">option</span> <span class="fn">value</span>=<span class="str">"p4"</span><span class="op">&gt;</span>AI Chatbot<span class="op">&lt;/</span><span class="kw">option</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="kw">option</span> <span class="fn">value</span>=<span class="str">"p5"</span><span class="op">&gt;</span>E-Commerce Site<span class="op">&lt;/</span><span class="kw">option</span><span class="op">&gt;</span>
+<span class="op">&lt;/</span><span class="kw">select</span><span class="op">&gt;</span>
+<span class="op">&lt;</span><span class="kw">ul</span> <span class="fn">id</span>=<span class="str">"studentList"</span><span class="op">&gt;&lt;/</span><span class="kw">ul</span><span class="op">&gt;</span>
+
+<span class="op">&lt;</span><span class="kw">script</span><span class="op">&gt;</span>
+<span class="kw">let</span> projects = {
+  p1: [<span class="str">"Amit"</span>, <span class="str">"Neha"</span>, <span class="str">"Ravi"</span>],
+  p2: [<span class="str">"Priya"</span>, <span class="str">"Sohan"</span>, <span class="str">"Meera"</span>],
+  p3: [<span class="str">"Arjun"</span>, <span class="str">"Kavya"</span>, <span class="str">"Rohan"</span>],
+  p4: [<span class="str">"Deepa"</span>, <span class="str">"Vikram"</span>, <span class="str">"Sneha"</span>],
+  p5: [<span class="str">"Rahul"</span>, <span class="str">"Pooja"</span>, <span class="str">"Ankit"</span>]
+};
+
+document.<span class="fn">getElementById</span>(<span class="str">"projectSelect"</span>).<span class="fn">addEventListener</span>(<span class="str">"change"</span>, <span class="kw">function</span>() {
+  <span class="kw">let</span> list = document.<span class="fn">getElementById</span>(<span class="str">"studentList"</span>);
+  list.innerHTML = <span class="str">""</span>;
+  <span class="kw">let</span> selected = <span class="kw">this</span>.value;
+  <span class="kw">if</span> (selected &amp;&amp; projects[selected]) {
+    projects[selected].<span class="fn">forEach</span>(<span class="kw">function</span>(name) {
+      <span class="kw">let</span> li = document.<span class="fn">createElement</span>(<span class="str">"li"</span>);
+      li.textContent = name;
+      li.style.color = <span class="str">"#c45a3c"</span>;
+      li.style.fontWeight = <span class="str">"bold"</span>;
+      li.style.fontSize = <span class="str">"16px"</span>;
+      list.<span class="fn">appendChild</span>(li);
+    });
+  }
+});
+<span class="op">&lt;/</span><span class="kw">script</span><span class="op">&gt;</span></pre>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Insert a string within a string at a particular position</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="kw">function</span> <span class="fn">insertString</span>(original, toInsert, position) {
+  <span class="kw">if</span> (position &lt; <span class="num">0</span> || position &gt; original.length) {
+    <span class="kw">return</span> <span class="str">"Invalid position"</span>;
+  }
+  <span class="kw">return</span> original.<span class="fn">substring</span>(<span class="num">0</span>, position) + toInsert + original.<span class="fn">substring</span>(position);
+}
+
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">insertString</span>(<span class="str">"Hello World"</span>, <span class="str">"Beautiful "</span>, <span class="num">6</span>));
+<span class="cm">// "Hello Beautiful World"</span></pre>
+      </div>
+      <p>This uses <code>substring(start, end)</code> to extract the part before the insertion point, concatenates the new string, then appends the remainder. This is a classic string manipulation question that tests understanding of <code>substring()</code> and string concatenation.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Display day of week from birth date using DOM</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">HTML + JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="op">&lt;</span><span class="kw">input</span> <span class="fn">type</span>=<span class="str">"date"</span> <span class="fn">id</span>=<span class="str">"birthdate"</span><span class="op">&gt;</span>
+<span class="op">&lt;</span><span class="kw">button</span> <span class="fn">onclick</span>=<span class="str">"findDay()"</span><span class="op">&gt;</span>Find Day<span class="op">&lt;/</span><span class="kw">button</span><span class="op">&gt;</span>
+<span class="op">&lt;</span><span class="kw">p</span> <span class="fn">id</span>=<span class="str">"result"</span><span class="op">&gt;&lt;/</span><span class="kw">p</span><span class="op">&gt;</span>
+
+<span class="op">&lt;</span><span class="kw">script</span><span class="op">&gt;</span>
+<span class="kw">function</span> <span class="fn">findDay</span>() {
+  <span class="kw">let</span> dateStr = document.<span class="fn">getElementById</span>(<span class="str">"birthdate"</span>).value;
+  <span class="kw">let</span> date = <span class="kw">new</span> <span class="fn">Date</span>(dateStr);
+  <span class="kw">let</span> days = [<span class="str">"Sunday"</span>, <span class="str">"Monday"</span>, <span class="str">"Tuesday"</span>, <span class="str">"Wednesday"</span>,
+              <span class="str">"Thursday"</span>, <span class="str">"Friday"</span>, <span class="str">"Saturday"</span>];
+  <span class="kw">let</span> dayName = days[date.<span class="fn">getDay</span>()];
+  <span class="fn">alert</span>(<span class="str">"You were born on a "</span> + dayName);
+  document.<span class="fn">getElementById</span>(<span class="str">"result"</span>).textContent = <span class="str">"Born on: "</span> + dayName;
+}
+<span class="op">&lt;/</span><span class="kw">script</span><span class="op">&gt;</span></pre>
+      </div>
+      <p>The <code>getDay()</code> method returns 0 (Sunday) through 6 (Saturday). The days array maps these indices to readable names. This program demonstrates DOM access (<code>getElementById</code>), Date object usage (<code>getDay()</code>), arrays, and user interaction (<code>alert</code> + DOM content update).</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Audio/Video play/pause toggle button</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">HTML + JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="op">&lt;</span><span class="kw">video</span> <span class="fn">id</span>=<span class="str">"myVideo"</span> <span class="fn">width</span>=<span class="str">"400"</span><span class="op">&gt;</span>
+  <span class="op">&lt;</span><span class="kw">source</span> <span class="fn">src</span>=<span class="str">"video.mp4"</span> <span class="fn">type</span>=<span class="str">"video/mp4"</span><span class="op">&gt;</span>
+<span class="op">&lt;/</span><span class="kw">video</span><span class="op">&gt;</span>
+<span class="op">&lt;</span><span class="kw">button</span> <span class="fn">id</span>=<span class="str">"toggleBtn"</span><span class="op">&gt;</span>Play/Pause<span class="op">&lt;/</span><span class="kw">button</span><span class="op">&gt;</span>
+
+<span class="op">&lt;</span><span class="kw">script</span><span class="op">&gt;</span>
+<span class="kw">let</span> media = document.<span class="fn">getElementById</span>(<span class="str">"myVideo"</span>);
+<span class="kw">let</span> btn = document.<span class="fn">getElementById</span>(<span class="str">"toggleBtn"</span>);
+
+btn.<span class="fn">addEventListener</span>(<span class="str">"click"</span>, <span class="kw">function</span>() {
+  <span class="kw">if</span> (media.paused) {
+    media.<span class="fn">play</span>();
+    btn.textContent = <span class="str">"Pause"</span>;
+  } <span class="kw">else</span> {
+    media.<span class="fn">pause</span>();
+    btn.textContent = <span class="str">"Play"</span>;
+  }
+});
+<span class="op">&lt;/</span><span class="kw">script</span><span class="op">&gt;</span></pre>
+      </div>
+      <p>This demonstrates the <code>play()</code> and <code>pause()</code> methods of HTML5 media elements, combined with DOM property reading (<code>media.paused</code>) and content modification (<code>btn.textContent</code>). The same approach works with <code>&lt;audio&gt;</code> elements.</p>
+    </div>
+  </details>
+
+  <details>
+    <summary>Sort array in descending order — function</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="kw">function</span> <span class="fn">sortDescending</span>(arr) {
+  <span class="cm">// slice() creates a copy so we don't modify the original</span>
+  <span class="kw">return</span> arr.<span class="fn">slice</span>().<span class="fn">sort</span>(<span class="kw">function</span>(a, b) {
+    <span class="kw">return</span> b - a;
+  });
+}
+
+<span class="kw">let</span> numbers = [<span class="num">34</span>, <span class="num">7</span>, <span class="num">23</span>, <span class="num">99</span>, <span class="num">2</span>, <span class="num">56</span>];
+<span class="fn">console</span>.<span class="fn">log</span>(<span class="fn">sortDescending</span>(numbers));
+<span class="cm">// [99, 56, 34, 23, 7, 2]</span>
+<span class="fn">console</span>.<span class="fn">log</span>(numbers);
+<span class="cm">// [34, 7, 23, 99, 2, 56] — original unchanged</span></pre>
+      </div>
+    </div>
+  </details>
+
+  <details>
+    <summary>Random number between 1 and 10 on button click</summary>
+    <div class="details-body">
+      <div class="code-block">
+        <span class="code-label">HTML + JavaScript</span>
+        <button class="copy-btn" onclick="copyCode(this)">copy</button>
+<pre><span class="op">&lt;</span><span class="kw">button</span> <span class="fn">onclick</span>=<span class="str">"showRandom()"</span><span class="op">&gt;</span>Generate Random Number<span class="op">&lt;/</span><span class="kw">button</span><span class="op">&gt;</span>
+<span class="op">&lt;</span><span class="kw">p</span> <span class="fn">id</span>=<span class="str">"output"</span><span class="op">&gt;&lt;/</span><span class="kw">p</span><span class="op">&gt;</span>
+
+<span class="op">&lt;</span><span class="kw">script</span><span class="op">&gt;</span>
+<span class="kw">function</span> <span class="fn">showRandom</span>() {
+  <span class="kw">let</span> num = Math.<span class="fn">floor</span>(Math.<span class="fn">random</span>() * <span class="num">10</span>) + <span class="num">1</span>;
+  <span class="fn">alert</span>(<span class="str">"Random number: "</span> + num);
+  document.<span class="fn">getElementById</span>(<span class="str">"output"</span>).textContent = <span class="str">"Generated: "</span> + num;
+}
+<span class="op">&lt;/</span><span class="kw">script</span><span class="op">&gt;</span></pre>
+      </div>
+      <p>The formula <code>Math.floor(Math.random() * 10) + 1</code> works because <code>Math.random()</code> returns a value in [0, 1), multiplying by 10 gives [0, 10), <code>Math.floor()</code> truncates to integers [0, 9], and adding 1 shifts to [1, 10].</p>
+    </div>
+  </details>
+
+  <div class="pullquote">
+    "The student who has worked through every example in this document, drawn every diagram at least once, and can explain each concept aloud to a friend — that student will not merely pass the examination. They will find it difficult to lose marks."
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>Unit 2: JavaScript &amp; Advanced JavaScript — The Definitive Exam Guide</p>
+  <p style="margin-top:.3rem;font-size:.7rem;color:var(--border)">Handcrafted for Indian university examinations · Covers all PYQs · Designed for deep understanding and exam mastery</p>
+</footer>
+
+</div><!-- end #main -->
+
+<!-- Back to top button -->
+<button id="back-top" aria-label="Back to top">↑</button>
+
+<!-- ============================================================ -->
+<!-- JAVASCRIPT -->
+<!-- ============================================================ -->
+<script>
+// Progress bar
+window.addEventListener('scroll', function() {
+  var winScroll = document.documentElement.scrollTop;
+  var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  var scrolled = (winScroll / height) * 100;
+  document.getElementById('progress-bar').style.width = scrolled + '%';
+
+  // Back to top button
+  var btn = document.getElementById('back-top');
+  if (winScroll > 400) {
+    btn.classList.add('visible');
+  } else {
+    btn.classList.remove('visible');
+  }
+
+  // Active navigation
+  var sections = document.querySelectorAll('section[id]');
+  var navLinks = document.querySelectorAll('#sidebar nav a');
+  var current = '';
+  sections.forEach(function(section) {
+    var sectionTop = section.offsetTop - 100;
+    if (winScroll >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(function(link) {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+
+// Back to top
+document.getElementById('back-top').addEventListener('click', function() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Sidebar toggle (mobile)
+document.getElementById('sidebarToggle').addEventListener('click', function() {
+  document.getElementById('sidebar').classList.toggle('open');
+});
+
+// Close sidebar on link click (mobile)
+document.querySelectorAll('#sidebar nav a').forEach(function(link) {
+  link.addEventListener('click', function() {
+    if (window.innerWidth <= 1024) {
+      document.getElementById('sidebar').classList.remove('open');
+    }
+  });
+});
+
+// Copy code button
+function copyCode(btn) {
+  var codeBlock = btn.parentElement.querySelector('pre');
+  var text = codeBlock.textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    btn.textContent = 'copied!';
+    setTimeout(function() { btn.textContent = 'copy'; }, 2000);
+  }).catch(function() {
+    // Fallback for older browsers
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    document.body.appendChild(textarea);
+    textarea.select();
+    document.execCommand('copy');
+    document.body.removeChild(textarea);
+    btn.textContent = 'copied!';
+    setTimeout(function() { btn.textContent = 'copy'; }, 2000);
+  });
+}
+
+// Animate sections on scroll
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('animate-in');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('section').forEach(function(section) {
+  observer.observe(section);
+});
+</script>
+</body>
+</html>

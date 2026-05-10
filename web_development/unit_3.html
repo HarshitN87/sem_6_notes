@@ -1,0 +1,2166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 3 — XML, Ajax &amp; jQuery | The Definitive Study Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Source+Serif+4:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf6f0;
+  --bg-deep: #f0ebe3;
+  --surface: #e8e2d8;
+  --surface-raised: #fffdf9;
+  --burgundy: #8b2635;
+  --burgundy-light: #a83a4a;
+  --burgundy-bg: #f5e8ea;
+  --forest: #2d5a3d;
+  --forest-light: #3d7a52;
+  --forest-bg: #e8f0eb;
+  --gold: #c4956a;
+  --gold-dark: #a07a52;
+  --gold-bg: #faf3eb;
+  --ink: #2c2420;
+  --ink-soft: #4a4039;
+  --muted: #7a6e63;
+  --muted-light: #a09488;
+  --rule: #d4ccc2;
+  --code-bg: #2c2420;
+  --code-text: #e8dfd6;
+  --accent-red: #c0392b;
+  --accent-blue: #2c6f9e;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 17px; scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.78;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ====== TYPOGRAPHY ====== */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 700;
+  line-height: 1.25;
+  color: var(--ink);
+}
+
+h1 { font-size: 3rem; letter-spacing: -0.02em; }
+h2 { font-size: 2.1rem; letter-spacing: -0.01em; margin-top: 3.5rem; }
+h3 { font-size: 1.55rem; margin-top: 2.5rem; }
+h4 { font-size: 1.2rem; font-weight: 600; margin-top: 1.8rem; }
+h5 { font-size: 1.05rem; font-weight: 600; margin-top: 1.5rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+
+p { margin-bottom: 1.15rem; font-size: 1rem; }
+
+a { color: var(--burgundy); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+a:hover { color: var(--burgundy-light); }
+
+strong { font-weight: 600; color: var(--ink); }
+em { font-style: italic; }
+
+code {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 0.88em;
+  background: var(--surface);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  color: var(--burgundy);
+}
+
+/* ====== LAYOUT ====== */
+.page-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem 6rem;
+}
+
+@media (max-width: 700px) {
+  .page-wrapper { padding: 1.2rem 1rem 4rem; }
+  html { font-size: 15px; }
+  h1 { font-size: 2.2rem; }
+  h2 { font-size: 1.6rem; }
+}
+
+/* ====== HERO / MASTHEAD ====== */
+.masthead {
+  text-align: center;
+  padding: 4rem 1rem 3rem;
+  border-bottom: 3px double var(--rule);
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.masthead::before {
+  content: '— UNIT III —';
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.35em;
+  color: var(--muted-light);
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+}
+
+.masthead h1 {
+  font-size: 3.2rem;
+  font-weight: 800;
+  color: var(--burgundy);
+  margin-bottom: 0.5rem;
+  line-height: 1.15;
+}
+
+.masthead .subtitle {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--muted);
+  margin-top: 0.5rem;
+}
+
+.masthead .edition-line {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--muted-light);
+  margin-top: 2rem;
+  text-transform: uppercase;
+}
+
+/* ====== DECORATIVE RULES ====== */
+.rule-ornament {
+  text-align: center;
+  margin: 3rem 0;
+  color: var(--rule);
+  font-size: 1.4rem;
+  letter-spacing: 0.5em;
+}
+
+.rule-line {
+  border: none;
+  border-top: 1px solid var(--rule);
+  margin: 2.5rem 0;
+}
+
+.rule-double {
+  border: none;
+  border-top: 3px double var(--rule);
+  margin: 3rem 0;
+}
+
+/* ====== TOC ====== */
+.toc {
+  background: var(--surface-raised);
+  border: 1px solid var(--rule);
+  padding: 2.5rem 3rem;
+  margin-bottom: 3rem;
+  position: relative;
+}
+
+.toc::before {
+  content: 'CONTENTS';
+  position: absolute;
+  top: -0.65rem;
+  left: 2rem;
+  background: var(--bg);
+  padding: 0 0.8rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--muted-light);
+  text-transform: uppercase;
+}
+
+.toc ol {
+  list-style: none;
+  counter-reset: toc-counter;
+}
+
+.toc > ol > li {
+  counter-increment: toc-counter;
+  margin-bottom: 1rem;
+  padding-left: 0;
+}
+
+.toc > ol > li::before {
+  content: counter(toc-counter, upper-roman) '.';
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  color: var(--burgundy);
+  margin-right: 0.8rem;
+  font-size: 1.05rem;
+}
+
+.toc a {
+  font-family: 'Source Serif 4', serif;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  text-decoration: none;
+  border-bottom: 1px dotted var(--rule);
+}
+
+.toc a:hover { color: var(--burgundy); }
+
+.toc ol ol {
+  margin: 0.5rem 0 0.5rem 2.2rem;
+  list-style: disc;
+}
+
+.toc ol ol li {
+  margin-bottom: 0.3rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+.toc ol ol li::marker { color: var(--gold); }
+
+/* ====== SECTION HEADERS ====== */
+.section-header {
+  text-align: center;
+  margin: 4rem 0 2.5rem;
+  position: relative;
+}
+
+.section-header::before,
+.section-header::after {
+  content: '';
+  display: inline-block;
+  width: 60px;
+  height: 1px;
+  background: var(--burgundy);
+  vertical-align: middle;
+  margin: 0 1.2rem;
+}
+
+.section-header h2 {
+  display: inline;
+  color: var(--burgundy);
+  font-size: 2.2rem;
+  margin: 0;
+}
+
+.section-tag {
+  display: block;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  color: var(--muted-light);
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+/* ====== SUBSECTION ====== */
+.subsection {
+  margin: 2.5rem 0;
+}
+
+.subsection h3 {
+  color: var(--forest);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* ====== CALLOUT BOXES ====== */
+.callout {
+  border-left: 3px solid var(--gold);
+  background: var(--gold-bg);
+  padding: 1.5rem 1.8rem;
+  margin: 2rem 0;
+  font-size: 0.95rem;
+  position: relative;
+}
+
+.callout::before {
+  content: attr(data-label);
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  margin-bottom: 0.6rem;
+}
+
+.callout.exam-tip {
+  border-left-color: var(--burgundy);
+  background: var(--burgundy-bg);
+}
+.callout.exam-tip::before { color: var(--burgundy); }
+
+.callout.memory {
+  border-left-color: var(--forest);
+  background: var(--forest-bg);
+}
+.callout.memory::before { color: var(--forest); }
+
+.callout.warning {
+  border-left-color: var(--accent-red);
+  background: #fdf2f2;
+}
+.callout.warning::before { color: var(--accent-red); }
+
+/* ====== CODE BLOCKS ====== */
+.code-block {
+  background: var(--code-bg);
+  color: var(--code-text);
+  padding: 1.8rem 2rem;
+  margin: 1.5rem 0;
+  border-radius: 4px;
+  overflow-x: auto;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  line-height: 1.7;
+  position: relative;
+  border: 1px solid #3a322c;
+}
+
+.code-block::before {
+  content: attr(data-lang);
+  position: absolute;
+  top: 0;
+  right: 0;
+  background: var(--burgundy);
+  color: #fff;
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.8rem;
+  border-radius: 0 4px 0 4px;
+  font-family: 'DM Mono', monospace;
+}
+
+.code-block .kw { color: #e8c547; }
+.code-block .str { color: #8bc774; }
+.code-block .cm { color: #7a6e63; font-style: italic; }
+.code-block .tag { color: #e07a5f; }
+.code-block .attr { color: #81a4d6; }
+.code-block .val { color: #8bc774; }
+.code-block .fn { color: #d4a8e8; }
+.code-block .num { color: #e8c547; }
+
+/* ====== TABLES ====== */
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  font-size: 0.9rem;
+}
+
+.comparison-table thead {
+  background: var(--burgundy);
+  color: #fff;
+}
+
+.comparison-table th {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  padding: 0.9rem 1.2rem;
+  text-align: left;
+  font-size: 0.85rem;
+  letter-spacing: 0.03em;
+}
+
+.comparison-table td {
+  padding: 0.8rem 1.2rem;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+.comparison-table tbody tr:nth-child(even) {
+  background: var(--bg-deep);
+}
+
+.comparison-table tbody tr:hover {
+  background: var(--gold-bg);
+}
+
+/* ====== PULL QUOTE ====== */
+.pullquote {
+  text-align: center;
+  margin: 3rem 2rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 1.25rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.pullquote cite {
+  display: block;
+  margin-top: 0.8rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted-light);
+  font-style: normal;
+}
+
+/* ====== SVG DIAGRAMS ====== */
+.diagram-container {
+  margin: 2.5rem 0;
+  text-align: center;
+}
+
+.diagram-container svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+
+.diagram-caption {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.1em;
+  margin-top: 1rem;
+  text-transform: uppercase;
+}
+
+/* ====== COLLAPSIBLE ====== */
+details {
+  margin: 1.5rem 0;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--surface-raised);
+}
+
+details summary {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--ink-soft);
+  list-style: none;
+  position: relative;
+  user-select: none;
+}
+
+details summary::before {
+  content: '▸';
+  margin-right: 0.8rem;
+  color: var(--burgundy);
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+details summary::-webkit-details-marker { display: none; }
+
+details .details-body {
+  padding: 0.5rem 1.5rem 1.5rem;
+  border-top: 1px solid var(--rule);
+}
+
+/* ====== EXAM QUESTION BOX ====== */
+.exam-questions {
+  background: var(--surface-raised);
+  border: 2px solid var(--burgundy);
+  padding: 2rem 2.5rem;
+  margin: 2.5rem 0;
+  position: relative;
+}
+
+.exam-questions::before {
+  content: 'PREVIOUS YEAR & PREDICTED QUESTIONS';
+  position: absolute;
+  top: -0.7rem;
+  left: 1.5rem;
+  background: var(--burgundy);
+  color: #fff;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  padding: 0.25rem 1rem;
+  text-transform: uppercase;
+}
+
+.exam-questions ol {
+  padding-left: 1.5rem;
+}
+
+.exam-questions li {
+  margin-bottom: 0.6rem;
+  font-size: 0.92rem;
+}
+
+.exam-questions li strong {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--gold-dark);
+  margin-right: 0.4rem;
+}
+
+/* ====== REVISION CARD ====== */
+.revision-card {
+  background: linear-gradient(135deg, var(--burgundy) 0%, #5a1a25 100%);
+  color: #f5e8ea;
+  padding: 2.5rem 3rem;
+  margin: 3rem 0;
+  border-radius: 6px;
+  position: relative;
+  overflow: hidden;
+}
+
+.revision-card::before {
+  content: '';
+  position: absolute;
+  top: -30%;
+  right: -10%;
+  width: 200px;
+  height: 200px;
+  border: 2px solid rgba(255,255,255,0.08);
+  border-radius: 50%;
+}
+
+.revision-card h3 {
+  color: var(--gold);
+  margin-top: 0;
+  font-size: 1.4rem;
+}
+
+.revision-card p, .revision-card li {
+  color: #e8dfd6;
+  font-size: 0.9rem;
+}
+
+.revision-card ul {
+  padding-left: 1.2rem;
+}
+
+.revision-card li {
+  margin-bottom: 0.4rem;
+}
+
+/* ====== SIDENOTE ====== */
+.sidenote {
+  float: right;
+  width: 220px;
+  margin: 0.5rem 0 1rem 2rem;
+  padding: 1.2rem;
+  background: var(--gold-bg);
+  border: 1px solid var(--gold);
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.5;
+  font-style: italic;
+  border-radius: 3px;
+}
+
+.sidenote strong {
+  display: block;
+  font-style: normal;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold-dark);
+  margin-bottom: 0.4rem;
+}
+
+@media (max-width: 800px) {
+  .sidenote { float: none; width: 100%; margin: 1.5rem 0; }
+}
+
+/* ====== ANSWER FRAMEWORK ====== */
+.answer-framework {
+  border: 2px dashed var(--forest);
+  background: var(--forest-bg);
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+  font-size: 0.9rem;
+}
+
+.answer-framework h4 {
+  color: var(--forest);
+  margin-top: 0;
+  font-size: 1.1rem;
+}
+
+.answer-framework ol {
+  padding-left: 1.5rem;
+}
+
+.answer-framework li { margin-bottom: 0.5rem; }
+
+/* ====== FOOTER ====== */
+.page-footer {
+  text-align: center;
+  margin-top: 5rem;
+  padding: 3rem 0;
+  border-top: 3px double var(--rule);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--muted-light);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+/* ====== ANIMATIONS ====== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+
+/* ====== PRINT ====== */
+@media print {
+  body::before { display: none; }
+  .page-wrapper { max-width: 100%; padding: 0; }
+  details { border: 1px solid #ccc; }
+  details[open] .details-body { display: block; }
+  .revision-card { background: #fff; color: #000; border: 2px solid #000; }
+  .revision-card h3 { color: #000; }
+  .revision-card p, .revision-card li { color: #000; }
+}
+
+/* ====== TABS ====== */
+.tab-container {
+  margin: 2rem 0;
+}
+
+.tab-buttons {
+  display: flex;
+  border-bottom: 2px solid var(--rule);
+  gap: 0;
+}
+
+.tab-btn {
+  padding: 0.7rem 1.5rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--muted);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+  color: var(--burgundy);
+  border-bottom-color: var(--burgundy);
+}
+
+.tab-btn:hover { color: var(--ink); }
+
+.tab-panel { display: none; padding: 1.5rem 0; }
+.tab-panel.active { display: block; }
+
+/* ====== FLOW STEP ====== */
+.flow-steps {
+  margin: 2rem 0;
+}
+
+.flow-step {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  align-items: flex-start;
+}
+
+.flow-step-num {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--burgundy);
+  color: #fff;
+  font-family: 'Playfair Display', serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-top: 0.2rem;
+}
+
+.flow-step-content {
+  flex: 1;
+}
+
+.flow-step-content h4 {
+  margin-top: 0;
+  color: var(--burgundy);
+}
+
+/* ====== MNEMONIC BOX ====== */
+.mnemonic {
+  background: var(--surface-raised);
+  border: 2px solid var(--gold);
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+  text-align: center;
+  border-radius: 4px;
+}
+
+.mnemonic .phrase {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--burgundy);
+  margin-bottom: 0.5rem;
+}
+
+.mnemonic .explain {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+<!-- ============================================================ -->
+<!-- MASTHEAD -->
+<!-- ============================================================ -->
+<header class="masthead animate-in">
+  <h1>XML, Ajax &amp; jQuery</h1>
+  <p class="subtitle">The Architecture of Structured Data, Asynchronous Communication, and Elegant DOM Manipulation</p>
+  <p class="edition-line">Comprehensive Exam Guide &bull; Web Technologies &bull; 2024–25 Edition</p>
+</header>
+
+<!-- ============================================================ -->
+<!-- TABLE OF CONTENTS -->
+<!-- ============================================================ -->
+<nav class="toc animate-in delay-1">
+  <ol>
+    <li><a href="#part-xml">Extensible Markup Language (XML)</a>
+      <ol>
+        <li><a href="#xml-intro">Introduction &amp; Motivation</a></li>
+        <li><a href="#xml-rules">Rules of Well-Formed XML</a></li>
+        <li><a href="#xml-components">Key Components</a></li>
+        <li><a href="#xml-dtd">DTD — Document Type Definition</a></li>
+        <li><a href="#xml-schema">XML Schema (XSD)</a></li>
+        <li><a href="#xml-namespace">Namespaces</a></li>
+        <li><a href="#xml-css">Styling XML with CSS</a></li>
+        <li><a href="#xml-vs-json">XML vs JSON</a></li>
+      </ol>
+    </li>
+    <li><a href="#part-ajax">Asynchronous JavaScript and XML (Ajax)</a>
+      <ol>
+        <li><a href="#ajax-intro">The Problem Ajax Solved</a></li>
+        <li><a href="#ajax-how">How Ajax Works</a></li>
+        <li><a href="#ajax-xhr">XMLHttpRequest — Methods &amp; Properties</a></li>
+        <li><a href="#ajax-code">JavaScript Implementation</a></li>
+        <li><a href="#ajax-server">Server-Side Handling</a></li>
+        <li><a href="#ajax-response">Handling the Response</a></li>
+        <li><a href="#ajax-json">Ajax with JSON</a></li>
+      </ol>
+    </li>
+    <li><a href="#part-jquery">jQuery</a>
+      <ol>
+        <li><a href="#jq-intro">Introduction &amp; Philosophy</a></li>
+        <li><a href="#jq-install">Installation</a></li>
+        <li><a href="#jq-syntax">Syntax &amp; Selectors</a></li>
+        <li><a href="#jq-effects">Effects &amp; Animations</a></li>
+        <li><a href="#jq-ajax">Ajax with jQuery</a></li>
+        <li><a href="#jq-load">Load, getJSON &amp; get Methods</a></li>
+        <li><a href="#jq-vs-js">jQuery vs Vanilla JavaScript</a></li>
+      </ol>
+    </li>
+    <li><a href="#part-exam">Exam Preparation Centre</a></li>
+  </ol>
+</nav>
+
+<!-- ============================================================ -->
+<!-- PART I: XML -->
+<!-- ============================================================ -->
+<div class="section-header" id="part-xml">
+  <h2>I. Extensible Markup Language</h2>
+</div>
+<div class="section-tag">Part One &bull; Structured Data for the Web</div>
+
+<div class="pullquote">
+  &ldquo;XML was designed to carry data, not to display data. It is a software- and hardware-independent tool for carrying information.&rdquo;
+  <cite>W3C XML Specification, 1998</cite>
+</div>
+
+<!-- ====== 1.1 Introduction ====== -->
+<div class="subsection" id="xml-intro">
+  <h3>1.1 Introduction to XML: What Problem Does It Solve?</h3>
+
+  <p>Imagine a world where every application stores its data in a proprietary, opaque binary format — your word processor saves documents that only it can read, your bank's database speaks a language that no other financial system understands, and the web pages you browse contain information locked inside visual formatting with no semantic structure whatsoever. This was, broadly speaking, the state of digital information exchange before the widespread adoption of XML. Data existed in silos, and moving it between systems required custom translation software written for each pair of formats. The cost was enormous, the fragility was legendary, and every new integration was a bespoke engineering effort that could take months.</p>
+
+  <p>XML — the Extensible Markup Language — emerged from this chaos as a W3C recommendation in February 1998, authored principally by Tim Bray, Jean Paoli, and C. M. Sperberg-McQueen. Its lineage traces back to SGML (Standard Generalized Markup Language, ISO 8879:1986), which had been the gold standard for structured document publishing since the 1980s. SGML was extraordinarily powerful but also extraordinarily complex — so complex that almost nobody implemented it fully. HTML, meanwhile, had been derived from SGML as a simplified subset for describing hypertext documents on the early web, but it suffered from the opposite problem: it was too simple, too focused on presentation, and utterly lacking in the ability to describe arbitrary data structures. XML was conceived as the elegant middle ground — a subset of SGML that retained its power for structured data representation while being simple enough that real-world software could parse and generate it reliably.</p>
+
+  <p>The design goals of XML, as articulated by the W3C working group, are worth enumerating because they illuminate why the language looks the way it does. XML shall be straightforwardly usable over the Internet. It shall support a wide variety of applications. It shall be compatible with SGML. It shall be easy to write programs that process XML documents. The number of optional features in XML is to be kept to the absolute minimum, ideally zero. XML documents should be human-legible and reasonably clear. The XML design should be prepared quickly. The design of XML shall be formal and concise. XML documents shall be easy to create. Terseness in XML markup is of minimal importance. Notice that last goal — terseness is explicitly unimportant. XML was not designed to be compact or to minimize keystrokes; it was designed to be unambiguous, self-describing, and universally parseable. This philosophy explains why XML tags are verbose by design and why closing tags repeat the element name.</p>
+
+  <div class="callout" data-label="Core Concept">
+    <strong>XML is a meta-language</strong> — a language for defining other languages. Unlike HTML, which has a fixed set of tags defined by the W3C (<code>&lt;p&gt;</code>, <code>&lt;div&gt;</code>, <code>&lt;table&gt;</code>), XML allows you to invent your own tags that describe your specific domain of data. A bookstore uses <code>&lt;book&gt;</code> and <code>&lt;author&gt;</code>; a hospital uses <code>&lt;patient&gt;</code> and <code>&lt;diagnosis&gt;</code>; a university uses <code>&lt;student&gt;</code> and <code>&lt;enrollment&gt;</code>. The syntax is uniform; the vocabulary is yours.
+  </div>
+
+  <h4>Uses of XML in Modern Computing</h4>
+
+  <p>XML's reach extends far beyond what most students initially imagine. While it is no longer the primary format for data interchange in web APIs (JSON has largely taken that role), XML remains deeply entrenched in enterprise computing, document publishing, configuration management, and several critical web technologies. The RSS and Atom feeds that power podcast distribution and blog aggregation are XML vocabularies. SOAP (Simple Object Access Protocol), which underpins a vast amount of enterprise web service communication, transmits its messages as XML documents. The SVG (Scalable Vector Graphics) format that describes vector images on the web is an XML application — every <code>&lt;svg&gt;</code>, <code>&lt;circle&gt;</code>, and <code>&lt;path&gt;</code> element you see in modern web graphics is XML. XHTML was an attempt to reformulate HTML as strict XML. Microsoft's .docx, .xlsx, and .pptx file formats are ZIP archives containing XML documents. Android's layout files are XML. Maven's build configuration files are XML. The Spring Framework's dependency injection configuration is XML. Ant, Log4j, Tomcat's server.xml, the web.xml deployment descriptor — the list is nearly endless. Understanding XML is not merely an academic exercise; it is a prerequisite for working competently in a surprising number of real-world technology stacks.</p>
+
+  <p>On the web specifically, XML serves three primary roles: data transport between client and server (though JSON now dominates this space), data storage in systems where schema validation and document structure are paramount, and configuration of web servers, application servers, and frameworks. Each of these roles leverages XML's core strengths — human readability, hierarchical structure, schema enforceability, and platform independence.</p>
+</div>
+
+<!-- ====== XML TREE DIAGRAM ====== -->
+<div class="diagram-container">
+  <svg width="700" height="360" viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background -->
+    <rect width="700" height="360" fill="#faf6f0" rx="6"/>
+    <rect x="1" y="1" width="698" height="358" fill="none" stroke="#d4ccc2" stroke-width="1" rx="6"/>
+    
+    <!-- Title -->
+    <text x="350" y="30" text-anchor="middle" font-family="Playfair Display, serif" font-size="15" font-weight="700" fill="#8b2635">XML Document Tree Structure</text>
+    
+    <!-- Root node -->
+    <rect x="280" y="48" width="140" height="36" rx="4" fill="#8b2635" stroke="none"/>
+    <text x="350" y="71" text-anchor="middle" font-family="DM Mono, monospace" font-size="12" fill="#fff">&lt;bookstore&gt;</text>
+    
+    <!-- Line from root to book1 -->
+    <line x1="320" y1="84" x2="170" y2="120" stroke="#c4956a" stroke-width="1.5"/>
+    <!-- Line from root to book2 -->
+    <line x1="380" y1="84" x2="530" y2="120" stroke="#c4956a" stroke-width="1.5"/>
+    
+    <!-- Book 1 -->
+    <rect x="100" y="120" width="140" height="36" rx="4" fill="#2d5a3d" stroke="none"/>
+    <text x="170" y="143" text-anchor="middle" font-family="DM Mono, monospace" font-size="12" fill="#fff">&lt;book&gt;</text>
+    
+    <!-- Book 2 -->
+    <rect x="460" y="120" width="140" height="36" rx="4" fill="#2d5a3d" stroke="none"/>
+    <text x="530" y="143" text-anchor="middle" font-family="DM Mono, monospace" font-size="12" fill="#fff">&lt;book&gt;</text>
+    
+    <!-- Children of book1 -->
+    <line x1="140" y1="156" x2="70" y2="195" stroke="#c4956a" stroke-width="1"/>
+    <line x1="170" y1="156" x2="170" y2="195" stroke="#c4956a" stroke-width="1"/>
+    <line x1="200" y1="156" x2="270" y2="195" stroke="#c4956a" stroke-width="1"/>
+    
+    <!-- Title1 -->
+    <rect x="20" y="195" width="100" height="30" rx="3" fill="#e8e2d8" stroke="#d4ccc2"/>
+    <text x="70" y="214" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#4a4039">&lt;title&gt;</text>
+    
+    <!-- Author1 -->
+    <rect x="130" y="195" width="80" height="30" rx="3" fill="#e8e2d8" stroke="#d4ccc2"/>
+    <text x="170" y="214" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#4a4039">&lt;author&gt;</text>
+    
+    <!-- Year1 -->
+    <rect x="220" y="195" width="100" height="30" rx="3" fill="#e8e2d8" stroke="#d4ccc2"/>
+    <text x="270" y="214" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#4a4039">&lt;year&gt;</text>
+    
+    <!-- Text values book1 -->
+    <line x1="70" y1="225" x2="70" y2="255" stroke="#c4956a" stroke-width="1"/>
+    <line x1="170" y1="225" x2="170" y2="255" stroke="#c4956a" stroke-width="1"/>
+    <line x1="270" y1="225" x2="270" y2="255" stroke="#c4956a" stroke-width="1"/>
+    
+    <rect x="20" y="255" width="100" height="26" rx="3" fill="#faf3eb" stroke="#c4956a" stroke-width="0.5"/>
+    <text x="70" y="272" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#a07a52">"XML Primer"</text>
+    
+    <rect x="130" y="255" width="80" height="26" rx="3" fill="#faf3eb" stroke="#c4956a" stroke-width="0.5"/>
+    <text x="170" y="272" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#a07a52">"Jane Doe"</text>
+    
+    <rect x="220" y="255" width="100" height="26" rx="3" fill="#faf3eb" stroke="#c4956a" stroke-width="0.5"/>
+    <text x="270" y="272" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#a07a52">"2023"</text>
+    
+    <!-- Children of book2 -->
+    <line x1="500" y1="156" x2="430" y2="195" stroke="#c4956a" stroke-width="1"/>
+    <line x1="530" y1="156" x2="530" y2="195" stroke="#c4956a" stroke-width="1"/>
+    <line x1="560" y1="156" x2="630" y2="195" stroke="#c4956a" stroke-width="1"/>
+    
+    <!-- Title2 -->
+    <rect x="380" y="195" width="100" height="30" rx="3" fill="#e8e2d8" stroke="#d4ccc2"/>
+    <text x="430" y="214" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#4a4039">&lt;title&gt;</text>
+    
+    <!-- Author2 -->
+    <rect x="490" y="195" width="80" height="30" rx="3" fill="#e8e2d8" stroke="#d4ccc2"/>
+    <text x="530" y="214" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#4a4039">&lt;author&gt;</text>
+    
+    <!-- Year2 -->
+    <rect x="580" y="195" width="100" height="30" rx="3" fill="#e8e2d8" stroke="#d4ccc2"/>
+    <text x="630" y="214" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#4a4039">&lt;year&gt;</text>
+    
+    <!-- Text values book2 -->
+    <line x1="430" y1="225" x2="430" y2="255" stroke="#c4956a" stroke-width="1"/>
+    <line x1="530" y1="225" x2="530" y2="255" stroke="#c4956a" stroke-width="1"/>
+    <line x1="630" y1="225" x2="630" y2="255" stroke="#c4956a" stroke-width="1"/>
+    
+    <rect x="380" y="255" width="100" height="26" rx="3" fill="#faf3eb" stroke="#c4956a" stroke-width="0.5"/>
+    <text x="430" y="272" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#a07a52">"Data Web"</text>
+    
+    <rect x="490" y="255" width="80" height="26" rx="3" fill="#faf3eb" stroke="#c4956a" stroke-width="0.5"/>
+    <text x="530" y="272" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#a07a52">"John Smith"</text>
+    
+    <rect x="580" y="255" width="100" height="26" rx="3" fill="#faf3eb" stroke="#c4956a" stroke-width="0.5"/>
+    <text x="630" y="272" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#a07a52">"2024"</text>
+    
+    <!-- Legend -->
+    <rect x="20" y="305" width="12" height="12" rx="2" fill="#8b2635"/>
+    <text x="38" y="315" font-family="DM Mono, monospace" font-size="9" fill="#4a4039">Root Element</text>
+    <rect x="140" y="305" width="12" height="12" rx="2" fill="#2d5a3d"/>
+    <text x="158" y="315" font-family="DM Mono, monospace" font-size="9" fill="#4a4039">Child Elements</text>
+    <rect x="270" y="305" width="12" height="12" rx="2" fill="#e8e2d8" stroke="#d4ccc2"/>
+    <text x="288" y="315" font-family="DM Mono, monospace" font-size="9" fill="#4a4039">Leaf Elements</text>
+    <rect x="400" y="305" width="12" height="12" rx="2" fill="#faf3eb" stroke="#c4956a" stroke-width="0.5"/>
+    <text x="418" y="315" font-family="DM Mono, monospace" font-size="9" fill="#4a4039">Text Data (PCDATA)</text>
+    
+    <text x="350" y="345" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#7a6e63">Fig. 1 — XML documents form a tree with one root, branching into elements and terminating in text content</text>
+  </svg>
+  <p class="diagram-caption">Figure 1 — Hierarchical Tree of an XML Document</p>
+</div>
+
+<!-- ====== 1.2 Rules ====== -->
+<div class="subsection" id="xml-rules">
+  <h3>1.2 Rules for Well-Formed XML Documents</h3>
+
+  <p>One of XML's most important design decisions was to impose strict syntactic rules and to refuse to process documents that violate them. HTML parsers are famously forgiving — they will attempt to render even severely malformed HTML, guessing at the author's intent. XML parsers take the opposite approach: if an XML document contains a single syntax error, the parser must stop and report it. This strictness is a feature, not a limitation, because it means that any conforming XML parser can reliably process any well-formed XML document, regardless of its origin or intended application. There is no guessing, no ambiguity, no browser-specific quirks mode. The rules that govern well-formedness are relatively few, but they are absolute.</p>
+
+  <p>First, every XML document must have exactly one root element that contains all other elements. This root element is the single top-level container from which the entire document tree descends. You cannot have two sibling elements at the top level of a document — this would violate the tree structure that XML demands. Second, every element that is opened must be closed. If you write <code>&lt;title&gt;</code>, you must eventually write <code>&lt;/title&gt;</code>. Empty elements (elements with no content) may use the self-closing shorthand <code>&lt;br/&gt;</code> or <code>&lt;img/&gt;</code>, where the slash before the closing angle bracket indicates that the element is simultaneously opened and closed. Third, element tags are case-sensitive: <code>&lt;Book&gt;</code> and <code>&lt;book&gt;</code> are distinct elements. If you open with <code>&lt;Book&gt;</code>, you must close with <code>&lt;/Book&gt;</code>, not <code>&lt;/book&gt;</code>. Fourth, elements must be properly nested — tags cannot overlap. <code>&lt;b&gt;&lt;i&gt;text&lt;/b&gt;&lt;/i&gt;</code> is illegal because the <code>&lt;b&gt;</code> element was opened before <code>&lt;i&gt;</code> but is closed before <code>&lt;i&gt;</code>. The correct form is <code>&lt;b&gt;&lt;i&gt;text&lt;/i&gt;&lt;/b&gt;</code>.</p>
+
+  <p>Fifth, attribute values must always be enclosed in quotation marks — either single or double quotes, but they must be present. Unlike HTML, where <code>checked</code> is a valid boolean attribute, XML requires <code>checked="checked"</code> or <code>checked="true"</code>. Sixth, the document may optionally begin with an XML declaration, typically <code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</code>, which identifies the document as XML and specifies the version and character encoding. While this declaration is technically optional, omitting it is considered poor practice and can cause problems with some parsers. Seventh, certain characters have special meaning in XML and must be escaped when they appear as data. The ampersand (<code>&amp;</code>) must be written as <code>&amp;amp;</code>, the less-than sign as <code>&amp;lt;</code>, the greater-than sign as <code>&amp;gt;</code>, the double quote as <code>&amp;quot;</code>, and the apostrophe as <code>&amp;apos;</code>. Alternatively, these characters can appear within a CDATA section, which we shall discuss shortly.</p>
+
+  <div class="callout memory" data-label="Memory Aid">
+    <strong>Remember "Every Attribute Needs Quotes, Every Tag Needs Closure"</strong> — If you remember that XML is strict about closing tags and quoting attributes, you will avoid the two most common well-formedness errors students commit in exams. Think of XML as a very punctilious librarian who refuses to catalogue a book with torn pages.
+  </div>
+</div>
+
+<!-- ====== 1.3 Key Components ====== -->
+<div class="subsection" id="xml-components">
+  <h3>1.3 XML Key Components — A Complete Inventory</h3>
+
+  <p>An XML document is composed of several distinct types of building blocks, each serving a specific purpose in the document's structure and meaning. Understanding these components individually is essential because exam questions frequently ask students to "explain the key components of XML" or to "identify and label the parts of an XML document," and a systematic, component-by-component answer is exactly what earns full marks.</p>
+
+  <h4>Elements</h4>
+  <p>Elements are the fundamental structural units of an XML document. Every element consists of an opening tag, content (which may include text, other elements, or both), and a closing tag. The content between the opening and closing tags is the element's value. Elements can nest inside one another to form the hierarchical tree structure that is the defining characteristic of XML. An element's name (also called its generic identifier) must begin with a letter or underscore and may contain letters, digits, hyphens, periods, and underscores — no spaces, no other special characters. Element names should be descriptive and meaningful: <code>&lt;employeeName&gt;</code> is far preferable to <code>&lt;en&gt;</code> or <code>&lt;data1&gt;</code>. Well-chosen element names make the document self-documenting, which is one of XML's greatest strengths.</p>
+
+  <h4>Attributes</h4>
+  <p>Attributes provide additional information about elements and appear within the opening tag as name-value pairs. For example, in <code>&lt;book isbn="978-0-13-468599-1"&gt;</code>, the attribute <code>isbn</code> with value <code>"978-0-13-468599-1"</code> provides metadata about the <code>&lt;book&gt;</code> element. A common design question that arises in XML is when to use an element versus an attribute: should the author of a book be represented as <code>&lt;author&gt;Jane Doe&lt;/author&gt;</code> (a child element) or <code>&lt;book author="Jane Doe"&gt;</code> (an attribute)? The general guideline, while not an absolute rule, is that attributes should be used for metadata (data about data — identifiers, units, types, references) while elements should be used for the actual data content. An attribute cannot contain other elements — it can only hold a simple string value. An element cannot have two attributes with the same name. Attribute order within a tag is not significant.</p>
+
+  <h4>Text Content (PCDATA)</h4>
+  <p>PCDATA stands for Parsed Character Data. It is the text content that appears inside elements and is "parsed" by the XML parser, meaning that the parser will look for markup within it — specifically, it will interpret the <code>&amp;</code> character as the beginning of an entity reference, the <code>&lt;</code> character as the beginning of a tag, and so on. This is why special characters must be escaped within PCDATA. When a question asks you to define PCDATA, you should write: "PCDATA (Parsed Character Data) is the text content within an XML element that is processed by the XML parser. The parser interprets markup characters such as <code>&amp;</code> and <code>&lt;</code> within PCDATA, so these characters must be escaped using entity references like <code>&amp;amp;</code> and <code>&amp;lt;</code>."</p>
+
+  <h4>CDATA Sections</h4>
+  <p>CDATA sections provide a way to include blocks of text that should not be parsed by the XML processor. Everything between <code>&lt;![CDATA[</code> and <code>]]&gt;</code> is treated as literal character data, and no markup interpretation occurs. This is extremely useful when you need to include content that contains many special characters — for example, embedding a snippet of HTML, JavaScript, or mathematical notation within an XML document. The text <code>&lt;![CDATA[if (a &lt; b &amp;&amp; c &gt; d) { ... }]]&gt;</code> preserves the JavaScript comparison operators without requiring tedious escaping. The crucial distinction between PCDATA and CDATA is a frequent exam question: PCDATA is parsed and requires escaping of special characters; CDATA is not parsed and allows special characters to appear literally. However, CDATA sections cannot be nested, and the literal string <code>]]&gt;</code> cannot appear within a CDATA section.</p>
+
+  <h4>Comments</h4>
+  <p>XML comments use the same syntax as HTML comments: <code>&lt;!-- comment text --&gt;</code>. Comments can appear anywhere in the document except within tags. They cannot be nested — the string <code>--</code> (double hyphen) is not permitted inside comments. Comments are ignored by the XML parser and exist solely for human readers of the document.</p>
+
+  <h4>Processing Instructions</h4>
+  <p>Processing instructions (PIs) are directives to the application that processes the XML document. They take the form <code>&lt;?target data?&gt;</code>, where the target identifies the application and the data provides the instruction. The XML declaration (<code>&lt;?xml version="1.0"?&gt;</code>) is technically a processing instruction with the target <code>xml</code>. Another common PI is <code>&lt;?xml-stylesheet type="text/css" href="style.css"?&gt;</code>, which instructs the processor to apply a CSS stylesheet to the XML document.</p>
+
+  <h4>Entities</h4>
+  <p>Entities are reusable fragments of content. The five predefined entity references in XML (<code>&amp;amp;</code>, <code>&amp;lt;</code>, <code>&amp;gt;</code>, <code>&amp;quot;</code>, <code>&amp;apos;</code>) provide the escaping mechanism discussed earlier. Custom entities can be defined in a DTD using <code>&lt;!ENTITY entityname "entity value"&gt;</code> and then referenced in the document as <code>&amp;entityname;</code>. This allows commonly repeated text to be defined once and referenced many times, improving maintainability.</p>
+</div>
+
+<!-- ====== 1.4 DTD ====== -->
+<div class="subsection" id="xml-dtd">
+  <h3>1.4 DTD — Document Type Definition</h3>
+
+  <p>While an XML document can exist on its own without any formal description of its structure (this is what makes XML so quick to start using), the real power of XML as a data interchange format comes from the ability to define and enforce a structure that all documents of a particular type must follow. A DTD (Document Type Definition) is the original mechanism for doing this. It acts as a grammar for a class of XML documents, specifying which elements are allowed, in what order, with what attributes, and with what content. Think of the XML document as an essay and the DTD as the assignment rubric — the rubric defines what the essay must contain and how it must be structured.</p>
+
+  <p>A DTD can be internal (embedded within the XML document itself, inside a <code>&lt;!DOCTYPE&gt;</code> declaration) or external (stored in a separate file with a <code>.dtd</code> extension and referenced from the XML document). Internal DTDs are convenient for small documents, while external DTDs are strongly preferred in production systems because they allow the same grammar to be shared across many documents without duplication.</p>
+
+  <p>The DTD uses a specialized syntax that is distinct from XML itself — a fact that occasionally confuses students. DTD declarations use keywords like <code>&lt;!ELEMENT&gt;</code>, <code>&lt;!ATTLIST&gt;</code>, and <code>&lt;!ENTITY&gt;</code> enclosed in angle brackets and exclamation marks. The <code>&lt;!ELEMENT&gt;</code> declaration defines an element's name and content model. The content model specifies what the element can contain: <code>(#PCDATA)</code> means the element contains only text; <code>(child1, child2, child3)</code> means the element contains a sequence of child elements; <code>(#PCDATA | child1)*</code> means the element can contain a mix of text and child elements in any order and quantity.</p>
+
+  <p>The quantifiers in content models are borrowed from regular expression notation and are critical to understand: <code>*</code> means zero or more occurrences, <code>+</code> means one or more occurrences, <code>?</code> means zero or one occurrence (optional), and no quantifier means exactly one occurrence. The pipe character <code>|</code> represents a choice (either-or), while the comma <code>,</code> represents a sequence (and-then).</p>
+
+  <h4>Complete DTD Example — Employee Database</h4>
+  <p>The following is a complete, exam-ready example that demonstrates a DTD defining an employee database, followed by a valid XML document that conforms to it.</p>
+
+  <div class="code-block" data-lang="DTD">
+<span class="cm">&lt;!-- External DTD file: employees.dtd --&gt;</span>
+<span class="kw">&lt;!ELEMENT</span> <span class="tag">company</span> (<span class="tag">employee</span>+)<span class="kw">&gt;</span>
+<span class="kw">&lt;!ELEMENT</span> <span class="tag">employee</span> (<span class="tag">name</span>, <span class="tag">department</span>, <span class="tag">designation</span>, <span class="tag">salary</span>)<span class="kw">&gt;</span>
+<span class="kw">&lt;!ELEMENT</span> <span class="tag">name</span>        (<span class="val">#PCDATA</span>)<span class="kw">&gt;</span>
+<span class="kw">&lt;!ELEMENT</span> <span class="tag">department</span>  (<span class="val">#PCDATA</span>)<span class="kw">&gt;</span>
+<span class="kw">&lt;!ELEMENT</span> <span class="tag">designation</span>(<span class="val">#PCDATA</span>)<span class="kw">&gt;</span>
+<span class="kw">&lt;!ELEMENT</span> <span class="tag">salary</span>      (<span class="val">#PCDATA</span>)<span class="kw">&gt;</span>
+
+<span class="kw">&lt;!ATTLIST</span> <span class="tag">employee</span>
+    <span class="attr">empId</span>   <span class="val">ID</span>        <span class="val">#REQUIRED</span>
+    <span class="attr">status</span>  (<span class="val">active</span>|<span class="val">inactive</span>) <span class="val">"active"</span>
+<span class="kw">&gt;</span>
+  </div>
+
+  <div class="code-block" data-lang="XML">
+<span class="kw">&lt;?xml</span> <span class="attr">version</span>=<span class="val">"1.0"</span> <span class="attr">encoding</span>=<span class="val">"UTF-8"</span><span class="kw">?&gt;</span>
+<span class="kw">&lt;!DOCTYPE</span> <span class="tag">company</span> <span class="attr">SYSTEM</span> <span class="val">"employees.dtd"</span><span class="kw">&gt;</span>
+
+<span class="tag">&lt;company&gt;</span>
+  <span class="tag">&lt;employee</span> <span class="attr">empId</span>=<span class="val">"E001"</span> <span class="attr">status</span>=<span class="val">"active"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Amit Sharma<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;department&gt;</span>Engineering<span class="tag">&lt;/department&gt;</span>
+    <span class="tag">&lt;designation&gt;</span>Senior Developer<span class="tag">&lt;/designation&gt;</span>
+    <span class="tag">&lt;salary&gt;</span>85000<span class="tag">&lt;/salary&gt;</span>
+  <span class="tag">&lt;/employee&gt;</span>
+
+  <span class="tag">&lt;employee</span> <span class="attr">empId</span>=<span class="val">"E002"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Priya Patel<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;department&gt;</span>Marketing<span class="tag">&lt;/department&gt;</span>
+    <span class="tag">&lt;designation&gt;</span>Team Lead<span class="tag">&lt;/designation&gt;</span>
+    <span class="tag">&lt;salary&gt;</span>72000<span class="tag">&lt;/salary&gt;</span>
+  <span class="tag">&lt;/employee&gt;</span>
+<span class="tag">&lt;/company&gt;</span>
+  </div>
+
+  <p>In this example, the DTD declares that a <code>&lt;company&gt;</code> element must contain one or more <code>&lt;employee&gt;</code> elements (the <code>+</code> quantifier). Each <code>&lt;employee&gt;</code> must contain exactly one <code>&lt;name&gt;</code>, followed by exactly one <code>&lt;department&gt;</code>, followed by exactly one <code>&lt;designation&gt;</code>, followed by exactly one <code>&lt;salary&gt;</code> — all containing parsed character data. The <code>&lt;!ATTLIST&gt;</code> declaration specifies that each <code>&lt;employee&gt;</code> must have an <code>empId</code> attribute of type <code>ID</code> (which must be unique across the entire document) and may optionally have a <code>status</code> attribute that is restricted to the values <code>active</code> or <code>inactive</code>, defaulting to <code>active</code> if omitted (as in the case of E002).</p>
+
+  <div class="callout exam-tip" data-label="Exam Tip">
+    When answering a DTD question, always write out the complete DTD with the <code>&lt;!ELEMENT&gt;</code> declarations first, then the <code>&lt;!ATTLIST&gt;</code> declarations, then show a sample XML document with the <code>&lt;!DOCTYPE&gt;</code> reference. Explain each declaration line by line. Professors reward systematic, annotated answers far more than bare code dumps.
+  </div>
+
+  <h4>Attribute Types in DTD</h4>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>Attribute Type</th><th>Description</th><th>Example</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>CDATA</code></td><td>Character data — any string value</td><td><code>&lt;!ATTLIST book title CDATA #REQUIRED&gt;</code></td></tr>
+      <tr><td><code>ID</code></td><td>A unique identifier for the element</td><td><code>&lt;!ATTLIST emp empId ID #REQUIRED&gt;</code></td></tr>
+      <tr><td><code>IDREF</code></td><td>References another element's ID</td><td><code>&lt;!ATTLIST order custId IDREF #REQUIRED&gt;</code></td></tr>
+      <tr><td><code>IDREFS</code></td><td>Space-separated list of ID references</td><td><code>&lt;!ATTLIST team members IDREFS #REQUIRED&gt;</code></td></tr>
+      <tr><td><code>Enumerated</code></td><td>Restricted to a fixed list of values</td><td><code>(red|green|blue)</code></td></tr>
+      <tr><td><code>NMTOKEN</code></td><td>A valid XML name token</td><td><code>&lt;!ATTLIST x code NMTOKEN #IMPLIED&gt;</code></td></tr>
+    </tbody>
+  </table>
+
+  <h4>Default Values in DTD Attributes</h4>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>Default Declaration</th><th>Meaning</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>#REQUIRED</code></td><td>The attribute must be provided; there is no default</td></tr>
+      <tr><td><code>#IMPLIED</code></td><td>The attribute is optional; no default value</td></tr>
+      <tr><td><code>#FIXED "value"</code></td><td>The attribute must always have this exact value if present</td></tr>
+      <tr><td><code>"default-value"</code></td><td>If omitted, the parser uses this default value</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ====== 1.5 XML Schema ====== -->
+<div class="subsection" id="xml-schema">
+  <h3>1.5 XML Schema (XSD)</h3>
+
+  <p>While DTDs served the XML community well in the early years, they have significant limitations that became increasingly apparent as XML was adopted for more complex data modeling tasks. DTDs have their own syntax that is not XML — you cannot use an XML parser to parse a DTD. DTDs cannot define data types — every element's content is either text (<code>#PCDATA</code>), child elements, or a mix. There is no way in a DTD to specify that a <code>&lt;salary&gt;</code> element must contain a positive integer, or that a <code>&lt;date&gt;</code> element must be in YYYY-MM-DD format. DTDs also cannot define namespaces, cannot impose occurrence constraints more precisely than the cardinality operators, and offer very limited inheritance mechanisms.</p>
+
+  <p>XML Schema (formally XML Schema Definition, XSD) was developed by the W3C to address these limitations, with the first version published in 2001. XML Schema is itself written in XML, which means you can use standard XML tools to create, read, transform, and validate schemas. It supports a rich type system with primitive types (string, boolean, decimal, float, double, duration, dateTime, time, date, gYearMonth, gYear, gMonthDay, gDay, gMonth, hexBinary, base64Binary, anyURI, QName, NOTATION), derived types (integer, positiveInteger, negativeInteger, nonPositiveInteger, nonNegativeInteger, long, int, short, byte, unsignedLong, unsignedInt, unsignedShort, unsignedByte, and many more), and the ability to define custom complex types through composition and restriction.</p>
+
+  <p>An XML Schema defines elements using <code>&lt;xs:element&gt;</code>, attributes using <code>&lt;xs:attribute&gt;</code>, complex types using <code>&lt;xs:complexType&gt;</code>, and simple types using <code>&lt;xs:simpleType&gt;</code>. The <code>xs:</code> prefix is a namespace prefix conventionally mapped to the namespace URI <code>http://www.w3.org/2001/XMLSchema</code>. A complex type is one that can contain child elements or attributes (or both); a simple type is one that can only contain text content (with possible restrictions). XML Schema allows you to define facets — restrictions on simple types — such as <code>minInclusive</code>, <code>maxInclusive</code>, <code>pattern</code> (using regular expressions), <code>length</code>, <code>minLength</code>, <code>maxLength</code>, <code>enumeration</code>, and <code>fractionDigits</code>. This gives XML Schema a level of data validation precision that DTDs simply cannot match.</p>
+
+  <h4>DTD vs XML Schema — Comparison</h4>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>Feature</th><th>DTD</th><th>XML Schema (XSD)</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Syntax</td><td>Own special syntax (not XML)</td><td>Written in XML itself</td></tr>
+      <tr><td>Data Types</td><td>No data type support</td><td>Rich built-in type system</td></tr>
+      <tr><td>Namespace Support</td><td>Not supported</td><td>Fully supported</td></tr>
+      <tr><td>Content Model</td><td>Regular expressions for elements</td><td>More flexible, supports ordering and grouping</td></tr>
+      <tr><td>Attribute Constraints</td><td>Limited (CDATA, ID, IDREF, enumerations)</td><td>Full facet-based constraints</td></tr>
+      <tr><td>Occurrence Constraints</td><td>*, +, ?, or implicit exactly-one</td><td>Numeric minOccurs and maxOccurs</td></tr>
+      <tr><td>Inheritance</td><td>Not supported</td><td>Type extension and restriction</td></tr>
+      <tr><td>Readability</td><td>Concise but cryptic</td><td>Verbose but self-documenting</td></tr>
+      <tr><td>Parser Requirement</td><td>Requires DTD-aware parser</td><td>Any XML parser can read it</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ====== 1.6 Namespaces ====== -->
+<div class="subsection" id="xml-namespace">
+  <h3>1.6 XML Namespaces</h3>
+
+  <p>A namespace in XML solves a very practical problem: name collisions. Imagine two different XML vocabularies — one for a library and one for a shipping company — that both happen to use an element called <code>&lt;address&gt;</code>. If you combine documents from both vocabularies into a single XML document (a common requirement in enterprise integration), the parser cannot distinguish between a library address and a shipping address based on the element name alone. Namespaces solve this by qualifying element and attribute names with a URI, creating globally unique names without requiring the URI itself to be resolvable to any resource.</p>
+
+  <p>A namespace is declared using the <code>xmlns</code> attribute, typically at the root element: <code>xmlns:lib="http://example.com/library"</code>. This binds the prefix <code>lib</code> to the namespace URI <code>http://example.com/library</code>. Elements within that namespace are then written as <code>&lt;lib:address&gt;</code>, <code>&lt;lib:book&gt;</code>, etc. A default namespace (<code>xmlns="http://example.com/shipping"</code>, without a prefix) applies to all unprefixed elements within its scope. The namespace URI does not need to point to an actual web page — it is simply a unique identifier string. However, by convention, organizations use URLs they own as namespace URIs to guarantee global uniqueness.</p>
+
+  <div class="code-block" data-lang="XML">
+<span class="kw">&lt;?xml</span> <span class="attr">version</span>=<span class="val">"1.0"</span><span class="kw">?&gt;</span>
+<span class="tag">&lt;root</span>
+  <span class="attr">xmlns:lib</span>=<span class="val">"http://example.com/library"</span>
+  <span class="attr">xmlns:ship</span>=<span class="val">"http://example.com/shipping"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;lib:book&gt;</span>
+    <span class="tag">&lt;lib:title&gt;</span>Data Structures<span class="tag">&lt;/lib:title&gt;</span>
+    <span class="tag">&lt;lib:address&gt;</span>Shelf A3, Row 2<span class="tag">&lt;/lib:address&gt;</span>
+  <span class="tag">&lt;/lib:book&gt;</span>
+
+  <span class="tag">&lt;ship:package&gt;</span>
+    <span class="tag">&lt;ship:weight&gt;</span>2.5kg<span class="tag">&lt;/ship:weight&gt;</span>
+    <span class="tag">&lt;ship:address&gt;</span>42 MG Road, Mumbai<span class="tag">&lt;/ship:address&gt;</span>
+  <span class="tag">&lt;/ship:package&gt;</span>
+
+<span class="tag">&lt;/root&gt;</span>
+  </div>
+
+  <div class="callout" data-label="Key Insight">
+    The namespace URI is an identifier, not a locator. The parser does not fetch content from that URL. It uses the string as a unique namespace name. Two elements with the same local name but different namespace URIs are considered entirely different elements.
+  </div>
+</div>
+
+<!-- ====== 1.7 CSS with XML ====== -->
+<div class="subsection" id="xml-css">
+  <h3>1.7 Styling XML with CSS</h3>
+
+  <p>While XML is designed for data structure, not presentation, there are situations where you want to display an XML document visually — in a browser, for example. Since XML elements have no inherent visual meaning (unlike HTML's <code>&lt;h1&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;table&gt;</code>), the browser cannot render them without styling instructions. CSS can be applied to XML documents using a processing instruction that links to a stylesheet. The browser then applies CSS rules to the XML elements, rendering them as visual content. This technique is occasionally useful for quick data visualization and is a legitimate exam question.</p>
+
+  <p>To apply CSS to an XML document, you add the processing instruction <code>&lt;?xml-stylesheet type="text/css" href="style.css"?&gt;</code> immediately after the XML declaration. In the CSS file, you select XML elements by their tag name (just as you would select HTML elements) and assign display properties. Since XML elements have no default display behavior, you must explicitly set the <code>display</code> property — typically to <code>block</code> or <code>inline</code> — for the elements to appear at all.</p>
+
+  <div class="code-block" data-lang="CSS">
+<span class="cm">/* style.css — applied to an XML document */</span>
+<span class="tag">book</span>   { <span class="attr">display</span>: <span class="val">block</span>; <span class="attr">margin-bottom</span>: <span class="val">20px</span>; <span class="attr">padding</span>: <span class="val">15px</span>; <span class="attr">border</span>: <span class="val">1px solid #ccc</span>; }
+<span class="tag">title</span>  { <span class="attr">display</span>: <span class="val">block</span>; <span class="attr">font-size</span>: <span class="val">1.5em</span>; <span class="attr">font-weight</span>: <span class="val">bold</span>; <span class="attr">color</span>: <span class="val">#8b2635</span>; }
+<span class="tag">author</span> { <span class="attr">display</span>: <span class="val">block</span>; <span class="attr">font-style</span>: <span class="val">italic</span>; <span class="attr">color</span>: <span class="val">#2d5a3d</span>; }
+<span class="tag">year</span>   { <span class="attr">display</span>: <span class="val">inline</span>; <span class="attr">color</span>: <span class="val">#7a6e63</span>; }
+  </div>
+</div>
+
+<!-- ====== 1.8 XML vs JSON ====== -->
+<div class="subsection" id="xml-vs-json">
+  <h3>1.8 XML vs JSON — The Great Debate</h3>
+
+  <p>This comparison is a perennial favourite of university examiners, and for good reason: it tests whether a student understands the fundamental design philosophies of both formats rather than merely memorizing their syntax. JSON (JavaScript Object Notation) was formalized by Douglas Crockford in the early 2000s and rose to dominance in web development alongside Ajax and REST APIs. Its design philosophy is diametrically opposed to XML's: where XML is verbose and self-describing, JSON is terse and assumes the consumer already understands the data structure. Where XML supports comments, processing instructions, attributes, namespaces, and schema validation natively, JSON offers none of these — but it parses directly into native data structures in JavaScript (and most modern programming languages), making it extraordinarily efficient for programmatic data exchange.</p>
+
+  <p>JSON's syntax is a subset of JavaScript's object literal notation: objects are delimited by curly braces, arrays by square brackets, strings by double quotes, numbers are unquoted, and the primitive values are <code>true</code>, <code>false</code>, and <code>null</code>. The same bookstore data that we represented in XML earlier looks like this in JSON:</p>
+
+  <div class="code-block" data-lang="JSON">
+{
+  <span class="str">"bookstore"</span>: [
+    {
+      <span class="str">"title"</span>: <span class="str">"XML Primer"</span>,
+      <span class="str">"author"</span>: <span class="str">"Jane Doe"</span>,
+      <span class="str">"year"</span>: <span class="num">2023</span>
+    },
+    {
+      <span class="str">"title"</span>: <span class="str">"Data Web"</span>,
+      <span class="str">"author"</span>: <span class="str">"John Smith"</span>,
+      <span class="str">"year"</span>: <span class="num">2024</span>
+    }
+  ]
+}
+  </div>
+
+  <p>The differences are immediately visible. JSON is roughly half the size of the equivalent XML. It requires no closing tags, no root element (though wrapping data in an object provides one), no DTD or schema, and parses directly into a JavaScript object with <code>JSON.parse()</code>. For web APIs that transfer structured data between a server and a browser-based client, JSON has become the de facto standard. However, XML retains significant advantages in scenarios requiring document markup (JSON has no concept of mixed content — text interleaved with child elements), schema validation (JSON Schema exists but is far less mature and widely adopted than XSD), namespace-qualified names, and human-authored documents with rich structural semantics. The question of which is "better for storing unstructured databases" is something of a trick question — neither format is ideal for truly unstructured data, but JSON's flexibility with nested objects and arrays makes it more forgiving for semi-structured data that does not conform to a rigid schema.</p>
+
+  <table class="comparison-table">
+    <thead>
+      <tr><th>Criterion</th><th>XML</th><th>JSON</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>Syntax Verbosity</td><td>High (opening + closing tags)</td><td>Low (key-value pairs)</td></tr>
+      <tr><td>Human Readability</td><td>Good, especially for documents</td><td>Good, especially for data</td></tr>
+      <tr><td>Data Types</td><td>All text (type info via Schema)</td><td>String, number, boolean, null, object, array</td></tr>
+      <tr><td>Schema Support</td><td>DTD, XML Schema (XSD), RELAX NG</td><td>JSON Schema (less mature)</td></tr>
+      <tr><td>Comments</td><td>Supported</td><td>Not supported</td></tr>
+      <tr><td>Namespaces</td><td>Supported</td><td>Not supported</td></tr>
+      <tr><td>Mixed Content</td><td>Supported (text + child elements)</td><td>Not natively supported</td></tr>
+      <tr><td>Parsing in JavaScript</td><td>Requires DOMParser</td><td>Native <code>JSON.parse()</code></td></tr>
+      <tr><td>Data Size</td><td>Larger</td><td>Smaller (typically 30-50% less)</td></tr>
+      <tr><td>Primary Use</td><td>Document markup, enterprise configs, SOAP</td><td>Web APIs, data interchange, config files</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<hr class="rule-double">
+
+<!-- ============================================================ -->
+<!-- PART II: AJAX -->
+<!-- ============================================================ -->
+<div class="section-header" id="part-ajax">
+  <h2>II. Asynchronous JavaScript and XML</h2>
+</div>
+<div class="section-tag">Part Two &bull; The Technology That Transformed the Web</div>
+
+<div class="pullquote">
+  &ldquo;Ajax isn't a technology. It's really several technologies, each flourishing in its own right, coming together in a powerful new way.&rdquo;
+  <cite>Jesse James Garrett, February 2005</cite>
+</div>
+
+<!-- ====== 2.1 The Problem ====== -->
+<div class="subsection" id="ajax-intro">
+  <h3>2.1 The Problem Ajax Solved: The Old Web's Greatest Frustration</h3>
+
+  <p>To appreciate what Ajax accomplished, you must first understand what the web was like before it. In the early 2000s, every interaction between a user and a web server required a complete page reload. When you clicked a button, submitted a form, selected a dropdown option, or performed any action that needed data from the server, the browser discarded the current page entirely, sent a new HTTP request, received a completely new HTML document from the server, and rendered it from scratch. The screen would flash white. The scroll position would reset. Any unsaved form data might be lost. The entire page — including parts that had not changed at all, like the header, navigation, sidebar, and footer — would be re-downloaded and re-rendered. For a simple action like adding an item to a shopping cart, the user experienced a jarring, full-page refresh that felt slow, disruptive, and primitive. Imagine reading a book where, every time you wanted to check a footnote, someone snatched the entire book from your hands and handed you a new copy with the footnote already visible — but with your bookmark lost and the page turned back to the beginning.</p>
+
+  <p>The fundamental problem was architectural. The HTTP request-response model was synchronous and monolithic: one request, one full-page response. There was no standard mechanism for the browser to send a request to the server, receive a small piece of data, and update just the relevant portion of the current page without reloading the rest. Some workarounds existed — hidden iframes, the <code>&lt;script&gt;</code> tag hack (later formalized as JSONP), and Flash-based communication — but they were kludges with significant limitations around security, cross-browser compatibility, and developer ergonomics.</p>
+
+  <p>In February 2005, Jesse James Garrett of Adaptive Path published a seminal essay titled "Ajax: A New Approach to Web Applications," giving a name to a set of techniques that had been quietly emerging. The core insight was that the <code>XMLHttpRequest</code> object, first introduced by Microsoft in Internet Explorer 5 as an ActiveX control in 1999, could be used to make HTTP requests from JavaScript running in the browser — asynchronously, in the background, without triggering a page reload. Garrett coined the term "Ajax" (Asynchronous JavaScript and XML) to describe the pattern of using this object to communicate with the server behind the scenes, exchanging small amounts of data, and using JavaScript to selectively update the DOM (Document Object Model) of the current page. The result was web applications that felt instantaneous, responsive, and desktop-like. Google Maps, launched the same month, became the poster child: as you dragged the map, new tile images were fetched in the background without the page ever reloading. This was transformative.</p>
+
+  <div class="callout" data-label="Historical Note">
+    Despite its name, Ajax does not require XML or any specific data format. The "X" in Ajax refers to the XMLHttpRequest object and to XML as the original data interchange format, but modern Ajax implementations overwhelmingly use JSON instead. The name stuck; the specifics evolved. When someone says "Ajax" today, they mean the asynchronous request pattern regardless of the data format involved.
+  </div>
+</div>
+
+<!-- ====== AJAX FLOW DIAGRAM ====== -->
+<div class="diagram-container">
+  <svg width="720" height="420" viewBox="0 0 720 420" xmlns="http://www.w3.org/2000/svg">
+    <rect width="720" height="420" fill="#faf6f0" rx="6"/>
+    <rect x="1" y="1" width="718" height="418" fill="none" stroke="#d4ccc2" stroke-width="1" rx="6"/>
+    
+    <text x="360" y="28" text-anchor="middle" font-family="Playfair Display, serif" font-size="15" font-weight="700" fill="#8b2635">Ajax Request–Response Cycle</text>
+    
+    <!-- User -->
+    <rect x="30" y="60" width="100" height="50" rx="6" fill="#2d5a3d"/>
+    <text x="80" y="82" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#fff">User</text>
+    <text x="80" y="96" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#8bc774">Action</text>
+    
+    <!-- Browser -->
+    <rect x="200" y="60" width="140" height="50" rx="6" fill="#8b2635"/>
+    <text x="270" y="82" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#fff">Browser</text>
+    <text x="270" y="96" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#e8c547">JavaScript Engine</text>
+    
+    <!-- XMLHttpRequest -->
+    <rect x="200" y="170" width="140" height="50" rx="6" fill="#c4956a"/>
+    <text x="270" y="192" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#fff">XMLHttpRequest</text>
+    <text x="270" y="206" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#2c2420">Async HTTP Client</text>
+    
+    <!-- Server -->
+    <rect x="520" y="170" width="140" height="50" rx="6" fill="#8b2635"/>
+    <text x="590" y="192" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#fff">Server</text>
+    <text x="590" y="206" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#e8c547">PHP / Node / Java</text>
+    
+    <!-- DOM -->
+    <rect x="200" y="310" width="140" height="50" rx="6" fill="#2d5a3d"/>
+    <text x="270" y="332" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#fff">DOM</text>
+    <text x="270" y="346" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#8bc774">Page Updated</text>
+    
+    <!-- Step 1: User → Browser -->
+    <line x1="130" y1="85" x2="195" y2="85" stroke="#2d5a3d" stroke-width="2" marker-end="url(#arrowG)"/>
+    <text x="163" y="78" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#7a6e63">① Click</text>
+    
+    <!-- Step 2: Browser → XHR -->
+    <line x1="270" y1="110" x2="270" y2="165" stroke="#c4956a" stroke-width="2" marker-end="url(#arrowG)"/>
+    <text x="290" y="142" font-family="DM Mono, monospace" font-size="7" fill="#7a6e63">② Create XHR</text>
+    
+    <!-- Step 3: XHR → Server -->
+    <line x1="340" y1="190" x2="515" y2="190" stroke="#8b2635" stroke-width="2" marker-end="url(#arrowR)"/>
+    <text x="428" y="183" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#7a6e63">③ Async HTTP Request</text>
+    <text x="428" y="197" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#7a6e63">(GET / POST)</text>
+    
+    <!-- Step 4: Server → XHR -->
+    <line x1="515" y1="215" x2="340" y2="215" stroke="#2d5a3d" stroke-width="2" marker-end="url(#arrowG)"/>
+    <text x="428" y="210" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#7a6e63">④ Response (XML/JSON/HTML/Text)</text>
+    
+    <!-- Step 5: XHR callback → DOM -->
+    <line x1="270" y1="220" x2="270" y2="305" stroke="#2d5a3d" stroke-width="2" marker-end="url(#arrowG)"/>
+    <text x="290" y="265" font-family="DM Mono, monospace" font-size="7" fill="#7a6e63">⑤ onreadystatechange</text>
+    <text x="290" y="277" font-family="DM Mono, monospace" font-size="7" fill="#7a6e63">callback fires</text>
+    
+    <!-- Step 6: DOM update (no page reload) -->
+    <rect x="440" y="300" width="230" height="70" rx="4" fill="none" stroke="#c4956a" stroke-width="1" stroke-dasharray="4 3"/>
+    <text x="555" y="322" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#c4956a">⑥ Partial Page Update</text>
+    <text x="555" y="338" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#7a6e63">Only the target section</text>
+    <text x="555" y="352" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#7a6e63">of the page is modified</text>
+    <text x="555" y="366" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#a07a52">No full page reload!</text>
+    
+    <!-- "Page stays loaded" annotation -->
+    <rect x="40" y="280" width="120" height="40" rx="3" fill="none" stroke="#2d5a3d" stroke-width="1" stroke-dasharray="3 2"/>
+    <text x="100" y="298" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#2d5a3d">Page remains</text>
+    <text x="100" y="310" text-anchor="middle" font-family="DM Mono, monospace" font-size="7" fill="#2d5a3d">loaded throughout</text>
+    
+    <!-- Arrow markers -->
+    <defs>
+      <marker id="arrowG" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#2d5a3d"/>
+      </marker>
+      <marker id="arrowR" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#8b2635"/>
+      </marker>
+    </defs>
+    
+    <text x="360" y="405" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#7a6e63">Fig. 2 — The Ajax cycle: user action triggers a background HTTP request; the response updates the DOM without reloading the page</text>
+  </svg>
+  <p class="diagram-caption">Figure 2 — Ajax Asynchronous Request-Response Lifecycle</p>
+</div>
+
+<!-- ====== 2.2 How Ajax Works ====== -->
+<div class="subsection" id="ajax-how">
+  <h3>2.2 How Ajax Works — A Step-by-Step Walkthrough</h3>
+
+  <p>The Ajax pattern involves a carefully orchestrated sequence of steps that, once understood, reveals the elegant simplicity underlying what initially appears to be a complex mechanism. The process begins with a user action — a button click, a form submission, a keystroke, a timer firing, or any other event that the JavaScript code is listening for. When this event occurs, instead of allowing the default browser behaviour (which would submit a form or follow a link, triggering a full page reload), the JavaScript event handler calls <code>event.preventDefault()</code> and initiates the Ajax sequence.</p>
+
+  <p>The first step in the sequence is creating an XMLHttpRequest object. In modern browsers, this is done with <code>var xhr = new XMLHttpRequest();</code>. In very old versions of Internet Explorer (IE5 and IE6), the object was created as an ActiveX control: <code>new ActiveXObject("Microsoft.XMLHTTP")</code>. Libraries like jQuery abstracted away this cross-browser inconsistency, which was one of the primary reasons jQuery became so popular. The XMLHttpRequest object is the engine of Ajax — it is a built-in browser API that can construct and send HTTP requests, receive responses, and report on the progress and completion of the operation, all without requiring a page reload.</p>
+
+  <p>The second step is configuring the request. The <code>open()</code> method is called with three parameters: the HTTP method (typically <code>"GET"</code> or <code>"POST"</code>), the URL to which the request should be sent, and a boolean indicating whether the request should be asynchronous (<code>true</code>) or synchronous (<code>false</code>). Modern best practices demand that this third parameter always be <code>true</code> — synchronous requests on the main thread freeze the browser's UI and are deprecated in many browsers. The <code>open()</code> method does not send the request; it merely configures it.</p>
+
+  <p>The third step is registering a callback function to handle the response. The <code>onreadystatechange</code> property is assigned a function that the browser will call each time the request's state changes. The request passes through five states (0 through 4): <code>UNSENT</code> (0), <code>OPENED</code> (1), <code>HEADERS_RECEIVED</code> (2), <code>LOADING</code> (3), and <code>DONE</code> (4). The callback function typically checks whether <code>readyState === 4</code> (the request is complete) and whether <code>status === 200</code> (the server returned a successful HTTP response). If both conditions are met, the response data is available via <code>responseText</code> (for text/JSON responses) or <code>responseXML</code> (for XML responses).</p>
+
+  <p>The fourth step is sending the request. The <code>send()</code> method transmits the configured request to the server. For GET requests, <code>send()</code> is called with no argument or <code>null</code>. For POST requests, the data to be sent in the request body is passed as the argument — for example, <code>xhr.send("name=Amit&age=25")</code> for form-encoded data, or <code>xhr.send(JSON.stringify({name: "Amit", age: 25}))</code> for JSON data. After <code>send()</code> is called, the browser dispatches the request asynchronously. The JavaScript engine continues executing subsequent code without waiting for the response — this is the "asynchronous" in Ajax. When the response eventually arrives from the server, the browser fires the <code>readystatechange</code> event, the callback function executes, and the page is updated.</p>
+
+  <div class="sidenote">
+    <strong>Terminology Note</strong>
+    "Asynchronous" means the JavaScript engine does not block while waiting for the server to respond. It fires off the request and moves on. The callback is invoked later, when the response arrives, via the event loop — the same mechanism that handles mouse clicks and keyboard events.
+  </div>
+</div>
+
+<!-- ====== 2.3 XMLHttpRequest ====== -->
+<div class="subsection" id="ajax-xhr">
+  <h3>2.3 XMLHttpRequest — Methods and Properties</h3>
+
+  <p>The XMLHttpRequest object is a built-in browser API that provides the complete interface for making HTTP requests from JavaScript. Understanding its methods and properties in detail is essential for answering both theoretical questions (such as "Explain how XMLHttpRequest works in AJAX") and practical questions (such as writing code that makes an Ajax call). Below is a comprehensive reference, organized by category, with explanations of when and why each is used.</p>
+
+  <h4>Methods</h4>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>Method</th><th>Syntax</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>open()</code></td>
+        <td><code>open(method, url, async, user, password)</code></td>
+        <td>Initializes a request. The <code>method</code> is "GET", "POST", "PUT", "DELETE", etc. The <code>url</code> is the server endpoint. The <code>async</code> flag (default true) determines synchronous vs asynchronous. Optional <code>user</code> and <code>password</code> parameters provide HTTP authentication credentials.</td>
+      </tr>
+      <tr>
+        <td><code>send()</code></td>
+        <td><code>send(body)</code></td>
+        <td>Sends the request. The optional <code>body</code> parameter contains data to send with POST/PUT requests. For GET requests, pass <code>null</code> or omit the argument.</td>
+      </tr>
+      <tr>
+        <td><code>setRequestHeader()</code></td>
+        <td><code>setRequestHeader(name, value)</code></td>
+        <td>Sets an HTTP request header. Must be called after <code>open()</code> and before <code>send()</code>. For JSON payloads: <code>xhr.setRequestHeader("Content-Type", "application/json")</code>.</td>
+      </tr>
+      <tr>
+        <td><code>abort()</code></td>
+        <td><code>abort()</code></td>
+        <td>Cancels an ongoing request. Useful when the user navigates away or when a timeout occurs.</td>
+      </tr>
+      <tr>
+        <td><code>getResponseHeader()</code></td>
+        <td><code>getResponseHeader(name)</code></td>
+        <td>Returns the value of a specific response header (e.g., "Content-Type").</td>
+      </tr>
+      <tr>
+        <td><code>getAllResponseHeaders()</code></td>
+        <td><code>getAllResponseHeaders()</code></td>
+        <td>Returns all response headers as a single string, useful for debugging.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Properties</h4>
+  <table class="comparison-table">
+    <thead>
+      <tr><th>Property</th><th>Description</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>readyState</code></td>
+        <td>Returns the current state of the request: 0 (UNSENT), 1 (OPENED), 2 (HEADERS_RECEIVED), 3 (LOADING), 4 (DONE). The callback function typically checks for state 4.</td>
+      </tr>
+      <tr>
+        <td><code>status</code></td>
+        <td>Returns the HTTP status code of the response (e.g., 200 for OK, 404 for Not Found, 500 for Internal Server Error).</td>
+      </tr>
+      <tr>
+        <td><code>statusText</code></td>
+        <td>Returns the HTTP status message (e.g., "OK", "Not Found").</td>
+      </tr>
+      <tr>
+        <td><code>responseText</code></td>
+        <td>Returns the response body as a string. Used for text, HTML, JSON, and XML responses (when parsed as text).</td>
+      </tr>
+      <tr>
+        <td><code>responseXML</code></td>
+        <td>Returns the response body as a parsed XML Document object. Only available when the server responds with an XML content type. Returns <code>null</code> if the response cannot be parsed as XML.</td>
+      </tr>
+      <tr>
+        <td><code>onreadystatechange</code></td>
+        <td>A callback function invoked each time <code>readyState</code> changes. This is where response handling logic is placed.</td>
+      </tr>
+      <tr>
+        <td><code>timeout</code></td>
+        <td>Sets or returns the time in milliseconds before the request is automatically aborted. Default is 0 (no timeout).</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h4>Ready States Explained</h4>
+  <div class="flow-steps">
+    <div class="flow-step">
+      <div class="flow-step-num">0</div>
+      <div class="flow-step-content">
+        <h4>UNSENT</h4>
+        <p>The XMLHttpRequest object has been created but <code>open()</code> has not been called yet. The request exists only as an empty vessel with no configuration.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">1</div>
+      <div class="flow-step-content">
+        <h4>OPENED</h4>
+        <p><code>open()</code> has been called, configuring the method, URL, and async flag. The request is configured but has not been dispatched. Headers can still be set at this stage using <code>setRequestHeader()</code>.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">2</div>
+      <div class="flow-step-content">
+        <h4>HEADERS_RECEIVED</h4>
+        <p><code>send()</code> has been called and the server has responded with HTTP headers. The <code>status</code> and <code>statusText</code> properties are now available, but the full response body may not yet be downloaded.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">3</div>
+      <div class="flow-step-content">
+        <h4>LOADING</h4>
+        <p>The response body is being downloaded. For large responses, this state may persist for a while. <code>responseText</code> contains partial data.</p>
+      </div>
+    </div>
+    <div class="flow-step">
+      <div class="flow-step-num">4</div>
+      <div class="flow-step-content">
+        <h4>DONE</h4>
+        <p>The operation is complete. <code>responseText</code> (or <code>responseXML</code>) contains the full response. This is the state where application logic typically executes — parsing the response, updating the DOM, displaying results to the user.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== 2.4 JavaScript Code ====== -->
+<div class="subsection" id="ajax-code">
+  <h3>2.4 JavaScript Implementation — Complete Ajax Example</h3>
+
+  <p>The following example demonstrates a complete Ajax workflow: an HTML page with a button that, when clicked, sends a GET request to a server-side PHP script, receives the response, and inserts it into a designated <code>&lt;div&gt;</code> element — all without reloading the page. This is the kind of programmatic question that appears frequently on exams.</p>
+
+  <h4>Client-Side: HTML + JavaScript</h4>
+  <div class="code-block" data-lang="HTML+JS">
+<span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="val">"en"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="val">"UTF-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Ajax Demo<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>Ajax Example<span class="tag">&lt;/h1&gt;</span>
+  <span class="tag">&lt;button</span> <span class="attr">id</span>=<span class="val">"loadBtn"</span><span class="tag">&gt;</span>Load Content<span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="val">"result"</span><span class="tag">&gt;&lt;/div&gt;</span>
+
+  <span class="tag">&lt;script&gt;</span>
+  <span class="cm">// Step 1: Attach event listener to the button</span>
+  <span class="kw">document</span>.<span class="fn">getElementById</span>(<span class="str">"loadBtn"</span>).<span class="fn">addEventListener</span>(<span class="str">"click"</span>, <span class="kw">function</span>() {
+
+    <span class="cm">// Step 2: Create XMLHttpRequest object</span>
+    <span class="kw">var</span> xhr = <span class="kw">new</span> <span class="fn">XMLHttpRequest</span>();
+
+    <span class="cm">// Step 3: Configure the request</span>
+    xhr.<span class="fn">open</span>(<span class="str">"GET"</span>, <span class="str">"server.php"</span>, <span class="kw">true</span>);
+
+    <span class="cm">// Step 4: Register the callback</span>
+    xhr.<span class="attr">onreadystatechange</span> = <span class="kw">function</span>() {
+      <span class="kw">if</span> (xhr.<span class="attr">readyState</span> === <span class="num">4</span> && xhr.<span class="attr">status</span> === <span class="num">200</span>) {
+        <span class="cm">// Step 5: Handle the response</span>
+        <span class="kw">document</span>.<span class="fn">getElementById</span>(<span class="str">"result"</span>).<span class="attr">innerHTML</span> = xhr.<span class="attr">responseText</span>;
+      }
+    };
+
+    <span class="cm">// Step 6: Send the request</span>
+    xhr.<span class="fn">send</span>(<span class="kw">null</span>);
+  });
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span>
+  </div>
+
+  <h4>Server-Side: PHP (server.php)</h4>
+  <div class="code-block" data-lang="PHP">
+<span class="kw">&lt;?php</span>
+  <span class="cm">// server.php — processes the request and returns a response</span>
+  <span class="kw">echo</span> <span class="str">"&lt;h2&gt;Hello from the Server!&lt;/h2&gt;"</span>;
+  <span class="kw">echo</span> <span class="str">"&lt;p&gt;This content was loaded via Ajax at: "</span>
+       . <span class="fn">date</span>(<span class="str">"H:i:s"</span>) . <span class="str">"&lt;/p&gt;"</span>;
+<span class="kw">?&gt;</span>
+  </div>
+
+  <p>Let us trace through this code carefully, because understanding the execution flow is more valuable than memorizing the syntax. When the user clicks the "Load Content" button, the anonymous callback function executes. It creates a new <code>XMLHttpRequest</code> object — think of this as constructing an envelope for an HTTP request. The <code>open()</code> method writes the address on the envelope: the method is GET, the destination is <code>server.php</code>, and the request is asynchronous (<code>true</code>). The <code>onreadystatechange</code> assignment places a listener — like a secretary who will check the mail slot every time a new piece of mail arrives. Then <code>send()</code> drops the envelope in the post box. The JavaScript engine does not wait at the post box; it continues executing (though in this case, there is nothing left to execute in the outer scope). Sometime later — milliseconds, usually — the server processes the request and sends back a response. The browser detects the incoming response, updates <code>readyState</code>, and fires the callback. The callback checks: is the request complete (readyState 4)? Was it successful (status 200)? If both, the response text is injected into the <code>result</code> div's innerHTML. The page updates seamlessly. The user sees new content without ever seeing a page reload.</p>
+
+  <div class="answer-framework">
+    <h4>How to Structure a 10-Mark Answer on Ajax Implementation</h4>
+    <ol>
+      <li><strong>Define Ajax</strong> — one paragraph on what it is and why it matters (2 marks)</li>
+      <li><strong>Explain the XMLHttpRequest object</strong> — what it is, its role (2 marks)</li>
+      <li><strong>Describe the workflow</strong> — create, open, set callback, send (2 marks)</li>
+      <li><strong>Write the code</strong> — complete working example with comments (2 marks)</li>
+      <li><strong>Explain the code line by line</strong> — annotate each step (1 mark)</li>
+      <li><strong>Mention the server-side component</strong> — what processes the request (1 mark)</li>
+    </ol>
+  </div>
+</div>
+
+<!-- ====== 2.5 Server-Side ====== -->
+<div class="subsection" id="ajax-server">
+  <h3>2.5 Implementing Ajax with a Server Scripting Language</h3>
+
+  <p>An Ajax request is only half the story — it sends data to a server endpoint, and that endpoint must be a program capable of receiving the request, processing it, and returning an appropriate response. On the server side, the Ajax request arrives as a perfectly normal HTTP request; the server cannot distinguish an Ajax request from any other HTTP request unless additional information is provided (such as the <code>X-Requested-With: XMLHttpRequest</code> header, which jQuery and some other libraries add automatically). The server-side script can be written in any language that can handle HTTP requests: PHP, Node.js, Python (Flask/Django), Java (Servlets), Ruby, ASP.NET, or any other server-side technology. The server processes the request — querying a database, performing calculations, reading files, whatever the application logic requires — and writes the response directly to the HTTP response stream using <code>echo</code> (PHP), <code>res.send()</code> (Node.js/Express), <code>print()</code> (Python), or equivalent.</p>
+
+  <p>For a POST request, the client sends data in the request body. On the PHP server, this data is available via the <code>$_POST</code> superglobal array (for form-encoded data) or via <code>file_get_contents("php://input")</code> (for raw JSON data). The server script must set the appropriate Content-Type response header — for example, <code>header("Content-Type: application/json")</code> when returning JSON, or <code>header("Content-Type: text/html")</code> when returning HTML fragments. The client-side callback then receives this response via <code>responseText</code> and processes it accordingly.</p>
+
+  <h4>POST Request Example</h4>
+  <div class="code-block" data-lang="JavaScript">
+<span class="kw">var</span> xhr = <span class="kw">new</span> <span class="fn">XMLHttpRequest</span>();
+xhr.<span class="fn">open</span>(<span class="str">"POST"</span>, <span class="str">"saveStudent.php"</span>, <span class="kw">true</span>);
+xhr.<span class="fn">setRequestHeader</span>(<span class="str">"Content-Type"</span>, <span class="str">"application/x-www-form-urlencoded"</span>);
+
+xhr.<span class="attr">onreadystatechange</span> = <span class="kw">function</span>() {
+  <span class="kw">if</span> (xhr.<span class="attr">readyState</span> === <span class="num">4</span> && xhr.<span class="attr">status</span> === <span class="num">200</span>) {
+    <span class="kw">var</span> response = xhr.<span class="attr">responseText</span>;
+    <span class="kw">document</span>.<span class="fn">getElementById</span>(<span class="str">"status"</span>).<span class="attr">innerHTML</span> = response;
+  }
+};
+
+<span class="kw">var</span> data = <span class="str">"name=Amit+Sharma&rollNo=101&branch=CSE"</span>;
+xhr.<span class="fn">send</span>(data);
+  </div>
+</div>
+
+<!-- ====== 2.6 Handling the Response ====== -->
+<div class="subsection" id="ajax-response">
+  <h3>2.6 Handling the Response — Processing Data Intelligently</h3>
+
+  <p>Once the Ajax request completes successfully, the response data must be processed and integrated into the current page. The approach depends on the response format. If the server returns an HTML fragment (a common approach for replacing a section of the page), the client simply sets the <code>innerHTML</code> of the target element. This is the simplest approach but couples the presentation logic to the server — the server must generate HTML that the client injects directly, which means the server needs to know about the page's structure.</p>
+
+  <p>A more architecturally sound approach is for the server to return raw data (in JSON or XML format) and for the client-side JavaScript to construct the HTML from that data. This separation of concerns — data on the server, presentation on the client — is a fundamental principle of modern web architecture and underpins frameworks like React, Vue, and Angular. When the server returns JSON, the client parses it with <code>JSON.parse(xhr.responseText)</code> and then iterates over the data to build DOM elements dynamically. When the server returns XML, the client can either use <code>xhr.responseXML</code> (which provides a parsed DOM Document) or parse the text manually. The XML DOM methods (<code>getElementsByTagName</code>, <code>getAttribute</code>, <code>childNodes</code>, <code>nodeValue</code>) are used to extract data from the parsed XML document.</p>
+
+  <div class="callout exam-tip" data-label="Exam Tip">
+    <strong>Error handling matters in exams.</strong> Always show that you know how to handle errors: check for <code>readyState === 4</code> but <code>status !== 200</code> (server errors), handle network failures with <code>xhr.onerror</code>, and consider timeout scenarios with <code>xhr.ontimeout</code>. Demonstrating error awareness earns significant marks in viva and long-answer questions.
+  </div>
+</div>
+
+<!-- ====== 2.7 Ajax with JSON ====== -->
+<div class="subsection" id="ajax-json">
+  <h3>2.7 Ajax with JSON</h3>
+
+  <p>The combination of Ajax and JSON has become the dominant pattern for client-server data exchange on the modern web, effectively replacing the Ajax-with-XML approach that gave Ajax its name. The pattern is straightforward: the client sends an HTTP request to the server, the server constructs a JSON object (typically by querying a database and serializing the results), the server sets the <code>Content-Type</code> header to <code>application/json</code>, and the client parses the JSON response into a native JavaScript object. The parsed object can then be used to update the DOM, populate forms, render tables, draw charts, or perform any other client-side operation.</p>
+
+  <div class="code-block" data-lang="JavaScript">
+<span class="kw">var</span> xhr = <span class="kw">new</span> <span class="fn">XMLHttpRequest</span>();
+xhr.<span class="fn">open</span>(<span class="str">"GET"</span>, <span class="str">"api/students.json"</span>, <span class="kw">true</span>);
+
+xhr.<span class="attr">onreadystatechange</span> = <span class="kw">function</span>() {
+  <span class="kw">if</span> (xhr.<span class="attr">readyState</span> === <span class="num">4</span> && xhr.<span class="attr">status</span> === <span class="num">200</span>) {
+    <span class="cm">// Parse the JSON string into a JavaScript object</span>
+    <span class="kw">var</span> students = <span class="fn">JSON</span>.<span class="fn">parse</span>(xhr.<span class="attr">responseText</span>);
+
+    <span class="cm">// Build HTML table from the data</span>
+    <span class="kw">var</span> html = <span class="str">"&lt;table border='1'&gt;"</span>;
+    html += <span class="str">"&lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Roll&lt;/th&gt;&lt;th&gt;Branch&lt;/th&gt;&lt;/tr&gt;"</span>;
+
+    <span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">0</span>; i &lt; students.<span class="attr">length</span>; i++) {
+      html += <span class="str">"&lt;tr&gt;"</span>;
+      html += <span class="str">"&lt;td&gt;"</span> + students[i].<span class="attr">name</span> + <span class="str">"&lt;/td&gt;"</span>;
+      html += <span class="str">"&lt;td&gt;"</span> + students[i].<span class="attr">rollNo</span> + <span class="str">"&lt;/td&gt;"</span>;
+      html += <span class="str">"&lt;td&gt;"</span> + students[i].<span class="attr">branch</span> + <span class="str">"&lt;/td&gt;"</span>;
+      html += <span class="str">"&lt;/tr&gt;"</span>;
+    }
+    html += <span class="str">"&lt;/table&gt;"</span>;
+
+    <span class="kw">document</span>.<span class="fn">getElementById</span>(<span class="str">"output"</span>).<span class="attr">innerHTML</span> = html;
+  }
+};
+
+xhr.<span class="fn">send</span>(<span class="kw">null</span>);
+  </div>
+
+  <p>The JSON file (<code>students.json</code>) would look like this:</p>
+  <div class="code-block" data-lang="JSON">
+[
+  { <span class="str">"name"</span>: <span class="str">"Amit Sharma"</span>,  <span class="str">"rollNo"</span>: <span class="str">"101"</span>, <span class="str">"branch"</span>: <span class="str">"CSE"</span> },
+  { <span class="str">"name"</span>: <span class="str">"Priya Patel"</span>,  <span class="str">"rollNo"</span>: <span class="str">"102"</span>, <span class="str">"branch"</span>: <span class="str">"ECE"</span> },
+  { <span class="str">"name"</span>: <span class="str">"Rohan Gupta"</span>,  <span class="str">"rollNo"</span>: <span class="str">"103"</span>, <span class="str">"branch"</span>: <span class="str">"IT"</span> }
+]
+  </div>
+</div>
+
+<hr class="rule-double">
+
+<!-- ============================================================ -->
+<!-- PART III: JQUERY -->
+<!-- ============================================================ -->
+<div class="section-header" id="part-jquery">
+  <h2>III. jQuery</h2>
+</div>
+<div class="section-tag">Part Three &bull; Write Less, Do More</div>
+
+<div class="pullquote">
+  &ldquo;jQuery is a fast, small, and feature-rich JavaScript library. It makes things like HTML document traversal and manipulation, event handling, animation, and Ajax much simpler with an easy-to-use API that works across a multitude of browsers.&rdquo;
+  <cite>jQuery Foundation</cite>
+</div>
+
+<!-- ====== 3.1 Introduction ====== -->
+<div class="subsection" id="jq-intro">
+  <h3>3.1 Introduction to jQuery — Why It Was Needed</h3>
+
+  <p>The story of jQuery begins with the pain of cross-browser JavaScript development in the mid-2000s. At that time, the "browser wars" had left behind a landscape of deeply incompatible implementations. Internet Explorer had its own event model (<code>attachEvent</code>) while Netscape/Mozilla/Opera used the W3C standard (<code>addEventListener</code>). Internet Explorer used <code>window.event</code> for event objects while standards-compliant browsers passed the event as a parameter to the handler. IE's event model had <code>srcElement</code> where others had <code>target</code>. IE had <code>innerText</code> where others had <code>textContent</code>. Selecting elements by class name was natively supported in some browsers but not others. The <code>XMLHttpRequest</code> object required an ActiveX control in older IE versions. Every piece of seemingly simple JavaScript required conditional branching, feature detection, and sometimes entirely different code paths for different browsers. Writing cross-browser JavaScript was tedious, error-prone, and soul-crushing.</p>
+
+  <p>John Resig, a young developer at Mozilla, created jQuery in January 2006 with a radical proposition: what if a single library could abstract away all of these browser differences, providing a clean, consistent API that worked identically everywhere? jQuery's core value proposition was cross-browser compatibility, achieved through a unified interface that masked the underlying inconsistencies. But jQuery offered much more than compatibility. Its chainable syntax, powerful selector engine (inspired by CSS selectors), elegant event handling, built-in animation effects, and streamlined Ajax methods collectively reduced the amount of code needed to accomplish common tasks by an order of magnitude. Where vanilla JavaScript might require ten lines to find an element, attach a click handler, and animate its opacity, jQuery could accomplish the same in a single, readable line.</p>
+
+  <p>At its peak popularity (roughly 2010–2016), jQuery was used on over 70% of the top 10 million websites. It was, for many developers, synonymous with JavaScript itself. While its dominance has waned somewhat in the era of modern frameworks (React, Vue, Angular) and improved native browser APIs (querySelector, fetch, classList), jQuery remains widely used, deeply embedded in legacy systems, and an excellent teaching tool for understanding DOM manipulation and event-driven programming. For Indian university exams, jQuery remains firmly in the syllabus and is tested regularly.</p>
+</div>
+
+<!-- ====== 3.2 Installation ====== -->
+<div class="subsection" id="jq-install">
+  <h3>3.2 Installing and Using the jQuery Library</h3>
+
+  <p>There are two primary methods for including jQuery in a web project, and a common exam question asks you to explain both and recommend the better option. The first method is to download the jQuery library file (<code>jquery.min.js</code>) from the official jQuery website, store it on your own server, and reference it using a <code>&lt;script&gt;</code> tag with a local path. The second method is to use a Content Delivery Network (CDN) — a geographically distributed network of servers that host popular libraries — by linking to a CDN URL such as <code>https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js</code>.</p>
+
+  <h4>Method 1: Local Installation</h4>
+  <div class="code-block" data-lang="HTML">
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="val">"jquery-3.7.1.min.js"</span><span class="tag">&gt;&lt;/script&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+  </div>
+
+  <h4>Method 2: CDN (Recommended)</h4>
+  <div class="code-block" data-lang="HTML">
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;script</span> <span class="attr">src</span>=<span class="val">"https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"</span><span class="tag">&gt;&lt;/script&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+  </div>
+
+  <p>The CDN method is generally preferred for several reasons. First, it leverages browser caching: if the user has visited another site that loads jQuery from the same CDN, the file will already be cached in their browser, eliminating the download entirely and making your page load faster. Second, CDN servers are distributed globally, so the file is served from a geographically nearby location, reducing latency. Third, you do not need to manage library updates — the CDN provider handles versioning. Fourth, it reduces the load on your own server. The local installation method is preferred only when you need to guarantee availability regardless of internet connectivity (e.g., offline applications or intranet environments) or when you need to use a specific custom build of the library.</p>
+
+  <div class="callout exam-tip" data-label="Exam Tip">
+    When asked "which method is better and why," always state CDN is preferred and give at least three reasons (caching, performance, reduced server load). This earns full marks. Students who merely say "CDN is better" without explaining why leave marks on the table.
+  </div>
+</div>
+
+<!-- ====== 3.3 Syntax ====== -->
+<div class="subsection" id="jq-syntax">
+  <h3>3.3 jQuery Syntax — The Foundation of Everything</h3>
+
+  <p>The fundamental syntax of jQuery is built around the jQuery function, aliased as the dollar sign <code>$</code>. This function serves a dual purpose: when called with a string argument, it acts as a selector (finding DOM elements that match the CSS selector); when called with a function argument, it acts as a document-ready handler. The selector returns a jQuery object — a wrapper around one or more DOM elements that provides access to jQuery's entire library of methods. This object is sometimes called a "jQuery set" or "wrapped set." The beauty of this design is that every method you call on the jQuery object operates on all elements in the set simultaneously — you do not need to write loops. The following examples illustrate the basic patterns:</p>
+
+  <div class="code-block" data-lang="jQuery">
+<span class="cm">// Select by element tag name</span>
+<span class="fn">$</span>(<span class="str">"p"</span>).<span class="fn">hide</span>();            <span class="cm">// Hides ALL &lt;p&gt; elements</span>
+
+<span class="cm">// Select by ID</span>
+<span class="fn">$</span>(<span class="str">"#myDiv"</span>).<span class="fn">fadeIn</span>();       <span class="cm">// Fades in the element with id="myDiv"</span>
+
+<span class="cm">// Select by class name</span>
+<span class="fn">$</span>(<span class="str">".highlight"</span>).<span class="fn">css</span>(<span class="str">"color"</span>, <span class="str">"red"</span>);  <span class="cm">// Sets text color of all .highlight elements</span>
+
+<span class="cm">// Document ready — executes when DOM is fully loaded</span>
+<span class="fn">$</span>(<span class="kw">document</span>).<span class="fn">ready</span>(<span class="kw">function</span>() {
+  <span class="cm">// Your code here — safe to manipulate the DOM</span>
+  <span class="fn">$</span>(<span class="str">"#message"</span>).<span class="fn">text</span>(<span class="str">"Page loaded!"</span>);
+});
+
+<span class="cm">// Shorthand for document ready (preferred)</span>
+<span class="fn">$</span>(<span class="kw">function</span>() {
+  <span class="cm">// Equivalent to $(document).ready()</span>
+  <span class="fn">$</span>(<span class="str">"#message"</span>).<span class="fn">text</span>(<span class="str">"Page loaded!"</span>);
+});
+  </div>
+
+  <h4>The Document Ready Event — Why It Matters</h4>
+  <p>The <code>$(document).ready()</code> handler is one of the most important concepts in jQuery and one that students must understand not merely as syntax but as a solution to a real problem. When a browser loads an HTML page, it parses the document from top to bottom, building the DOM (Document Object Model) as it encounters each element. If your <code>&lt;script&gt;</code> tag is placed in the <code>&lt;head&gt;</code> (a common practice), your JavaScript executes before the browser has finished parsing the <code>&lt;body&gt;</code> — meaning that elements referenced by your code (like <code>$("#myButton")</code>) do not exist yet. Attempting to attach an event handler to a nonexistent element fails silently. The <code>$(document).ready()</code> handler solves this by deferring execution of your code until the entire DOM has been constructed and is ready for manipulation. This is analogous to the native JavaScript <code>window.onload</code> event, but with a crucial difference: <code>window.onload</code> waits for all resources (images, stylesheets, iframes) to finish loading, while <code>$(document).ready()</code> fires as soon as the DOM tree is complete, without waiting for external resources. This makes it faster and more responsive.</p>
+
+  <div class="callout" data-label="Critical Distinction">
+    <code>$(document).ready()</code> fires when the DOM is ready (elements exist). <code>$(window).load()</code> fires when all resources (including images) are loaded. For most jQuery code, you want the ready event, not the load event. In modern jQuery (3.x+), <code>$(function() { })</code> is the recommended shorthand.
+  </div>
+</div>
+
+<!-- ====== 3.4 Effects ====== -->
+<div class="subsection" id="jq-effects">
+  <h3>3.4 jQuery Effects and Animations</h3>
+
+  <p>jQuery provides a rich set of built-in methods for showing, hiding, fading, and sliding elements, all of which enhance user interaction by providing visual feedback for user actions. Rather than the jarring snap of an element appearing or disappearing, jQuery's effects create smooth, gradual transitions that feel natural and polished. Understanding these methods and how to combine them with event handlers is essential for both exam questions and practical development work.</p>
+
+  <h4>Hide, Show, and Toggle</h4>
+  <p>The <code>hide()</code> method sets the element's CSS <code>display</code> property to <code>none</code>, removing it from the visual flow. The <code>show()</code> method restores it. The <code>toggle()</code> method alternates between hidden and visible. All three accept optional duration parameters (<code>"slow"</code> = 600ms, <code>"fast"</code> = 200ms, or a number in milliseconds) that animate the transition — the element gradually shrinks and fades as it hides, and expands and appears as it shows.</p>
+
+  <h4>Fade Effects</h4>
+  <p><code>fadeIn()</code>, <code>fadeOut()</code>, <code>fadeTo()</code>, and <code>fadeToggle()</code> control the element's opacity. <code>fadeIn(duration)</code> transitions opacity from 0 to 1; <code>fadeOut(duration)</code> transitions from 1 to 0 (and then sets <code>display: none</code>). <code>fadeTo(duration, opacity)</code> transitions to a specific opacity value between 0 and 1, without hiding the element entirely.</p>
+
+  <h4>Slide Effects</h4>
+  <p><code>slideDown()</code>, <code>slideUp()</code>, and <code>slideToggle()</code> animate the element's height, creating an accordion-like reveal or conceal effect. <code>slideDown()</code> expands the element from zero height to its natural height; <code>slideUp()</code> collapses it. These are commonly used for dropdown menus, collapsible panels, and FAQ sections.</p>
+
+  <h4>Custom Animations with animate()</h4>
+  <p>The <code>animate()</code> method allows you to animate any numeric CSS property — <code>width</code>, <code>height</code>, <code>opacity</code>, <code>padding</code>, <code>margin</code>, <code>fontSize</code>, <code>left</code>, <code>top</code>, and so on. You pass a CSS properties object and a duration. The method transitions the element from its current state to the specified state over the given duration.</p>
+
+  <div class="code-block" data-lang="jQuery">
+<span class="cm">// Hide/Show on mouse enter/leave using element tag, class, and ID</span>
+
+<span class="cm">// By element tag — all paragraphs hide/show on hover</span>
+<span class="fn">$</span>(<span class="str">"p"</span>).<span class="fn">mouseenter</span>(<span class="kw">function</span>() {
+  <span class="fn">$</span>(<span class="kw">this</span>).<span class="fn">fadeOut</span>(<span class="num">300</span>);
+});
+<span class="fn">$</span>(<span class="str">"p"</span>).<span class="fn">mouseleave</span>(<span class="kw">function</span>() {
+  <span class="fn">$</span>(<span class="kw">this</span>).<span class="fn">fadeIn</span>(<span class="num">300</span>);
+});
+
+<span class="cm">// By class — elements with class="card" toggle on hover</span>
+<span class="fn">$</span>(<span class="str">".card"</span>).<span class="fn">hover</span>(
+  <span class="kw">function</span>() { <span class="fn">$</span>(<span class="kw">this</span>).<span class="fn">slideUp</span>(<span class="num">400</span>); },    <span class="cm">// mouse enter</span>
+  <span class="kw">function</span>() { <span class="fn">$</span>(<span class="kw">this</span>).<span class="fn">slideDown</span>(<span class="num">400</span>); }  <span class="cm">// mouse leave</span>
+);
+
+<span class="cm">// By ID — single element toggles visibility</span>
+<span class="fn">$</span>(<span class="str">"#panel"</span>).<span class="fn">mouseenter</span>(<span class="kw">function</span>() {
+  <span class="fn">$</span>(<span class="kw">this</span>).<span class="fn">hide</span>(<span class="str">"slow"</span>);
+});
+<span class="fn">$</span>(<span class="str">"#panel"</span>).<span class="fn">mouseleave</span>(<span class="kw">function</span>() {
+  <span class="fn">$</span>(<span class="kw">this</span>).<span class="fn">show</span>(<span class="str">"slow"</span>);
+});
+  </div>
+</div>
+
+<!-- ====== jQuery Selection DIAGRAM ====== -->
+<div class="diagram-container">
+  <svg width="680" height="300" viewBox="0 0 680 300" xmlns="http://www.w3.org/2000/svg">
+    <rect width="680" height="300" fill="#faf6f0" rx="6"/>
+    <rect x="1" y="1" width="678" height="298" fill="none" stroke="#d4ccc2" stroke-width="1" rx="6"/>
+    
+    <text x="340" y="28" text-anchor="middle" font-family="Playfair Display, serif" font-size="15" font-weight="700" fill="#8b2635">jQuery Selector Engine</text>
+    
+    <!-- $(selector) -->
+    <rect x="240" y="45" width="200" height="40" rx="6" fill="#8b2635"/>
+    <text x="340" y="70" text-anchor="middle" font-family="DM Mono, monospace" font-size="13" fill="#fff">$("selector")</text>
+    
+    <!-- Three branches -->
+    <line x1="300" y1="85" x2="110" y2="130" stroke="#c4956a" stroke-width="1.5"/>
+    <line x1="340" y1="85" x2="340" y2="130" stroke="#c4956a" stroke-width="1.5"/>
+    <line x1="380" y1="85" x2="570" y2="130" stroke="#c4956a" stroke-width="1.5"/>
+    
+    <!-- Tag selector -->
+    <rect x="30" y="130" width="160" height="40" rx="4" fill="#2d5a3d"/>
+    <text x="110" y="148" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#fff">$("p")</text>
+    <text x="110" y="162" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#8bc774">By Tag Name</text>
+    
+    <!-- Class selector -->
+    <rect x="260" y="130" width="160" height="40" rx="4" fill="#c4956a"/>
+    <text x="340" y="148" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#fff">$(".intro")</text>
+    <text x="340" y="162" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#2c2420">By Class Name</text>
+    
+    <!-- ID selector -->
+    <rect x="490" y="130" width="160" height="40" rx="4" fill="#8b2635"/>
+    <text x="570" y="148" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#fff">$("#main")</text>
+    <text x="570" y="162" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#e8c547">By ID</text>
+    
+    <!-- Results -->
+    <line x1="110" y1="170" x2="110" y2="210" stroke="#d4ccc2" stroke-width="1"/>
+    <line x1="340" y1="170" x2="340" y2="210" stroke="#d4ccc2" stroke-width="1"/>
+    <line x1="570" y1="170" x2="570" y2="210" stroke="#d4ccc2" stroke-width="1"/>
+    
+    <rect x="30" y="210" width="160" height="40" rx="3" fill="#e8e2d8" stroke="#d4ccc2"/>
+    <text x="110" y="228" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#4a4039">Returns ALL &lt;p&gt;</text>
+    <text x="110" y="242" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#7a6e63">elements (set)</text>
+    
+    <rect x="260" y="210" width="160" height="40" rx="3" fill="#e8e2d8" stroke="#d4ccc2"/>
+    <text x="340" y="228" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#4a4039">Returns .intro</text>
+    <text x="340" y="242" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#7a6e63">elements (set)</text>
+    
+    <rect x="490" y="210" width="160" height="40" rx="3" fill="#e8e2d8" stroke="#d4ccc2"/>
+    <text x="570" y="228" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#4a4039">Returns ONE element</text>
+    <text x="570" y="242" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#7a6e63">(unique ID match)</text>
+    
+    <!-- Arrow to jQuery Object -->
+    <line x1="340" y1="250" x2="340" y2="268" stroke="#8b2635" stroke-width="1.5" marker-end="url(#arrowR2)"/>
+    
+    <rect x="210" y="268" width="260" height="24" rx="3" fill="#f5e8ea" stroke="#8b2635" stroke-width="1"/>
+    <text x="340" y="284" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#8b2635">jQuery Object — chainable, manipulable</text>
+    
+    <defs>
+      <marker id="arrowR2" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+        <path d="M 0 0 L 8 4 L 0 8 Z" fill="#8b2635"/>
+      </marker>
+    </defs>
+  </svg>
+  <p class="diagram-caption">Figure 3 — jQuery's three primary selector types and their return values</p>
+</div>
+
+<!-- ====== 3.5 Ajax with jQuery ====== -->
+<div class="subsection" id="jq-ajax">
+  <h3>3.5 Ajax with jQuery — Simplified Asynchronous Requests</h3>
+
+  <p>One of jQuery's most significant contributions to web development was its abstraction of the XMLHttpRequest object into a clean, elegant, and vastly simpler API. Where making a basic Ajax call with vanilla JavaScript required creating an object, opening a connection, setting headers, registering a callback with readyState checking, and handling errors — a sequence of at least fifteen to twenty lines of boilerplate code — jQuery reduced the same operation to a single function call with a configuration object. The <code>$.ajax()</code> method is the most general-purpose of jQuery's Ajax methods, accepting an object with properties that specify the URL, HTTP method, data to send, expected response type, and callback functions for success and error scenarios.</p>
+
+  <div class="code-block" data-lang="jQuery">
+<span class="cm">// $.ajax() — the general-purpose jQuery Ajax method</span>
+<span class="fn">$</span>.<span class="fn">ajax</span>({
+  <span class="attr">url</span>: <span class="str">"api/students.json"</span>,
+  <span class="attr">type</span>: <span class="str">"GET"</span>,
+  <span class="attr">dataType</span>: <span class="str">"json"</span>,
+  <span class="attr">success</span>: <span class="kw">function</span>(data) {
+    <span class="cm">// 'data' is already parsed — jQuery handles JSON.parse()</span>
+    <span class="kw">var</span> output = <span class="str">""</span>;
+    <span class="fn">$</span>.<span class="fn">each</span>(data, <span class="kw">function</span>(index, student) {
+      output += <span class="str">"&lt;p&gt;"</span> + student.<span class="attr">name</span> + <span class="str">" — "</span> + student.<span class="attr">branch</span> + <span class="str">"&lt;/p&gt;"</span>;
+    });
+    <span class="fn">$</span>(<span class="str">"#output"</span>).<span class="fn">html</span>(output);
+  },
+  <span class="attr">error</span>: <span class="kw">function</span>(xhr, status, error) {
+    <span class="fn">$</span>(<span class="str">"#output"</span>).<span class="fn">html</span>(<span class="str">"&lt;p&gt;Error: "</span> + error + <span class="str">"&lt;/p&gt;"</span>);
+  }
+});
+  </div>
+
+  <p>Compare this to the vanilla JavaScript Ajax code we wrote earlier. The jQuery version is shorter, more readable, and automatically handles several concerns that required manual implementation: jQuery automatically sets the <code>XMLHttpRequest</code> header, automatically parses JSON when <code>dataType: "json"</code> is specified, provides clear <code>success</code> and <code>error</code> callbacks instead of requiring manual readyState checking, and normalizes cross-browser differences in the underlying XHR implementation. The <code>$.ajax()</code> method also supports a wealth of additional options including <code>data</code> (for sending request parameters), <code>contentType</code>, <code>beforeSend</code> (for showing a loading indicator), <code>complete</code> (for cleanup that runs regardless of success or failure), <code>timeout</code>, and <code>async</code>.</p>
+
+  <h4>Shorthand Methods</h4>
+  <p>jQuery provides several shorthand methods for common Ajax patterns:</p>
+  <div class="code-block" data-lang="jQuery">
+<span class="cm">// $.get() — shorthand for $.ajax with GET method</span>
+<span class="fn">$</span>.<span class="fn">get</span>(<span class="str">"server.php"</span>, { <span class="attr">id</span>: <span class="num">101</span> }, <span class="kw">function</span>(response) {
+  <span class="fn">$</span>(<span class="str">"#result"</span>).<span class="fn">html</span>(response);
+});
+
+<span class="cm">// $.post() — shorthand for $.ajax with POST method</span>
+<span class="fn">$</span>.<span class="fn">post</span>(<span class="str">"save.php"</span>, { <span class="attr">name</span>: <span class="str">"Amit"</span>, <span class="attr">roll</span>: <span class="str">"101"</span> }, <span class="kw">function</span>(response) {
+  <span class="fn">alert</span>(response);
+});
+
+<span class="cm">// $.getJSON() — GET request that automatically parses JSON response</span>
+<span class="fn">$</span>.<span class="fn">getJSON</span>(<span class="str">"data.json"</span>, <span class="kw">function</span>(data) {
+  <span class="fn">console</span>.<span class="fn">log</span>(data);
+});
+  </div>
+</div>
+
+<!-- ====== 3.6 Load, getJSON, get ====== -->
+<div class="subsection" id="jq-load">
+  <h3>3.6 The load() Method, $.get(), and $.getJSON()</h3>
+
+  <h4>The load() Method</h4>
+  <p>The <code>load()</code> method is the simplest Ajax method in jQuery. It loads HTML content from a server and inserts it directly into the selected element. It is designed for the common case of replacing the content of a container element with HTML returned from the server. The syntax is <code>$(selector).load(url, data, callback)</code>. The <code>url</code> is the server endpoint. The optional <code>data</code> parameter is an object of key-value pairs to send as request parameters (if provided, the request is automatically made as POST; otherwise, GET). The optional <code>callback</code> function is invoked when the request completes, receiving three parameters: the response text, the status string, and the XMLHttpRequest object.</p>
+
+  <div class="code-block" data-lang="jQuery">
+<span class="cm">// Load content from server.php into #result div</span>
+<span class="fn">$</span>(<span class="str">"#result"</span>).<span class="fn">load</span>(<span class="str">"server.php"</span>);
+
+<span class="cm">// Load with data and callback</span>
+<span class="fn">$</span>(<span class="str">"#result"</span>).<span class="fn">load</span>(<span class="str">"server.php"</span>, { <span class="attr">userId</span>: <span class="num">42</span> }, <span class="kw">function</span>(response, status, xhr) {
+  <span class="kw">if</span> (status === <span class="str">"error"</span>) {
+    <span class="fn">$</span>(<span class="kw">this</span>).<span class="fn">html</span>(<span class="str">"Sorry, an error occurred."</span>);
+  }
+});
+
+<span class="cm">// Load only a specific fragment from the response</span>
+<span class="cm">// (loads only the content inside #articles from the response page)</span>
+<span class="fn">$</span>(<span class="str">"#result"</span>).<span class="fn">load</span>(<span class="str">"blog.html #articles"</span>);
+  </div>
+
+  <p>The fragment loading feature deserves special attention because it is both powerful and commonly tested. By appending a space and a CSS selector to the URL, you instruct jQuery to fetch the entire page but only insert the portion matching that selector. This allows you to reuse full pages as data sources, loading specific sections into different parts of your interface.</p>
+
+  <h4>$.get() Method</h4>
+  <p>The <code>$.get()</code> method performs a GET request and passes the response to a callback function. Unlike <code>load()</code>, it does not automatically insert the response into an element — it gives you the raw response to process as you see fit. The syntax is <code>$.get(url, data, callback, dataType)</code>, where <code>dataType</code> specifies the expected response format (<code>"json"</code>, <code>"xml"</code>, <code>"html"</code>, <code>"text"</code>, <code>"script"</code>).</p>
+
+  <h4>$.getJSON() Method</h4>
+  <p>The <code>$.getJSON()</code> method is a specialized shorthand for <code>$.get()</code> with the <code>dataType</code> set to <code>"json"</code>. It performs a GET request, expects a JSON response, automatically parses it, and passes the resulting JavaScript object to the callback. This is the most convenient way to consume a JSON API from jQuery. The callback receives a fully parsed object — no manual <code>JSON.parse()</code> required.</p>
+
+  <div class="code-block" data-lang="jQuery">
+<span class="cm">// Complete example: fetch JSON and build a table</span>
+<span class="fn">$</span>(<span class="kw">document</span>).<span class="fn">ready</span>(<span class="kw">function</span>() {
+  <span class="fn">$</span>(<span class="str">"#loadBtn"</span>).<span class="fn">click</span>(<span class="kw">function</span>() {
+    <span class="fn">$</span>.<span class="fn">getJSON</span>(<span class="str">"json_demo.json"</span>, <span class="kw">function</span>(data) {
+      <span class="kw">var</span> html = <span class="str">"&lt;table&gt;&lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Age&lt;/th&gt;&lt;th&gt;City&lt;/th&gt;&lt;/tr&gt;"</span>;
+      <span class="fn">$</span>.<span class="fn">each</span>(data, <span class="kw">function</span>(i, item) {
+        html += <span class="str">"&lt;tr&gt;&lt;td&gt;"</span> + item.<span class="attr">name</span> + <span class="str">"&lt;/td&gt;"</span>;
+        html += <span class="str">"&lt;td&gt;"</span> + item.<span class="attr">age</span> + <span class="str">"&lt;/td&gt;"</span>;
+        html += <span class="str">"&lt;td&gt;"</span> + item.<span class="attr">city</span> + <span class="str">"&lt;/td&gt;&lt;/tr&gt;"</span>;
+      });
+      html += <span class="str">"&lt;/table&gt;"</span>;
+      <span class="fn">$</span>(<span class="str">"#output"</span>).<span class="fn">html</span>(html);
+    });
+  });
+});
+  </div>
+
+  <p>The JSON file <code>json_demo.json</code>:</p>
+  <div class="code-block" data-lang="JSON">
+[
+  { <span class="str">"name"</span>: <span class="str">"Amit Sharma"</span>,  <span class="str">"age"</span>: <span class="num">22</span>, <span class="str">"city"</span>: <span class="str">"Delhi"</span> },
+  { <span class="str">"name"</span>: <span class="str">"Priya Patel"</span>,  <span class="str">"age"</span>: <span class="num">21</span>, <span class="str">"city"</span>: <span class="str">"Mumbai"</span> },
+  { <span class="str">"name"</span>: <span class="str">"Rohan Gupta"</span>,  <span class="str">"age"</span>: <span class="num">23</span>, <span class="str">"city"</span>: <span class="str">"Bangalore"</span> },
+  { <span class="str">"name"</span>: <span class="str">"Sneha Reddy"</span>,  <span class="str">"age"</span>: <span class="num">20</span>, <span class="str">"city"</span>: <span class="str">"Hyderabad"</span> }
+]
+  </div>
+</div>
+
+<!-- ====== 3.7 jQuery vs JavaScript ====== -->
+<div class="subsection" id="jq-vs-js">
+  <h3>3.7 jQuery vs Vanilla JavaScript</h3>
+
+  <table class="comparison-table">
+    <thead>
+      <tr><th>Feature</th><th>Vanilla JavaScript</th><th>jQuery</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>DOM Selection</td><td><code>document.getElementById()</code>, <code>querySelector()</code></td><td><code>$("#id")</code>, <code>$(".class")</code>, <code>$("tag")</code></td></tr>
+      <tr><td>Event Handling</td><td><code>addEventListener()</code></td><td><code>.click()</code>, <code>.on()</code>, <code>.hover()</code></td></tr>
+      <tr><td>Ajax</td><td>~20 lines with XMLHttpRequest or <code>fetch()</code></td><td><code>$.ajax()</code>, <code>$.get()</code>, <code>$.getJSON()</code></td></tr>
+      <tr><td>Animation</td><td>CSS transitions or Web Animations API</td><td><code>.fadeIn()</code>, <code>.slideUp()</code>, <code>.animate()</code></td></tr>
+      <tr><td>DOM Manipulation</td><td><code>createElement()</code>, <code>appendChild()</code></td><td><code>.html()</code>, <code>.append()</code>, <code>.text()</code></td></tr>
+      <tr><td>Cross-Browser</td><td>Must handle manually</td><td>Handled by library</td></tr>
+      <tr><td>File Size</td><td>None (native)</td><td>~87KB (minified, v3.7)</td></tr>
+      <tr><td>Learning Curve</td><td>Steeper</td><td>Gentler, more intuitive</td></tr>
+      <tr><td>Performance</td><td>Faster (no abstraction overhead)</td><td>Slight overhead from abstraction</td></tr>
+      <tr><td>Modern Relevance</td><td>Standard, universally supported</td><td>Legacy, but still widespread</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout" data-label="Balanced Perspective">
+    The question "JavaScript vs jQuery" is not quite like comparing two competing technologies at the same layer. jQuery is a library written in JavaScript — it cannot do anything that JavaScript cannot do. It simply does many things more concisely and more portably. The modern trend is toward using vanilla JavaScript (since ES6/ES2015 has significantly improved native APIs) and frameworks like React or Vue for complex applications. But jQuery remains invaluable for rapid prototyping, legacy maintenance, and situations where a full framework is overkill.
+  </div>
+</div>
+
+<hr class="rule-double">
+
+<!-- ============================================================ -->
+<!-- PART IV: EXAM PREPARATION CENTRE -->
+<!-- ============================================================ -->
+<div class="section-header" id="part-exam">
+  <h2>IV. Exam Preparation Centre</h2>
+</div>
+<div class="section-tag">Rapid Revision &bull; Likely Questions &bull; Answer Frameworks</div>
+
+<!-- Quick Revision Summary -->
+<div class="revision-card">
+  <h3>Unit 3 — Rapid Revision Summary</h3>
+  <ul>
+    <li><strong>XML</strong> — Extensible Markup Language. Meta-language for defining structured data. Tags are user-defined. Strict syntax rules (well-formedness). Validated by DTD or XML Schema.</li>
+    <li><strong>Well-formed XML</strong> — Single root, all tags closed, proper nesting, case-sensitive, attributes quoted, special characters escaped.</li>
+    <li><strong>PCDATA</strong> — Parsed Character Data (parser interprets markup). <strong>CDATA</strong> — Character Data (parser ignores markup, literal content).</li>
+    <li><strong>DTD</strong> — Defines element structure and attributes. Uses <code>&lt;!ELEMENT&gt;</code> and <code>&lt;!ATTLIST&gt;</code>. Syntax is NOT XML. No data types.</li>
+    <li><strong>XML Schema (XSD)</strong> — Written in XML. Rich data types. Namespace support. Facet-based constraints. Replaces DTD for complex applications.</li>
+    <li><strong>Namespaces</strong> — Prevent element name collisions. Declared with <code>xmlns:prefix="URI"</code>. URI is identifier, not locator.</li>
+    <li><strong>Ajax</strong> — Asynchronous JavaScript and XML. Background HTTP requests without page reload. Uses XMLHttpRequest object.</li>
+    <li><strong>XMLHttpRequest</strong> — <code>open()</code> configures, <code>send()</code> dispatches, <code>onreadystatechange</code> handles response. Check readyState===4 && status===200.</li>
+    <li><strong>Ajax with JSON</strong> — <code>JSON.parse(xhr.responseText)</code> to parse. Modern standard over XML.</li>
+    <li><strong>jQuery</strong> — JavaScript library. Cross-browser DOM manipulation. <code>$()</code> selector function. <code>$(document).ready()</code> for safe DOM access.</li>
+    <li><strong>jQuery Ajax</strong> — <code>$.ajax()</code>, <code>$.get()</code>, <code>$.getJSON()</code>, <code>.load()</code>. Automatic JSON parsing, error handling, cross-browser support.</li>
+    <li><strong>jQuery effects</strong> — <code>hide()/show()</code>, <code>fadeIn()/fadeOut()</code>, <code>slideDown()/slideUp()</code>, <code>animate()</code>. All accept duration parameter.</li>
+  </ul>
+</div>
+
+<!-- Most Commonly Confused Points -->
+<div class="callout warning" data-label="Commonly Confused Points">
+  <ol>
+    <li><strong>PCDATA vs CDATA</strong> — PCDATA is PARSED (markup recognized, must escape special chars). CDATA is NOT PARSED (markup ignored, chars are literal). This is the single most confused distinction in XML questions.</li>
+    <li><strong>DTD vs XML Schema</strong> — DTD is older, has its own syntax, no data types. XSD is modern, written in XML, has rich types. Students often conflate them.</li>
+    <li><strong>XML vs HTML</strong> — HTML has predefined tags for presentation. XML has user-defined tags for data. HTML is forgiving; XML is strict.</li>
+    <li><strong>Ajax is NOT a programming language</strong> — it is a technique/pattern using existing technologies (JavaScript, XMLHttpRequest, DOM, CSS).</li>
+    <li><strong><code>readyState</code> vs <code>status</code></strong> — readyState tracks the request's lifecycle (0-4). status is the HTTP response code (200, 404, 500). Both must be checked.</li>
+    <li><strong><code>$(document).ready()</code> vs <code>window.onload</code></strong> — ready() fires when DOM is built. onload fires when ALL resources (images etc.) load. ready() is faster.</li>
+  </ol>
+</div>
+
+<!-- Exam Questions -->
+<div class="exam-questions">
+  <ol>
+    <li><strong>[10M]</strong> Define XML and list the rules to be followed by XML documents. What is the XML Namespace? How to use CSS inside an XML file?</li>
+    <li><strong>[10M]</strong> How is XML used in web applications? Write a sample XML file that stores a list of books (title, author, year) and create a simple DTD or Schema to validate it.</li>
+    <li><strong>[10M]</strong> What is XML and DTD? Explain the relationship between XML and DTD with some suitable examples.</li>
+    <li><strong>[10M]</strong> Define DTD. What is a PCDATA and CDATA section in XML? With the help of XML, create a database of employees and validate it with the help of DTD.</li>
+    <li><strong>[10M]</strong> What is the difference between XML and JSON? Which one is better for storing unstructured databases?</li>
+    <li><strong>[10M]</strong> What is Ajax? Write a small program to make an Ajax call to a server and insert the response web page.</li>
+    <li><strong>[10M]</strong> Explain Ajax with an example. How does XMLHttpRequest work in AJAX?</li>
+    <li><strong>[10M]</strong> What is the difference between JavaScript and jQuery? What are the two ways of using jQuery on your website and which one is better and why?</li>
+    <li><strong>[10M]</strong> Write the syntax of jQuery and explain how you can hide and unhide an element (using element tag, class, and ID) when the mouse enters or leaves that element. Explain why you should use the document ready event.</li>
+    <li><strong>[10M]</strong> Explain the concept of AJAX/jQuery. Write a program to fetch the content of a JSON file named json_demo.json with the help of AJAX and visualize the database on the client side.</li>
+    <li><strong>[5M]</strong> Describe the purpose of jQuery effects and how they can enhance user interaction on web pages.</li>
+    <li><strong>[5M]</strong> What is Ajax? Explain with diagram.</li>
+  </ol>
+</div>
+
+<!-- ====== Answer Frameworks ====== -->
+<details>
+  <summary>Answer Framework: "Define XML and list the rules" (10 marks)</summary>
+  <div class="details-body">
+    <div class="answer-framework">
+      <h4>Recommended Structure</h4>
+      <ol>
+        <li><strong>Opening definition</strong> (2 marks) — XML is the Extensible Markup Language, a W3C recommendation for structured data representation. State its origin from SGML, its 1998 publication, and its purpose.</li>
+        <li><strong>Uses of XML</strong> (2 marks) — Data exchange, configuration files, web services (SOAP), document storage, RSS feeds, SVG graphics.</li>
+        <li><strong>Rules of well-formed XML</strong> (4 marks) — List and explain all seven rules: single root, closing tags, proper nesting, case sensitivity, quoted attributes, XML declaration, special character escaping. Write an example showing correct and incorrect usage.</li>
+        <li><strong>XML Namespace explanation</strong> (1 mark) — Briefly define namespace, show xmlns declaration, explain purpose (preventing name collisions).</li>
+        <li><strong>CSS in XML</strong> (1 mark) — Show the <code>&lt;?xml-stylesheet?></code> processing instruction, explain that XML elements need explicit <code>display</code> property, give a short CSS example.</li>
+      </ol>
+    </div>
+  </div>
+</details>
+
+<details>
+  <summary>Answer Framework: "Ajax with example" (10 marks)</summary>
+  <div class="details-body">
+    <div class="answer-framework">
+      <h4>Recommended Structure</h4>
+      <ol>
+        <li><strong>Define Ajax</strong> (2 marks) — Full form, purpose (asynchronous data exchange without page reload), Jesse James Garrett 2005.</li>
+        <li><strong>Explain the problem Ajax solves</strong> (2 marks) — Pre-Ajax web required full page reloads. Describe the user experience problem.</li>
+        <li><strong>Draw and explain the Ajax diagram</strong> (2 marks) — User → Browser → XHR → Server → Response → DOM Update. Label each step.</li>
+        <li><strong>Write complete code</strong> (3 marks) — HTML with button and div, JavaScript with XHR creation, open(), onreadystatechange, send(). Include server.php.</li>
+        <li><strong>Explain XMLHttpRequest</strong> (1 mark) — readyState states, status checking, responseText vs responseXML.</li>
+      </ol>
+    </div>
+  </div>
+</details>
+
+<details>
+  <summary>Answer Framework: "jQuery hide/unhide with selectors and document ready" (10 marks)</summary>
+  <div class="details-body">
+    <div class="answer-framework">
+      <h4>Recommended Structure</h4>
+      <ol>
+        <li><strong>jQuery syntax</strong> (1 mark) — <code>$(selector).action()</code>. Explain the $ function, selectors, chaining.</li>
+        <li><strong>Document ready event</strong> (2 marks) — Define it. Explain WHY it's needed (DOM not loaded when script runs). Show syntax. Contrast with window.onload.</li>
+        <li><strong>Hide/show by element tag</strong> (2 marks) — <code>$("p").mouseenter()</code> / <code>mouseleave()</code> with <code>.hide()</code> / <code>.show()</code>. Write full code.</li>
+        <li><strong>Hide/show by class</strong> (2 marks) — <code>$(".card").hover()</code> with <code>.slideUp()</code> / <code>.slideDown()</code>. Write full code.</li>
+        <li><strong>Hide/show by ID</strong> (2 marks) — <code>$("#panel").click()</code> with <code>.toggle()</code>. Write full code.</li>
+        <li><strong>jQuery effects summary</strong> (1 mark) — List hide/show, fadeIn/fadeOut, slideDown/slideUp, animate. Explain duration parameter.</li>
+      </ol>
+    </div>
+  </div>
+</details>
+
+<details>
+  <summary>Answer Framework: "Ajax with jQuery — fetch JSON and visualize" (10 marks)</summary>
+  <div class="details-body">
+    <div class="answer-framework">
+      <h4>Recommended Structure</h4>
+      <ol>
+        <li><strong>Define Ajax/jQuery concept</strong> (2 marks) — jQuery simplifies Ajax. Mention $.ajax(), $.get(), $.getJSON(), .load() methods.</li>
+        <li><strong>Show json_demo.json</strong> (1 mark) — Write a sample JSON array with objects containing name, age, city.</li>
+        <li><strong>Write the HTML page</strong> (1 mark) — Include jQuery via CDN, button, output div.</li>
+        <li><strong>Write the jQuery code</strong> (4 marks) — $(document).ready(), click handler, $.getJSON() call, $.each() to iterate, build HTML table, insert into output div.</li>
+        <li><strong>Explain the code</strong> (2 marks) — Line-by-line explanation of each method, data flow, automatic JSON parsing by jQuery.</li>
+      </ol>
+    </div>
+  </div>
+</details>
+
+<!-- Mnemonics -->
+<div class="mnemonic">
+  <div class="phrase">"Old Tom Had Cats And Purred"</div>
+  <div class="explain">XMLHttpRequest readyState values in order: <strong>O</strong>ld(0) → <strong>T</strong>om(1) → <strong>H</strong>ad(2) → <strong>C</strong>ats(3) → <strong>A</strong>nd(4) <strong>P</strong>urred = <strong>U</strong>nsent → <strong>O</strong>pened → <strong>H</strong>eaders_received → <strong>L</strong>oading → <strong>D</strong>one</div>
+</div>
+
+<div class="mnemonic">
+  <div class="phrase">"SCENT"</div>
+  <div class="explain">Well-formed XML rules: <strong>S</strong>ingle root, <strong>C</strong>losing tags, <strong>E</strong>scaped special chars, <strong>N</strong>ested properly, <strong>T</strong>ags case-sensitive &amp; attributes quoted</div>
+</div>
+
+<!-- Viva Questions -->
+<details>
+  <summary>Viva Voce: Likely Questions &amp; Model Answers</summary>
+  <div class="details-body">
+    <p><strong>Q: What is the difference between PCDATA and CDATA?</strong><br>
+    A: PCDATA (Parsed Character Data) is text content that the XML parser processes — it looks for markup characters like &amp; and &lt; and interprets them. CDATA (Character Data) sections, delimited by &lt;![CDATA[ and ]]&gt;, tell the parser to treat everything inside as literal text without parsing. CDATA is useful when including code snippets with many special characters.</p>
+
+    <p><strong>Q: Can an XML document have multiple root elements?</strong><br>
+    A: No. Every well-formed XML document must have exactly one root element that contains all other elements. This is one of the fundamental rules of XML well-formedness.</p>
+
+    <p><strong>Q: What happens if we set async to false in XMLHttpRequest.open()?</strong><br>
+    A: The request becomes synchronous — the JavaScript engine blocks and waits for the response before executing any further code. This freezes the browser UI and is deprecated in modern browsers on the main thread. It should always be set to true (asynchronous).</p>
+
+    <p><strong>Q: Why use $(document).ready() instead of placing scripts at the end of the body?</strong><br>
+    A: While placing scripts at the end of the body is a valid strategy, $(document).ready() provides a programmatic guarantee that the DOM is fully loaded regardless of script placement. It also works when scripts must be in the &lt;head&gt; (e.g., for CDN order dependencies) and is the idiomatic jQuery approach.</p>
+
+    <p><strong>Q: What is the difference between $.get() and $.getJSON()?</strong><br>
+    A: $.get() performs a GET request and returns the response as-is (usually text). $.getJSON() performs a GET request specifically expecting a JSON response — it automatically parses the JSON string into a JavaScript object before passing it to the callback.</p>
+
+    <p><strong>Q: Is XML still relevant in modern web development?</strong><br>
+    A: While JSON has replaced XML as the dominant data interchange format for web APIs, XML remains widely used in enterprise systems (SOAP, WSDL), document formats (DOCX, SVG), configuration files (Maven, Android, Spring), and RSS/Atom feeds. Understanding XML is essential for working with these technologies.</p>
+  </div>
+</details>
+
+<!-- What Professors Expect -->
+<details>
+  <summary>What Professors Usually Expect</summary>
+  <div class="details-body">
+    <ol>
+      <li><strong>Neat, labeled diagrams</strong> — especially for Ajax request-response flow and XML tree structure. Always draw with a ruler in handwritten exams.</li>
+      <li><strong>Complete, working code examples</strong> — not snippets. Include the DOCTYPE, html, head, body, and script tags. Professors want to see you understand the full context.</li>
+      <li><strong>Definitions in formal language</strong> — begin answers with "XML is defined as..." or "Ajax is a technique that..." before explaining in your own words.</li>
+      <li><strong>Comparisons in tabular format</strong> — XML vs JSON, DTD vs Schema, JavaScript vs jQuery. Tables show organized thinking and earn marks efficiently.</li>
+      <li><strong>Advantages and disadvantages</strong> — always include at least two or three of each when discussing any technology. Professors look for balanced analysis.</li>
+      <li><strong>Line-by-line code explanation</strong> — after writing code, annotate the key lines. This demonstrates understanding beyond memorization.</li>
+      <li><strong>Real-world examples</strong> — mention specific applications (Google Maps for Ajax, Android layouts for XML, etc.) to show contextual awareness.</li>
+    </ol>
+  </div>
+</details>
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="page-footer">
+  Unit III Study Guide &bull; XML, Ajax &amp; jQuery &bull; Handcrafted for Exam Excellence<br>
+  &copy; 2025 &bull; Designed for Deep Understanding, Not Just Passing
+</footer>
+
+</div><!-- end .page-wrapper -->
+
+<script>
+// Tab functionality
+document.querySelectorAll('.tab-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    var container = this.closest('.tab-container');
+    container.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+    container.querySelectorAll('.tab-panel').forEach(function(p) { p.classList.remove('active'); });
+    this.classList.add('active');
+    var targetId = this.getAttribute('data-tab');
+    document.getElementById(targetId).classList.add('active');
+  });
+});
+
+// Smooth scroll for TOC links
+document.querySelectorAll('.toc a').forEach(function(link) {
+  link.addEventListener('click', function(e) {
+    e.preventDefault();
+    var target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// Animate sections on scroll
+var observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.subsection, .exam-questions, .revision-card, .callout').forEach(function(el) {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px)';
+  el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>

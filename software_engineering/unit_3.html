@@ -1,0 +1,2657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 3 — Software Design, Measurement &amp; Development | TCS-602</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0e8;
+  --bg-alt: #ebe5d6;
+  --surface: #faf7f0;
+  --surface-alt: #f0e8d8;
+  --accent: #b8432f;
+  --accent-light: #d4644f;
+  --teal: #3d7c6c;
+  --teal-light: #5a9e8d;
+  --gold: #d4a843;
+  --gold-light: #e8c76a;
+  --purple: #7c5295;
+  --purple-light: #9b72b5;
+  --text-primary: #2c2416;
+  --text-secondary: #5c5345;
+  --text-muted: #8a7f6f;
+  --border: #d4c9b8;
+  --border-light: #e6ddd0;
+  --shadow: rgba(44, 36, 22, 0.06);
+  --shadow-md: rgba(44, 36, 22, 0.1);
+  --radius: 4px;
+  --max-width: 920px;
+  --side-pad: 2.5rem;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 17px; }
+
+body {
+  font-family: 'Crimson Pro', Georgia, serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Playfair Display', Georgia, serif;
+  line-height: 1.2;
+  color: var(--text-primary);
+}
+
+h1 { font-size: 2.8rem; font-weight: 700; }
+h2 { font-size: 2rem; font-weight: 700; margin-bottom: 1rem; }
+h3 { font-size: 1.5rem; font-weight: 600; margin-bottom: 0.75rem; }
+h4 { font-size: 1.2rem; font-weight: 600; margin-bottom: 0.5rem; }
+
+p { margin-bottom: 1.15rem; font-weight: 400; }
+p:last-child { margin-bottom: 0; }
+
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+a:hover { border-bottom-color: var(--accent); }
+
+code, .mono {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.88em;
+  background: var(--surface-alt);
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius);
+}
+
+pre {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  background: #2c2416;
+  color: #f0ece4;
+  padding: 1.5rem;
+  border-radius: 6px;
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  line-height: 1.6;
+  border: 1px solid #3d352a;
+}
+
+pre code {
+  background: none;
+  padding: 0;
+  font-size: inherit;
+}
+
+blockquote {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  border-left: 3px solid var(--gold);
+  padding: 0.75rem 1.5rem;
+  margin: 2rem 0;
+  line-height: 1.6;
+}
+
+img { max-width: 100%; }
+
+/* ---- NAVIGATION ---- */
+.nav {
+  position: sticky;
+  top: 0;
+  background: rgba(245, 240, 232, 0.92);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  padding: 0 var(--side-pad);
+}
+
+.nav-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  gap: 1.5rem;
+}
+
+.nav-brand {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nav-links {
+  display: flex;
+  gap: 0.25rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.nav-links::-webkit-scrollbar { display: none; }
+
+.nav-link {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  padding: 0.35rem 0.7rem;
+  border-radius: 3px;
+  white-space: nowrap;
+  transition: all 0.2s;
+  border-bottom: none;
+  letter-spacing: 0.03em;
+}
+.nav-link:hover {
+  background: var(--surface-alt);
+  color: var(--text-primary);
+  border-bottom: none;
+}
+.nav-link.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* ---- HERO ---- */
+.hero {
+  padding: 5rem var(--side-pad) 4rem;
+  text-align: center;
+  position: relative;
+  border-bottom: 1px solid var(--border);
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: radial-gradient(ellipse at 30% 20%, rgba(212,168,67,0.08) 0%, transparent 50%),
+              radial-gradient(ellipse at 70% 80%, rgba(61,124,108,0.06) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.hero-unit-tag {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1.5px solid var(--accent);
+  padding: 0.3rem 1rem;
+  border-radius: 2px;
+  margin-bottom: 1.5rem;
+}
+
+.hero h1 {
+  font-size: 3.2rem;
+  max-width: 700px;
+  margin: 0 auto 1rem;
+  letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.3rem;
+  font-style: italic;
+  color: var(--text-muted);
+  max-width: 550px;
+  margin: 0 auto 2rem;
+  line-height: 1.5;
+}
+
+.hero-meta {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.hero-ornament {
+  display: block;
+  margin: 2rem auto 0;
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+/* ---- MAIN CONTAINER ---- */
+.container {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  padding: 0 var(--side-pad);
+}
+
+/* ---- SECTION HEADERS ---- */
+.section-header {
+  padding: 4rem 0 2.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 2.5rem;
+  position: relative;
+}
+
+.section-number {
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.section-header h2 {
+  font-size: 2.2rem;
+  letter-spacing: -0.01em;
+}
+
+.section-header .section-desc {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  margin-top: 0.75rem;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.section-ornament {
+  display: block;
+  width: 50px;
+  height: 1.5px;
+  background: var(--accent);
+  margin: 1.5rem auto 0;
+}
+
+/* ---- CARDS ---- */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px var(--shadow);
+  position: relative;
+}
+
+.card-accent {
+  border-top: 3px solid var(--accent);
+}
+.card-teal {
+  border-top: 3px solid var(--teal);
+}
+.card-gold {
+  border-top: 3px solid var(--gold);
+}
+.card-purple {
+  border-top: 3px solid var(--purple);
+}
+
+.card h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.card h3 .card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.icon-accent { background: rgba(184,67,47,0.1); color: var(--accent); }
+.icon-teal { background: rgba(61,124,108,0.1); color: var(--teal); }
+.icon-gold { background: rgba(212,168,67,0.1); color: var(--gold); }
+.icon-purple { background: rgba(124,82,149,0.1); color: var(--purple); }
+
+/* ---- EXAM TIP BOX ---- */
+.exam-tip {
+  background: linear-gradient(135deg, rgba(212,168,67,0.08), rgba(212,168,67,0.03));
+  border: 1px solid rgba(212,168,67,0.25);
+  border-left: 4px solid var(--gold);
+  border-radius: 0 6px 6px 0;
+  padding: 1.25rem 1.5rem;
+  margin: 2rem 0;
+}
+
+.exam-tip-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.exam-tip p { font-size: 0.95rem; margin-bottom: 0.5rem; }
+.exam-tip p:last-child { margin-bottom: 0; }
+
+/* ---- MEMORY ANCHOR ---- */
+.memory-anchor {
+  background: linear-gradient(135deg, rgba(61,124,108,0.08), rgba(61,124,108,0.03));
+  border: 1px solid rgba(61,124,108,0.2);
+  border-left: 4px solid var(--teal);
+  border-radius: 0 6px 6px 0;
+  padding: 1.25rem 1.5rem;
+  margin: 2rem 0;
+}
+
+.memory-anchor-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 0.5rem;
+}
+
+/* ---- PULL QUOTE ---- */
+.pull-quote {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.4rem;
+  font-style: italic;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 2rem 3rem;
+  margin: 2.5rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  position: relative;
+}
+
+.pull-quote::before {
+  content: '\201C';
+  font-size: 3rem;
+  color: var(--gold);
+  position: absolute;
+  top: 0.6rem;
+  left: 1.5rem;
+  line-height: 1;
+}
+
+/* ---- TABLES ---- */
+.table-wrap {
+  overflow-x: auto;
+  margin: 2rem 0;
+  border-radius: 6px;
+  border: 1px solid var(--border-light);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+thead {
+  background: var(--text-primary);
+  color: var(--surface);
+}
+
+th {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.85rem 1.2rem;
+  text-align: left;
+}
+
+td {
+  padding: 0.8rem 1.2rem;
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: top;
+}
+
+tbody tr:nth-child(even) { background: rgba(244, 240, 232, 0.5); }
+tbody tr:hover { background: rgba(212, 168, 67, 0.05); }
+
+/* ---- DIAGRAM CONTAINER ---- */
+.diagram-container {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 2rem;
+  margin: 2rem 0;
+  text-align: center;
+  box-shadow: 0 2px 12px var(--shadow);
+}
+
+.diagram-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.diagram-caption {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+  letter-spacing: 0.05em;
+}
+
+/* ---- COLLAPSIBLE ---- */
+.collapsible-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--surface-alt);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  transition: all 0.2s;
+  margin-top: 1.5rem;
+}
+
+.collapsible-trigger:hover {
+  background: var(--surface);
+  border-color: var(--accent);
+}
+
+.collapsible-trigger .arrow {
+  transition: transform 0.3s;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.collapsible-trigger.open .arrow {
+  transform: rotate(180deg);
+}
+
+.collapsible-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+
+.collapsible-content.open {
+  max-height: 8000px;
+}
+
+.collapsible-inner {
+  padding: 1.5rem 0;
+}
+
+/* ---- SUBSECTION ---- */
+.subsection {
+  margin-bottom: 3.5rem;
+}
+
+.subsection > h3 {
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 1.25rem;
+}
+
+/* ---- LISTS ---- */
+ul, ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1.15rem;
+}
+
+li {
+  margin-bottom: 0.35rem;
+  font-weight: 400;
+}
+
+li strong {
+  color: var(--text-primary);
+}
+
+/* ---- DEF LIST ---- */
+dl {
+  margin-bottom: 1.5rem;
+}
+dt {
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 0.2rem;
+}
+dd {
+  margin-left: 1.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ---- REVISION CARD ---- */
+.revision-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.revision-card {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 1.5rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.revision-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px var(--shadow-md);
+}
+
+.revision-card h4 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--accent);
+}
+
+.revision-card p, .revision-card li {
+  font-size: 0.9rem;
+}
+
+/* ---- SPECTRUM BAR ---- */
+.spectrum-bar {
+  display: flex;
+  margin: 1.5rem 0;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border-light);
+}
+
+.spectrum-item {
+  flex: 1;
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: #fff;
+  transition: transform 0.2s;
+}
+
+.spectrum-item:hover {
+  transform: scaleY(1.05);
+}
+
+/* ---- FOOTER ---- */
+.site-footer {
+  margin-top: 4rem;
+  padding: 3rem var(--side-pad);
+  border-top: 1px solid var(--border);
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.site-footer .footer-ornament {
+  display: block;
+  width: 50px;
+  height: 1.5px;
+  background: var(--border);
+  margin: 0 auto 1.5rem;
+}
+
+/* ---- PRINT ---- */
+@media print {
+  .nav, .collapsible-trigger { display: none; }
+  .collapsible-content { max-height: none !important; }
+  body::before { display: none; }
+  .hero { padding: 2rem 0; }
+  .card { break-inside: avoid; }
+  .diagram-container { break-inside: avoid; }
+  html { font-size: 12pt; }
+}
+
+/* ---- RESPONSIVE ---- */
+@media (max-width: 768px) {
+  html { font-size: 15px; }
+  :root { --side-pad: 1.25rem; }
+  .hero h1 { font-size: 2.2rem; }
+  .section-header h2 { font-size: 1.7rem; }
+  .card { padding: 1.5rem; }
+  .pull-quote { padding: 1.5rem 2rem; font-size: 1.2rem; }
+  .nav-links { display: none; }
+}
+
+/* ---- SVG STYLES ---- */
+.svg-node { fill: var(--surface); stroke: var(--text-primary); stroke-width: 1.5; }
+.svg-node-accent { fill: rgba(184,67,47,0.08); stroke: var(--accent); stroke-width: 1.5; }
+.svg-node-teal { fill: rgba(61,124,108,0.08); stroke: var(--teal); stroke-width: 1.5; }
+.svg-node-gold { fill: rgba(212,168,67,0.08); stroke: var(--gold); stroke-width: 1.5; }
+.svg-node-dark { fill: var(--text-primary); stroke: var(--text-primary); stroke-width: 1.5; }
+.svg-text { font-family: 'DM Mono', monospace; font-size: 11px; fill: var(--text-primary); }
+.svg-text-light { font-family: 'DM Mono', monospace; font-size: 11px; fill: #f0ece4; }
+.svg-text-small { font-family: 'DM Mono', monospace; font-size: 9px; fill: var(--text-muted); }
+.svg-text-label { font-family: 'Crimson Pro', serif; font-size: 12px; fill: var(--text-secondary); font-weight: 600; }
+.svg-arrow { stroke: var(--text-primary); stroke-width: 1.2; fill: none; marker-end: url(#arrowhead); }
+.svg-arrow-accent { stroke: var(--accent); stroke-width: 1.2; fill: none; marker-end: url(#arrowhead-accent); }
+.svg-arrow-teal { stroke: var(--teal); stroke-width: 1.2; fill: none; marker-end: url(#arrowhead-teal); }
+.svg-arrow-dashed { stroke: var(--text-muted); stroke-width: 1; stroke-dasharray: 4,3; fill: none; marker-end: url(#arrowhead); }
+
+/* ---- ANIMATIONS ---- */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  opacity: 0;
+  animation: fadeInUp 0.5s ease forwards;
+}
+
+.delay-1 { animation-delay: 0.1s; }
+.delay-2 { animation-delay: 0.2s; }
+.delay-3 { animation-delay: 0.3s; }
+
+/* ---- SIDENOTE ---- */
+.sidenote {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-style: italic;
+  font-size: 0.92rem;
+  color: var(--text-muted);
+  border-left: 2px solid var(--border);
+  padding-left: 1rem;
+  margin: 1.5rem 0;
+}
+
+/* ---- FLOW LIST ---- */
+.flow-steps {
+  counter-reset: flow;
+  list-style: none;
+  padding: 0;
+  margin: 1.5rem 0;
+}
+
+.flow-steps li {
+  counter-increment: flow;
+  padding: 1rem 1.25rem 1rem 3.5rem;
+  position: relative;
+  border-left: 2px solid var(--border-light);
+  margin-bottom: 0;
+}
+
+.flow-steps li::before {
+  content: counter(flow);
+  position: absolute;
+  left: -13px;
+  top: 0.85rem;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flow-steps li:last-child { border-left-color: transparent; }
+
+/* ---- ADV/DISADV COLUMNS ---- */
+.ad-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+@media (max-width: 600px) {
+  .ad-grid { grid-template-columns: 1fr; }
+}
+
+.ad-col {
+  background: var(--surface);
+  border: 1px solid var(--border-light);
+  border-radius: 6px;
+  padding: 1.25rem;
+}
+
+.ad-col h4 {
+  font-size: 0.9rem;
+  margin-bottom: 0.75rem;
+}
+
+.ad-col.adv h4 { color: var(--teal); }
+.ad-col.disadv h4 { color: var(--accent); }
+
+.ad-col ul {
+  list-style: none;
+  padding: 0;
+}
+
+.ad-col li {
+  padding: 0.3rem 0;
+  padding-left: 1.2rem;
+  position: relative;
+  font-size: 0.9rem;
+}
+
+.ad-col.adv li::before {
+  content: '+';
+  position: absolute;
+  left: 0;
+  color: var(--teal);
+  font-weight: 700;
+}
+
+.ad-col.disadv li::before {
+  content: '\2013';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* ---- PYQ BADGE ---- */
+.pyq-badge {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  background: var(--accent);
+  color: #fff;
+  padding: 0.2rem 0.6rem;
+  border-radius: 2px;
+  margin-left: 0.5rem;
+  vertical-align: middle;
+}
+
+/* ---- VIVA BOX ---- */
+.viva-box {
+  background: linear-gradient(135deg, rgba(124,82,149,0.06), rgba(124,82,149,0.02));
+  border: 1px solid rgba(124,82,149,0.2);
+  border-left: 4px solid var(--purple);
+  border-radius: 0 6px 6px 0;
+  padding: 1.25rem 1.5rem;
+  margin: 2rem 0;
+}
+
+.viva-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--purple);
+  margin-bottom: 0.5rem;
+}
+
+.viva-box p { font-size: 0.95rem; }
+</style>
+</head>
+<body>
+
+<!-- SVG DEFINITIONS -->
+<svg style="position:absolute;width:0;height:0" aria-hidden="true">
+  <defs>
+    <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#2c2416"/>
+    </marker>
+    <marker id="arrowhead-accent" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#b8432f"/>
+    </marker>
+    <marker id="arrowhead-teal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#3d7c6c"/>
+    </marker>
+  </defs>
+</svg>
+
+<!-- NAVIGATION -->
+<nav class="nav">
+  <div class="nav-inner">
+    <span class="nav-brand">TCS-602 / Unit 3</span>
+    <div class="nav-links">
+      <a href="#design" class="nav-link">Design</a>
+      <a href="#coupling" class="nav-link">Coupling</a>
+      <a href="#cohesion" class="nav-link">Cohesion</a>
+      <a href="#modular" class="nav-link">Modular</a>
+      <a href="#ood" class="nav-link">OOD</a>
+      <a href="#approaches" class="nav-link">Approaches</a>
+      <a href="#patterns" class="nav-link">Patterns</a>
+      <a href="#architecture" class="nav-link">Architecture</a>
+      <a href="#metrics" class="nav-link">Metrics</a>
+      <a href="#halstead" class="nav-link">Halstead</a>
+      <a href="#fpa" class="nav-link">FP</a>
+      <a href="#cyclomatic" class="nav-link">Cyclomatic</a>
+      <a href="#coding" class="nav-link">Coding</a>
+      <a href="#pyq" class="nav-link">PYQ</a>
+      <a href="#revision" class="nav-link">Revision</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <span class="hero-unit-tag">Unit 3 &mdash; TCS-602 / TCS-611</span>
+  <h1>Software Design,<br>Measurement &amp; Development</h1>
+  <p class="hero-subtitle">A comprehensive study guide covering design principles, architectural styles, software metrics, and development practices &mdash; crafted for deep understanding and exam mastery.</p>
+  <div class="hero-meta">Software Engineering &bull; B.Tech / MCA &bull; 2024&ndash;25</div>
+  <span class="hero-ornament"></span>
+</header>
+
+<main>
+<div class="container">
+
+<!-- ============================================================ -->
+<!--  TABLE OF CONTENTS                                           -->
+<!-- ============================================================ -->
+<section id="toc" style="padding: 3rem 0;">
+  <div class="card card-gold">
+    <h3><span class="card-icon icon-gold">&sect;</span> Table of Contents</h3>
+    <div style="column-count:2; column-gap:2rem; margin-top:1rem;">
+      <ol style="font-size:0.92rem;">
+        <li><a href="#design">Goals of Good Software Design</a></li>
+        <li><a href="#data-driven">Data-Oriented Software Design</a></li>
+        <li><a href="#structured-design">Structured Design &amp; Structure Charts</a></li>
+        <li><a href="#coupling">Coupling &mdash; Types &amp; Analysis</a></li>
+        <li><a href="#cohesion">Cohesion &mdash; Types &amp; Analysis</a></li>
+        <li><a href="#coupling-cohesion-relation">Coupling &times; Cohesion Relationship</a></li>
+        <li><a href="#modular">Modular Structure &amp; Packaging</a></li>
+        <li><a href="#ood">Object-Oriented Design</a></li>
+        <li><a href="#approaches">Top-Down &amp; Bottom-Up Approaches</a></li>
+        <li><a href="#patterns">Design Patterns</a></li>
+        <li><a href="#architecture">Architectural Styles</a></li>
+        <li><a href="#metrics">Software Metrics Overview</a></li>
+        <li><a href="#halstead">Halstead&rsquo;s Software Science</a></li>
+        <li><a href="#fpa">Function Point Analysis</a></li>
+        <li><a href="#cyclomatic">Cyclomatic Complexity &amp; CFGs</a></li>
+        <li><a href="#coding">Development: Language, Coding &amp; Documentation</a></li>
+        <li><a href="#pyq">PYQ Answer Bank</a></li>
+        <li><a href="#revision">Exam-Night Revision Sheet</a></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  1. GOALS OF GOOD SOFTWARE DESIGN                            -->
+<!-- ============================================================ -->
+<section id="design" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 01</span>
+    <h2>Goals of Good Software Design</h2>
+    <p class="section-desc">The invisible architecture that determines whether software survives contact with reality</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>Software design is the process of defining the architecture, components, interfaces, and other characteristics of a system or component. It sits between requirements analysis and implementation in the software development lifecycle, and it is arguably the phase that exerts the greatest influence over the quality of the final product. If requirements tell us <em>what</em> the system must do, design tells us <em>how</em> the system will do it. The decisions made during design ripple through every subsequent phase: they determine how easily the system can be coded, how thoroughly it can be tested, how gracefully it can be maintained, and how effectively it can be evolved to meet future needs. A poorly designed system may satisfy every functional requirement on paper yet collapse under the weight of its own complexity when it encounters real-world conditions such as changing user needs, scaling demands, or the necessity of fixing defects without introducing new ones.</p>
+
+  <p>The concept of good design has evolved considerably over the history of software engineering. In the earliest decades of computing, when programs were small and written by single programmers, design was largely an informal mental activity. As software systems grew in scale during the 1960s and 1970s, the limitations of ad hoc approaches became painfully apparent, culminating in what was termed the "software crisis." It was in response to this crisis that structured design principles were articulated by researchers such as Edsger Dijkstra, Larry Constantine, Glenford Myers, and others. The fundamental insight was that the internal structure of software matters enormously, and that this structure can be deliberately shaped through the application of principles such as modularity, abstraction, coupling, and cohesion.</p>
+
+  <h3>The Primary Goals</h3>
+  <p>The goals of good software design form an interconnected web rather than a simple checklist, but they can be articulated as a set of guiding principles that every design decision should serve. The first and most fundamental goal is <strong>correctness</strong>: a design must enable the system to satisfy all of its functional requirements. No amount of architectural elegance can compensate for a design that fails to deliver the required behavior. However, correctness alone is insufficient, because software must operate in a world of change, constraint, and human imperfection. Thus the second goal is <strong>maintainability</strong>: the design must make the system easy to understand, modify, and extend over its lifetime. Since maintenance typically consumes 60 to 80 percent of total software cost, this goal has profound economic significance. A maintainable design uses clear abstractions, minimizes the ripple effects of changes, and keeps the system's structure transparent to developers who were not involved in its original construction.</p>
+
+  <p>The third goal is <strong>efficiency</strong>, which encompasses both computational performance and the judicious use of resources such as memory, bandwidth, and processing time. While premature optimization is widely condemned, a design that ignores performance characteristics entirely may produce a system that is correct and maintainable but unusable in practice. The key is to make efficiency a conscious design consideration without allowing it to dominate at the expense of clarity. The fourth goal is <strong>reliability</strong>: the design should anticipate failure modes and incorporate mechanisms for fault tolerance, error recovery, and graceful degradation. A well-designed system does not merely work when everything goes right; it behaves predictably and safely when things go wrong. The fifth goal is <strong>scalability</strong>: the architecture should accommodate growth in data volume, user load, and functional scope without requiring wholesale redesign. This often involves strategic decisions about distribution, caching, data partitioning, and the separation of concerns.</p>
+
+  <p>Beyond these functional and quality goals, good design pursues <strong>abstraction</strong> as a means of managing complexity. Abstraction allows the designer to suppress irrelevant details and focus on essential characteristics at each level of the system hierarchy. A well-chosen abstraction hides implementation complexity behind a clean interface, enabling different parts of the system to be understood, developed, and modified independently. <strong>Modularity</strong>, which we will examine in considerable depth, is the structural expression of abstraction: it decomposes the system into discrete, self-contained units with well-defined boundaries. The closely related goals of <strong>low coupling</strong> and <strong>high cohesion</strong> refine modularity by specifying the quality of relationships within and between modules. Finally, good design aims for <strong>reusability</strong>, seeking to create components that can serve in multiple contexts, thereby reducing development effort and improving quality through the use of proven building blocks.</p>
+
+ <div class="diagram-container">
+  <svg viewBox="0 0 720 360" xmlns="http://www.w3.org/2000/svg" style="background-color: #F7F5F0;">
+    <defs>
+      <marker id="arrow-red" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#B5534B" />
+      </marker>
+      <marker id="arrow-teal" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#518576" />
+      </marker>
+      <marker id="arrow-grey" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#4A4A4A" />
+      </marker>
+    </defs>
+
+    <style>
+      .text-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 600; fill: #2C2620; }
+      .text-node { font-family: 'Courier New', Courier, monospace; font-size: 11px; fill: #333333; }
+      .text-center { font-family: 'Courier New', Courier, monospace; font-size: 12px; fill: #FFFFFF; font-weight: bold; }
+      .text-caption { font-family: 'Courier New', Courier, monospace; font-size: 11px; fill: #888888; }
+      
+      .node-dark { fill: #2C2620; rx: 6; }
+      .node-red { fill: #F4E2DE; stroke: #B5534B; stroke-width: 1.5; rx: 4; }
+      .node-teal { fill: #E1ECE7; stroke: #518576; stroke-width: 1.5; rx: 4; }
+      .node-gold { fill: #F6ECD1; stroke: #CBA358; stroke-width: 1.5; rx: 4; }
+      .node-grey { fill: #FAFAFA; stroke: #333333; stroke-width: 1.5; rx: 4; }
+      
+      .line-red { stroke: #B5534B; stroke-width: 1.5; marker-end: url(#arrow-red); }
+      .line-teal { stroke: #518576; stroke-width: 1.5; marker-end: url(#arrow-teal); }
+      .line-grey { stroke: #4A4A4A; stroke-width: 1.5; marker-end: url(#arrow-grey); }
+    </style>
+
+
+    <line x1="180" y1="68" x2="285" y2="140" class="line-red"/>
+    <line x1="360" y1="68" x2="360" y2="140" class="line-teal"/>
+    <line x1="540" y1="68" x2="435" y2="140" class="line-grey"/>
+
+    <line x1="180" y1="164" x2="270" y2="164" class="line-grey"/>
+    <line x1="540" y1="164" x2="450" y2="164" class="line-grey"/>
+
+    <line x1="180" y1="250" x2="285" y2="188" class="line-red"/>
+    <line x1="360" y1="250" x2="360" y2="188" class="line-teal"/>
+    <line x1="540" y1="250" x2="435" y2="188" class="line-grey"/>
+
+    <rect x="270" y="140" width="180" height="48" class="node-dark"/>
+    <text x="360" y="168" text-anchor="middle" class="text-center">GOOD DESIGN</text>
+
+    <rect x="80" y="30" width="130" height="38" class="node-red"/>
+    <text x="145" y="53" text-anchor="middle" class="text-node">Correctness</text>
+
+    <rect x="295" y="30" width="130" height="38" class="node-teal"/>
+    <text x="360" y="53" text-anchor="middle" class="text-node">Maintainability</text>
+
+    <rect x="510" y="30" width="130" height="38" class="node-gold"/>
+    <text x="575" y="53" text-anchor="middle" class="text-node">Efficiency</text>
+
+    <rect x="50" y="145" width="130" height="38" class="node-grey"/>
+    <text x="115" y="168" text-anchor="middle" class="text-node">Reliability</text>
+
+    <rect x="540" y="145" width="130" height="38" class="node-grey"/>
+    <text x="605" y="168" text-anchor="middle" class="text-node">Scalability</text>
+
+    <rect x="80" y="250" width="130" height="38" class="node-red"/>
+    <text x="145" y="273" text-anchor="middle" class="text-node">Abstraction</text>
+
+    <rect x="295" y="250" width="130" height="38" class="node-teal"/>
+    <text x="360" y="273" text-anchor="middle" class="text-node">Modularity</text>
+
+    <rect x="510" y="250" width="130" height="38" class="node-gold"/>
+    <text x="575" y="273" text-anchor="middle" class="text-node">Reusability</text>
+
+    <text x="360" y="330" text-anchor="middle" class="text-caption">Fig. 1 — The interconnected goals of good software design</text>
+  </svg>
+</div>
+
+  <div class="exam-tip">
+    <div class="exam-tip-label">Exam Tip</div>
+    <p>For a 10-mark question on "characteristics and goals of good design," cover at least 8 goals with brief explanations and then add a paragraph on why modularity is central. Include a simple diagram showing the goals radiating from "Good Design" at the center.</p>
+  </div>
+
+  <h3>Characteristics of a Good Design</h3>
+  <p>A well-designed software system exhibits several observable characteristics that distinguish it from a poorly designed one. First, it possesses <strong>structural clarity</strong>: a developer reading the design should be able to understand the system's organization, the responsibilities of each component, and the pathways of data and control flow without needing to trace through implementation details. Second, the design exhibits <strong>conceptual integrity</strong>, meaning that it follows a consistent set of design principles and patterns throughout, rather than appearing as an assemblage of ad hoc solutions. Fred Brooks argued in <em>The Mythical Man-Month</em> that conceptual integrity is the most important consideration in system design, and that it is best achieved when the design reflects the vision of a small number of minds. Third, a good design achieves <strong>separation of concerns</strong>, ensuring that each module or component addresses a single aspect of the system's functionality. This principle, articulated by Dijkstra, is the intellectual foundation of modularity and is what makes it possible to reason about complex systems one piece at a time.</p>
+
+  <p>Fourth, a good design employs <strong>appropriate levels of abstraction</strong> at each level of the system hierarchy. At the top level, the system is described in terms of its major subsystems and their interactions; at intermediate levels, each subsystem is decomposed into its constituent modules; at the lowest level, each module is specified in terms of its algorithms and data structures. This layered approach to abstraction mirrors the way humans naturally manage complexity and enables developers to work at the level of detail appropriate to their current task. Fifth, the design achieves <strong>information hiding</strong>, a concept introduced by David Parnas in 1972, which mandates that each module should encapsulate a design decision and expose only the information necessary for other modules to interact with it. Information hiding is the mechanism that makes modularity effective: without it, changes to one module would cascade through the system, destroying the independence that modularity was supposed to provide.</p>
+
+  <h3>Benefits of Modular Design</h3>
+  <p>Modular design decomposes a system into a collection of cohesive, loosely coupled modules, each responsible for a well-defined portion of the system's functionality. The benefits of this approach are substantial and well-documented. <strong>Independent development</strong> becomes possible when modules have clean interfaces: different teams can work on different modules simultaneously, reducing development time and enabling parallel progress. <strong>Independent testing</strong> is similarly facilitated, since each module can be tested in isolation using stubs and drivers to simulate its interactions with other modules. <strong>Maintainability</strong> is greatly enhanced because a defect or change request can typically be localized to a single module, limiting the scope of the required modification and reducing the risk of unintended side effects. <strong>Reusability</strong> is a natural consequence of modularity: a well-designed module with a general-purpose interface can be employed in multiple systems, reducing development effort and leveraging proven implementations. <strong>Comprehensibility</strong> improves because each module can be understood independently of the others, making it feasible for developers to grasp the overall system by studying one module at a time. Finally, <strong>fault isolation</strong> is improved because the boundaries between modules serve as natural firewalls: a failure in one module is less likely to propagate to others if the interfaces are properly designed.</p>
+
+  <div class="memory-anchor">
+    <div class="memory-anchor-label">Memory Anchor</div>
+    <p><strong>Remember the goals with the mnemonic "CREAM-SAM-R":</strong> Correctness, Reliability, Efficiency, Abstraction, Maintainability, Scalability, Modularity, Abstraction, Reusability. Think of it as "designing software is like making a good cream &mdash; it needs the right ingredients blended in the right proportions."</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  2. DATA-ORIENTED SOFTWARE DESIGN                            -->
+<!-- ============================================================ -->
+<section id="data-driven" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 02</span>
+    <h2>Data-Oriented Software Design</h2>
+    <p class="section-desc">When data structures dictate the shape of the system</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>Data-oriented software design (also called data-driven design) is a design paradigm in which the structure of the system's data serves as the primary organizing principle for the software architecture. Rather than beginning with the processes or functions the system must perform and then designing data structures to support those processes, data-oriented design begins by identifying the fundamental data entities, their attributes, and their relationships, and then derives the processing structure from the data model. The underlying conviction is that while processing requirements change frequently as business needs evolve, the fundamental data entities of a domain tend to remain relatively stable over time. A banking system's core entities &mdash; accounts, customers, transactions, branches &mdash; have remained essentially the same for decades, even as the processes operating on them have been transformed by technology. By anchoring the design to these stable data structures, the system achieves a form of resilience against the shifting winds of functional requirements.</p>
+
+  <p>The historical roots of data-oriented design lie in the database design methodologies of the 1970s and 1980s, particularly the work of Michael Jackson on Jackson Structured Programming (JSP) and Jackson System Development (JSD). Jackson argued that the structure of a program should mirror the structure of the data it processes: if the input data has a repeating structure, the program should have a corresponding repetitive structure; if the data has an optional component, the program should have a corresponding conditional structure. This principle of "structure follows data" yields designs that are naturally aligned with the information they manipulate, making the code easier to understand, verify, and maintain. The approach is particularly well-suited to data-intensive applications such as business information systems, report generators, data transformation pipelines, and ETL (Extract, Transform, Load) processes, where the dominant challenge is processing structured data according to well-defined rules.</p>
+
+  <p>In practice, data-oriented design typically involves several steps. The designer first identifies the key data entities and their relationships, often using techniques such as Entity-Relationship (ER) modeling or data flow analysis. Next, the data structures are designed to accurately represent these entities and their interconnections, taking into account considerations such as normalization, access patterns, and storage efficiency. The processing components are then designed to operate on these data structures, with the structure of each processing module reflecting the structure of the data it handles. In the Jackson method, this correspondence is formalized through structure charts that map data hierarchies to program hierarchies. The approach differs from function-oriented design, which derives the system structure primarily from the required functions, and from object-oriented design, which organizes the system around objects that encapsulate both data and behavior.</p>
+
+  <div class="ad-grid">
+    <div class="ad-col adv">
+      <h4>Advantages</h4>
+      <ul>
+        <li>Natural alignment with data structures makes code intuitive</li>
+        <li>Stable data models provide resilience to changing requirements</li>
+        <li>Well-suited to data-intensive and batch-processing applications</li>
+        <li>Clear traceability between data and code structures</li>
+        <li>Simplifies validation and verification</li>
+      </ul>
+    </div>
+    <div class="ad-col disadv">
+      <h4>Drawbacks</h4>
+      <ul>
+        <li>May produce overly rigid designs when processing logic is complex</li>
+        <li>Less natural for systems with complex control flows or user interactions</li>
+        <li>Can lead to tight coupling between data formats and code</li>
+        <li>Difficult to apply when data structures are volatile</li>
+        <li>Does not naturally address concurrency or distributed concerns</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  3. STRUCTURED DESIGN & STRUCTURE CHARTS                     -->
+<!-- ============================================================ -->
+<section id="structured-design" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 03</span>
+    <h2>Structured Design &amp; Structure Charts</h2>
+    <p class="section-desc">Transforming data flow into hierarchical program architecture</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>Structured design is a methodical approach to software design that emerged in the 1970s, primarily through the work of Larry Constantine, Edward Yourdon, and Glenford Myers. Its central premise is that the quality of a software design can be systematically evaluated and improved by examining the patterns of connection between its constituent modules, and that good designs can be derived from data flow diagrams through a set of transformation rules. The primary design artifact in structured design is the <strong>structure chart</strong>, a hierarchical diagram that depicts the system as a tree of modules connected by call relationships and data flows. Where a data flow diagram (DFD) shows how data moves through the system's processing steps, a structure chart shows how those processing steps are organized into a calling hierarchy of program modules.</p>
+
+  <p>A structure chart represents each module as a rectangle, with the module name inscribed within it. Modules are connected by arrows that indicate calling relationships: the calling module is placed above the called module, and the arrow points downward from caller to callee. Alongside these arrows, small arrows with open heads indicate the flow of data between modules, while small arrows with filled heads (or diamond-headed arrows) indicate control flags or boolean signals that influence the behavior of the called module. The topmost module in the chart is the controlling module (or main module), which orchestrates the overall processing by calling subordinate modules in the appropriate sequence. The chart may also show loops (indicated by a curved arrow looping back to a calling arrow) and conditionals (indicated by a small diamond on the calling arrow) to represent repetitive and conditional invocations of subordinates.</p>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="24" text-anchor="middle" font-family="'Playfair Display', serif" font-size="15" font-weight="600" fill="#2c2416">Structure Chart &mdash; Library Book Issue System</text>
+      <!-- Main module -->
+      <rect x="255" y="42" width="190" height="42" rx="5" class="svg-node-dark"/>
+      <text x="350" y="68" text-anchor="middle" class="svg-text-light" font-size="11">PROCESS BOOK ISSUE</text>
+
+      <!-- Level 1 modules -->
+      <rect x="50" y="140" width="170" height="38" rx="4" class="svg-node-accent"/>
+      <text x="135" y="164" text-anchor="middle" class="svg-text" font-size="10">READ MEMBER DATA</text>
+
+      <rect x="265" y="140" width="170" height="38" rx="4" class="svg-node-teal"/>
+      <text x="350" y="164" text-anchor="middle" class="svg-text" font-size="10">VALIDATE MEMBER</text>
+
+      <rect x="480" y="140" width="170" height="38" rx="4" class="svg-node-gold"/>
+      <text x="565" y="164" text-anchor="middle" class="svg-text" font-size="10">CHECK AVAILABILITY</text>
+
+      <!-- Lines from main to level 1 -->
+      <line x1="310" y1="84" x2="135" y2="140" class="svg-arrow"/>
+      <line x1="350" y1="84" x2="350" y2="140" class="svg-arrow"/>
+      <line x1="390" y1="84" x2="565" y2="140" class="svg-arrow"/>
+
+      <!-- Data labels -->
+      <text x="220" y="108" text-anchor="middle" class="svg-text-small">member_id</text>
+      <text x="360" y="118" text-anchor="middle" class="svg-text-small">member_rec</text>
+      <text x="480" y="108" text-anchor="middle" class="svg-text-small">book_id</text>
+
+      <!-- Level 2 modules -->
+      <rect x="30" y="250" width="150" height="38" rx="4" class="svg-node"/>
+      <text x="105" y="274" text-anchor="middle" class="svg-text" font-size="10">GET MEMBER RECORD</text>
+      <line x1="110" y1="178" x2="105" y2="250" class="svg-arrow"/>
+      <text x="100" y="218" text-anchor="middle" class="svg-text-small">member_id</text>
+
+      <rect x="190" y="250" width="150" height="38" rx="4" class="svg-node"/>
+      <text x="265" y="274" text-anchor="middle" class="svg-text" font-size="10">CHECK EXPIRY</text>
+      <line x1="200" y1="178" x2="265" y2="250" class="svg-arrow"/>
+
+      <rect x="355" y="250" width="150" height="38" rx="4" class="svg-node"/>
+      <text x="430" y="274" text-anchor="middle" class="svg-text" font-size="10">CHECK FINE</text>
+      <line x1="330" y1="178" x2="430" y2="250" class="svg-arrow"/>
+
+      <rect x="520" y="250" width="150" height="38" rx="4" class="svg-node"/>
+      <text x="595" y="274" text-anchor="middle" class="svg-text" font-size="10">SEARCH CATALOG</text>
+      <line x1="530" y1="178" x2="595" y2="250" class="svg-arrow"/>
+
+      <!-- Level 3 -->
+      <rect x="120" y="340" width="160" height="38" rx="4" class="svg-node"/>
+      <text x="200" y="364" text-anchor="middle" class="svg-text" font-size="10">READ DATABASE</text>
+      <line x1="175" y1="288" x2="200" y2="340" class="svg-arrow"/>
+
+      <rect x="460" y="340" width="160" height="38" rx="4" class="svg-node"/>
+      <text x="540" y="364" text-anchor="middle" class="svg-text" font-size="10">UPDATE STOCK</text>
+      <line x1="570" y1="288" x2="540" y2="340" class="svg-arrow"/>
+
+      <!-- Loop indicator -->
+      <path d="M 350 84 C 340 100, 300 100, 310 84" fill="none" stroke="#b8432f" stroke-width="1.2"/>
+      <text x="295" y="112" class="svg-text-small" fill="#b8432f">loop</text>
+
+      <!-- Control flag indicator -->
+      <line x1="430" y1="178" x2="430" y2="190" stroke="#d4a843" stroke-width="1" stroke-dasharray="3,2"/>
+      <text x="450" y="198" class="svg-text-small" fill="#d4a843">status_flag</text>
+
+      <!-- Legend -->
+      <rect x="20" y="390" width="660" height="24" rx="3" fill="none" stroke="#d4c9b8" stroke-width="0.8"/>
+      <line x1="40" y1="402" x2="80" y2="402" class="svg-arrow"/>
+      <text x="88" y="406" class="svg-text-small">Data flow</text>
+      <line x1="180" y1="402" x2="220" y2="402" stroke="#d4a843" stroke-width="1.2" stroke-dasharray="3,2"/>
+      <text x="228" y="406" class="svg-text-small">Control flag</text>
+      <path d="M 340 395 C 335 400, 325 400, 330 395" fill="none" stroke="#b8432f" stroke-width="1"/>
+      <text x="355" y="406" class="svg-text-small">Loop</text>
+      <text x="440" y="406" class="svg-text-small">Each box = one module</text>
+    </svg>
+    <div class="diagram-caption">Fig. 2 &mdash; Structure Chart for a Library Book Issue System showing module hierarchy, data flow, control flags, and loops</div>
+  </div>
+
+  <h3>Converting DFD to Structure Chart</h3>
+  <p>The transformation of a data flow diagram into a structure chart is a central activity in structured design. Two primary strategies exist for performing this transformation, and in practice, most designs use a combination of both. The first strategy is <strong>transaction analysis</strong>, which is applied when the DFD exhibits a clearly identifiable transaction center &mdash; a processing step that receives input and dispatches it to one of several possible processing paths based on the type of transaction. In this case, the transaction center becomes the controlling module, and each processing path becomes a subordinate module. Transaction analysis is commonly used in systems that must handle multiple types of inputs or operations, such as an ATM system that must process deposits, withdrawals, balance inquiries, and transfers.</p>
+
+  <p>The second strategy is <strong>transform analysis</strong>, which is applied to DFDs that have a clear linear flow from input to processing to output. Transform analysis proceeds in three steps. First, the designer identifies the <strong>central transform</strong> &mdash; the portion of the DFD where the fundamental processing occurs, after the data has been received and before it is formatted for output. Second, the designer traces the data flows backward from the central transform to identify the <strong>afferent (input) branch</strong> and forward to identify the <strong>efferent (output) branch</strong>. Third, the designer creates a top-level controlling module that calls modules corresponding to the afferent branch, the central transform, and the efferent branch, and then refines each of these into lower-level modules by progressively decomposing the corresponding DFD processes.</p>
+
+  <div class="exam-tip">
+    <div class="exam-tip-label">Exam Tip</div>
+    <p>When asked to convert a DFD to a structure chart, always identify whether the DFD is transaction-centered or transform-centered first. Then draw the top-level controlling module, identify the afferent/efferent branches (for transform) or the dispatch center (for transaction), and decompose step by step. Label all data flows on the structure chart arrows.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  4. COUPLING                                                  -->
+<!-- ============================================================ -->
+<section id="coupling" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 04</span>
+    <h2>Coupling</h2>
+    <p class="section-desc">The measure of interdependence between modules &mdash; the less, the better</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>Coupling is one of the most important concepts in software design, and understanding it thoroughly is essential for writing strong exam answers. In formal terms, <strong>coupling</strong> is the measure of the degree of interdependence between two modules. When two modules are tightly coupled, they are heavily dependent on each other: a change in one module is likely to require a corresponding change in the other. When two modules are loosely coupled, they are relatively independent: each module can be modified, tested, and understood without detailed knowledge of the other's internal workings. The goal of good design is to achieve <strong>low (loose) coupling</strong> between modules, because loosely coupled systems are easier to maintain, test, understand, and modify.</p>
+
+  <p>Why does coupling matter so profoundly? Consider what happens when two modules are tightly coupled. If a developer needs to modify the internal data structure of module A, they must also examine module B (and possibly modules C, D, and E) to determine whether the change will break those modules' interactions with A. This examination may reveal cascading changes that must be propagated throughout the system, turning a simple modification into a risky and time-consuming endeavor. The developer must now test not only the modified module but all of its coupled neighbors, and the neighbors' neighbors, in a spreading wave of impact analysis. In a system with tight coupling, even minor changes can have disproportionate effects, and the system becomes increasingly resistant to change over time &mdash; a phenomenon known as <strong>software rigidity</strong>. Loose coupling limits the propagation of change, localizes the impact of defects, and enables independent evolution of system components.</p>
+
+  <h3>Types of Coupling (from Loosest to Tightest)</h3>
+  <p>The types of coupling form a spectrum from the loosest (most desirable) to the tightest (least desirable). Understanding this spectrum and being able to explain each type with examples is essential for exam preparation.</p>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 760 120" xmlns="http://www.w3.org/2000/svg">
+      <text x="380" y="18" text-anchor="middle" font-family="'Playfair Display', serif" font-size="14" font-weight="600" fill="#2c2416">Coupling Spectrum &mdash; Loosest to Tightest</text>
+      <rect x="10" y="35" width="100" height="50" rx="4" fill="#3d7c6c" stroke="#2d5a4f" stroke-width="1"/>
+      <text x="60" y="55" text-anchor="middle" font-family="'DM Mono', monospace" font-size="9" fill="#fff">Data</text>
+      <text x="60" y="70" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" fill="rgba(255,255,255,0.7)">Coupling</text>
+
+      <rect x="118" y="35" width="100" height="50" rx="4" fill="#5a9e8d" stroke="#3d7c6c" stroke-width="1"/>
+      <text x="168" y="55" text-anchor="middle" font-family="'DM Mono', monospace" font-size="9" fill="#fff">Stamp</text>
+      <text x="168" y="70" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" fill="rgba(255,255,255,0.7)">Coupling</text>
+
+      <rect x="226" y="35" width="100" height="50" rx="4" fill="#d4a843" stroke="#b89030" stroke-width="1"/>
+      <text x="276" y="55" text-anchor="middle" font-family="'DM Mono', monospace" font-size="9" fill="#fff">Control</text>
+      <text x="276" y="70" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" fill="rgba(255,255,255,0.7)">Coupling</text>
+
+      <rect x="334" y="35" width="105" height="50" rx="4" fill="#d4644f" stroke="#b8432f" stroke-width="1"/>
+      <text x="386" y="55" text-anchor="middle" font-family="'DM Mono', monospace" font-size="9" fill="#fff">External</text>
+      <text x="386" y="70" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" fill="rgba(255,255,255,0.7)">Coupling</text>
+
+      <rect x="447" y="35" width="105" height="50" rx="4" fill="#b8432f" stroke="#8c3220" stroke-width="1"/>
+      <text x="499" y="55" text-anchor="middle" font-family="'DM Mono', monospace" font-size="9" fill="#fff">Common</text>
+      <text x="499" y="70" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" fill="rgba(255,255,255,0.7)">Coupling</text>
+
+      <rect x="560" y="35" width="100" height="50" rx="4" fill="#8c3220" stroke="#6a2015" stroke-width="1"/>
+      <text x="610" y="55" text-anchor="middle" font-family="'DM Mono', monospace" font-size="9" fill="#fff">Content</text>
+      <text x="610" y="70" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" fill="rgba(255,255,255,0.7)">Coupling</text>
+
+      <!-- Arrow -->
+      <line x1="30" y1="100" x2="640" y2="100" stroke="#2c2416" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+      <text x="50" y="115" font-family="'DM Mono', monospace" font-size="9" fill="#3d7c6c">LOOSE (Good)</text>
+      <text x="560" y="115" font-family="'DM Mono', monospace" font-size="9" fill="#8c3220">TIGHT (Bad)</text>
+    </svg>
+    <div class="diagram-caption">Fig. 3 &mdash; The coupling spectrum from loosest (data coupling) to tightest (content coupling)</div>
+  </div>
+
+  <p><strong>1. Data Coupling</strong> &mdash; This is the loosest and most desirable form of coupling. Two modules are data-coupled when they communicate by passing only data elements (simple parameters such as integers, strings, or records of data) as arguments. The modules do not pass control information to each other, and neither module depends on the internal structure of the other. For example, a module <code>calculateInterest(principal, rate, time)</code> receives pure data and returns a result; it knows nothing about the caller's internal workings, and the caller knows nothing about how the interest is calculated. Data coupling is the best form of coupling because it minimizes the interface between modules, making each module independently testable, modifiable, and reusable. When examiners ask why data coupling is the best form, the answer lies in this minimal interface: since modules share only data values, changes to one module's internal implementation cannot affect the other module, provided the data interface remains stable.</p>
+
+  <p><strong>2. Stamp Coupling</strong> &mdash; Two modules are stamp-coupled when they share a composite data structure (such as a record, object, or array), but each module uses only a portion of the data in that structure. For instance, if module A passes an entire employee record to module B, but module B only uses the employee's name and department, then A and B are stamp-coupled. The problem with stamp coupling is that it creates an unnecessary dependency on the structure of the shared data: if the employee record is modified (say, by adding a new field), both modules may need to be reviewed, even though module B does not use the new field. The solution is to pass only the specific data elements needed, converting stamp coupling to data coupling.</p>
+
+  <p><strong>3. Control Coupling</strong> &mdash; Two modules are control-coupled when one module passes a control flag or switch to another module that influences the second module's internal logic. For example, if module A calls module B with a parameter <code>operationType = "SORT_BY_NAME"</code>, and module B uses this parameter in an if-else or switch statement to decide which sorting algorithm to execute, then A and B are control-coupled. The problem is that module A must know something about module B's internal processing logic in order to pass the appropriate control flag, creating a dependency that goes beyond mere data exchange. Control coupling is generally considered undesirable because it violates the principle of information hiding: the caller should not need to know how the callee implements its function.</p>
+
+  <p><strong>4. External Coupling</strong> &mdash; Two modules are externally coupled when they share an externally imposed data format, communication protocol, or interface convention. For example, two modules that both read from the same file format or both communicate using the same message protocol are externally coupled. The coupling exists not because the modules directly interact, but because they both depend on the same external specification. Changes to the external format or protocol will force changes in both modules.</p>
+
+  <p><strong>5. Common Coupling</strong> &mdash; Two modules are common-coupled (also called global coupling) when they both access and potentially modify the same global data area. For example, if both module A and module B read from and write to a global variable or a shared database table, they are common-coupled. This form of coupling is particularly dangerous because it makes the modules' behavior dependent on the sequence in which they execute: the result of module A's execution may depend on whether module B has already modified the global data. This creates subtle, hard-to-detect bugs and makes the system difficult to test, since the state of the global data at any point depends on the entire execution history.</p>
+
+  <p><strong>6. Content Coupling</strong> &mdash; This is the tightest and most undesirable form of coupling. Two modules are content-coupled when one module directly accesses or modifies the internal data of another module, or when one module branches into the middle of another module (using a goto statement, for example). Content coupling violates every principle of modular design: it destroys encapsulation, makes modules impossible to understand in isolation, and creates the maximum possible ripple effect when changes are made. Content coupling should be eliminated in all well-designed systems.</p>
+
+  <div class="exam-tip">
+    <div class="exam-tip-label">Exam Tip</div>
+    <p>For a 10-mark question on coupling, define coupling, explain why low coupling is desirable, describe all 6 types with examples (each type deserves about 100 words), and conclude with the coupling spectrum diagram. This naturally generates 600+ words of answer material.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  5. COHESION                                                  -->
+<!-- ============================================================ -->
+<section id="cohesion" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 05</span>
+    <h2>Cohesion</h2>
+    <p class="section-desc">How closely focused is a module's responsibility &mdash; the more, the better</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>Where coupling measures the strength of connections <em>between</em> modules, cohesion measures the strength of the relationship among the elements <em>within</em> a single module. A highly cohesive module performs a single, well-defined task, and all of its internal elements (data, functions, processing steps) contribute to that one task. A module with low cohesion performs multiple unrelated tasks, or contains elements that have no clear relationship to each other or to the module's stated purpose. The goal of good design is to achieve <strong>high cohesion</strong>, because cohesive modules are easier to understand, maintain, and reuse. A module that does one thing well is far more useful and reliable than a module that does several things poorly.</p>
+
+  <p>Think of cohesion through the analogy of a kitchen utensil drawer. A well-organized drawer might contain only spatulas and turners &mdash; everything in the drawer serves the same function, and you can reach in knowing exactly what you will find. That is high cohesion. A poorly organized drawer might contain spatulas, batteries, a screwdriver, some tape, and a few pens. You can still use the drawer, but it is confusing, hard to maintain (finding what you need requires rummaging), and the items have no clear relationship to each other. That is low cohesion. In software terms, a highly cohesive module like <code>calculateTax()</code> contains only the data and logic needed for tax calculation. A low-cohesion module like <code>processTransaction()</code> might mix tax calculation, inventory management, logging, email notification, and database updates in a single undifferentiated mass of code.</p>
+
+  <h3>Types of Cohesion (from Lowest to Highest)</h3>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 760 120" xmlns="http://www.w3.org/2000/svg">
+      <text x="380" y="18" text-anchor="middle" font-family="'Playfair Display', serif" font-size="14" font-weight="600" fill="#2c2416">Cohesion Spectrum &mdash; Lowest to Highest</text>
+      <rect x="5" y="35" width="98" height="50" rx="4" fill="#8c3220" stroke="#6a2015" stroke-width="1"/>
+      <text x="54" y="55" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8.5" fill="#fff">Coincidental</text>
+
+      <rect x="110" y="35" width="98" height="50" rx="4" fill="#b8432f" stroke="#8c3220" stroke-width="1"/>
+      <text x="159" y="55" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8.5" fill="#fff">Logical</text>
+
+      <rect x="215" y="35" width="98" height="50" rx="4" fill="#d4644f" stroke="#b8432f" stroke-width="1"/>
+      <text x="264" y="55" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8.5" fill="#fff">Temporal</text>
+
+      <rect x="320" y="35" width="98" height="50" rx="4" fill="#d4a843" stroke="#b89030" stroke-width="1"/>
+      <text x="369" y="55" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8.5" fill="#fff">Procedural</text>
+
+      <rect x="425" y="35" width="98" height="50" rx="4" fill="#c9b850" stroke="#a89a35" stroke-width="1"/>
+      <text x="474" y="55" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8.5" fill="#2c2416">Communicational</text>
+
+      <rect x="530" y="35" width="98" height="50" rx="4" fill="#5a9e8d" stroke="#3d7c6c" stroke-width="1"/>
+      <text x="579" y="55" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8.5" fill="#fff">Sequential</text>
+
+      <rect x="635" y="35" width="115" height="50" rx="4" fill="#3d7c6c" stroke="#2d5a4f" stroke-width="1"/>
+      <text x="692" y="55" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8.5" fill="#fff">Functional</text>
+
+      <line x1="25" y1="100" x2="730" y2="100" stroke="#2c2416" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+      <text x="20" y="115" font-family="'DM Mono', monospace" font-size="9" fill="#8c3220">LOW (Bad)</text>
+      <text x="640" y="115" font-family="'DM Mono', monospace" font-size="9" fill="#3d7c6c">HIGH (Good)</text>
+    </svg>
+    <div class="diagram-caption">Fig. 4 &mdash; The cohesion spectrum from lowest (coincidental) to highest (functional)</div>
+  </div>
+
+  <p><strong>1. Coincidental Cohesion</strong> (Lowest) &mdash; A module has coincidental cohesion when its elements have no meaningful relationship to each other. The module exists simply because someone decided to group these tasks together, perhaps because they happened to be coded at the same time or because they seemed "similar enough." An example would be a utility module called <code>miscellaneous()</code> that contains functions for sorting an array, formatting a date, and sending an email. There is no logical connection between these tasks, and the module is nearly impossible to describe with a meaningful name. Coincidental cohesion is the worst form because it makes modules completely unpredictable, unmaintainable, and unreusable.</p>
+
+  <p><strong>2. Logical Cohesion</strong> &mdash; A module has logical cohesion when its elements perform similar functions that are selected at runtime through a control flag. For example, a module called <code>inputData()</code> might handle keyboard input, file input, and network input, with a parameter determining which type of input is performed. While the functions are superficially related (all involve "input"), they require completely different internal logic and data structures. The module must contain code for all three types, even when only one is needed, creating unnecessary complexity and potential for error.</p>
+
+  <p><strong>3. Temporal Cohesion</strong> &mdash; A module has temporal cohesion when its elements are related by the time at which they execute rather than by the function they perform. For example, an <code>initializeSystem()</code> module might open files, clear memory buffers, reset counters, establish network connections, and load configuration data. All of these tasks happen at system startup (hence "temporal"), but they serve different functions. Temporal cohesion is common in initialization and cleanup modules and is generally considered acceptable for such purposes, even though it is not the highest form of cohesion.</p>
+
+  <p><strong>4. Procedural Cohesion</strong> &mdash; A module has procedural cohesion when its elements are related by the sequence in which they execute, typically because they are part of the same control flow. For example, a module that reads a record from a file, validates the record, and then updates a database table has procedural cohesion: the tasks must be performed in a specific order, and they share a common flow of control. Procedural cohesion is better than temporal cohesion because the elements share not just a time of execution but an actual sequence of execution, but it still falls short because the elements may perform different functions.</p>
+
+  <p><strong>5. Communicational Cohesion</strong> &mdash; A module has communicational cohesion when its elements operate on the same input data or produce the same output data. For example, a module that calculates both the average and the standard deviation of a set of exam scores has communicational cohesion: both calculations operate on the same data (the scores) and contribute to the same purpose (statistical analysis of the scores). Communicational cohesion is a strong form that often indicates a natural functional grouping.</p>
+
+  <p><strong>6. Sequential Cohesion</strong> &mdash; A module has sequential cohesion when the output of one element serves as the input to the next element in sequence. For example, a module that reads data from a file, sorts it, and then writes the sorted data to another file has sequential cohesion: the output of reading is the input to sorting, and the output of sorting is the input to writing. Sequential cohesion is very close to functional cohesion and is often considered nearly as good. The distinction is that sequential cohesion involves a sequence of related but distinct operations, whereas functional cohesion involves a single, unified operation.</p>
+
+  <p><strong>7. Functional Cohesion</strong> (Highest) &mdash; A module has functional cohesion when every element in the module contributes to the execution of a single, well-defined function. The module's name can typically be expressed as a verb-object phrase: <code>calculateTax()</code>, <code>sortArray()</code>, <code>validateEmail()</code>. All data structures, algorithms, and control structures within the module are directed toward the single purpose, and the module contains no extraneous elements. Functional cohesion is the ideal form because it produces modules that are maximally understandable, maintainable, testable, and reusable.</p>
+
+  <div class="exam-tip">
+    <div class="exam-tip-label">Exam Tip</div>
+    <p>For a 10-mark question on cohesion, define cohesion, explain why high cohesion is desirable, describe all 7 types with examples (80-100 words each), and include the cohesion spectrum diagram. This generates approximately 700+ words of answer material, which is ideal for a long-form exam response.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  6. COUPLING & COHESION RELATIONSHIP                          -->
+<!-- ============================================================ -->
+<section id="coupling-cohesion-relation" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 06</span>
+    <h2>The Relationship Between Coupling &amp; Cohesion</h2>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>Coupling and cohesion are not independent properties; they are deeply intertwined, and improving one almost invariably improves the other. The relationship can be stated as a general principle: <strong>modules with high cohesion tend to be loosely coupled, and modules with low cohesion tend to be tightly coupled</strong>. The logic behind this relationship is straightforward. When a module has high cohesion, it performs a single, well-defined function, which means its interface with other modules is minimal and focused: it receives only the data it needs and returns only the result of its specific function. This minimal interface naturally produces loose coupling with the calling modules. Conversely, when a module has low cohesion, it performs multiple unrelated functions, which means it must interact with many different modules to gather the data and control information it needs for those various functions. These multiple interactions create multiple points of coupling, resulting in tighter coupling overall.</p>
+
+  <p>Consider a concrete example. A module with functional cohesion called <code>calculateCircleArea(radius)</code> has a single, well-defined interface: it receives a radius and returns an area. It is tightly focused on one task and therefore has minimal coupling with other modules. Now consider a module with coincidental cohesion called <code>processGeometry()</code> that handles circle calculations, triangle validation, coordinate transformations, and output formatting all in one module. This module needs to interact with input modules, calculation modules for each shape, formatting modules, and output modules, creating extensive coupling across the system. The lesson is clear: pursuing high cohesion is one of the most effective strategies for achieving low coupling, and vice versa. When designing a system, if you focus on making each module do one thing well (high cohesion), the coupling between modules will naturally decrease as a consequence.</p>
+
+  <div class="pull-quote">
+    High cohesion within modules and low coupling between them are not separate goals but two faces of the same coin. Pursuing one inevitably leads to the other.
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Aspect</th><th>High Cohesion + Low Coupling</th><th>Low Cohesion + High Coupling</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Understandability</strong></td><td>Each module is self-contained and easy to understand</td><td>Modules are tangled and confusing</td></tr>
+        <tr><td><strong>Maintainability</strong></td><td>Changes are localized; minimal ripple effect</td><td>Changes cascade across many modules</td></tr>
+        <tr><td><strong>Testability</strong></td><td>Modules can be unit-tested independently</td><td>Testing requires the entire system context</td></tr>
+        <tr><td><strong>Reusability</strong></td><td>Modules can be extracted and reused easily</td><td>Modules carry too many dependencies to reuse</td></tr>
+        <tr><td><strong>Reliability</strong></td><td>Defects are isolated and contained</td><td>Defects propagate across module boundaries</td></tr>
+        <tr><td><strong>Development Speed</strong></td><td>Teams can work independently on modules</td><td>Coordination overhead slows development</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  7. MODULAR STRUCTURE & PACKAGING                             -->
+<!-- ============================================================ -->
+<section id="modular" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 07</span>
+    <h2>Modular Structure &amp; Packaging</h2>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>A <strong>module</strong> is a logically self-contained component of a software system that encapsulates a set of related data and procedures behind a well-defined interface. The concept of modularity is one of the foundational ideas of software engineering, drawing on the broader engineering principle of "divide and conquer." A large, complex system that is designed as a monolithic whole is virtually impossible to understand, develop, test, and maintain as a single entity. By decomposing the system into modules, each of which handles a manageable portion of the overall complexity, we transform an intractable problem into a collection of tractable ones. The key insight is that the complexity of a modular system is determined not by the total amount of code but by the complexity of the most complex individual module and the complexity of the interfaces between modules.</p>
+
+  <p>Parnas's principle of information hiding provides the theoretical foundation for effective modularity. Each module should hide a design decision &mdash; a data structure, an algorithm, a hardware interface, or a policy &mdash; behind an abstract interface that reveals only what other modules need to know. The module's internal implementation can then be changed freely, as long as its external interface remains stable. This separation of "what" from "how" is what makes it possible to modify, replace, or optimize individual modules without disturbing the rest of the system. The module's interface serves as a contract between the module and its users: the module promises to provide certain services through its interface, and the users promise to interact with the module only through that interface.</p>
+
+  <h3>Packaging</h3>
+  <p>Packaging is the process of organizing modules into larger logical units such as packages, libraries, namespaces, or subsystems. The goal of packaging is to provide a higher-level organizational structure that reflects the system's architecture and facilitates navigation, dependency management, and deployment. Good packaging groups related modules together based on functional area, layer, or feature, and minimizes the dependencies between packages. In Java, for example, related classes are grouped into packages; in C#, into namespaces; in Python, into modules and packages. The packaging strategy should reflect the architectural decomposition of the system, with each package corresponding to a coherent subsystem or layer. Packages that share many dependencies indicate that their modules may be too tightly coupled and might benefit from reorganization.</p>
+
+  <div class="exam-tip">
+    <div class="exam-tip-label">Exam Tip</div>
+    <p>When explaining modularity in exams, always mention: (1) the definition of a module, (2) Parnas's information hiding principle, (3) the interface contract concept, (4) the relationship to coupling and cohesion, and (5) the benefits of modular design. This creates a well-rounded answer that demonstrates deep understanding.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  8. OBJECT-ORIENTED DESIGN                                    -->
+<!-- ============================================================ -->
+<section id="ood" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 08</span>
+    <h2>Object-Oriented Design</h2>
+    <p class="section-desc">Organizing software around objects that combine data and behavior</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>Object-oriented design (OOD) is a design methodology that organizes a software system as a collection of interacting <strong>objects</strong>, where each object is an instance of a <strong>class</strong> that encapsulates both data (attributes) and behavior (methods). Unlike function-oriented design, which decomposes the system into functions or procedures that operate on external data, OOD bundles data and the operations that manipulate that data into a single cohesive unit. This approach mirrors the way we naturally perceive the world: we think of a "bank account" as an entity that has a balance (data) and can perform deposits and withdrawals (behavior), rather than as a separate data structure that is manipulated by external functions.</p>
+
+  <p>The four foundational principles of OOD are <strong>encapsulation</strong>, <strong>inheritance</strong>, <strong>polymorphism</strong>, and <strong>abstraction</strong>. Encapsulation bundles data and methods together and restricts direct access to an object's internal state, enforcing access through a controlled interface. This is the object-oriented equivalent of information hiding: the object's internal representation is hidden behind its public methods. Inheritance allows a new class (subclass) to inherit the attributes and methods of an existing class (superclass), promoting code reuse and establishing an "is-a" relationship between classes. Polymorphism allows objects of different classes to respond to the same message in different ways, enabling flexible and extensible designs. Abstraction allows the designer to focus on the essential characteristics of an object while suppressing irrelevant details.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Aspect</th><th>Function-Oriented Design</th><th>Object-Oriented Design</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Basic Unit</strong></td><td>Function / Procedure</td><td>Object (class instance)</td></tr>
+        <tr><td><strong>Data Handling</strong></td><td>Data is separate from functions; shared via parameters or global stores</td><td>Data is encapsulated within objects</td></tr>
+        <tr><td><strong>Approach</strong></td><td>Decomposition by function (what the system does)</td><td>Decomposition by entity (what the system is about)</td></tr>
+        <tr><td><strong>Reusability</strong></td><td>Through function libraries</td><td>Through inheritance, composition, and polymorphism</td></tr>
+        <tr><td><strong>Extensibility</strong></td><td>Requires modifying existing functions</td><td>New classes can extend existing ones via inheritance</td></tr>
+        <tr><td><strong>Data Security</strong></td><td>Less secure; data is often globally accessible</td><td>More secure; data is hidden behind encapsulation</td></tr>
+        <tr><td><strong>Maintainability</strong></td><td>Changes to data structures ripple through all functions</td><td>Changes are localized within classes</td></tr>
+        <tr><td><strong>Modeling</strong></td><td>Models the system as a series of transformations on data</td><td>Models the system as interacting real-world entities</td></tr>
+        <tr><td><strong>Design Artifacts</strong></td><td>Structure charts, DFDs</td><td>Class diagrams, sequence diagrams, UML</td></tr>
+        <tr><td><strong>Example Languages</strong></td><td>C, COBOL, Pascal (early versions)</td><td>Java, C++, Python, C#</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="exam-tip">
+    <div class="exam-tip-label">Exam Tip</div>
+    <p>The function-oriented vs. object-oriented comparison table is a frequent 5-mark question. Cover at least 8 differences with brief explanations. Always conclude with a statement about when each approach is appropriate: function-oriented for simple, linear data processing systems; object-oriented for complex systems with rich entity relationships.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  9. TOP-DOWN & BOTTOM-UP APPROACHES                           -->
+<!-- ============================================================ -->
+<section id="approaches" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 09</span>
+    <h2>Top-Down &amp; Bottom-Up Approaches</h2>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>The top-down and bottom-up approaches represent two fundamentally different philosophies for decomposing a software system into modules, and understanding when to use each &mdash; or how to combine them &mdash; is a hallmark of mature software design thinking.</p>
+
+  <h3>Top-Down Approach</h3>
+  <p>The top-down approach, also known as stepwise refinement, begins with the system's highest-level abstraction and progressively decomposes it into more detailed sub-problems. The designer starts with the overall system function (the "main" module) and identifies the major sub-functions it requires. Each sub-function is then further decomposed into its own sub-sub-functions, and this process continues until each leaf-level module performs a single, well-defined task that can be implemented directly. The approach was formalized by Niklaus Wirth in his influential 1971 paper "Program Development by Stepwise Refinement," and it naturally produces a hierarchical tree structure that maps directly to a structure chart. The primary advantage of top-down design is that it maintains a clear connection between the system's requirements and its implementation: at each level of decomposition, the designer can verify that the identified sub-functions are both necessary and sufficient to fulfill the parent function's responsibility. Top-down design is particularly effective when the system's overall function is well understood from the outset, as is often the case with algorithmic or procedural systems.</p>
+
+  <h3>Bottom-Up Approach</h3>
+  <p>The bottom-up approach begins with the system's most fundamental components and progressively assembles them into higher-level structures. The designer first identifies the low-level services and utilities that the system will need (such as data access routines, mathematical functions, or communication primitives) and implements them as reusable building blocks. These building blocks are then combined into higher-level modules, which are in turn combined into still higher-level modules, until the complete system is assembled. The bottom-up approach is natural when the system is built on a foundation of pre-existing components, libraries, or frameworks, and it is particularly effective for designing reusable component libraries and utility services. It is also the approach that naturally emerges in object-oriented design, where the designer first identifies the fundamental classes and then composes them into larger structures through aggregation and association.</p>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 720 310" xmlns="http://www.w3.org/2000/svg">
+      <text x="360" y="22" text-anchor="middle" font-family="'Playfair Display', serif" font-size="15" font-weight="600" fill="#2c2416">Top-Down vs. Bottom-Up Approach</text>
+
+      <!-- Top-Down side -->
+      <text x="180" y="52" text-anchor="middle" font-family="'DM Mono', monospace" font-size="11" font-weight="500" fill="#b8432f">TOP-DOWN</text>
+      <text x="180" y="68" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" fill="#8a7f6f">Decompose from abstract to concrete</text>
+
+      <!-- Top-down tree (root at top) -->
+      <rect x="130" y="80" width="100" height="30" rx="4" class="svg-node-dark"/>
+      <text x="180" y="100" text-anchor="middle" class="svg-text-light" font-size="9">SYSTEM</text>
+
+      <line x1="155" y1="110" x2="90" y2="140" class="svg-arrow-accent"/>
+      <line x1="205" y1="110" x2="270" y2="140" class="svg-arrow-accent"/>
+
+      <rect x="50" y="140" width="80" height="26" rx="3" class="svg-node-accent"/>
+      <text x="90" y="158" text-anchor="middle" class="svg-text" font-size="8">Module A</text>
+
+      <rect x="230" y="140" width="80" height="26" rx="3" class="svg-node-accent"/>
+      <text x="270" y="158" text-anchor="middle" class="svg-text" font-size="8">Module B</text>
+
+      <line x1="70" y1="166" x2="45" y2="195" class="svg-arrow-accent"/>
+      <line x1="110" y1="166" x2="135" y2="195" class="svg-arrow-accent"/>
+      <line x1="250" y1="166" x2="225" y2="195" class="svg-arrow-accent"/>
+      <line x1="290" y1="166" x2="315" y2="195" class="svg-arrow-accent"/>
+
+      <rect x="15" y="195" width="60" height="22" rx="3" class="svg-node"/>
+      <text x="45" y="210" text-anchor="middle" class="svg-text" font-size="7.5">A1</text>
+      <rect x="105" y="195" width="60" height="22" rx="3" class="svg-node"/>
+      <text x="135" y="210" text-anchor="middle" class="svg-text" font-size="7.5">A2</text>
+      <rect x="195" y="195" width="60" height="22" rx="3" class="svg-node"/>
+      <text x="225" y="210" text-anchor="middle" class="svg-text" font-size="7.5">B1</text>
+      <rect x="285" y="195" width="60" height="22" rx="3" class="svg-node"/>
+      <text x="315" y="210" text-anchor="middle" class="svg-text" font-size="7.5">B2</text>
+
+      <!-- Arrow showing direction -->
+      <line x1="180" y1="225" x2="180" y2="260" stroke="#b8432f" stroke-width="2" marker-end="url(#arrowhead-accent)"/>
+      <text x="180" y="278" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" fill="#b8432f">Refinement direction</text>
+
+      <!-- Bottom-Up side -->
+      <text x="540" y="52" text-anchor="middle" font-family="'DM Mono', monospace" font-size="11" font-weight="500" fill="#3d7c6c">BOTTOM-UP</text>
+      <text x="540" y="68" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" fill="#8a7f6f">Compose from concrete to abstract</text>
+
+      <!-- Bottom-up tree (root at bottom) -->
+      <rect x="425" y="80" width="60" height="22" rx="3" class="svg-node"/>
+      <text x="455" y="95" text-anchor="middle" class="svg-text" font-size="7.5">P1</text>
+      <rect x="495" y="80" width="60" height="22" rx="3" class="svg-node"/>
+      <text x="525" y="95" text-anchor="middle" class="svg-text" font-size="7.5">P2</text>
+      <rect x="565" y="80" width="60" height="22" rx="3" class="svg-node"/>
+      <text x="595" y="95" text-anchor="middle" class="svg-text" font-size="7.5">P3</text>
+      <rect x="635" y="80" width="60" height="22" rx="3" class="svg-node"/>
+      <text x="665" y="95" text-anchor="middle" class="svg-text" font-size="7.5">P4</text>
+
+      <line x1="455" y1="102" x2="475" y2="130" class="svg-arrow-teal"/>
+      <line x1="525" y1="102" x2="495" y2="130" class="svg-arrow-teal"/>
+      <line x1="595" y1="102" x2="615" y2="130" class="svg-arrow-teal"/>
+      <line x1="665" y1="102" x2="635" y2="130" class="svg-arrow-teal"/>
+
+      <rect x="445" y="130" width="80" height="26" rx="3" class="svg-node-teal"/>
+      <text x="485" y="148" text-anchor="middle" class="svg-text" font-size="8">Component X</text>
+
+      <rect x="585" y="130" width="80" height="26" rx="3" class="svg-node-teal"/>
+      <text x="625" y="148" text-anchor="middle" class="svg-text" font-size="8">Component Y</text>
+
+      <line x1="485" y1="156" x2="510" y2="185" class="svg-arrow-teal"/>
+      <line x1="625" y1="156" x2="600" y2="185" class="svg-arrow-teal"/>
+
+      <rect x="490" y="185" width="130" height="30" rx="4" class="svg-node-dark"/>
+      <text x="555" y="205" text-anchor="middle" class="svg-text-light" font-size="9">SYSTEM</text>
+
+      <!-- Arrow showing direction -->
+      <line x1="540" y1="225" x2="540" y2="260" stroke="#3d7c6c" stroke-width="2" marker-end="url(#arrowhead-teal)"/>
+      <text x="540" y="278" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" fill="#3d7c6c">Composition direction</text>
+
+      <!-- Divider -->
+      <line x1="360" y1="45" x2="360" y2="290" stroke="#d4c9b8" stroke-width="0.8" stroke-dasharray="4,3"/>
+    </svg>
+    <div class="diagram-caption">Fig. 5 &mdash; Top-down decomposition vs. bottom-up composition of a software system</div>
+  </div>
+
+  <p>In practice, most real-world software designs employ a <strong>hybrid or bidirectional approach</strong>, combining elements of both top-down and bottom-up design. The top-down approach is used to establish the overall system architecture and identify the major subsystems, while the bottom-up approach is used to identify and implement reusable utility components that the higher-level modules will need. This hybrid approach recognizes that neither pure top-down nor pure bottom-up design is optimal in isolation: top-down design can produce elegant hierarchies that rely on components that have not yet been built, while bottom-up design can produce robust building blocks that do not quite assemble into the system that was actually needed. The bidirectional approach mitigates both risks by working simultaneously from both ends and meeting in the middle.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Aspect</th><th>Top-Down</th><th>Bottom-Up</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Starting Point</strong></td><td>Highest-level system function</td><td>Lowest-level utility components</td></tr>
+        <tr><td><strong>Direction</strong></td><td>Abstract to concrete (decomposition)</td><td>Concrete to abstract (composition)</td></tr>
+        <tr><td><strong>Strength</strong></td><td>Clear traceability to requirements</td><td>Robust, reusable foundation components</td></tr>
+        <tr><td><strong>Weakness</strong></td><td>May produce modules that depend on non-existent lower layers</td><td>May produce components that don't assemble into the right system</td></tr>
+        <tr><td><strong>Best For</strong></td><td>Systems with well-understood functional requirements</td><td>Systems built on reusable libraries and frameworks</td></tr>
+        <tr><td><strong>Testing Strategy</strong></td><td>Top-down testing with stubs</td><td>Bottom-up testing with drivers</td></tr>
+        <tr><td><strong>Example</strong></td><td>Designing a compiler from the parser down to the code generator</td><td>Building math libraries, then data structures, then application logic</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  10. DESIGN PATTERNS                                          -->
+<!-- ============================================================ -->
+<section id="patterns" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 10</span>
+    <h2>Design Patterns</h2>
+    <p class="section-desc">Reusable solutions to commonly occurring design problems</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>Design patterns are generalized, reusable solutions to commonly occurring problems within a given context in software design. They are not finished designs that can be directly transformed into code; rather, they are templates or blueprints that describe how to solve a particular design problem in a way that has been proven effective across many different systems and situations. The concept was popularized in software engineering by the 1994 book <em>Design Patterns: Elements of Reusable Object-Oriented Software</em> by Erich Gamma, Richard Helm, Ralph Johnson, and John Vlissides (collectively known as the "Gang of Four" or GoF). However, the underlying idea of pattern languages originated in architecture, specifically in the work of Christopher Alexander, who described patterns as recurring solutions to design problems in the built environment.</p>
+
+  <p>Each design pattern is typically described using a standard template that includes the pattern's <strong>name</strong>, the <strong>problem</strong> it addresses, the <strong>context</strong> in which it applies, the <strong>solution</strong> it proposes, and the <strong>consequences</strong> (tradeoffs) of applying it. The GoF catalog contains 23 patterns organized into three categories based on their purpose.</p>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 700 330" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="22" text-anchor="middle" font-family="'Playfair Display', serif" font-size="15" font-weight="600" fill="#2c2416">GoF Design Pattern Categories</text>
+
+      <!-- Three main categories -->
+      <rect x="240" y="40" width="220" height="36" rx="5" class="svg-node-dark"/>
+      <text x="350" y="63" text-anchor="middle" class="svg-text-light" font-size="11">DESIGN PATTERNS (23)</text>
+
+      <line x1="290" y1="76" x2="130" y2="100" class="svg-arrow"/>
+      <line x1="350" y1="76" x2="350" y2="100" class="svg-arrow"/>
+      <line x1="410" y1="76" x2="570" y2="100" class="svg-arrow"/>
+
+      <!-- Creational -->
+      <rect x="30" y="100" width="200" height="32" rx="4" fill="#b8432f" stroke="#8c3220" stroke-width="1.2"/>
+      <text x="130" y="121" text-anchor="middle" font-family="'DM Mono', monospace" font-size="10" fill="#fff">CREATIONAL (5)</text>
+
+      <text x="50" y="152" class="svg-text" font-size="9">1. Singleton</text>
+      <text x="50" y="168" class="svg-text" font-size="9">2. Factory Method</text>
+      <text x="50" y="184" class="svg-text" font-size="9">3. Abstract Factory</text>
+      <text x="50" y="200" class="svg-text" font-size="9">4. Builder</text>
+      <text x="50" y="216" class="svg-text" font-size="9">5. Prototype</text>
+
+      <!-- Structural -->
+      <rect x="250" y="100" width="200" height="32" rx="4" fill="#3d7c6c" stroke="#2d5a4f" stroke-width="1.2"/>
+      <text x="350" y="121" text-anchor="middle" font-family="'DM Mono', monospace" font-size="10" fill="#fff">STRUCTURAL (7)</text>
+
+      <text x="270" y="152" class="svg-text" font-size="9">1. Adapter</text>
+      <text x="270" y="168" class="svg-text" font-size="9">2. Bridge</text>
+      <text x="270" y="184" class="svg-text" font-size="9">3. Composite</text>
+      <text x="270" y="200" class="svg-text" font-size="9">4. Decorator</text>
+      <text x="270" y="216" class="svg-text" font-size="9">5. Facade</text>
+      <text x="270" y="232" class="svg-text" font-size="9">6. Flyweight</text>
+      <text x="270" y="248" class="svg-text" font-size="9">7. Proxy</text>
+
+      <!-- Behavioral -->
+      <rect x="470" y="100" width="200" height="32" rx="4" fill="#d4a843" stroke="#b89030" stroke-width="1.2"/>
+      <text x="570" y="121" text-anchor="middle" font-family="'DM Mono', monospace" font-size="10" fill="#2c2416">BEHAVIORAL (11)</text>
+
+      <text x="490" y="152" class="svg-text" font-size="9">1. Chain of Responsibility</text>
+      <text x="490" y="168" class="svg-text" font-size="9">2. Command</text>
+      <text x="490" y="184" class="svg-text" font-size="9">3. Iterator</text>
+      <text x="490" y="200" class="svg-text" font-size="9">4. Mediator</text>
+      <text x="490" y="216" class="svg-text" font-size="9">5. Memento</text>
+      <text x="490" y="232" class="svg-text" font-size="9">6. Observer</text>
+      <text x="490" y="248" class="svg-text" font-size="9">7. State</text>
+      <text x="490" y="264" class="svg-text" font-size="9">8. Strategy</text>
+      <text x="490" y="280" class="svg-text" font-size="9">9. Template Method</text>
+      <text x="490" y="296" class="svg-text" font-size="9">10. Visitor</text>
+      <text x="490" y="312" class="svg-text" font-size="9">11. Interpreter</text>
+    </svg>
+    <div class="diagram-caption">Fig. 6 &mdash; The 23 Gang of Four design patterns organized by category</div>
+  </div>
+
+  <p><strong>Creational patterns</strong> deal with the mechanisms of object creation, seeking to create objects in a manner suitable to the situation. The <strong>Singleton</strong> pattern ensures that a class has only one instance and provides a global point of access to it. The <strong>Factory Method</strong> pattern defines an interface for creating an object but lets subclasses decide which class to instantiate. The <strong>Abstract Factory</strong> pattern provides an interface for creating families of related objects without specifying their concrete classes. The <strong>Builder</strong> pattern separates the construction of a complex object from its representation, allowing the same construction process to create different representations. The <strong>Prototype</strong> pattern creates new objects by cloning an existing instance.</p>
+
+  <p><strong>Structural patterns</strong> deal with the composition of classes and objects to form larger structures. The <strong>Adapter</strong> pattern converts the interface of a class into another interface that clients expect, enabling classes with incompatible interfaces to work together. The <strong>Facade</strong> pattern provides a unified, simplified interface to a set of interfaces in a subsystem, making the subsystem easier to use. The <strong>Decorator</strong> pattern attaches additional responsibilities to an object dynamically, providing a flexible alternative to subclassing for extending functionality.</p>
+
+  <p><strong>Behavioral patterns</strong> deal with the communication and interaction between objects. The <strong>Observer</strong> pattern defines a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically. The <strong>Strategy</strong> pattern defines a family of algorithms, encapsulates each one, and makes them interchangeable, allowing the algorithm to vary independently from the clients that use it. The <strong>Template Method</strong> pattern defines the skeleton of an algorithm in a method, deferring some steps to subclasses, allowing subclasses to redefine certain steps of the algorithm without changing its overall structure.</p>
+
+  <div class="exam-tip">
+    <div class="exam-tip-label">Exam Tip</div>
+    <p>For design pattern questions, define what patterns are, explain the three categories, give 2 examples from each category with brief descriptions, and discuss the benefits of using design patterns. This provides a solid 10-mark answer. For viva, be prepared to explain at least 3 patterns in detail.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  11. ARCHITECTURAL STYLES                                     -->
+<!-- ============================================================ -->
+<section id="architecture" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 11</span>
+    <h2>Architectural Styles</h2>
+    <p class="section-desc">The high-level structural choices that shape entire systems</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>Software architecture defines the high-level structure of a system: the major components (often called modules, layers, tiers, or subsystems), their responsibilities, and the relationships and interactions between them. An architectural style is a named collection of architectural design decisions that (1) are applicable in a given development context, (2) constrain architectural design decisions that are specific to a particular system within that context, and (3) elicit beneficial qualities in each resulting system. Architectural styles provide a vocabulary for talking about system structure and a set of well-understood tradeoffs that guide the architect's decisions. The choice of architectural style is one of the most consequential decisions in software design, because it shapes every subsequent design and implementation decision.</p>
+
+  <h3>Layered Architecture</h3>
+  <p>The layered architecture is one of the most widely used architectural styles, organizing the system into a hierarchy of layers, each of which provides a set of services to the layer above and uses services from the layer below. Each layer interacts only with its immediate neighbor layers, creating a clean separation of concerns. The most common example is the four-layer architecture used in many business applications: the <strong>presentation layer</strong> (user interface), the <strong>application/business logic layer</strong> (business rules and workflows), the <strong>data access layer</strong> (database interaction), and the <strong>database layer</strong> (data storage). In a strict layered architecture, each layer only calls the layer immediately below it; in a relaxed layered architecture, a layer may skip intermediate layers and call a lower layer directly.</p>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="24" text-anchor="middle" font-family="'Playfair Display', serif" font-size="15" font-weight="600" fill="#2c2416">Layered Architecture &mdash; LIBSYS (Library Automation System)</text>
+
+      <!-- Layer 4: Presentation -->
+      <rect x="100" y="50" width="500" height="65" rx="6" fill="rgba(184,67,47,0.12)" stroke="#b8432f" stroke-width="1.5"/>
+      <text x="350" y="78" text-anchor="middle" font-family="'DM Mono', monospace" font-size="11" font-weight="500" fill="#b8432f">PRESENTATION LAYER</text>
+      <text x="200" y="100" text-anchor="middle" class="svg-text" font-size="9">Search UI</text>
+      <text x="350" y="100" text-anchor="middle" class="svg-text" font-size="9">Member Portal</text>
+      <text x="500" y="100" text-anchor="middle" class="svg-text" font-size="9">Admin Dashboard</text>
+
+      <!-- Layer 3: Application Logic -->
+      <rect x="100" y="140" width="500" height="65" rx="6" fill="rgba(212,168,67,0.12)" stroke="#d4a843" stroke-width="1.5"/>
+      <text x="350" y="168" text-anchor="middle" font-family="'DM Mono', monospace" font-size="11" font-weight="500" fill="#b89030">APPLICATION / BUSINESS LOGIC LAYER</text>
+      <text x="175" y="190" text-anchor="middle" class="svg-text" font-size="9">Book Issue</text>
+      <text x="310" y="190" text-anchor="middle" class="svg-text" font-size="9">Fine Calculation</text>
+      <text x="455" y="190" text-anchor="middle" class="svg-text" font-size="9">Reservation Mgmt</text>
+      <text x="565" y="190" text-anchor="middle" class="svg-text" font-size="9">Reports</text>
+
+      <!-- Layer 2: Data Access -->
+      <rect x="100" y="230" width="500" height="65" rx="6" fill="rgba(61,124,108,0.12)" stroke="#3d7c6c" stroke-width="1.5"/>
+      <text x="350" y="258" text-anchor="middle" font-family="'DM Mono', monospace" font-size="11" font-weight="500" fill="#3d7c6c">DATA ACCESS LAYER</text>
+      <text x="200" y="280" text-anchor="middle" class="svg-text" font-size="9">BookDAO</text>
+      <text x="350" y="280" text-anchor="middle" class="svg-text" font-size="9">MemberDAO</text>
+      <text x="500" y="280" text-anchor="middle" class="svg-text" font-size="9">TransactionDAO</text>
+
+      <!-- Layer 1: Database -->
+      <rect x="100" y="320" width="500" height="65" rx="6" fill="rgba(44,36,22,0.08)" stroke="#2c2416" stroke-width="1.5"/>
+      <text x="350" y="348" text-anchor="middle" font-family="'DM Mono', monospace" font-size="11" font-weight="500" fill="#2c2416">DATABASE LAYER</text>
+      <text x="200" y="370" text-anchor="middle" class="svg-text" font-size="9">Books DB</text>
+      <text x="350" y="370" text-anchor="middle" class="svg-text" font-size="9">Members DB</text>
+      <text x="500" y="370" text-anchor="middle" class="svg-text" font-size="9">Transactions DB</text>
+
+      <!-- Arrows between layers -->
+      <line x1="350" y1="115" x2="350" y2="140" class="svg-arrow" stroke-width="1.8"/>
+      <text x="365" y="131" class="svg-text-small" fill="#b8432f">calls</text>
+
+      <line x1="350" y1="205" x2="350" y2="230" class="svg-arrow" stroke-width="1.8"/>
+      <text x="365" y="221" class="svg-text-small" fill="#d4a843">calls</text>
+
+      <line x1="350" y1="295" x2="350" y2="320" class="svg-arrow" stroke-width="1.8"/>
+      <text x="365" y="311" class="svg-text-small" fill="#3d7c6c">queries</text>
+
+      <!-- Users indicator -->
+      <text x="60" y="85" text-anchor="middle" class="svg-text-small">Users &rarr;</text>
+    </svg>
+    <div class="diagram-caption">Fig. 7 &mdash; Four-layer architecture for LIBSYS, a library automation system</div>
+  </div>
+
+  <h3>Repository (Data-Centered) Architecture</h3>
+  <p>In a repository (or data-centered) architecture, the system is organized around a central shared data store (the repository) that all other components access. The components may be independent subsystems that read from and write to the repository without directly communicating with each other. The repository serves as the single source of truth, and all interactions between subsystems occur implicitly through shared data in the repository. This style is well-suited to systems where multiple subsystems need to operate on the same data, such as version control systems, database-centric applications, and integrated development environments. The advantage is that data is centralized and consistent; the disadvantage is that the repository can become a performance bottleneck and a single point of failure.</p>
+
+  <h3>Client-Server Architecture</h3>
+  <p>The client-server architecture divides the system into two types of components: <strong>clients</strong>, which request services, and <strong>servers</strong>, which provide services. Clients and servers communicate over a network using a defined protocol. In a <strong>two-tier</strong> client-server architecture, the client communicates directly with the server (typically a database server). In a <strong>three-tier</strong> architecture, an intermediate application server sits between the client and the database server, handling business logic and reducing the client's complexity. In an <strong>n-tier</strong> architecture, the system is further decomposed into additional layers for improved scalability and separation of concerns.</p>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="22" text-anchor="middle" font-family="'Playfair Display', serif" font-size="15" font-weight="600" fill="#2c2416">Client-Server Architecture &mdash; Film Library System</text>
+
+      <!-- Clients -->
+      <rect x="30" y="60" width="120" height="45" rx="5" class="svg-node-accent"/>
+      <text x="90" y="82" text-anchor="middle" class="svg-text" font-size="9">Web Browser</text>
+      <text x="90" y="96" text-anchor="middle" class="svg-text-small">(Client 1)</text>
+
+      <rect x="30" y="125" width="120" height="45" rx="5" class="svg-node-accent"/>
+      <text x="90" y="147" text-anchor="middle" class="svg-text" font-size="9">Mobile App</text>
+      <text x="90" y="161" text-anchor="middle" class="svg-text-small">(Client 2)</text>
+
+      <rect x="30" y="190" width="120" height="45" rx="5" class="svg-node-accent"/>
+      <text x="90" y="212" text-anchor="middle" class="svg-text" font-size="9">Admin Panel</text>
+      <text x="90" y="226" text-anchor="middle" class="svg-text-small">(Client 3)</text>
+
+      <!-- Network -->
+      <rect x="200" y="100" width="100" height="100" rx="50" fill="none" stroke="#d4a843" stroke-width="1.5" stroke-dasharray="5,3"/>
+      <text x="250" y="145" text-anchor="middle" font-family="'DM Mono', monospace" font-size="8" fill="#d4a843">Network</text>
+      <text x="250" y="158" text-anchor="middle" font-family="'DM Mono', monospace" font-size="7" fill="#8a7f6f">(HTTP/TCP)</text>
+
+      <!-- Server -->
+      <rect x="370" y="55" width="180" height="55" rx="6" class="svg-node-teal"/>
+      <text x="460" y="78" text-anchor="middle" class="svg-text" font-size="10" font-weight="500">Application Server</text>
+      <text x="460" y="95" text-anchor="middle" class="svg-text-small">Film catalog, search, booking</text>
+
+      <rect x="370" y="140" width="180" height="55" rx="6" class="svg-node"/>
+      <text x="460" y="163" text-anchor="middle" class="svg-text" font-size="10" font-weight="500">Database Server</text>
+      <text x="460" y="180" text-anchor="middle" class="svg-text-small">Films, members, transactions</text>
+
+      <rect x="370" y="225" width="180" height="55" rx="6" class="svg-node"/>
+      <text x="460" y="248" text-anchor="middle" class="svg-text" font-size="10" font-weight="500">Media Server</text>
+      <text x="460" y="265" text-anchor="middle" class="svg-text-small">Film trailers, images, reviews</text>
+
+      <!-- Connections -->
+      <line x1="150" y1="82" x2="215" y2="120" class="svg-arrow"/>
+      <line x1="150" y1="147" x2="215" y2="140" class="svg-arrow"/>
+      <line x1="150" y1="212" x2="215" y2="175" class="svg-arrow"/>
+
+      <line x1="290" y1="130" x2="370" y2="80" class="svg-arrow"/>
+      <line x1="290" y1="150" x2="370" y2="155" class="svg-arrow"/>
+      <line x1="290" y1="170" x2="370" y2="240" class="svg-arrow"/>
+
+      <!-- Server interconnections -->
+      <line x1="460" y1="110" x2="460" y2="140" class="svg-arrow"/>
+      <line x1="460" y1="195" x2="460" y2="225" class="svg-arrow"/>
+
+      <!-- Labels -->
+      <text x="600" y="80" class="svg-text-small" fill="#3d7c6c">Processes requests</text>
+      <text x="600" y="165" class="svg-text-small" fill="#5c5345">Stores data</text>
+      <text x="600" y="250" class="svg-text-small" fill="#5c5345">Serves media</text>
+    </svg>
+    <div class="diagram-caption">Fig. 8 &mdash; Three-tier client-server architecture for a film library system</div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Architectural Style</th><th>Best Suited For</th><th>Key Characteristic</th><th>Example System</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Layered</strong></td><td>Enterprise applications with clear tiers</td><td>Strict layer separation; each layer calls only the layer below</td><td>LIBSYS, banking systems</td></tr>
+        <tr><td><strong>Repository / Data-Centered</strong></td><td>Networking, data-intensive, shared-data systems</td><td>Central shared data store; components interact via repository</td><td>Version control (Git), IDE, compilers</td></tr>
+        <tr><td><strong>Client-Server</strong></td><td>Web-based, distributed, multi-user systems</td><td>Clients request; servers respond; network-mediated</td><td>Email, web apps, streaming</td></tr>
+        <tr><td><strong>Call and Return</strong></td><td>Web-based systems, APIs, microservices</td><td>Components communicate via procedure/function calls</td><td>REST APIs, RPC systems</td></tr>
+        <tr><td><strong>Pipe and Filter</strong></td><td>Data processing pipelines</td><td>Data flows through a sequence of processing filters</td><td>Unix shell pipes, compilers</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="exam-tip">
+    <div class="exam-tip-label">Exam Tip</div>
+    <p>For architectural style questions, always draw a diagram. For LIBSYS with layered architecture, show the four layers with their components and label the inter-layer communication. For the film library with client-server, show clients, network, and server tiers. These diagrams earn significant marks and help you structure your written explanation.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  12. SOFTWARE METRICS OVERVIEW                                -->
+<!-- ============================================================ -->
+<section id="metrics" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 12</span>
+    <h2>Software Metrics &mdash; Overview</h2>
+    <p class="section-desc">Measuring what we build so we can build it better</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>Software metrics are quantitative measures of software properties that provide objective data about the software process and product. They transform subjective assessments ("this code looks complex") into objective numbers ("this module has a cyclomatic complexity of 12"), enabling informed decision-making about project management, quality assurance, resource allocation, and technical debt. Without metrics, software engineering remains an activity guided by intuition and experience rather than evidence, which is inadequate for managing large, complex projects with significant economic stakes.</p>
+
+  <p>Software metrics serve several essential purposes. They enable <strong>estimation</strong>: by measuring attributes of the software product (such as its size, complexity, or function point count), we can predict attributes of the development process (such as effort, cost, and schedule). They enable <strong>quality assessment</strong>: by measuring properties such as defect density, complexity, and test coverage, we can identify modules that are likely to contain defects and prioritize testing and review efforts accordingly. They enable <strong>process improvement</strong>: by measuring process attributes such as cycle time, defect injection rate, and rework percentage, we can identify bottlenecks and inefficiencies in the development process and track the effects of process changes over time. They enable <strong>project control</strong>: by measuring progress against plan, we can detect schedule slippage, budget overruns, and scope creep early enough to take corrective action.</p>
+
+  <p>Software metrics are broadly classified into several categories. <strong>Product metrics</strong> measure attributes of the software product itself, such as its size, complexity, modularity, and reliability. <strong>Process metrics</strong> measure attributes of the software development process, such as defect rates, productivity, and cycle times. <strong>Project metrics</strong> measure attributes of the software project, such as cost, schedule, staffing, and scope. Within product metrics, a further distinction is made between <strong>size-oriented metrics</strong>, which are based on the physical size of the software (typically measured in lines of code), and <strong>function-oriented metrics</strong>, which are based on the functionality the software provides (measured in function points). Each approach has strengths and limitations that we will examine in detail.</p>
+
+  <div class="exam-tip">
+    <div class="exam-tip-label">Exam Tip</div>
+    <p>For a question on "software metrics and its types," define metrics, explain why they are needed (at least 3 reasons), classify metrics into product/process/project, and further classify product metrics into size-oriented and function-oriented. This creates a well-structured answer of 400+ words.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  13. HALSTEAD'S SOFTWARE SCIENCE                              -->
+<!-- ============================================================ -->
+<section id="halstead" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 13</span>
+    <h2>Halstead&rsquo;s Software Science</h2>
+    <p class="section-desc">Measuring software complexity through operators and operands</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>Halstead's Software Science, developed by Maurice Halstead in 1977, is one of the earliest and most influential approaches to quantitative software measurement. Halstead proposed that software complexity could be measured by analyzing the <strong>operators</strong> and <strong>operands</strong> in a program, treating software as a collection of tokens that can be classified and counted. An <strong>operator</strong> is a symbol that specifies an action to be performed (such as +, -, *, /, if, while, return, =, ==), while an <strong>operand</strong> is a symbol that represents a data value on which an operator acts (such as variable names, constants, and literals). The theory is elegant in its simplicity: by counting these fundamental building blocks, Halstead claimed we could derive measures of program length, vocabulary, volume, difficulty, effort, and even the estimated time required to understand or write the program.</p>
+
+  <p>The foundational quantities in Halstead's theory are four basic counts: &eta;<sub>1</sub> (eta-1) = the number of <strong>unique operators</strong> in the program, &eta;<sub>2</sub> (eta-2) = the number of <strong>unique operands</strong> in the program, N<sub>1</sub> = the <strong>total number of operators</strong> (including duplicates), and N<sub>2</sub> = the <strong>total number of operands</strong> (including duplicates). From these four counts, Halstead derived the following metrics:</p>
+
+  <div class="card card-accent" style="text-align:center; padding: 1.5rem;">
+    <h4 style="margin-bottom:1rem; color:var(--accent);">Halstead&rsquo;s Formulae</h4>
+    <div style="font-family:'DM Mono',monospace; font-size:0.9rem; line-height:2.2;">
+      <div><strong>Vocabulary:</strong> &eta; = &eta;<sub>1</sub> + &eta;<sub>2</sub></div>
+      <div><strong>Program Length:</strong> N = N<sub>1</sub> + N<sub>2</sub></div>
+      <div><strong>Calculated Program Length:</strong> N&#770; = &eta;<sub>1</sub> &times; log<sub>2</sub>&eta;<sub>1</sub> + &eta;<sub>2</sub> &times; log<sub>2</sub>&eta;<sub>2</sub></div>
+      <div><strong>Volume:</strong> V = N &times; log<sub>2</sub>&eta;</div>
+      <div><strong>Difficulty:</strong> D = (&eta;<sub>1</sub> / 2) &times; (N<sub>2</sub> / &eta;<sub>2</sub>)</div>
+      <div><strong>Effort:</strong> E = D &times; V</div>
+      <div><strong>Time to Understand:</strong> T = E / 18 (seconds)</div>
+      <div><strong>Delivered Bugs:</strong> B = E<sup>2/3</sup> / 3000 &nbsp;or&nbsp; B = V / 3000</div>
+    </div>
+  </div>
+
+  <p>Let us understand each metric intuitively. <strong>Vocabulary (&eta;)</strong> counts the total number of distinct operators and operands in the program. A program with a larger vocabulary uses more different types of instructions and data values, which generally indicates greater functional complexity. <strong>Program Length (N)</strong> counts the total number of operator and operand occurrences, including repetitions. This is a measure of the program's physical size in terms of its fundamental tokens, distinct from lines of code. <strong>Volume (V)</strong> measures the amount of information required to represent the program and is measured in "bits" (information-theoretic units). A program with a large volume contains more information and is therefore more complex. The volume depends on both the length and the vocabulary: a long program with a small vocabulary (many repetitions of the same constructs) has a smaller volume than a long program with a large vocabulary (many different constructs).</p>
+
+  <p><strong>Difficulty (D)</strong> measures how difficult the program is to write or understand. It increases when the program uses many unique operators (high &eta;<sub>1</sub>) and when operands are used frequently relative to the number of unique operands (high N<sub>2</sub>/&eta;<sub>2</sub>). The intuition is that a program is more difficult when it uses many different kinds of operations and when it applies those operations to many different data values. <strong>Effort (E)</strong> represents the total mental effort required to develop or understand the program, measured in "elementary mental discriminations." It is the product of difficulty and volume: a program that is both difficult and voluminous requires the most effort. <strong>Time (T)</strong> converts effort into an estimate of the time (in seconds) required by an average programmer to write or understand the code, using Halstead's empirically derived constant of 18 discriminations per second. <strong>Delivered Bugs (B)</strong> estimates the number of defects that will be present in the delivered code, based on the observation that more complex programs tend to contain more bugs.</p>
+
+  <h3>Worked Example</h3>
+  <div class="card card-teal">
+    <h4>Calculate Halstead metrics for the following code:</h4>
+    <pre><code>if (a > b)
+    c = 3;
+else
+    c = 5;
+c = c * c;</code></pre>
+
+    <p><strong>Step 1: Identify operators and operands.</strong></p>
+    <p><strong>Unique operators (&eta;<sub>1</sub>):</strong> if, &gt;, =, *, else &mdash; so &eta;<sub>1</sub> = 5</p>
+    <p><strong>Unique operands (&eta;<sub>2</sub>):</strong> a, b, c, 3, 5 &mdash; so &eta;<sub>2</sub> = 5</p>
+    <p><strong>Total operators (N<sub>1</sub>):</strong> if(1), &gt;(1), =(3), *(1), else(1) &mdash; so N<sub>1</sub> = 7</p>
+    <p><strong>Total operands (N<sub>2</sub>):</strong> a(1), b(1), c(4), 3(1), 5(1) &mdash; so N<sub>2</sub> = 8</p>
+
+    <p><strong>Step 2: Calculate derived metrics.</strong></p>
+    <p>Vocabulary: &eta; = 5 + 5 = <strong>10</strong></p>
+    <p>Program Length: N = 7 + 8 = <strong>15</strong></p>
+    <p>Volume: V = 15 &times; log<sub>2</sub>(10) = 15 &times; 3.32 = <strong>49.8 bits</strong></p>
+    <p>Difficulty: D = (5/2) &times; (8/5) = 2.5 &times; 1.6 = <strong>4.0</strong></p>
+    <p>Effort: E = 4.0 &times; 49.8 = <strong>199.2 elementary discriminations</strong></p>
+    <p>Time: T = 199.2 / 18 = <strong>11.07 seconds</strong></p>
+    <p>Bugs: B = V / 3000 = 49.8 / 3000 = <strong>0.017</strong></p>
+  </div>
+
+  <div class="memory-anchor">
+    <div class="memory-anchor-label">Memory Anchor</div>
+    <p><strong>Remember the formula order with "VD-ET-B":</strong> Volume, Difficulty, Effort, Time, Bugs. "Very Difficult Exams Take Brains." Start with the basic counts (&eta;<sub>1</sub>, &eta;<sub>2</sub>, N<sub>1</sub>, N<sub>2</sub>), then derive V, D, E, T, B in sequence.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  14. FUNCTION POINT ANALYSIS                                  -->
+<!-- ============================================================ -->
+<section id="fpa" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 14</span>
+    <h2>Function Point Analysis</h2>
+    <p class="section-desc">Measuring software size by what it does, not how it&rsquo;s written</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>Function Point Analysis (FPA), developed by Allan Albrecht at IBM in 1979, is a method for measuring the size of software based on the functionality it delivers to the user, rather than the number of lines of code it contains. The fundamental insight behind function points is that the size of a software system is better characterized by what it does for its users than by how many statements a programmer wrote to implement it. Lines of code (LOC) as a size measure suffers from several well-known problems: LOC counts vary dramatically between programming languages (a Python program may be 5 to 10 times shorter than an equivalent COBOL program), they can be inflated or deflated by coding style, they are not known until after implementation is complete, and they reward verbose coding over elegant, compact solutions. Function points address all of these issues by measuring size in terms of the system's functional requirements, which are known before implementation begins and are independent of the programming language used.</p>
+
+  <p>Function Point Analysis measures the functional size of a system by counting and classifying five types of functional components, evaluating their complexity, and computing a total that represents the system's functional size in Function Points (FP). The five component types are divided into two categories: <strong>data functions</strong> (which store and maintain data) and <strong>transactional functions</strong> (which process data).</p>
+
+  <p>The two <strong>data function</strong> types are: <strong>Internal Logical Files (ILF)</strong> &mdash; user-identifiable groups of logically related data or control information that are maintained (created, updated, deleted) within the application's boundary. For example, a "Student" table maintained by a student management system is an ILF. <strong>External Interface Files (EIF)</strong> &mdash; user-identifiable groups of logically related data or control information that are referenced by the application but maintained by another application. For example, if the student management system reads course data from a separate course management system, that course data is an EIF.</p>
+
+  <p>The three <strong>transactional function</strong> types are: <strong>External Inputs (EI)</strong> &mdash; elementary processes that maintain or update one or more ILFs by adding, changing, or deleting data. For example, "Add New Student" is an EI. <strong>External Outputs (EO)</strong> &mdash; elementary processes that send data out of the application boundary, involving some processing logic beyond simple data retrieval. For example, "Generate Grade Report" (which involves calculating GPA) is an EO. <strong>External Inquiries (EQ)</strong> &mdash; elementary processes that send data out of the application boundary in response to a retrieval request, without significant processing logic. For example, "Search Student by ID" is an EQ.</p>
+
+  <div class="diagram-container">
+    <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg">
+      <text x="350" y="22" text-anchor="middle" font-family="'Playfair Display', serif" font-size="15" font-weight="600" fill="#2c2416">Function Point Components &amp; Complexity Weights</text>
+
+      <!-- Table header -->
+      <rect x="50" y="45" width="200" height="30" rx="0" fill="#2c2416"/>
+      <rect x="250" y="45" width="100" height="30" rx="0" fill="#2c2416"/>
+      <rect x="350" y="45" width="100" height="30" rx="0" fill="#2c2416"/>
+      <rect x="450" y="45" width="100" height="30" rx="0" fill="#2c2416"/>
+      <rect x="560" y="45" width="100" height="30" rx="0" fill="#2c2416"/>
+
+      <text x="150" y="65" text-anchor="middle" font-family="'DM Mono', monospace" font-size="9" fill="#f0ece4">Component Type</text>
+      <text x="300" y="65" text-anchor="middle" font-family="'DM Mono', monospace" font-size="9" fill="#f0ece4">Category</text>
+      <text x="400" y="65" text-anchor="middle" font-family="'DM Mono', monospace" font-size="9" fill="#f0ece4">Low</text>
+      <text x="500" y="65" text-anchor="middle" font-family="'DM Mono', monospace" font-size="9" fill="#f0ece4">Average</text>
+      <text x="610" y="65" text-anchor="middle" font-family="'DM Mono', monospace" font-size="9" fill="#f0ece4">High</text>
+
+      <!-- ILF -->
+      <rect x="50" y="75" width="200" height="28" fill="rgba(184,67,47,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="250" y="75" width="100" height="28" fill="rgba(184,67,47,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="350" y="75" width="100" height="28" fill="rgba(184,67,47,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="450" y="75" width="100" height="28" fill="rgba(184,67,47,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="560" y="75" width="100" height="28" fill="rgba(184,67,47,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <text x="150" y="93" text-anchor="middle" class="svg-text" font-size="9">ILF (Internal Logical File)</text>
+      <text x="300" y="93" text-anchor="middle" class="svg-text" font-size="9">Data</text>
+      <text x="400" y="93" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">7</text>
+      <text x="500" y="93" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">10</text>
+      <text x="610" y="93" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">15</text>
+
+      <!-- EIF -->
+      <rect x="50" y="103" width="200" height="28" fill="rgba(61,124,108,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="250" y="103" width="100" height="28" fill="rgba(61,124,108,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="350" y="103" width="100" height="28" fill="rgba(61,124,108,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="450" y="103" width="100" height="28" fill="rgba(61,124,108,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="560" y="103" width="100" height="28" fill="rgba(61,124,108,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <text x="150" y="121" text-anchor="middle" class="svg-text" font-size="9">EIF (External Interface File)</text>
+      <text x="300" y="121" text-anchor="middle" class="svg-text" font-size="9">Data</text>
+      <text x="400" y="121" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">5</text>
+      <text x="500" y="121" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">7</text>
+      <text x="610" y="121" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">10</text>
+
+      <!-- EI -->
+      <rect x="50" y="135" width="200" height="28" fill="rgba(212,168,67,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="250" y="135" width="100" height="28" fill="rgba(212,168,67,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="350" y="135" width="100" height="28" fill="rgba(212,168,67,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="450" y="135" width="100" height="28" fill="rgba(212,168,67,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="560" y="135" width="100" height="28" fill="rgba(212,168,67,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <text x="150" y="153" text-anchor="middle" class="svg-text" font-size="9">EI (External Input)</text>
+      <text x="300" y="153" text-anchor="middle" class="svg-text" font-size="9">Transactional</text>
+      <text x="400" y="153" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">3</text>
+      <text x="500" y="153" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">4</text>
+      <text x="610" y="153" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">6</text>
+
+      <!-- EO -->
+      <rect x="50" y="163" width="200" height="28" fill="rgba(124,82,149,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="250" y="163" width="100" height="28" fill="rgba(124,82,149,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="350" y="163" width="100" height="28" fill="rgba(124,82,149,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="450" y="163" width="100" height="28" fill="rgba(124,82,149,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="560" y="163" width="100" height="28" fill="rgba(124,82,149,0.06)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <text x="150" y="181" text-anchor="middle" class="svg-text" font-size="9">EO (External Output)</text>
+      <text x="300" y="181" text-anchor="middle" class="svg-text" font-size="9">Transactional</text>
+      <text x="400" y="181" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">4</text>
+      <text x="500" y="181" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">5</text>
+      <text x="610" y="181" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">7</text>
+
+      <!-- EQ -->
+      <rect x="50" y="191" width="200" height="28" fill="rgba(44,36,22,0.04)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="250" y="191" width="100" height="28" fill="rgba(44,36,22,0.04)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="350" y="191" width="100" height="28" fill="rgba(44,36,22,0.04)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="450" y="191" width="100" height="28" fill="rgba(44,36,22,0.04)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <rect x="560" y="191" width="100" height="28" fill="rgba(44,36,22,0.04)" stroke="#d4c9b8" stroke-width="0.5"/>
+      <text x="150" y="209" text-anchor="middle" class="svg-text" font-size="9">EQ (External Inquiry)</text>
+      <text x="300" y="209" text-anchor="middle" class="svg-text" font-size="9">Transactional</text>
+      <text x="400" y="209" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">3</text>
+      <text x="500" y="209" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">4</text>
+      <text x="610" y="209" text-anchor="middle" class="svg-text" font-size="10" font-weight="600">6</text>
+
+      <!-- Formula -->
+      <rect x="50" y="235" width="610" height="35" rx="4" fill="rgba(212,168,67,0.1)" stroke="#d4a843" stroke-width="1"/>
+      <text x="355" y="257" text-anchor="middle" font-family="'DM Mono', monospace" font-size="10" fill="#2c2416">
+        UFC = &Sigma; (count &times; weight) for each component &nbsp;&nbsp;|&nbsp;&nbsp; FP = UFC &times; [0.65 + 0.01 &times; &Sigma;Fi]
+      </text>
+    </svg>
+    <div class="diagram-caption">Fig. 9 &mdash; Function Point component types with their complexity weight values</div>
+  </div>
+
+  <p>The process of calculating function points proceeds as follows. First, the analyst identifies and counts each of the five component types (ILF, EIF, EI, EO, EQ) and assesses the complexity of each component as Low, Average, or High based on the number of data element types (DETs), record element types (RETs), and file types referenced (FTRs). Each component count is multiplied by its corresponding complexity weight (from the table above), and the products are summed to obtain the <strong>Unadjusted Function Count (UFC)</strong>. Next, the analyst evaluates 14 <strong>General System Characteristics (GSCs)</strong> that assess the overall complexity of the system (such as data communications, distributed processing, performance, heavily used configuration, transaction rate, online data entry, end-user efficiency, online update, complex processing, reusability, installation ease, operational ease, and multiple sites). Each GSC is rated on a scale from 0 (no influence) to 5 (strong influence). The 14 ratings are summed to produce the <strong>Value Adjustment Factor (VAF)</strong>, calculated as VAF = 0.65 + 0.01 &times; &Sigma;F<sub>i</sub>. The final <strong>Function Point count</strong> is FP = UFC &times; VAF.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Criterion</th><th>Size-Oriented (LOC)</th><th>Function-Oriented (FP)</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Language Independence</strong></td><td>No &mdash; LOC varies by language</td><td>Yes &mdash; FP is language-independent</td></tr>
+        <tr><td><strong>Known Before Coding</strong></td><td>No &mdash; counted after implementation</td><td>Yes &mdash; counted from requirements</td></tr>
+        <tr><td><strong>Measures Functionality</strong></td><td>No &mdash; measures physical size</td><td>Yes &mdash; measures delivered functionality</td></tr>
+        <tr><td><strong>Subjectivity</strong></td><td>Low &mdash; straightforward counting</td><td>Higher &mdash; complexity assessment is subjective</td></tr>
+        <tr><td><strong>Industry Adoption</strong></td><td>Declining</td><td>Widely adopted; ISO standard (ISO 20926)</td></tr>
+        <tr><td><strong>Better For</strong></td><td>Comparing implementations in the same language</td><td>Estimation, benchmarking, cross-language comparison</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  15. CYCLOMATIC COMPLEXITY                                    -->
+<!-- ============================================================ -->
+<section id="cyclomatic" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 15</span>
+    <h2>Cyclomatic Complexity &amp; Control Flow Graphs</h2>
+    <p class="section-desc">Measuring the structural complexity of code through graph theory</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>Cyclomatic complexity, developed by Thomas McCabe in 1976, is a quantitative measure of the number of <strong>linearly independent paths</strong> through a program's source code. It is computed from the program's <strong>Control Flow Graph (CFG)</strong>, a directed graph in which nodes represent indivisible groups of statements (basic blocks) and edges represent the flow of control between them. The cyclomatic complexity provides a direct measure of the minimum number of test cases required to achieve complete branch coverage of the code, making it an invaluable tool for test planning and quality assessment. A module with a high cyclomatic complexity has many decision points and many independent paths through it, which makes it harder to understand, test, and maintain. As a general guideline, modules with cyclomatic complexity greater than 10 are considered complex and should be candidates for refactoring.</p>
+
+  <p>A <strong>Control Flow Graph</strong> represents the flow of control in a program as a directed graph. Each node in the graph represents a sequence of statements that execute without any branching (a basic block), and each edge represents a possible transfer of control from one block to another. Decision points (such as if statements, while loops, for loops, and switch cases) create branching in the graph, producing multiple outgoing edges from the decision node. The graph has a single entry node (start) and a single exit node (end), ensuring that it is a connected, directed graph &mdash; a requirement for the cyclomatic complexity formula to apply correctly.</p>
+
+  <p><strong>Linearly independent paths</strong> are paths through the CFG that cannot be represented as a linear combination of other paths. In practical terms, a set of linearly independent paths is a set of paths such that each path introduces at least one new edge that was not covered by the previous paths. The cyclomatic complexity V(G) gives the exact number of such paths, which equals the minimum number of test cases needed for complete branch coverage.</p>
+
+  <h3>Three Methods to Calculate Cyclomatic Complexity</h3>
+  <p>There are three equivalent methods for computing cyclomatic complexity, and exams often require you to know and apply all three.</p>
+
+  <div class="card card-accent" style="text-align:center; padding: 1.5rem;">
+    <h4 style="margin-bottom:1rem; color:var(--accent);">Method 1: Graph Formula</h4>
+    <p style="font-family:'DM Mono',monospace; font-size:1rem;">V(G) = E &minus; N + 2P</p>
+    <p style="font-size:0.9rem; color:var(--text-muted); margin-top:0.5rem;">Where E = number of edges, N = number of nodes, P = number of connected components (usually 1 for a single program)</p>
+  </div>
+
+  <div class="card card-teal" style="text-align:center; padding: 1.5rem;">
+    <h4 style="margin-bottom:1rem; color:var(--teal);">Method 2: Predicate Nodes</h4>
+    <p style="font-family:'DM Mono',monospace; font-size:1rem;">V(G) = P + 1</p>
+    <p style="font-size:0.9rem; color:var(--text-muted); margin-top:0.5rem;">Where P = number of predicate nodes (decision nodes with two or more outgoing edges)</p>
+  </div>
+
+  <div class="card card-gold" style="text-align:center; padding: 1.5rem;">
+    <h4 style="margin-bottom:1rem; color:var(--gold);">Method 3: Region Counting</h4>
+    <p style="font-family:'DM Mono',monospace; font-size:1rem;">V(G) = Number of enclosed regions + 1</p>
+    <p style="font-size:0.9rem; color:var(--text-muted); margin-top:0.5rem;">Count all enclosed regions (areas enclosed by edges) in the planar CFG and add 1 for the outer region</p>
+  </div>
+
+  <h3>Worked Examples</h3>
+
+  <!-- Code Snippet 1 -->
+  <div class="card card-teal">
+    <h4>Code Snippet 1 &mdash; Simple If-Else</h4>
+    <pre><code>if (a > b)
+    c = 3;
+else
+    c = 5;
+c = c * c;</code></pre>
+
+    <div class="diagram-container" style="padding:1rem;">
+      <svg viewBox="0 0 400 220" xmlns="http://www.w3.org/2000/svg">
+        <text x="200" y="18" text-anchor="middle" font-family="'DM Mono', monospace" font-size="10" fill="#8a7f6f">CFG &mdash; Code Snippet 1</text>
+        <!-- Node 1: if (a>b) -->
+        <polygon points="200,30 270,60 200,90 130,60" class="svg-node-accent"/>
+        <text x="200" y="64" text-anchor="middle" class="svg-text" font-size="9">if (a &gt; b)</text>
+
+        <!-- Node 2: c=3 -->
+        <rect x="40" y="110" width="100" height="34" rx="4" class="svg-node-teal"/>
+        <text x="90" y="132" text-anchor="middle" class="svg-text" font-size="9">c = 3</text>
+
+        <!-- Node 3: c=5 -->
+        <rect x="260" y="110" width="100" height="34" rx="4" class="svg-node-teal"/>
+        <text x="310" y="132" text-anchor="middle" class="svg-text" font-size="9">c = 5</text>
+
+        <!-- Node 4: c=c*c -->
+        <rect x="130" y="180" width="140" height="34" rx="4" class="svg-node-dark"/>
+        <text x="200" y="202" text-anchor="middle" class="svg-text-light" font-size="9">c = c * c</text>
+
+        <!-- Edges -->
+        <line x1="155" y1="76" x2="110" y2="110" class="svg-arrow-accent"/>
+        <text x="120" y="96" class="svg-text-small" fill="#b8432f">T</text>
+
+        <line x1="245" y1="76" x2="290" y2="110" class="svg-arrow"/>
+        <text x="280" y="96" class="svg-text-small" fill="#5c5345">F</text>
+
+        <line x1="90" y1="144" x2="170" y2="180" class="svg-arrow-teal"/>
+        <line x1="310" y1="144" x2="230" y2="180" class="svg-arrow"/>
+      </svg>
+    </div>
+
+    <p><strong>Method 1:</strong> E = 4 (if&rarr;c=3, if&rarr;c=5, c=3&rarr;c*c, c=5&rarr;c*c), N = 4, P = 1<br>
+    V(G) = 4 &minus; 4 + 2(1) = <strong>2</strong></p>
+    <p><strong>Method 2:</strong> Predicate nodes = 1 (the if node)<br>
+    V(G) = 1 + 1 = <strong>2</strong></p>
+    <p><strong>Method 3:</strong> Enclosed regions = 1 (the area between the two paths) + 1 (outer) = <strong>2</strong></p>
+    <p><strong>Independent Paths:</strong><br>
+    Path 1: if(T) &rarr; c=3 &rarr; c=c*c<br>
+    Path 2: if(F) &rarr; c=5 &rarr; c=c*c</p>
+  </div>
+
+  <!-- Code Snippet 2 -->
+  <div class="card card-accent">
+    <h4>Code Snippet 2 &mdash; Euclid&rsquo;s GCD Algorithm</h4>
+    <pre><code>while (x != y) {
+    if (x > y)
+        x = x - y;
+    else
+        y = y - x;
+}
+return x;</code></pre>
+
+    <div class="diagram-container" style="padding:1rem;">
+      <svg viewBox="0 0 340 310" xmlns="http://www.w3.org/2000/svg">
+        <text x="170" y="18" text-anchor="middle" font-family="'DM Mono', monospace" font-size="10" fill="#8a7f6f">CFG &mdash; Code Snippet 2</text>
+
+        <!-- Node 1: while -->
+        <polygon points="170,30 240,60 170,90 100,60" class="svg-node-accent"/>
+        <text x="170" y="56" text-anchor="middle" class="svg-text" font-size="8">while</text>
+        <text x="170" y="68" text-anchor="middle" class="svg-text" font-size="8">(x != y)</text>
+
+        <!-- Node 2: if -->
+        <polygon points="170,110 230,135 170,160 110,135" class="svg-node-gold"/>
+        <text x="170" y="139" text-anchor="middle" class="svg-text" font-size="8">if (x &gt; y)</text>
+
+        <!-- Node 3: x=x-y -->
+        <rect x="25" y="170" width="100" height="30" rx="4" class="svg-node-teal"/>
+        <text x="75" y="190" text-anchor="middle" class="svg-text" font-size="8">x = x - y</text>
+
+        <!-- Node 4: y=y-x -->
+        <rect x="215" y="170" width="100" height="30" rx="4" class="svg-node-teal"/>
+        <text x="265" y="190" text-anchor="middle" class="svg-text" font-size="8">y = y - x</text>
+
+        <!-- Node 5: return x -->
+        <rect x="120" y="250" width="100" height="30" rx="4" class="svg-node-dark"/>
+        <text x="170" y="270" text-anchor="middle" class="svg-text-light" font-size="9">return x</text>
+
+        <!-- Edges -->
+        <line x1="125" y1="76" x2="140" y2="110" class="svg-arrow-accent"/>
+        <text x="118" y="97" class="svg-text-small" fill="#b8432f">T</text>
+
+        <line x1="215" y1="76" x2="170" y2="250" class="svg-arrow"/>
+        <text x="220" y="175" class="svg-text-small" fill="#5c5345">F</text>
+
+        <line x1="130" y1="155" x2="85" y2="170" class="svg-arrow"/>
+        <text x="95" y="163" class="svg-text-small" fill="#5c5345">T</text>
+
+        <line x1="210" y1="155" x2="255" y2="170" class="svg-arrow"/>
+        <text x="240" y="163" class="svg-text-small" fill="#5c5345">F</text>
+
+        <!-- Loop backs -->
+        <path d="M 35 170 Q -15 140, 100 70" fill="none" stroke="#3d7c6c" stroke-width="1.2" marker-end="url(#arrowhead-teal)"/>
+        <path d="M 305 200 Q 330 230, 250 90" fill="none" stroke="#3d7c6c" stroke-width="1.2" marker-end="url(#arrowhead-teal)"/>
+      </svg>
+    </div>
+
+    <p><strong>Method 1:</strong> E = 6, N = 5, P = 1<br>
+    V(G) = 6 &minus; 5 + 2 = <strong>3</strong></p>
+    <p><strong>Method 2:</strong> Predicate nodes = 2 (while, if)<br>
+    V(G) = 2 + 1 = <strong>3</strong></p>
+    <p><strong>Method 3:</strong> Enclosed regions = 2 (while loop region, if-else region) + 1 (outer) = <strong>3</strong></p>
+    <p><strong>Independent Paths:</strong><br>
+    Path 1: while(F) &rarr; return x<br>
+    Path 2: while(T) &rarr; if(T) &rarr; x=x-y &rarr; while(F) &rarr; return x<br>
+    Path 3: while(T) &rarr; if(F) &rarr; y=y-x &rarr; while(F) &rarr; return x</p>
+  </div>
+
+  <!-- Code Snippet 3 -->
+  <div class="card card-gold">
+    <h4>Code Snippet 3 &mdash; Insertion Sort</h4>
+    <pre><code>int i, j, k;
+for (i=0; i<=N; i++)
+    p[i] = 1;
+for (i=2; i<=N; i++) {
+    k = p[i];
+    j = i;
+    while (a[p[j-1]] > a[k]) {
+        p[j] = p[j-1];
+        j--;
+    }
+    p[j] = k;
+}</code></pre>
+
+    <p><strong>Method 1:</strong> E = 10, N = 8 (7 code nodes + 1 exit node), P = 1<br>
+    V(G) = 10 &minus; 8 + 2 = <strong>4</strong></p>
+    <p><strong>Method 2:</strong> Predicate nodes = 3 (for1, for2, while)<br>
+    V(G) = 3 + 1 = <strong>4</strong></p>
+    <p><strong>Independent Paths:</strong> 4 paths covering each decision branch combination at least once.</p>
+  </div>
+
+  <!-- Code Snippet 4 -->
+  <div class="card card-purple">
+    <h4>Code Snippet 4 &mdash; Python Check Number</h4>
+    <pre><code>def check_number(num):
+    if num > 0:
+        print("Positive")
+    elif num == 0:
+        print("Zero")
+    else:
+        print("Negative")
+    if num % 2 == 0:
+        print("Even")
+    else:
+        print("Odd")</code></pre>
+
+    <div class="diagram-container" style="padding:1rem;">
+      <svg viewBox="0 0 500 340" xmlns="http://www.w3.org/2000/svg">
+        <text x="250" y="18" text-anchor="middle" font-family="'DM Mono', monospace" font-size="10" fill="#8a7f6f">CFG &mdash; Code Snippet 4</text>
+
+        <!-- Node 1: if num > 0 -->
+        <polygon points="250,30 320,55 250,80 180,55" class="svg-node-accent"/>
+        <text x="250" y="59" text-anchor="middle" class="svg-text" font-size="8">num &gt; 0 ?</text>
+
+        <!-- Node 2: Positive -->
+        <rect x="30" y="100" width="110" height="28" rx="4" class="svg-node-teal"/>
+        <text x="85" y="119" text-anchor="middle" class="svg-text" font-size="8">print("Positive")</text>
+
+        <!-- Node 3: if num == 0 -->
+        <polygon points="250,100 310,125 250,150 190,125" class="svg-node-gold"/>
+        <text x="250" y="129" text-anchor="middle" class="svg-text" font-size="8">num == 0 ?</text>
+
+        <!-- Node 4: Zero -->
+        <rect x="340" y="100" width="100" height="28" rx="4" class="svg-node-teal"/>
+        <text x="390" y="119" text-anchor="middle" class="svg-text" font-size="8">print("Zero")</text>
+
+        <!-- Node 5: Negative -->
+        <rect x="340" y="160" width="110" height="28" rx="4" class="svg-node-teal"/>
+        <text x="395" y="179" text-anchor="middle" class="svg-text" font-size="8">print("Negative")</text>
+
+        <!-- Node 6: if num%2==0 -->
+        <polygon points="250,210 330,240 250,270 170,240" class="svg-node-accent"/>
+        <text x="250" y="236" text-anchor="middle" class="svg-text" font-size="8">num % 2 == 0 ?</text>
+        <text x="250" y="250" text-anchor="middle" class="svg-text" font-size="8"></text>
+
+        <!-- Node 7: Even -->
+        <rect x="100" y="290" width="100" height="28" rx="4" class="svg-node-teal"/>
+        <text x="150" y="309" text-anchor="middle" class="svg-text" font-size="8">print("Even")</text>
+
+        <!-- Node 8: Odd -->
+        <rect x="310" y="290" width="100" height="28" rx="4" class="svg-node-teal"/>
+        <text x="360" y="309" text-anchor="middle" class="svg-text" font-size="8">print("Odd")</text>
+
+        <!-- Edges from Node 1 -->
+        <line x1="200" y1="68" x2="120" y2="100" class="svg-arrow-accent"/>
+        <text x="145" y="87" class="svg-text-small" fill="#b8432f">T</text>
+        <line x1="300" y1="68" x2="250" y2="100" class="svg-arrow"/>
+        <text x="290" y="87" class="svg-text-small" fill="#5c5345">F</text>
+
+        <!-- Edges from Node 2 to Node 6 -->
+        <line x1="85" y1="128" x2="195" y2="225" class="svg-arrow-teal"/>
+
+        <!-- Edges from Node 3 -->
+        <line x1="310" y1="125" x2="370" y2="100" class="svg-arrow-accent"/>
+        <text x="355" y="108" class="svg-text-small" fill="#b8432f">T</text>
+        <line x1="290" y1="140" x2="365" y2="160" class="svg-arrow"/>
+        <text x="340" y="150" class="svg-text-small" fill="#5c5345">F</text>
+
+        <!-- Edges from Node 4 and 5 to Node 6 -->
+        <line x1="390" y1="128" x2="300" y2="225" class="svg-arrow"/>
+        <line x1="395" y1="188" x2="310" y2="225" class="svg-arrow"/>
+
+        <!-- Edges from Node 6 -->
+        <line x1="200" y1="260" x2="170" y2="290" class="svg-arrow-accent"/>
+        <text x="175" y="278" class="svg-text-small" fill="#b8432f">T</text>
+        <line x1="300" y1="260" x2="340" y2="290" class="svg-arrow"/>
+        <text x="330" y="278" class="svg-text-small" fill="#5c5345">F</text>
+      </svg>
+    </div>
+
+    <p><strong>Method 1:</strong> E = 11, N = 9 (8 code nodes + 1 exit node), P = 1<br>
+    V(G) = 11 &minus; 9 + 2 = <strong>4</strong></p>
+    <p><strong>Method 2:</strong> Predicate nodes = 3 (num&gt;0, num==0, num%2==0)<br>
+    V(G) = 3 + 1 = <strong>4</strong></p>
+    <p><strong>Independent Paths (4):</strong><br>
+    Path 1: num&gt;0(T) &rarr; Positive &rarr; Even<br>
+    Path 2: num&gt;0(T) &rarr; Positive &rarr; Odd<br>
+    Path 3: num&gt;0(F) &rarr; num==0(T) &rarr; Zero &rarr; Even<br>
+    Path 4: num&gt;0(F) &rarr; num==0(F) &rarr; Negative &rarr; Even</p>
+  </div>
+
+  <div class="exam-tip">
+    <div class="exam-tip-label">Exam Tip</div>
+    <p>For cyclomatic complexity questions, always show ALL THREE calculation methods and get the same answer. Then list the linearly independent paths. Draw the CFG clearly with labeled nodes and edges. This is the most frequently tested topic in the metrics section.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  16. DEVELOPMENT: CODING & DOCUMENTATION                     -->
+<!-- ============================================================ -->
+<section id="coding" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 16</span>
+    <h2>Development: Language Selection, Coding &amp; Documentation</h2>
+    <span class="section-ornament"></span>
+  </div>
+
+  <h3>Selecting a Programming Language</h3>
+  <p>The choice of programming language is a consequential development decision that affects productivity, performance, maintainability, and the availability of skilled developers. The selection should not be driven by personal preference or fashion, but by a systematic evaluation of the project's requirements against the capabilities and characteristics of candidate languages. The major factors to consider include the <strong>application domain</strong> (embedded systems favor C/C++, web applications favor JavaScript/Python, enterprise systems favor Java/C#, data science favors Python/R), the <strong>performance requirements</strong> (compiled languages like C/C++ and Rust outperform interpreted languages like Python and Ruby for computation-intensive tasks), the <strong>platform and environment</strong> (some languages are tightly coupled to specific platforms, while others are platform-independent), the <strong>availability of libraries and frameworks</strong> (a language with mature libraries for the problem domain dramatically reduces development effort), the <strong>team's expertise</strong> (using a language the team knows well is generally more productive than adopting a theoretically superior but unfamiliar language), the <strong>maintainability and readability</strong> of the language (languages with clear syntax and strong type systems tend to produce more maintainable code), and <strong>long-term viability</strong> (choosing a language with a strong community, active development, and institutional backing reduces the risk of technological obsolescence).</p>
+
+  <h3>Coding Guidelines</h3>
+  <p>Coding guidelines (also called coding standards or coding conventions) are a set of rules and recommendations for writing source code in a consistent, readable, and maintainable manner. They address aspects such as naming conventions (how variables, functions, classes, and constants should be named), indentation and formatting (how code should be laid out on the page), commenting practices (what should be commented, how comments should be written, and when comments are unnecessary), error handling (how errors should be detected, reported, and recovered from), and code organization (how files, classes, and functions should be structured and arranged). The purpose of coding guidelines is not to constrain the programmer's creativity but to ensure that the codebase is accessible to all members of the development team, both during initial development and during the long maintenance phase that follows. Well-known coding guidelines include the Google Style Guides (for C++, Java, Python, JavaScript, and other languages), the MISRA C guidelines (for safety-critical C code), and the PEP 8 style guide (for Python).</p>
+
+  <h3>Code Documentation</h3>
+  <p>Code documentation is the practice of embedding explanatory text within and alongside source code to help developers understand the code's purpose, structure, and behavior. Documentation serves as a bridge between the original developer's intent and the understanding of future developers who must maintain, extend, or debug the code.</p>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Aspect</th><th>Internal Documentation</th><th>External Documentation</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Definition</strong></td><td>Documentation embedded within the source code itself</td><td>Documentation that exists as separate documents outside the source code</td></tr>
+        <tr><td><strong>Examples</strong></td><td>Comments, function headers, inline annotations, docstrings</td><td>User manuals, design documents, API references, README files, architecture diagrams</td></tr>
+        <tr><td><strong>Audience</strong></td><td>Developers and maintainers who read the source code</td><td>Users, managers, testers, and developers who need a high-level overview</td></tr>
+        <tr><td><strong>Proximity</strong></td><td>Adjacent to or within the code it describes</td><td>Stored separately from the code (in documents, wikis, or portals)</td></tr>
+        <tr><td><strong>Maintenance</strong></td><td>Must be updated whenever the code changes; prone to becoming outdated</td><td>Updated independently; may drift from the actual code over time</td></tr>
+        <tr><td><strong>Tools</strong></td><td>Javadoc, Doxygen, Sphinx, docstrings</td><td>Word processors, wikis, Confluence, LaTeX, Markdown</td></tr>
+        <tr><td><strong>Advantage</strong></td><td>Always available to the developer; close to the code</td><td>Provides broader context; accessible to non-developers</td></tr>
+        <tr><td><strong>Disadvantage</strong></td><td>Can clutter code if overdone; may become outdated</td><td>May be ignored; can diverge from actual code behavior</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="exam-tip">
+    <div class="exam-tip-label">Exam Tip</div>
+    <p>The internal vs. external documentation comparison is a frequent 5-mark question. Cover definition, examples, audience, advantages, and disadvantages for each type. Use a comparison table format for clarity.</p>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  PYQ ANSWER BANK                                              -->
+<!-- ============================================================ -->
+<section id="pyq" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 17</span>
+    <h2>PYQ Answer Bank</h2>
+    <p class="section-desc">Structuring answers for maximum marks in university examinations</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <p>This section provides structured answer outlines for the most frequently asked Previous Year Questions (PYQs) from Unit 3. Each outline includes the key points to cover, suggested diagram, and approximate word count guidance so you can calibrate your answer length to the marks allocated.</p>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 1: Characteristics and goals of good design; benefits of modular design (10 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (800&ndash;1000 words):</strong></p>
+      <p>Begin with a definition of software design and its position in the SDLC. Then list and explain 8&ndash;10 goals: correctness, maintainability, efficiency, reliability, scalability, abstraction, modularity, reusability, separation of concerns, information hiding. For each goal, provide 2&ndash;3 sentences of explanation. Include the goals diagram (Fig. 1).</p>
+      <p>For modular design benefits, define modularity, explain Parnas's information hiding principle, and list 6&ndash;7 benefits: independent development, independent testing, maintainability, reusability, comprehensibility, fault isolation, and reduced complexity. Conclude with a brief mention of how modular design relates to coupling and cohesion.</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 2: Define Coupling; types of coupling; why is data coupling best? (10 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (800&ndash;1000 words):</strong></p>
+      <p>Define coupling formally. State the goal of low coupling. Describe all 6 types with examples (data, stamp, control, external, common, content). Include the coupling spectrum diagram (Fig. 3). For data coupling as the best form, explain that it minimizes the interface between modules, maximizes independence, enables independent testing and modification, and produces the smallest ripple effect when changes are made. Provide a code example showing data coupling vs. other types.</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 3: Cohesion &mdash; definition and all types (10 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (800&ndash;1000 words):</strong></p>
+      <p>Define cohesion formally. State the goal of high cohesion. Describe all 7 types with examples: coincidental, logical, temporal, procedural, communicational, sequential, functional. Include the cohesion spectrum diagram (Fig. 4). For each type, give a concrete example and explain why it is better or worse than the previous type. Conclude with the relationship between cohesion and coupling.</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 4: Relationship between cohesion and coupling (5 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (400&ndash;500 words):</strong></p>
+      <p>State the relationship: high cohesion &hArr; low coupling. Explain the logic: a cohesive module does one thing, needs minimal interfaces, thus creates low coupling. Conversely, a low-cohesion module needs many interactions, creating high coupling. Use a concrete example (compare calculateTax() vs. processTransaction()). Include the comparison table from Section 6. Conclude that pursuing high cohesion is the most effective strategy for achieving low coupling.</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 5: Function-oriented vs. Object-oriented design (5 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (400&ndash;500 words):</strong></p>
+      <p>Define both paradigms briefly. Present 8&ndash;10 differences using the comparison table from Section 8 (basic unit, data handling, approach, reusability, extensibility, data security, maintainability, modeling, design artifacts, example languages). Conclude with when each is appropriate.</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 6: Data-driven software design &mdash; benefits and drawbacks (5&ndash;10 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (500&ndash;800 words):</strong></p>
+      <p>Define data-oriented design. Explain the historical motivation (Jackson's JSP/JSD). Describe the principle "structure follows data." Explain the design steps. Differentiate from function-oriented and object-oriented design. List advantages (natural alignment, stability, clarity) and disadvantages (rigidity for complex control flows, coupling to data formats). Provide examples (ETL systems, report generators).</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 7: Top-down and bottom-up approaches (10 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (600&ndash;800 words):</strong></p>
+      <p>Define both approaches. Explain top-down with Wirth's stepwise refinement, its process, advantages, and disadvantages. Explain bottom-up with composition approach, its process, advantages, and disadvantages. Include the comparison diagram (Fig. 5) and comparison table. Explain the hybrid/bidirectional approach. Give examples for each (compiler design for top-down, utility library construction for bottom-up).</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 8: Structure chart and DFD-to-structure-chart conversion (10 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (800&ndash;1000 words):</strong></p>
+      <p>Define structure chart. Explain its components (modules, call arrows, data flow arrows, control flags, loops). Include the structure chart diagram (Fig. 2). Explain the two conversion strategies: transaction analysis and transform analysis. For each, describe the steps and when to use it. Walk through a DFD-to-structure-chart conversion example, showing both the DFD and the resulting structure chart.</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 9: Layered architecture for LIBSYS &mdash; case study (10 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (600&ndash;800 words):</strong></p>
+      <p>Define layered architecture. Explain the four layers (presentation, application logic, data access, database). Include the LIBSYS layered architecture diagram (Fig. 7). Describe the components in each layer specific to a library system. Explain how layers interact (strict vs. relaxed layered). List advantages (separation of concerns, independent layer development, technology flexibility per layer) and disadvantages (performance overhead of layer traversal, difficulty in skipping layers). Conclude with why this style suits LIBSYS.</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 10: Client-Server architecture for a film library (10 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (600&ndash;800 words):</strong></p>
+      <p>Define client-server architecture. Explain two-tier, three-tier, and n-tier variants. Include the film library client-server diagram (Fig. 8). Describe the clients (web browser, mobile app, admin panel), the network layer, and the server tiers (application server for catalog management, database server for persistent storage, media server for trailers and images). Explain the communication protocol (HTTP over TCP/IP). List advantages (scalability, resource sharing, centralized management) and disadvantages (network dependency, server bottleneck, security concerns).</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 11: Software metrics &mdash; definition, types, need (5 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (400&ndash;500 words):</strong></p>
+      <p>Define software metrics as quantitative measures. Explain why metrics are needed (estimation, quality assessment, process improvement, project control). Classify metrics into product, process, and project metrics. Further classify product metrics into size-oriented and function-oriented. Provide examples for each category.</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 12: Halstead&rsquo;s Software Science &mdash; key metrics (10 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (800&ndash;1000 words):</strong></p>
+      <p>Introduce Halstead's theory and its historical context. Define operators and operands. State the four basic counts (&eta;<sub>1</sub>, &eta;<sub>2</sub>, N<sub>1</sub>, N<sub>2</sub>). Derive each metric with formula and intuitive explanation: vocabulary, program length, calculated length, volume, difficulty, effort, time, bugs. Include the formula card. Work through a complete numerical example. Discuss the practical applications and limitations of Halstead's metrics.</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 13: Function Point metrics &mdash; explanation and calculation (10 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (800&ndash;1000 words):</strong></p>
+      <p>Introduce FPA and its motivation (limitations of LOC). Define the five component types (ILF, EIF, EI, EO, EQ) with examples. Include the FP components and weights table (Fig. 9). Explain the complexity assessment (Low, Average, High). Describe the calculation process: count components, assess complexity, compute UFC, evaluate 14 GSCs, compute VAF, calculate FP. Work through a numerical example. Compare FP with LOC-based metrics (comparison table). Conclude with the advantages of FP analysis.</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 14: Cyclomatic Complexity &mdash; all calculation methods (10 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (800&ndash;1000 words):</strong></p>
+      <p>Define cyclomatic complexity. Define control flow graph. Define linearly independent paths. Present all three calculation methods with formulae. Work through at least 2 of the 4 code snippets with full CFGs, calculations using all three methods, and listing of independent paths. Explain the significance for testing (minimum test cases for branch coverage). Discuss the threshold guidelines (V(G) &le; 10 is manageable). Include CFG diagrams for the examples.</p>
+    </div>
+  </div>
+
+  <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
+    <span>PYQ 15: Language selection criteria and coding guidelines (5 marks)</span>
+    <span class="arrow">&darr;</span>
+  </button>
+  <div class="collapsible-content">
+    <div class="collapsible-inner">
+      <p><strong>Answer Structure (400&ndash;500 words):</strong></p>
+      <p>For language selection, list and explain 7&ndash;8 factors: application domain, performance requirements, platform, libraries/frameworks, team expertise, maintainability, long-term viability, and development time. For coding guidelines, define what they are, explain what they address (naming, formatting, commenting, error handling), and mention well-known guidelines (PEP 8, Google Style Guides). For internal vs. external documentation, use the comparison table from Section 16.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<!--  EXAM-NIGHT REVISION SHEET                                    -->
+<!-- ============================================================ -->
+<section id="revision" class="subsection">
+  <div class="section-header">
+    <span class="section-number">Section 18</span>
+    <h2>Exam-Night Revision Sheet</h2>
+    <p class="section-desc">Everything you need in one place when the exam is tomorrow morning</p>
+    <span class="section-ornament"></span>
+  </div>
+
+  <div class="revision-grid">
+    <div class="revision-card">
+      <h4>Goals of Good Design</h4>
+      <ul>
+        <li>Correctness, Maintainability, Efficiency</li>
+        <li>Reliability, Scalability, Abstraction</li>
+        <li>Modularity, Reusability</li>
+        <li>Separation of concerns, Information hiding</li>
+      </ul>
+    </div>
+
+    <div class="revision-card">
+      <h4>Coupling (Loosest &rarr; Tightest)</h4>
+      <ul>
+        <li><strong>Data</strong> &mdash; pass only data values</li>
+        <li><strong>Stamp</strong> &mdash; pass whole record/structure</li>
+        <li><strong>Control</strong> &mdash; pass control flags</li>
+        <li><strong>External</strong> &mdash; share external format</li>
+        <li><strong>Common</strong> &mdash; share global data</li>
+        <li><strong>Content</strong> &mdash; access internal data directly</li>
+      </ul>
+    </div>
+
+    <div class="revision-card">
+      <h4>Cohesion (Lowest &rarr; Highest)</h4>
+      <ul>
+        <li><strong>Coincidental</strong> &mdash; no relationship</li>
+        <li><strong>Logical</strong> &mdash; similar functions selected by flag</li>
+        <li><strong>Temporal</strong> &mdash; related by execution time</li>
+        <li><strong>Procedural</strong> &mdash; related by execution sequence</li>
+        <li><strong>Communicational</strong> &mdash; operate on same data</li>
+        <li><strong>Sequential</strong> &mdash; output feeds input</li>
+        <li><strong>Functional</strong> &mdash; single well-defined function</li>
+      </ul>
+    </div>
+
+    <div class="revision-card">
+      <h4>Halstead&rsquo;s Formulae</h4>
+      <ul style="font-family:'DM Mono',monospace; font-size:0.8rem;">
+        <li>Vocab: &eta; = &eta;1 + &eta;2</li>
+        <li>Length: N = N1 + N2</li>
+        <li>Volume: V = N &times; log2(&eta;)</li>
+        <li>Difficulty: D = (&eta;1/2) &times; (N2/&eta;2)</li>
+        <li>Effort: E = D &times; V</li>
+        <li>Time: T = E / 18 sec</li>
+        <li>Bugs: B = V / 3000</li>
+      </ul>
+    </div>
+
+    <div class="revision-card">
+      <h4>Function Point Components</h4>
+      <ul>
+        <li><strong>ILF</strong> &mdash; Internal Logical File</li>
+        <li><strong	EIF</strong> &mdash; External Interface File</li>
+        <li><strong>EI</strong> &mdash; External Input</li>
+        <li><strong>EO</strong> &mdash; External Output</li>
+        <li><strong>EQ</strong> &mdash; External Inquiry</li>
+        <li>UFC = &Sigma;(count &times; weight)</li>
+        <li>FP = UFC &times; (0.65 + 0.01&Sigma;Fi)</li>
+      </ul>
+    </div>
+
+    <div class="revision-card">
+      <h4>Cyclomatic Complexity</h4>
+      <ul style="font-family:'DM Mono',monospace; font-size:0.8rem;">
+        <li>Method 1: V(G) = E - N + 2</li>
+        <li>Method 2: V(G) = P + 1</li>
+        <li>Method 3: V(G) = Regions + 1</li>
+        <li>Threshold: V(G) &le; 10 manageable</li>
+        <li>= min test cases for branch coverage</li>
+      </ul>
+    </div>
+
+    <div class="revision-card">
+      <h4>Key Comparisons to Remember</h4>
+      <ul>
+        <li>Data coupling &gt; Stamp &gt; Control (loosest to tightest)</li>
+        <li>Functional cohesion &gt; Sequential &gt; Communicational (highest to lower)</li>
+        <li>FP vs. LOC: FP is language-independent</li>
+        <li>Top-down vs. Bottom-up: decomposition vs. composition</li>
+        <li>Internal vs. External documentation</li>
+      </ul>
+    </div>
+
+    <div class="revision-card">
+      <h4>Most Commonly Confused Points</h4>
+      <ul>
+        <li>Coupling = between modules; Cohesion = within a module</li>
+        <li>Low coupling is GOOD; High cohesion is GOOD</li>
+        <li>Stamp coupling passes whole record; Data coupling passes only needed values</li>
+        <li>Halstead D = (&eta;1/2)(N2/&eta;2) &mdash; &eta;1 on top left, N2 on top right</li>
+        <li>V(G) = P+1 uses predicate NODES, not total nodes</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="pull-quote">
+    The student who understands coupling, cohesion, and cyclomatic complexity can answer 40 percent of Unit 3 questions with confidence and clarity.
+  </div>
+
+  <div class="card card-gold">
+    <h3 style="margin-bottom:1rem;">How to Structure a 10-Mark Answer</h3>
+    <ol>
+      <li><strong>Definition paragraph (100 words):</strong> Start with a clear, formal definition of the concept. Use university-standard terminology.</li>
+      <li><strong>Motivation/context paragraph (100 words):</strong> Explain why this concept exists, what problem it solves, and its historical significance.</li>
+      <li><strong>Detailed explanation (400&ndash;500 words):</strong> Break down the concept into its components or types. Explain each with examples. Include technical terminology and formal statements.</li>
+      <li><strong>Diagram (accompanies explanation):</strong> Draw a clear, labeled diagram that illustrates the concept visually. Refer to it in your text.</li>
+      <li><strong>Advantages/Disadvantages (100&ndash;150 words):</strong> Discuss the tradeoffs, strengths, and limitations of the concept or approach.</li>
+      <li><strong>Conclusion/Connection (50&ndash;100 words):</strong> Connect the concept to related ideas and state its significance in the broader context of software engineering.</li>
+    </ol>
+    <p style="margin-top:1rem; font-size:0.92rem; color:var(--text-secondary);">This structure naturally produces 800&ndash;1000 words and covers all the dimensions that professors look for when awarding marks.</p>
+  </div>
+
+  <div class="viva-box">
+    <div class="viva-label">Viva Preparation</div>
+    <p><strong>Q: What is the difference between coupling and cohesion?</strong><br>A: Coupling measures interdependence between modules; cohesion measures the internal focus of a module. Low coupling and high cohesion are desirable.</p>
+    <p><strong>Q: Why is data coupling the best?</strong><br>A: It minimizes the interface between modules, enabling maximum independence, testability, and maintainability.</p>
+    <p><strong>Q: What does cyclomatic complexity tell us?</strong><br>A: It tells us the minimum number of test cases needed for complete branch coverage and indicates structural complexity.</p>
+    <p><strong>Q: What is the difference between Halstead's effort and volume?</strong><br>A: Volume measures the information content of the program (in bits); effort measures the mental work needed to create or understand it. Effort = Difficulty &times; Volume.</p>
+    <p><strong>Q: When would you choose bottom-up over top-down?</strong><br>A: When building systems from reusable components or libraries, or in object-oriented design where fundamental classes are designed first.</p>
+    <p><strong>Q: What are the three categories of design patterns?</strong><br>A: Creational (object creation), Structural (object composition), and Behavioral (object interaction and responsibility).</p>
+  </div>
+
+  <div class="memory-anchor">
+    <div class="memory-anchor-label">Final Memory Anchors</div>
+    <p><strong>"Low CH, High CO"</strong> &mdash; Low Coupling, High Cohesion = Good Design</p>
+    <p><strong>"COCK-PIT-T"</strong> &mdash; Coupling types: Content, Common, Control, Stamp, Data... wait, that's from tightest to loosest. For loosest to tightest: <strong>"DESCCE"</strong> &mdash; Data, External, Stamp, Control, Common, Content. Hmm, try: <strong>"Dearest Sally Can Count Cards Easily"</strong> = Data, Stamp, Control, Common, External, Content. (Remember: External is between Control and Common.)</p>
+    <p><strong>Cohesion mnemonic (lowest to highest):</strong> <strong>"Cats That Prefer Catching Prey See Food"</strong> = Coincidental, Temporal, Procedural, Communicational, (Sequential is sometimes above Communicational), but the real order is: Coincidental, Logical, Temporal, Procedural, Communicational, Sequential, Functional. Try: <strong>"Cool Loggers Talk Politely, Clearly Speaking French."</strong></p>
+  </div>
+
+</section>
+
+</div><!-- /.container -->
+</main>
+
+<!-- FOOTER -->
+<footer class="site-footer">
+  <span class="footer-ornament"></span>
+  <p>Unit 3 Study Guide &mdash; Software Engineering (TCS-602 / TCS-611)</p>
+  <p style="font-size:0.78rem; margin-top:0.5rem;">Crafted for deep understanding and exam mastery &bull; Covers all major PYQ topics</p>
+</footer>
+
+<script>
+function toggleCollapsible(trigger) {
+  trigger.classList.toggle('open');
+  const content = trigger.nextElementSibling;
+  content.classList.toggle('open');
+}
+
+// Active nav link highlighting
+const sections = document.querySelectorAll('section[id]');
+const navLinks = document.querySelectorAll('.nav-link');
+
+function updateActiveNav() {
+  let current = '';
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop - 100;
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+}
+
+window.addEventListener('scroll', updateActiveNav);
+window.addEventListener('load', updateActiveNav);
+
+// Animate elements on scroll
+const animateElements = document.querySelectorAll('.card, .revision-card, .exam-tip, .memory-anchor, .diagram-container, .viva-box');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = 'translateY(0)';
+    }
+  });
+}, { threshold: 0.1 });
+
+animateElements.forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(12px)';
+  el.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+  observer.observe(el);
+});
+</script>
+
+</body>
+</html>

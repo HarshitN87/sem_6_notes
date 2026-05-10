@@ -1511,88 +1511,80 @@ that allows detection of tampering or injection at any point in the delivery pat
         <p>The professor's slides present a taxonomy that classifies DTN routing protocols along two major dimensions: <span class="term">knowledge-based</span> classification (based on what the protocol knows about future contacts) and <span class="term">replication-based</span> classification (based on how many copies of a message are created).</p>
 
         <!-- Taxonomy Diagram -->
-        <div class="diagram-container">
-          <div class="diagram-label">Figure 2.3 — DTN Routing Taxonomy</div>
-          <svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg">
-            <!-- Root -->
-            <rect x="270" y="15" width="180" height="40" rx="4" fill="#2C1810"/>
-            <text x="360" y="41" text-anchor="middle" font-family="Cormorant Garamond" font-size="14" font-weight="700" fill="#F7F2EA">DTN Routing</text>
+       <div class="diagram-container">
+  <div class="diagram-label">Figure 2.3 — DTN Routing Taxonomy</div>
+  <svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg">
+    <rect x="270" y="15" width="180" height="40" rx="4" fill="#2C1810"/>
+    <text x="360" y="41" text-anchor="middle" font-family="Cormorant Garamond" font-size="14" font-weight="700" fill="#F7F2EA">DTN Routing</text>
 
-            <!-- Two branches -->
-            <line x1="320" y1="55" x2="180" y2="90" stroke="#2C1810" stroke-width="1.5"/>
-            <line x1="400" y1="55" x2="540" y2="90" stroke="#2C1810" stroke-width="1.5"/>
+    <line x1="320" y1="55" x2="180" y2="90" stroke="#2C1810" stroke-width="1.5"/>
+    <line x1="400" y1="55" x2="540" y2="90" stroke="#2C1810" stroke-width="1.5"/>
 
-            <!-- Knowledge-based -->
-            <rect x="80" y="90" width="200" height="40" rx="4" fill="#5B7F6E"/>
-            <text x="180" y="115" text-anchor="middle" font-family="Cormorant Garamond" font-size="13" font-weight="700" fill="white">Knowledge-Based</text>
+    <rect x="80" y="90" width="200" height="40" rx="4" fill="#5B7F6E"/>
+    <text x="180" y="115" text-anchor="middle" font-family="Cormorant Garamond" font-size="13" font-weight="700" fill="white">Knowledge-Based</text>
 
-            <!-- Replication-based -->
-            <rect x="440" y="90" width="200" height="40" rx="4" fill="#C17050"/>
-            <text x="540" y="115" text-anchor="middle" font-family="Cormorant Garamond" font-size="13" font-weight="700" fill="white">Replication-Based</text>
+    <rect x="440" y="90" width="200" height="40" rx="4" fill="#C17050"/>
+    <text x="540" y="115" text-anchor="middle" font-family="Cormorant Garamond" font-size="13" font-weight="700" fill="white">Replication-Based</text>
 
-            <!-- Knowledge sub-branches -->
-            <line x1="130" y1="130" x2="90" y2="165" stroke="#5B7F6E" stroke-width="1"/>
-            <line x1="180" y1="130" x2="180" y2="165" stroke="#5B7F6E" stroke-width="1"/>
-            <line x1="230" y1="130" x2="280" y2="165" stroke="#5B7F6E" stroke-width="1"/>
+    <line x1="130" y1="130" x2="70" y2="165" stroke="#5B7F6E" stroke-width="1"/>
+    <line x1="180" y1="130" x2="190" y2="165" stroke="#5B7F6E" stroke-width="1"/>
+    <line x1="230" y1="130" x2="310" y2="165" stroke="#5B7F6E" stroke-width="1"/>
 
-            <rect x="30" y="165" width="120" height="55" rx="3" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
-            <text x="90" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5B7F6E" font-weight="600">Scheduled</text>
-            <text x="90" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Contacts known</text>
-            <text x="90" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">in advance</text>
+    <rect x="15" y="165" width="110" height="55" rx="3" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
+    <text x="70" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5B7F6E" font-weight="600">Scheduled</text>
+    <text x="70" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Contacts known</text>
+    <text x="70" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">in advance</text>
 
-            <rect x="165" y="165" width="120" height="55" rx="3" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
-            <text x="225" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5B7F6E" font-weight="600">Probabilistic</text>
-            <text x="225" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">History-based</text>
-            <text x="225" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">predictions</text>
+    <rect x="135" y="165" width="110" height="55" rx="3" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
+    <text x="190" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5B7F6E" font-weight="600">Probabilistic</text>
+    <text x="190" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">History-based</text>
+    <text x="190" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">predictions</text>
 
-            <rect x="300" y="165" width="120" height="55" rx="3" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
-            <text x="360" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5B7F6E" font-weight="600">Context-aware</text>
-            <text x="360" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Social metrics</text>
-            <text x="360" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">centrality</text>
+    <rect x="255" y="165" width="110" height="55" rx="3" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
+    <text x="310" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5B7F6E" font-weight="600">Context-aware</text>
+    <text x="310" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Social metrics</text>
+    <text x="310" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">centrality</text>
 
-            <!-- Replication sub-branches -->
-            <line x1="490" y1="130" x2="440" y2="165" stroke="#C17050" stroke-width="1"/>
-            <line x1="540" y1="130" x2="540" y2="165" stroke="#C17050" stroke-width="1"/>
-            <line x1="590" y1="130" x2="650" y2="165" stroke="#C17050" stroke-width="1"/>
+    <line x1="490" y1="130" x2="430" y2="165" stroke="#C17050" stroke-width="1"/>
+    <line x1="540" y1="130" x2="550" y2="165" stroke="#C17050" stroke-width="1"/>
+    <line x1="590" y1="130" x2="660" y2="165" stroke="#C17050" stroke-width="1"/>
 
-            <rect x="380" y="165" width="120" height="55" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
-            <text x="440" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">Flooding</text>
-            <text x="440" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Unlimited copies</text>
-            <text x="440" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Epidemic, MaxProp</text>
+    <rect x="375" y="165" width="110" height="55" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+    <text x="430" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">Flooding</text>
+    <text x="430" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Unlimited copies</text>
+    <text x="430" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Epidemic, MaxProp</text>
 
-            <rect x="510" y="165" width="120" height="55" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
-            <text x="570" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">Controlled</text>
-            <text x="570" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Limited copies</text>
-            <text x="570" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Spray-and-Wait</text>
+    <rect x="495" y="165" width="110" height="55" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+    <text x="550" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">Controlled</text>
+    <text x="550" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Limited copies</text>
+    <text x="550" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Spray-and-Wait</text>
 
-            <rect x="640" y="165" width="70" height="55" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
-            <text x="675" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">Fwd</text>
-            <text x="675" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Single copy</text>
-            <text x="675" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">only</text>
+    <rect x="615" y="165" width="90" height="55" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+    <text x="660" y="186" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">Fwd</text>
+    <text x="660" y="204" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">Single copy</text>
+    <text x="660" y="214" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5C4A3A">only</text>
 
-            <!-- Protocol examples at bottom -->
-            <rect x="30" y="260" width="680" height="120" rx="4" fill="#FFFCF5" stroke="#E8DDD0" stroke-width="1"/>
-            <text x="370" y="285" text-anchor="middle" font-family="Cormorant Garamond" font-size="13" font-weight="700" fill="#2C1810">Protocol Examples by Category</text>
+    <rect x="30" y="260" width="680" height="120" rx="4" fill="#FFFCF5" stroke="#E8DDD0" stroke-width="1"/>
+    <text x="370" y="285" text-anchor="middle" font-family="Cormorant Garamond" font-size="13" font-weight="700" fill="#2C1810">Protocol Examples by Category</text>
 
-            <rect x="50" y="300" width="150" height="60" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
-            <text x="125" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" fill="#C17050" font-weight="600">Flooding-Based</text>
-            <text x="125" y="340" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Epidemic · MaxProp · RAPID</text>
+    <rect x="50" y="300" width="150" height="60" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
+    <text x="125" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" fill="#C17050" font-weight="600">Flooding-Based</text>
+    <text x="125" y="340" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Epidemic · MaxProp · RAPID</text>
 
-            <rect x="220" y="300" width="150" height="60" rx="3" fill="#FBF6ED" stroke="#D4A853" stroke-width="1"/>
-            <text x="295" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" fill="#8A6D1B" font-weight="600">Quota/Controlled</text>
-            <text x="295" y="340" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Spray-and-Wait · EBR</text>
+    <rect x="220" y="300" width="150" height="60" rx="3" fill="#FBF6ED" stroke="#D4A853" stroke-width="1"/>
+    <text x="295" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" fill="#8A6D1B" font-weight="600">Quota/Controlled</text>
+    <text x="295" y="340" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Spray-and-Wait · EBR</text>
 
-            <rect x="390" y="300" width="150" height="60" rx="3" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
-            <text x="465" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" fill="#5B7F6E" font-weight="600">Probabilistic</text>
-            <text x="465" y="340" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">PRoPHET</text>
+    <rect x="390" y="300" width="150" height="60" rx="3" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
+    <text x="465" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" fill="#5B7F6E" font-weight="600">Probabilistic</text>
+    <text x="465" y="340" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">PRoPHET</text>
 
-            <rect x="560" y="300" width="130" height="60" rx="3" fill="#FFF8F0" stroke="#B85450" stroke-width="1"/>
-            <text x="625" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" fill="#B85450" font-weight="600">Forwarding</text>
-            <text x="625" y="340" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Single-copy routing</text>
-          </svg>
-          <div class="diagram-caption">Figure 2.3 — DTN routing taxonomy showing the two major classification dimensions and representative protocols.</div>
-        </div>
-      </div>
+    <rect x="560" y="300" width="130" height="60" rx="3" fill="#FFF8F0" stroke="#B85450" stroke-width="1"/>
+    <text x="625" y="320" text-anchor="middle" font-family="JetBrains Mono" font-size="8.5" fill="#B85450" font-weight="600">Forwarding</text>
+    <text x="625" y="340" text-anchor="middle" font-family="Lora" font-size="8" fill="#5C4A3A">Single-copy routing</text>
+  </svg>
+  <div class="diagram-caption">Figure 2.3 — DTN routing taxonomy showing the two major classification dimensions and representative protocols.</div>
+</div>
 
       <div class="subsection">
         <h4 class="subsection-title">Knowledge-Based Classification</h4>
@@ -1714,66 +1706,69 @@ that allows detection of tampering or injection at any point in the delivery pat
         <p>A variant called <span class="term">Spray-and-Focus</span> relaxes the wait phase by allowing relay nodes to forward their copy to another node that is "closer" to the destination according to some utility metric, rather than waiting for a direct encounter. This improves delivery performance without significantly increasing resource consumption.</p>
 
         <!-- Spray-and-Wait Diagram -->
-        <div class="diagram-container">
-          <div class="diagram-label">Figure 2.4 — Spray-and-Wait Protocol Operation (L=4)</div>
-          <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg">
-            <!-- Source -->
-            <rect x="20" y="120" width="100" height="55" rx="4" fill="#C17050"/>
-            <text x="70" y="148" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white" font-weight="600">SOURCE</text>
-            <text x="70" y="164" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="white">L=4 copies</text>
+      <div class="diagram-container" style="background-color: #FFFCF5; border: 1px solid #E8DDD0; padding: 25px; border-radius: 8px; font-family: 'Lora', serif; color: #2C1810;">
+  <div class="diagram-label" style="font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 700; margin-bottom: 20px;">Figure 2.4 — Spray-and-Wait Protocol Operation (L=4)</div>
+  <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg">
+    <rect x="15" y="45" width="280" height="230" rx="6" fill="none" stroke="#C17050" stroke-width="0.75" stroke-dasharray="3,3" />
+    <rect x="310" y="45" width="375" height="230" rx="6" fill="none" stroke="#5B7F6E" stroke-width="0.75" stroke-dasharray="3,3" />
 
-            <!-- Spray Phase Label -->
-            <rect x="155" y="10" width="130" height="28" rx="14" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
-            <text x="220" y="29" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">SPRAY PHASE</text>
+    <rect x="150" y="5" width="130" height="28" rx="14" fill="#FDF0EA" stroke="#C17050" stroke-width="1.2"/>
+    <text x="215" y="24" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#C17050" font-weight="600">SPRAY PHASE</text>
 
-            <!-- Relay nodes from spray -->
-            <rect x="175" y="60" width="90" height="50" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
-            <text x="220" y="83" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Relay 1</text>
-            <text x="220" y="100" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A7565">1 copy</text>
+    <rect x="420" y="5" width="130" height="28" rx="14" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1.2"/>
+    <text x="485" y="24" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="#5B7F6E" font-weight="600">WAIT PHASE</text>
 
-            <rect x="175" y="130" width="90" height="50" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
-            <text x="220" y="153" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Relay 2</text>
-            <text x="220" y="170" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A7565">1 copy</text>
+    <rect x="20" y="115" width="110" height="60" rx="4" fill="#C17050"/>
+    <text x="75" y="145" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="white" font-weight="600">SOURCE</text>
+    <text x="75" y="162" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white">L=4 copies</text>
 
-            <rect x="175" y="200" width="90" height="50" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1"/>
-            <text x="220" y="223" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#C17050">Relay 3</text>
-            <text x="220" y="240" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A7565">1 copy</text>
+    <text x="75" y="200" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="#8A7565" font-style="italic">Keeps 1 copy</text>
+    <line x1="75" y1="175" x2="75" y2="195" stroke="#8A7565" stroke-width="0.5" stroke-dasharray="3,3" />
 
-            <!-- Source keeps 1 copy -->
-            <text x="70" y="200" text-anchor="middle" font-family="JetBrains Mono" font-size="7" fill="white">Keeps 1 copy</text>
+    <rect x="170" y="60" width="100" height="50" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1.2"/>
+    <text x="220" y="85" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">Relay 1</text>
+    <text x="220" y="102" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#5C4A3A">1 copy</text>
 
-            <!-- Arrows from source to relays -->
-            <line x1="120" y1="140" x2="175" y2="85" stroke="#C17050" stroke-width="1.2" marker-end="url(#arrowS2)"/>
-            <line x1="120" y1="148" x2="175" y2="155" stroke="#C17050" stroke-width="1.2" marker-end="url(#arrowS2)"/>
-            <line x1="120" y1="155" x2="175" y2="225" stroke="#C17050" stroke-width="1.2" marker-end="url(#arrowS2)"/>
+    <rect x="170" y="130" width="100" height="50" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1.2"/>
+    <text x="220" y="155" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">Relay 2</text>
+    <text x="220" y="172" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#5C4A3A">1 copy</text>
 
-            <!-- Wait Phase Label -->
-            <rect x="380" y="10" width="130" height="28" rx="14" fill="#EDF5F1" stroke="#5B7F6E" stroke-width="1"/>
-            <text x="445" y="29" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#5B7F6E" font-weight="600">WAIT PHASE</text>
+    <rect x="170" y="200" width="100" height="50" rx="3" fill="#FDF0EA" stroke="#C17050" stroke-width="1.2"/>
+    <text x="220" y="225" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="#C17050" font-weight="600">Relay 3</text>
+    <text x="220" y="242" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="#5C4A3A">1 copy</text>
 
-            <!-- Destination -->
-            <rect x="560" y="120" width="120" height="55" rx="4" fill="#5B7F6E"/>
-            <text x="620" y="148" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white" font-weight="600">DESTINATION</text>
-            <text x="620" y="164" text-anchor="middle" font-family="JetBrains Mono" font-size="8" fill="white">Receives bundle</text>
+    <line x1="130" y1="145" x2="170" y2="90" stroke="#C17050" stroke-width="1.5" marker-end="url(#arrowS)"/>
+    <line x1="130" y1="150" x2="170" y2="155" stroke="#C17050" stroke-width="1.5" marker-end="url(#arrowS)"/>
+    <line x1="130" y1="155" x2="170" y2="220" stroke="#C17050" stroke-width="1.5" marker-end="url(#arrowS)"/>
 
-            <!-- Wait arrows - each relay waits for direct encounter -->
-            <line x1="265" y1="85" x2="560" y2="138" stroke="#5B7F6E" stroke-width="1.2" stroke-dasharray="6,3"/>
-            <text x="410" y="100" text-anchor="middle" font-family="Lora" font-size="7.5" fill="#5B7F6E" font-style="italic">Wait for direct encounter</text>
-            <line x1="265" y1="155" x2="560" y2="148" stroke="#5B7F6E" stroke-width="1.2" stroke-dasharray="6,3"/>
-            <line x1="265" y1="225" x2="560" y2="158" stroke="#5B7F6E" stroke-width="1.2" stroke-dasharray="6,3"/>
-            <line x1="120" y1="175" x2="560" y2="145" stroke="#5B7F6E" stroke-width="1" stroke-dasharray="6,3"/>
+    <path id="waitCurve" d="M 330 140 Q 420 120 510 140" fill="none"/>
+    <text text-anchor="middle" font-family="Lora" font-size="8" fill="#5B7F6E" font-style="italic">
+      <textPath href="#waitCurve" startOffset="50%">Wait for direct encounter</textPath>
+    </text>
+    <line x1="330" y1="140" x2="560" y2="140" stroke="#5B7F6E" stroke-width="0.5" stroke-dasharray="3,3" stroke-opacity="0.5" />
 
-            <text x="350" y="280" text-anchor="middle" font-family="Lora" font-size="9" fill="#8A7565" font-style="italic">Each relay holds its copy until it meets the destination directly — no further forwarding to intermediaries</text>
+    <rect x="560" y="115" width="120" height="60" rx="4" fill="#5B7F6E"/>
+    <text x="620" y="145" text-anchor="middle" font-family="JetBrains Mono" font-size="10" fill="white" font-weight="600">DESTINATION</text>
+    <text x="620" y="162" text-anchor="middle" font-family="JetBrains Mono" font-size="9" fill="white">Receives bundle</text>
 
-            <defs>
-              <marker id="arrowS2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                <path d="M 0 0 L 10 5 L 0 10 z" fill="#C17050"/>
-              </marker>
-            </defs>
-          </svg>
-          <div class="diagram-caption">Figure 2.4 — Spray-and-Wait with L=4. Source distributes 4 copies during the spray phase; each relay waits for a direct encounter with the destination.</div>
-        </div>
-      </div>
+    <line x1="270" y1="90" x2="560" y2="135" stroke="#5B7F6E" stroke-width="1.2" stroke-dasharray="6,3"/>
+    <line x1="270" y1="155" x2="560" y2="145" stroke="#5B7F6E" stroke-width="1.2" stroke-dasharray="6,3"/>
+    <line x1="270" y1="220" x2="560" y2="155" stroke="#5B7F6E" stroke-width="1.2" stroke-dasharray="6,3"/>
+
+    <text x="350" y="300" text-anchor="middle" font-family="Lora" font-size="9" fill="#8A7565" font-style="italic">
+      Each relay holds its copy until it meets the destination directly — no further forwarding to intermediaries
+    </text>
+
+    <defs>
+      <marker id="arrowS" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#C17050"/>
+      </marker>
+    </defs>
+  </svg>
+  <div class="diagram-caption" style="font-size: 11px; text-align: center; color: #5C4A3A; line-height: 1.5; margin-top: 20px;">
+    Figure 2.4 — Spray-and-Wait with L=4. Source distributes L-1 (3) copies to relays and holds 1 copy; each participant then waits for a direct encounter with the destination.
+  </div>
+</div>
 
       <div class="subsection">
         <h4 class="subsection-title">PRoPHET (Probabilistic Routing Protocol using History of Encounters and Transitivity)</h4>

@@ -1,0 +1,2611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 4 — PHP, Sessions & Database · The Complete Scholar's Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0e6;
+  --bg-deep: #ece5d5;
+  --surface: #faf7ef;
+  --surface-alt: #f0ebe0;
+  --accent-burgundy: #7a2040;
+  --accent-burgundy-light: #a33060;
+  --accent-teal: #2a6a6a;
+  --accent-teal-light: #3a8a8a;
+  --accent-gold: #b8862a;
+  --accent-gold-light: #d4a03a;
+  --accent-olive: #5a6a30;
+  --text-primary: #2c1a10;
+  --text-secondary: #5a4a3a;
+  --text-muted: #8a7a6a;
+  --border: #d4cabb;
+  --border-light: #e8e0d2;
+
+  --code-border: #d8d0c2;
+  --shadow: rgba(44, 26, 16, 0.08);
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-body: 'Source Serif 4', 'Georgia', serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 17px; }
+
+body {
+  background: var(--bg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='200' height='200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+::selection { background: var(--accent-burgundy); color: #fff; }
+
+a { color: var(--accent-teal); text-decoration: none; border-bottom: 1px solid var(--accent-teal); }
+a:hover { color: var(--accent-burgundy); border-color: var(--accent-burgundy); }
+
+h1, h2, h3, h4, h5 { font-family: var(--font-display); font-weight: 600; line-height: 1.3; }
+
+.container {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ─── Hero ─── */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  position: relative;
+  border-bottom: 3px double var(--border);
+}
+
+.hero-ornament {
+  width: 120px;
+  height: 2px;
+  background: var(--accent-burgundy);
+  margin: 1.5rem auto;
+  position: relative;
+}
+.hero-ornament::before, .hero-ornament::after {
+  content: '◆';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--accent-burgundy);
+  font-size: 0.6rem;
+}
+.hero-ornament::before { left: -18px; }
+.hero-ornament::after { right: -18px; }
+
+.hero-unit {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent-teal);
+  margin-bottom: 1rem;
+}
+
+.hero h1 {
+  font-size: 3.2rem;
+  color: var(--accent-burgundy);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.hero-subtitle {
+  font-size: 1.3rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  max-width: 560px;
+}
+
+.hero-meta {
+  margin-top: 2.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ─── TOC ─── */
+.toc-section {
+  padding: 4rem 0;
+  border-bottom: 1px solid var(--border);
+}
+.toc-section h2 {
+  font-size: 1.8rem;
+  color: var(--accent-burgundy);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.toc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.6rem 2rem;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.toc-item {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px dotted var(--border-light);
+  font-size: 0.92rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.toc-item:hover { color: var(--accent-burgundy); }
+.toc-num {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--accent-teal);
+  min-width: 2.5rem;
+}
+
+/* ─── Section Styles ─── */
+.section {
+  padding: 4rem 0 3rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.section-number {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent-teal);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.section h2 {
+  font-size: 2rem;
+  color: var(--accent-burgundy);
+  margin-bottom: 0.4rem;
+}
+
+.section-subtitle {
+  font-style: italic;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  font-size: 1.05rem;
+}
+
+.section h3 {
+  font-size: 1.4rem;
+  color: var(--accent-teal);
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.section h4 {
+  font-size: 1.15rem;
+  color: var(--text-primary);
+  margin-top: 1.8rem;
+  margin-bottom: 0.7rem;
+}
+
+p { margin-bottom: 1rem; text-align: justify; hyphens: auto; }
+
+.drop-cap::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-size: 3.5rem;
+  line-height: 0.8;
+  margin: 0.05em 0.12em 0 0;
+  color: var(--accent-burgundy);
+  font-weight: 700;
+}
+
+/* ─── Code Blocks ─── */
+/* Block-level Code */
+pre {
+  background: var(--code-bg, #161b22); /* Lighter than a standard #0d1117 dark background */
+  color: var(--code-text, #e6edf3); /* Off-white to reduce eye strain, avoid #ffffff */
+  border: 1px solid var(--code-border, #30363d); /* Subtle structural outline */
+  border-left: 4px solid var(--accent-burgundy, #ff7b72); /* Shifted to a high-luminance coral/red */
+  padding: 1.25rem 1.5rem;
+  margin: 2.5rem 0; 
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4); /* Intense shadow for dark mode depth */
+  overflow-x: auto;
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 0.95rem;
+  line-height: 1.45;
+  border-radius: 6px;
+  tab-size: 4;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Inline Code Snippets */
+code {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, Consolas, monospace);
+  font-size: 0.9em;
+  /* Deep, saturated blue for mathematical contrast against light backgrounds */
+  color: var(--inline-code-color, #0550ae); 
+  /* Translucent background to adapt to the page's underlying color */
+  background: var(--inline-code-bg, rgba(175, 184, 193, 0.2));
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+  word-break: break-word;
+}
+
+/* Reset for code within pre */
+pre code {
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font-size: 1em;
+  word-break: normal;
+}
+/* ─── Tables ─── */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
+  font-size: 0.9rem;
+}
+th {
+  font-family: var(--font-display);
+  font-weight: 600;
+  background: var(--accent-burgundy);
+  color: #fff;
+  padding: 0.8rem 1rem;
+  text-align: left;
+  font-size: 0.85rem;
+}
+td {
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: top;
+}
+tr:nth-child(even) { background: var(--surface-alt); }
+
+/* ─── Diagram Container ─── */
+.diagram-wrap {
+  margin: 2rem 0;
+  text-align: center;
+}
+.diagram-wrap svg {
+  max-width: 100%;
+  height: auto;
+}
+.diagram-caption {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  margin-top: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ─── Exam Question Blocks ─── */
+.exam-q {
+  background: var(--surface-alt);
+  border-left: 4px solid var(--accent-burgundy);
+  padding: 1rem 1.5rem;
+  margin: 1rem 0;
+  font-size: 0.92rem;
+}
+.exam-q strong {
+  color: var(--accent-burgundy);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+.exam-q p { margin-bottom: 0.3rem; }
+
+/* ─── Revision Card ─── */
+.revision-card {
+  background: var(--accent-burgundy);
+  color: #fff;
+  padding: 2rem 2.5rem;
+  margin: 2rem 0;
+  position: relative;
+}
+.revision-card h4 {
+  color: var(--accent-gold-light);
+  font-size: 1rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+}
+.revision-card ul {
+  list-style: none;
+  padding: 0;
+}
+.revision-card li {
+  padding: 0.3rem 0;
+  padding-left: 1.2rem;
+  position: relative;
+  font-size: 0.9rem;
+}
+.revision-card li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--accent-gold-light);
+}
+
+/* ─── Pull Quote ─── */
+.pull-quote {
+  border-top: 2px solid var(--accent-gold);
+  border-bottom: 2px solid var(--accent-gold);
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+/* ─── Details / Collapsible ─── */
+details {
+  border: 1px solid var(--border);
+  margin: 1rem 0;
+  background: var(--surface);
+}
+details summary {
+  padding: 0.8rem 1.2rem;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--accent-teal);
+  list-style: none;
+  position: relative;
+  padding-left: 2rem;
+}
+details summary::before {
+  content: '▸';
+  position: absolute;
+  left: 0.8rem;
+  transition: transform 0.2s;
+}
+details[open] summary::before { transform: rotate(90deg); }
+details .details-body { padding: 0 1.2rem 1rem; }
+
+/* ─── Inline annotations ─── */
+.annotate {
+  display: inline;
+  border-bottom: 1px dashed var(--accent-gold);
+  cursor: help;
+}
+
+/* ─── Print ─── */
+@media print {
+  body::before { display: none; }
+  .hero { min-height: auto; page-break-after: always; }
+  .section { page-break-inside: avoid; }
+  details[open] .details-body { display: block !important; }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 700px) {
+  html { font-size: 15px; }
+  .hero h1 { font-size: 2.2rem; }
+  .toc-grid { grid-template-columns: 1fr; }
+  .container { padding: 0 1.2rem; }
+  pre { font-size: 0.72rem; padding: 0.8rem; }
+}
+
+/* ─── Collapsible toggle ─── */
+.collapse-toggle {
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  padding: 0.5rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  margin-top: 2rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: all 0.2s;
+}
+.collapse-toggle:hover { background: var(--accent-burgundy); color: #fff; border-color: var(--accent-burgundy); }
+
+/* ─── Step list ─── */
+.step-list { counter-reset: step; list-style: none; padding: 0; }
+.step-list li {
+  counter-increment: step;
+  padding: 0.6rem 0 0.6rem 2.5rem;
+  position: relative;
+  border-left: 2px solid var(--border-light);
+  margin-left: 0.8rem;
+}
+.step-list li::before {
+  content: counter(step);
+  position: absolute;
+  left: -0.7rem;
+  top: 0.55rem;
+  width: 1.4rem;
+  height: 1.4rem;
+  background: var(--accent-teal);
+  color: #fff;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+/* ─── Comparison grid ─── */
+.compare-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+.compare-col {
+  border: 1px solid var(--border);
+  padding: 1.2rem;
+  background: var(--surface);
+}
+.compare-col h5 {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+  color: var(--accent-burgundy);
+}
+@media (max-width: 600px) {
+  .compare-grid { grid-template-columns: 1fr; }
+}
+
+/* ─── Timeline ─── */
+.timeline-item {
+  display: flex;
+  gap: 1.2rem;
+  margin-bottom: 1.2rem;
+}
+.timeline-dot {
+  width: 10px; height: 10px;
+  background: var(--accent-burgundy);
+  border-radius: 50%;
+  margin-top: 0.5rem;
+  flex-shrink: 0;
+}
+.timeline-content { flex: 1; }
+.timeline-content strong { color: var(--accent-teal); font-size: 0.85rem; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════ HERO ═══════════════════ -->
+<header class="hero">
+  <span class="hero-unit">Unit 4</span>
+  <div class="hero-ornament"></div>
+  <h1>PHP &amp; the Dynamic Web</h1>
+  <p class="hero-subtitle">XAMPP, Syntax, Arrays, Functions, Sessions, Cookies, MySQL — a complete scholar's companion for university examinations</p>
+  <div class="hero-ornament"></div>
+  <p class="hero-meta">Server-Side Scripting &nbsp;·&nbsp; Database Integration &nbsp;·&nbsp; Exam Master Document</p>
+</header>
+
+<!-- ═══════════════════ TOC ═══════════════════ -->
+<nav class="toc-section container">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <div class="toc-item"><span class="toc-num">01</span> XAMPP Server Configuration</div>
+    <div class="toc-item"><span class="toc-num">02</span> Introduction to PHP &amp; Basic Syntax</div>
+    <div class="toc-item"><span class="toc-num">03</span> Decision Making &amp; Looping</div>
+    <div class="toc-item"><span class="toc-num">04</span> PHP and HTML Integration</div>
+    <div class="toc-item"><span class="toc-num">05</span> Arrays in PHP</div>
+    <div class="toc-item"><span class="toc-num">06</span> Functions in PHP</div>
+    <div class="toc-item"><span class="toc-num">07</span> Browser Control &amp; Detection</div>
+    <div class="toc-item"><span class="toc-num">08</span> String Handling</div>
+    <div class="toc-item"><span class="toc-num">09</span> Form Processing</div>
+    <div class="toc-item"><span class="toc-num">10</span> File Handling</div>
+    <div class="toc-item"><span class="toc-num">11</span> Cookies &amp; Sessions</div>
+    <div class="toc-item"><span class="toc-num">12</span> PHP &amp; MySQL Database</div>
+    <div class="toc-item"><span class="toc-num">13</span> Super Global Variables</div>
+    <div class="toc-item"><span class="toc-num">14</span> Error Handling &amp; Magic Constants</div>
+    <div class="toc-item"><span class="toc-num">15</span> Exam Revision Arsenal</div>
+  </div>
+</nav>
+
+<main class="container">
+
+<!-- ═══════════════════ SECTION 1: XAMPP ═══════════════════ -->
+<article class="section" id="s1">
+  <span class="section-number">Section 01</span>
+  <h2>XAMPP Server Configuration</h2>
+  <p class="section-subtitle">Understanding the local development environment that makes PHP possible</p>
+
+  <p class="drop-cap">Before one can write a single line of PHP and see it execute, there is a prerequisite that textbooks often gloss over with a single paragraph and a screenshot: the server environment. PHP is a server-side scripting language, which means the code does not execute inside the user's browser the way JavaScript does. Instead, the browser sends an HTTP request to a web server, the web server hands the PHP file to the PHP interpreter, the interpreter processes the code (perhaps querying a database along the way), produces plain HTML, and sends that HTML back to the browser. Without a properly configured web server and PHP interpreter installed on your machine, saving a file with a <code>.php</code> extension and double-clicking it will simply open it in a text editor or display raw code in the browser — it will never execute. This is precisely the problem that XAMPP solves for students and developers.</p>
+
+  <h3>What Does XAMPP Stand For?</h3>
+  <p>The acronym XAMPP is composed of five letters, each representing a core component of the software stack: <strong>X</strong> stands for "cross-platform" (meaning it works on Windows, Linux, and macOS), <strong>A</strong> stands for <strong>Apache</strong>, the world's most widely used web server software; <strong>M</strong> stands for <strong>MariaDB</strong> (a community fork of MySQL, the relational database management system); the first <strong>P</strong> stands for <strong>PHP</strong>, the server-side scripting language; and the second <strong>P</strong> stands for <strong>Perl</strong>, another scripting language that is included for completeness but is rarely used in the typical Indian university curriculum. The beauty of XAMPP is that it bundles all of these complex, independently developed software systems into a single installer with a unified control panel, so that a student can go from zero to a running web server in under ten minutes without needing to understand Apache configuration files, MySQL initialization, or system PATH variables.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="XAMPP Architecture Diagram">
+      <defs>
+        <filter id="softshadow1">
+          <feDropShadow dx="2" dy="3" stdDeviation="3" flood-color="#2c1a10" flood-opacity="0.1"/>
+        </filter>
+      </defs>
+      <!-- Background -->
+      <rect x="0" y="0" width="700" height="420" rx="6" fill="#faf7ef"/>
+      <rect x="20" y="20" width="660" height="380" rx="4" fill="none" stroke="#d4cabb" stroke-width="1"/>
+      <!-- Title -->
+      <text x="350" y="52" text-anchor="middle" font-family="Playfair Display, Georgia, serif" font-size="18" font-weight="600" fill="#7a2040">XAMPP Architecture</text>
+      <line x1="280" y1="62" x2="420" y2="62" stroke="#7a2040" stroke-width="1"/>
+      <!-- X box -->
+      <rect x="50" y="85" width="120" height="70" rx="4" fill="#7a2040" filter="url(#softshadow1)"/>
+      <text x="110" y="112" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" font-weight="700" fill="#fff">X</text>
+      <text x="110" y="132" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#f0e0d0">Cross-Platform</text>
+      <text x="110" y="146" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#d4b0a0">Win / Linux / Mac</text>
+      <!-- A box -->
+      <rect x="190" y="85" width="120" height="70" rx="4" fill="#2a6a6a" filter="url(#softshadow1)"/>
+      <text x="250" y="112" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" font-weight="700" fill="#fff">A</text>
+      <text x="250" y="132" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#d0e8e8">Apache HTTP</text>
+      <text x="250" y="146" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#a0c8c8">Web Server</text>
+      <!-- M box -->
+      <rect x="330" y="85" width="120" height="70" rx="4" fill="#b8862a" filter="url(#softshadow1)"/>
+      <text x="390" y="112" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" font-weight="700" fill="#fff">M</text>
+      <text x="390" y="132" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#fff">MariaDB / MySQL</text>
+      <text x="390" y="146" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#f0d8a0">Database Server</text>
+      <!-- P box 1 -->
+      <rect x="470" y="85" width="90" height="70" rx="4" fill="#5a6a30" filter="url(#softshadow1)"/>
+      <text x="515" y="112" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" font-weight="700" fill="#fff">P</text>
+      <text x="515" y="132" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#d8e0c0">PHP</text>
+      <text x="515" y="146" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#b0c880">Scripting</text>
+      <!-- P box 2 -->
+      <rect x="580" y="85" width="80" height="70" rx="4" fill="#8a7a6a" filter="url(#softshadow1)"/>
+      <text x="620" y="112" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="22" font-weight="700" fill="#fff">P</text>
+      <text x="620" y="132" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#f0ece4">Perl</text>
+      <text x="620" y="146" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#d4cabb">Optional</text>
+      <!-- Request flow -->
+      <text x="350" y="192" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#2c1a10">Request-Response Flow</text>
+      <!-- Browser -->
+      <rect x="50" y="215" width="110" height="55" rx="4" fill="#f0ebe2" stroke="#b8862a" stroke-width="1.5"/>
+      <text x="105" y="238" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" font-weight="600" fill="#2c1a10">Browser</text>
+      <text x="105" y="255" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7a6a">localhost:80</text>
+      <!-- Arrow 1 -->
+      <line x1="160" y1="242" x2="225" y2="242" stroke="#7a2040" stroke-width="1.5" marker-end="url(#arrowhead1)"/>
+      <text x="193" y="235" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#7a2040">HTTP Req</text>
+      <!-- Apache -->
+      <rect x="230" y="215" width="110" height="55" rx="4" fill="#2a6a6a" stroke="#2a6a6a" stroke-width="1.5"/>
+      <text x="285" y="238" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" font-weight="600" fill="#fff">Apache</text>
+      <text x="285" y="255" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#d0e8e8">Port 80</text>
+      <!-- Arrow 2 -->
+      <line x1="340" y1="242" x2="405" y2="242" stroke="#7a2040" stroke-width="1.5" marker-end="url(#arrowhead1)"/>
+      <text x="373" y="235" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#7a2040">.php file</text>
+      <!-- PHP Engine -->
+      <rect x="410" y="215" width="110" height="55" rx="4" fill="#5a6a30" stroke="#5a6a30" stroke-width="1.5"/>
+      <text x="465" y="238" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" font-weight="600" fill="#fff">PHP Engine</text>
+      <text x="465" y="255" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#d8e0c0">Interpreter</text>
+      <!-- Arrow down to DB -->
+      <line x1="465" y1="270" x2="465" y2="305" stroke="#b8862a" stroke-width="1.5" marker-end="url(#arrowhead1)"/>
+      <text x="490" y="292" font-family="JetBrains Mono, monospace" font-size="7" fill="#b8862a">Query</text>
+      <!-- MySQL -->
+      <rect x="405" y="310" width="120" height="50" rx="4" fill="#b8862a" stroke="#b8862a" stroke-width="1.5"/>
+      <text x="465" y="333" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" font-weight="600" fill="#fff">MySQL / MariaDB</text>
+      <text x="465" y="348" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#f0d8a0">Port 3306</text>
+      <!-- Arrow response -->
+      <line x1="405" y1="248" x2="340" y2="248" stroke="#2a6a6a" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrowhead2)"/>
+      <text x="373" y="268" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#2a6a6a">HTML</text>
+      <line x1="225" y1="248" x2="160" y2="248" stroke="#2a6a6a" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrowhead2)"/>
+      <text x="193" y="268" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#2a6a6a">Response</text>
+      <!-- Arrow markers -->
+      <defs>
+        <marker id="arrowhead1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#7a2040"/>
+        </marker>
+        <marker id="arrowhead2" markerWidth="8" markerHeight="6" refX="0" refY="3" orient="auto">
+          <polygon points="8 0, 0 3, 8 6" fill="#2a6a6a"/>
+        </marker>
+      </defs>
+      <!-- Control Panel Note -->
+      <rect x="50" y="310" width="200" height="70" rx="3" fill="none" stroke="#d4cabb" stroke-dasharray="3,3"/>
+      <text x="150" y="335" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="600" fill="#5a4a3a">XAMPP Control Panel</text>
+      <text x="150" y="350" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7a6a">Start / Stop individual</text>
+      <text x="150" y="363" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7a6a">services &amp; monitor logs</text>
+    </svg>
+    <p class="diagram-caption">Fig 1.1 — XAMPP Architecture and Request-Response Flow</p>
+  </div>
+
+  <h3>Installing and Configuring XAMPP</h3>
+  <p>The installation process on Windows is straightforward: download the installer from the Apache Friends website, run it, and choose the components you need. For most university coursework, you will need Apache, MySQL, PHP, and phpMyAdmin at minimum. The default installation directory is <code>C:\xampp</code>, and it is generally advisable to accept this default because some PHP configurations use absolute paths that can behave unexpectedly when placed in directories with spaces in their names. Once installed, the XAMPP Control Panel provides Start and Stop buttons for each service. When you click "Start" next to Apache, it binds to port 80 (HTTP) by default; when you click "Start" next to MySQL, it binds to port 3306. If another application on your machine — commonly Skype — is already using port 80, Apache will fail to start, and you will see an error in the log. The remedy is either to change Apache's port (by editing <code>httpd.conf</code> and changing the <code>Listen</code> directive to something like <code>8080</code>) or to close the conflicting application.</p>
+
+  <p>Once both Apache and MySQL are running, you can test the installation by opening a browser and navigating to <code>http://localhost</code>. You should see the XAMPP welcome page. PHP files are placed in the <code>htdocs</code> subdirectory of your XAMPP installation (e.g., <code>C:\xampp\htdocs\myproject\</code>), and they are then accessible in the browser at <code>http://localhost/myproject/filename.php</code>. The phpMyAdmin interface, accessible at <code>http://localhost/phpmyadmin</code>, provides a graphical interface for managing MySQL databases without writing SQL commands directly, though understanding the underlying SQL is essential for examinations.</p>
+
+  <h3>Why XAMPP Matters for Examinations</h3>
+  <div class="box box-exam">
+    <span class="box-label">Exam Note</span>
+    <p>Questions about XAMPP configuration appear in practical examinations and sometimes in theory papers as short questions. You should be able to explain what each letter stands for, describe the role of Apache and MySQL, explain the concept of localhost, and describe how PHP files are executed on the server before the HTML reaches the client. A common viva question is: "Why can't you just open a PHP file in a browser like an HTML file?" The answer, rooted in everything discussed above, is that PHP requires server-side interpretation — the browser receives only the output, not the source code.</p>
+  </div>
+
+  <div class="exam-q">
+    <p><strong>Frequently Asked:</strong></p>
+    <p>Q: What is XAMPP? Explain its components.</p>
+    <p>Q: Why do we need a local server to run PHP?</p>
+    <p>Q: What is the default port for Apache and MySQL?</p>
+    <p>Q: What is the role of the <code>htdocs</code> directory?</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 2: PHP INTRO ═══════════════════ -->
+<article class="section" id="s2">
+  <span class="section-number">Section 02</span>
+  <h2>Introduction to PHP &amp; Basic Syntax</h2>
+  <p class="section-subtitle">The language that powers most of the dynamic web — its origins, philosophy, and grammar</p>
+
+  <h3>What is PHP?</h3>
+  <p class="drop-cap">PHP originally stood for "Personal Home Page" when Rasmus Lerdorf created it in 1994 as a set of Common Gateway Interface (CGI) scripts to track visits to his online resume. As the language grew far beyond its humble origins — attracting contributions from Andi Gutmans and Zeev Suraski, who rewrote the parser in 1997 and founded Zend Technologies — the acronym was retrofitted to stand for the recursive phrase "PHP: Hypertext Preprocessor." This etymological detail, while seemingly trivial, is worth knowing because it appears as a fill-in-the-blank or short-answer question with surprising regularity in Indian university examinations. PHP is a server-side, HTML-embedded, general-purpose scripting language. Let us unpack each of those adjectives carefully, because understanding them is the difference between knowing PHP and merely typing PHP.</p>
+
+  <p>Server-side means that PHP code is executed on the web server, not in the user's browser. When a user requests a PHP page, the web server (Apache, typically) intercepts the request, passes the file to the PHP interpreter, which processes the code — performing calculations, reading databases, handling file operations, making decisions — and produces a plain HTML document as output. This HTML is what travels back to the browser. The user never sees the PHP source code; they see only its output. This has profound security implications: since the source code remains on the server, it is theoretically invisible to end users, which is why database credentials, API keys, and business logic can safely reside in PHP files (though security best practices require additional precautions beyond this basic separation).</p>
+
+  <p>HTML-embedded means that PHP code is interspersed within HTML markup. Unlike languages such as Python or Java, where you typically generate HTML from within a purely programmatic context, PHP allows you to write HTML directly and then drop into "PHP mode" wherever you need dynamic behavior. This makes PHP uniquely accessible to web designers who already know HTML, because the learning curve is not about learning a new paradigm — it is about adding a dynamic layer to something familiar.</p>
+
+  <h3>Advantages and Disadvantages of PHP</h3>
+
+  <table>
+    <tr><th style="width:50%">Advantages</th><th style="width:50%">Disadvantages</th></tr>
+    <tr><td><strong>Easy to learn and deploy:</strong> PHP's syntax is forgiving and resembles C/Perl, making it accessible to beginners. No compilation is required; save and refresh the browser.</td><td><strong>Inconsistent function naming:</strong> Historical inconsistencies like <code>str_replace</code> vs <code>strpos</code> (different underscore conventions) can confuse learners.</td></tr>
+    <tr><td><strong>Open source and free:</strong> PHP is released under the PHP License, and the entire LAMP/WAMP stack costs nothing, which is why most shared hosting providers support it.</td><td><strong>Loose typing can cause subtle bugs:</strong> PHP's automatic type coercion means <code>"5" == 5</code> is true, which can lead to unexpected behavior if you are not vigilant.</td></tr>
+    <tr><td><strong>Massive ecosystem:</strong> WordPress, Laravel, Drupal, Magento — a large fraction of the web runs on PHP. Community support, tutorials, and frameworks are abundant.</td><td><strong>Security depends on the developer:</strong> PHP does not enforce secure coding. Without careful input validation, SQL injection and XSS vulnerabilities are easy to introduce.</td></tr>
+    <tr><td><strong>Platform independent:</strong> Runs on Windows, Linux, macOS, and most web servers including Apache, Nginx, and IIS.</td><td><strong>Not ideal for real-time applications:</strong> PHP follows a request-response model; each request starts fresh. WebSockets and long-lived connections require alternative approaches.</td></tr>
+    <tr><td><strong>Built-in database support:</strong> Native functions for MySQL, PostgreSQL, SQLite, and others. No external libraries needed for basic database operations.</td><td><strong>Performance ceiling:</strong> For CPU-intensive tasks, PHP is slower than compiled languages. Modern versions (8.x) have significantly improved, but the ceiling exists.</td></tr>
+  </table>
+
+  <h3>Five Reasons Why PHP Is So Popular</h3>
+  <ol>
+    <li><strong>Low barrier to entry:</strong> A student can write their first dynamic web page within an hour of installing XAMPP. The feedback loop of "edit file, refresh browser, see result" is almost instantaneous.</li>
+    <li><strong>Ubiquitous hosting support:</strong> Almost every affordable web hosting plan supports PHP out of the box. Deploying a PHP application is often as simple as uploading files via FTP.</li>
+    <li><strong>WordPress and CMS dominance:</strong> WordPress alone powers roughly 40% of all websites on the internet, and it is written in PHP. This creates enormous demand for PHP developers and generates a self-reinforcing cycle of community growth.</li>
+    <li><strong>Framework maturity:</strong> Laravel, Symfony, CodeIgniter, and other PHP frameworks provide modern development patterns (MVC, dependency injection, ORM) that make PHP competitive with newer languages.</li>
+    <li><strong>Continuous evolution:</strong> PHP 7 and 8 brought dramatic performance improvements, strict typing options, named arguments, match expressions, union types, and JIT compilation — demonstrating that the language is actively evolving rather than stagnating.</li>
+  </ol>
+
+  <h3>PHP Basic Syntax</h3>
+  <p>Every PHP script begins and ends with specific delimiters. The standard opening tag is <code>&lt;?php</code> and the closing tag is <code>?&gt;</code>. Everything between these delimiters is interpreted as PHP code; everything outside them is treated as plain HTML and sent directly to the browser. There is also a short open tag <code>&lt;?</code> that can be used if the <code>short_open_tags</code> directive is enabled in <code>php.ini</code>, but this is considered bad practice because it is not portable across all server configurations, and examination answers should always use the full <code>&lt;?php</code> tag.</p>
+
+  <p>PHP statements end with a semicolon (<code>;</code>). This is a common source of syntax errors for beginners — forgetting the semicolon at the end of a line will produce an error, and the error message will often point to the <em>next</em> line, which can be confusing. PHP variables always begin with a dollar sign (<code>$</code>), followed by a letter or underscore, and then any combination of letters, numbers, and underscores. Variable names are case-sensitive: <code>$Name</code> and <code>$name</code> are different variables. PHP is a loosely typed language, meaning you do not declare a variable's type explicitly; the type is inferred from the value assigned. Comments can be written as <code>// single-line</code>, <code># single-line</code>, or <code>/* multi-line */</code>.</p>
+
+<pre><code>&lt;?php
+  // This is a PHP script embedded in HTML
+  $greeting = "Hello, World!";
+  echo $greeting;   // Output: Hello, World!
+
+  $year = 2024;          // Integer
+  $price = 99.95;        // Float
+  $name = "Amit";        // String
+  $isStudent = true;     // Boolean
+
+  echo gettype($year);   // Output: integer
+  echo gettype($price);  // Output: double
+  echo gettype($name);   // Output: string
+?&gt;</code></pre>
+
+  <h3>PHP Data Types</h3>
+  <p>PHP supports eight primitive data types that every student must know for examinations. <strong>String</strong> is a sequence of characters enclosed in single quotes (<code>'hello'</code>) or double quotes (<code>"hello"</code>). The crucial difference is that double-quoted strings perform variable interpolation — if you write <code>"Hello $name"</code>, PHP will replace <code>$name</code> with its value — while single-quoted strings treat everything literally. <strong>Integer</strong> represents whole numbers without decimal points. <strong>Float</strong> (also called double) represents numbers with decimal points. <strong>Boolean</strong> represents true or false. <strong>Array</strong> stores multiple values in a single variable (covered in detail in Section 5). <strong>Object</strong> is an instance of a class. <strong>NULL</strong> represents a variable with no value. <strong>Resource</strong> is a special type that holds a reference to an external resource, such as a database connection or a file handle.</p>
+
+  <div class="box box-memory">
+    <span class="box-label">Memory Anchor</span>
+    <p>Think of PHP delimiters as a "stage door": actors (PHP code) perform only when they are on stage (between <code>&lt;?php</code> and <code>?&gt;</code>). Outside the stage door, the audience sees only the backdrop (HTML). The semicolon is the director's clap — it signals "end of scene."</p>
+  </div>
+
+  <h3>The <code>echo</code> and <code>print</code> Statements</h3>
+  <p>Both <code>echo</code> and <code>print</code> are used to output data to the browser, but they have subtle differences. <code>echo</code> can take multiple comma-separated parameters (<code>echo "Hello", " ", "World";</code>) while <code>print</code> can take only one argument and always returns the integer 1, making it technically a function-like construct. In practice, <code>echo</code> is slightly faster and is used far more frequently. For examinations, it is sufficient to know that both output strings to the browser, <code>echo</code> does not return a value, and <code>print</code> returns 1.</p>
+
+<pre><code>&lt;?php
+  $name = "Priya";
+  echo "Hello, $name!";        // Double quotes: variable interpolation
+  echo 'Hello, $name!';        // Single quotes: literal output
+  // Output: Hello, Priya!Hello, $name!
+
+  echo "&lt;br&gt;";                 // HTML tag for new line in browser
+  print "Welcome to PHP";      // Returns 1
+  echo "\n";                   // Newline in source code (not browser)
+?&gt;</code></pre>
+
+  <div class="box box-confusion">
+    <span class="box-label">Common Confusion</span>
+    <p><strong><code>$message</code> vs <code>$$message</code>:</strong> A single dollar sign creates a normal variable: <code>$message = "Hello"</code>. A double dollar sign creates a <em>variable variable</em>, where the name of the variable is itself stored in another variable. If <code>$message = "greeting"</code> and <code>$$message = "Hello"</code>, then <code>echo $greeting</code> will output "Hello". This is because <code>$$message</code> is interpreted as <code>$greeting</code>. While rarely used in production code, this is a classic examination question.</p>
+  </div>
+
+<pre><code>&lt;?php
+  $message = "greeting";
+  $$message = "Hello, World!";
+
+  echo $message;      // Output: greeting
+  echo $$message;     // Output: Hello, World!
+  echo $greeting;     // Output: Hello, World!  (same as $$message)
+?&gt;</code></pre>
+
+  <div class="box box-exam">
+    <span class="box-label">Exam-Writing Material</span>
+    <p>When writing a 10-mark answer about "What is PHP," structure your answer as follows: (1) Full form and historical origin with Rasmus Lerdorf and 1994, (2) Definition as server-side, HTML-embedded scripting language, (3) Explain each adjective — server-side, HTML-embedded, general-purpose, scripting — with examples, (4) List and explain at least 5 advantages with brief elaboration, (5) List at least 3 disadvantages honestly, (6) Mention 5 reasons for popularity with current statistics if possible, (7) Show basic syntax with a code example, (8) Compare with at least one other language (e.g., ASP.NET or JSP). This structure will comfortably earn full marks.</p>
+  </div>
+
+  <div class="exam-q">
+    <p><strong>PYQ:</strong> What is PHP and explain the advantages and disadvantages of PHP. Mention 5 reasons why PHP is so popular. What does PHP stand for?</p>
+    <p><strong>PYQ:</strong> What is the difference between <code>$message</code> and <code>$$message</code>?</p>
+    <p><strong>PYQ:</strong> PHP server scripts are surrounded by delimiters. (Fill in the blank)</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 3: DECISIONS & LOOPS ═══════════════════ -->
+<article class="section" id="s3">
+  <span class="section-number">Section 03</span>
+  <h2>Decision Making &amp; Looping</h2>
+  <p class="section-subtitle">Controlling the flow of execution — conditionals and iteration in PHP</p>
+
+  <p class="drop-cap">Every program of any meaningful complexity must make decisions and repeat actions. These two capabilities — branching and iteration — form the backbone of computational logic, and PHP implements them using syntax derived from the C programming language tradition. If you have studied C or Java, the structures will feel immediately familiar. If you have not, the concepts are still straightforward once you understand the underlying logic: a conditional evaluates a Boolean expression and executes different code blocks depending on whether the expression is true or false; a loop evaluates a condition and repeatedly executes a block of code as long as the condition remains true. The subtlety, as always, lies in the details — type coercion in comparisons, infinite loops, off-by-one errors, and the appropriate choice of loop construct for a given scenario.</p>
+
+  <h3>Conditional Statements</h3>
+  <h4>The <code>if-elseif-else</code> Construct</h4>
+  <p>The most fundamental conditional is the <code>if</code> statement. It evaluates the expression within parentheses; if the expression evaluates to true (after PHP's type coercion rules), the code block within braces executes. The optional <code>elseif</code> clause allows checking additional conditions when the first one fails, and the optional <code>else</code> clause provides a default path when all preceding conditions are false. One important PHP-specific detail: the string <code>"0"</code>, the integer <code>0</code>, the float <code>0.0</code>, an empty string <code>""</code>, a NULL value, and an empty array <code>[]</code> all evaluate to false in a Boolean context. This means <code>if ("0")</code> will <em>not</em> execute its body, which surprises many students coming from languages where any non-empty string is truthy.</p>
+
+<pre><code>&lt;?php
+  $marks = 72;
+
+  if ($marks >= 90) {
+      $grade = "A+";
+  } elseif ($marks >= 80) {
+      $grade = "A";
+  } elseif ($marks >= 70) {
+      $grade = "B+";
+  } elseif ($marks >= 60) {
+      $grade = "B";
+  } elseif ($marks >= 50) {
+      $grade = "C";
+  } else {
+      $grade = "F (Fail)";
+  }
+
+  echo "Marks: $marks — Grade: $grade";
+  // Output: Marks: 72 — Grade: B+
+?&gt;</code></pre>
+
+  <h4>The <code>switch</code> Statement</h4>
+  <p>When you need to compare a single variable against multiple possible values, the <code>switch</code> statement provides cleaner syntax than a long chain of <code>if-elseif</code> blocks. Each <code>case</code> compares the switch expression against a specific value using loose comparison (<code>==</code>, not <code>===</code>). A critical detail that appears in examinations: every <code>case</code> block must end with <code>break;</code> to prevent "fall-through" — where execution continues into subsequent case blocks even when the value does not match. The <code>default</code> case handles any value not matched by previous cases.</p>
+
+<pre><code>&lt;?php
+  $day = "Wednesday";
+
+  switch ($day) {
+      case "Monday":
+          echo "Start of work week";
+          break;
+      case "Wednesday":
+          echo "Midweek day";
+          break;             // Without break, it would fall through to Thursday
+      case "Friday":
+          echo "Almost weekend";
+          break;
+      default:
+          echo "Regular day";
+  }
+  // Output: Midweek day
+?&gt;</code></pre>
+
+  <h4>The Ternary Operator and Null Coalescing</h4>
+  <p>PHP supports the ternary operator <code>? :</code> for inline conditional expressions: <code>$status = ($age >= 18) ? "Adult" : "Minor";</code>. This is syntactic sugar for a simple if-else and is commonly used for assigning values based on a condition in a single line. PHP 7 introduced the null coalescing operator <code>??</code>, which returns the left operand if it exists and is not NULL, otherwise returns the right operand: <code>$name = $_GET['name'] ?? 'Guest';</code>. This is extremely useful for handling form inputs and is a cleaner alternative to writing <code>isset()</code> checks.</p>
+
+  <h3>Looping Constructs</h3>
+
+  <h4><code>for</code> Loop</h4>
+  <p>The <code>for</code> loop is used when the number of iterations is known beforehand. It consists of three expressions separated by semicolons: initialization (<code>$i = 0</code>), condition (<code>$i &lt; 10</code>), and increment (<code>$i++</code>). The loop body executes repeatedly as long as the condition evaluates to true.</p>
+
+<pre><code>&lt;?php
+  echo "&lt;table border='1'&gt;";
+  for ($row = 1; $row <= 5; $row++) {
+      echo "&lt;tr&gt;";
+      for ($col = 1; $col <= 5; $col++) {
+          echo "&lt;td&gt;" . ($row * $col) . "&lt;/td&gt;";
+      }
+      echo "&lt;/tr&gt;";
+  }
+  echo "&lt;/table&gt;";
+  // Outputs a 5×5 multiplication table as an HTML table
+?&gt;</code></pre>
+
+  <h4><code>while</code> and <code>do-while</code> Loops</h4>
+  <p>The <code>while</code> loop evaluates the condition before each iteration, meaning the body may execute zero times if the condition is initially false. The <code>do-while</code> loop evaluates the condition after each iteration, guaranteeing that the body executes at least once. This distinction is important for examinations: if a question asks "What is the difference between <code>while</code> and <code>do-while</code>?", the answer is that <code>do-while</code> guarantees at least one execution.</p>
+
+<pre><code>&lt;?php
+  // while — may not execute at all
+  $count = 0;
+  while ($count > 0) {
+      echo "This will never print.";
+  }
+
+  // do-while — executes at least once
+  $count = 0;
+  do {
+      echo "This prints once even though count is 0.";
+  } while ($count > 0);
+?&gt;</code></pre>
+
+  <h4><code>foreach</code> Loop</h4>
+  <p>The <code>foreach</code> loop is designed specifically for iterating over arrays. It has two forms: <code>foreach ($array as $value)</code> which gives you each element's value, and <code>foreach ($array as $key =&gt; $value)</code> which gives you both the key and the value. This is the idiomatic way to process arrays in PHP, and it should be preferred over <code>for</code> loops with index variables when working with arrays.</p>
+
+<pre><code>&lt;?php
+  $fruits = ["Apple", "Banana", "Cherry", "Date"];
+
+  // Simple foreach
+  foreach ($fruits as $fruit) {
+      echo "$fruit&lt;br&gt;";
+  }
+
+  // foreach with key
+  $grades = ["Amit" => 85, "Priya" => 92, "Rahul" => 78];
+  foreach ($grades as $student => $score) {
+      echo "$student scored $score marks.&lt;br&gt;";
+  }
+?&gt;</code></pre>
+
+  <h4><code>break</code> and <code>continue</code></h4>
+  <p>The <code>break</code> statement immediately terminates the innermost loop (or switch) and execution continues with the statement following the loop. The <code>continue</code> statement skips the remaining code in the current iteration and jumps to the next iteration of the loop. Both accept an optional numeric argument indicating how many levels of nesting to break out of or skip — <code>break 2</code> exits two levels of nested loops — but this usage is rare and somewhat discouraged for readability reasons.</p>
+
+  <div class="box box-tip">
+    <span class="box-label">Exam Tip</span>
+    <p>For 5-mark questions on looping, always write a practical example — a multiplication table, a pattern of stars, or processing an array. Purely theoretical descriptions earn fewer marks than code that demonstrates the concept in action. Add comments to your code explaining each part, since examiners appreciate clarity.</p>
+  </div>
+
+  <div class="exam-q">
+    <p><strong>Viva:</strong> What happens if you forget the <code>break</code> in a switch case?</p>
+    <p><strong>Viva:</strong> What is the difference between <code>while</code> and <code>do-while</code>?</p>
+    <p><strong>Viva:</strong> When would you use <code>foreach</code> instead of <code>for</code>?</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 4: PHP AND HTML ═══════════════════ -->
+<article class="section" id="s4">
+  <span class="section-number">Section 04</span>
+  <h2>PHP and HTML Integration</h2>
+  <p class="section-subtitle">Where server-side logic meets client-side presentation</p>
+
+  <p class="drop-cap">The fundamental power of PHP lies in its ability to generate HTML dynamically. While a static HTML file delivers the same content to every visitor, a PHP script can examine the current time, the user's input, the contents of a database, or any other state, and produce customized HTML accordingly. This interplay between PHP and HTML is not merely a technical capability — it is the architectural foundation of every dynamic website, from a simple contact form to a full-featured e-commerce platform. Understanding how PHP and HTML coexist within a single file, and how data flows between them, is therefore not an optional skill but a core competency.</p>
+
+  <p>When the PHP interpreter encounters a <code>&lt;?php</code> tag, it switches into PHP mode and begins executing code. When it encounters a <code>?&gt;</code> tag, it exits PHP mode and passes everything between the closing tag and the next opening tag directly to the browser as literal text. This mechanism means you can freely interleave PHP and HTML:</p>
+
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;PHP and HTML Demo&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Student Grade Report&lt;/h1&gt;
+
+    &lt;?php
+    $students = [
+        ["name" =&gt; "Amit",   "marks" =&gt; 85],
+        ["name" =&gt; "Priya",  "marks" =&gt; 92],
+        ["name" =&gt; "Rahul",  "marks" =&gt; 67],
+        ["name" =&gt; "Sneha",  "marks" =&gt; 78],
+    ];
+    ?&gt;
+
+    &lt;table border="1" cellpadding="8" cellspacing="0"&gt;
+        &lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Marks&lt;/th&gt;&lt;th&gt;Grade&lt;/th&gt;&lt;/tr&gt;
+        &lt;?php foreach ($students as $student): ?&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;?= $student['name'] ?&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;?= $student['marks'] ?&gt;&lt;/td&gt;
+            &lt;td&gt;
+                &lt;?php
+                $m = $student['marks'];
+                if ($m >= 90) echo "A+";
+                elseif ($m >= 80) echo "A";
+                elseif ($m >= 70) echo "B";
+                else echo "C";
+                ?&gt;
+            &lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;?php endforeach; ?&gt;
+    &lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+  <p>Notice the alternative syntax for control structures: <code>foreach (...):</code> ... <code>endforeach;</code> is an alternative to the brace syntax, and it is particularly useful when PHP code is interspersed with HTML because it makes the template-like structure more readable. Also notice the shorthand <code>&lt;?= expr ?&gt;</code> which is equivalent to <code>&lt;?php echo expr; ?&gt;</code> — this was made permanently available in PHP 5.4 and is the recommended way to output values within HTML.</p>
+
+  <h3>The Alternate Syntax for Templates</h3>
+  <p>When PHP is used heavily within HTML (as in template files), the alternative control structure syntax using colons and end keywords improves readability significantly. Instead of <code>if (condition) {</code>, you write <code>if (condition):</code>, and instead of the closing brace, you write <code>endif;</code>. Similarly: <code>for (...):</code> ... <code>endfor;</code>, <code>while (...):</code> ... <code>endwhile;</code>, <code>foreach (...):</code> ... <code>endforeach;</code>, and <code>switch (...):</code> ... <code>endswitch;</code>.</p>
+
+  <div class="box box-memory">
+    <span class="box-label">Memory Anchor</span>
+    <p>Think of PHP-in-HTML like a bilingual speaker alternating between two languages mid-sentence. The <code>&lt;?php</code> tag is like saying "Switch to French" and <code>?&gt;</code> is "Switch back to English." The browser only understands English (HTML); it never hears the French (PHP) — it only hears the translation (the output PHP produces).</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 5: ARRAYS ═══════════════════ -->
+<article class="section" id="s5">
+  <span class="section-number">Section 05</span>
+  <h2>Arrays in PHP</h2>
+  <p class="section-subtitle">Storing collections of data — indexed, associative, and multidimensional</p>
+
+  <p class="drop-cap">An array in PHP is an ordered map — a data structure that associates keys with values. This definition, which appears in the official PHP manual, is worth unpacking because it reveals that PHP's array type is more versatile than the "array" concept in languages like C or Java. In those languages, an array is a fixed-size, sequentially indexed collection of elements of the same type. In PHP, an array can use integer indices, string keys, or a mixture of both; it can grow and shrink dynamically; and it can hold values of different types simultaneously. This flexibility makes the PHP array one of the most powerful data structures in the language, but it also means that students must understand three distinct flavors: indexed arrays, associative arrays, and multidimensional arrays.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PHP Array Types Diagram">
+      <rect x="0" y="0" width="700" height="380" rx="6" fill="#faf7ef"/>
+      <text x="350" y="35" text-anchor="middle" font-family="Playfair Display, serif" font-size="18" font-weight="600" fill="#7a2040">Three Types of PHP Arrays</text>
+      <line x1="270" y1="45" x2="430" y2="45" stroke="#7a2040" stroke-width="1"/>
+      <!-- Indexed Array -->
+      <rect x="20" y="65" width="210" height="290" rx="4" fill="#f0ebe2" stroke="#2a6a6a" stroke-width="1.5"/>
+      <text x="125" y="90" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#2a6a6a">Indexed Array</text>
+      <text x="125" y="108" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7a6a">Numeric keys (0, 1, 2…)</text>
+      <!-- Index boxes -->
+      <rect x="40" y="125" width="50" height="30" rx="2" fill="#2a6a6a"/>
+      <text x="65" y="145" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#fff">0</text>
+      <rect x="40" y="160" width="50" height="30" rx="2" fill="#2a6a6a"/>
+      <text x="65" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#fff">1</text>
+      <rect x="40" y="195" width="50" height="30" rx="2" fill="#2a6a6a"/>
+      <text x="65" y="215" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#fff">2</text>
+      <rect x="40" y="230" width="50" height="30" rx="2" fill="#2a6a6a"/>
+      <text x="65" y="250" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#fff">3</text>
+      <!-- Arrows and values -->
+      <line x1="90" y1="140" x2="110" y2="140" stroke="#5a4a3a" stroke-width="1"/>
+      <rect x="110" y="125" width="100" height="30" rx="2" fill="#fff" stroke="#d4cabb"/>
+      <text x="160" y="145" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#2c1a10">"Apple"</text>
+      <line x1="90" y1="175" x2="110" y2="175" stroke="#5a4a3a" stroke-width="1"/>
+      <rect x="110" y="160" width="100" height="30" rx="2" fill="#fff" stroke="#d4cabb"/>
+      <text x="160" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#2c1a10">"Banana"</text>
+      <line x1="90" y1="210" x2="110" y2="210" stroke="#5a4a3a" stroke-width="1"/>
+      <rect x="110" y="195" width="100" height="30" rx="2" fill="#fff" stroke="#d4cabb"/>
+      <text x="160" y="215" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#2c1a10">"Cherry"</text>
+      <line x1="90" y1="245" x2="110" y2="245" stroke="#5a4a3a" stroke-width="1"/>
+      <rect x="110" y="230" width="100" height="30" rx="2" fill="#fff" stroke="#d4cabb"/>
+      <text x="160" y="250" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#2c1a10">"Date"</text>
+      <text x="125" y="285" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#5a4a3a">$fruits = ["Apple","Banana",</text>
+      <text x="125" y="298" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#5a4a3a">"Cherry","Date"];</text>
+
+      <!-- Associative Array -->
+      <rect x="245" y="65" width="210" height="290" rx="4" fill="#fdf8f3" stroke="#b8862a" stroke-width="1.5"/>
+      <text x="350" y="90" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#b8862a">Associative Array</text>
+      <text x="350" y="108" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7a6a">String keys</text>
+      <rect x="260" y="125" width="65" height="30" rx="2" fill="#b8862a"/>
+      <text x="292" y="145" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#fff">"name"</text>
+      <rect x="260" y="160" width="65" height="30" rx="2" fill="#b8862a"/>
+      <text x="292" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#fff">"age"</text>
+      <rect x="260" y="195" width="65" height="30" rx="2" fill="#b8862a"/>
+      <text x="292" y="215" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#fff">"city"</text>
+      <line x1="325" y1="140" x2="345" y2="140" stroke="#5a4a3a" stroke-width="1"/>
+      <rect x="345" y="125" width="100" height="30" rx="2" fill="#fff" stroke="#d4cabb"/>
+      <text x="395" y="145" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#2c1a10">"Amit"</text>
+      <line x1="325" y1="175" x2="345" y2="175" stroke="#5a4a3a" stroke-width="1"/>
+      <rect x="345" y="160" width="100" height="30" rx="2" fill="#fff" stroke="#d4cabb"/>
+      <text x="395" y="180" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#2c1a10">21</text>
+      <line x1="325" y1="210" x2="345" y2="210" stroke="#5a4a3a" stroke-width="1"/>
+      <rect x="345" y="195" width="100" height="30" rx="2" fill="#fff" stroke="#d4cabb"/>
+      <text x="395" y="215" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#2c1a10">"Mumbai"</text>
+      <text x="350" y="285" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#5a4a3a">$student = ["name" =&gt; "Amit",</text>
+      <text x="350" y="298" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#5a4a3a">"age" =&gt; 21, "city" =&gt; "Mumbai"];</text>
+
+      <!-- Multidimensional Array -->
+      <rect x="470" y="65" width="210" height="290" rx="4" fill="#f0ece0" stroke="#7a2040" stroke-width="1.5"/>
+      <text x="575" y="90" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#7a2040">Multidimensional</text>
+      <text x="575" y="108" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#8a7a6a">Arrays within arrays</text>
+      <!-- Nested visual -->
+      <rect x="490" y="125" width="170" height="65" rx="3" fill="none" stroke="#7a2040" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="500" y="140" font-family="JetBrains Mono, monospace" font-size="7" fill="#7a2040">[0]</text>
+      <rect x="500" y="145" width="70" height="18" rx="2" fill="#7a2040" opacity="0.15"/>
+      <text x="535" y="158" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#2c1a10">"Amit", 85</text>
+      <rect x="490" y="195" width="170" height="65" rx="3" fill="none" stroke="#7a2040" stroke-width="1" stroke-dasharray="4,2"/>
+      <text x="500" y="210" font-family="JetBrains Mono, monospace" font-size="7" fill="#7a2040">[1]</text>
+      <rect x="500" y="215" width="70" height="18" rx="2" fill="#7a2040" opacity="0.15"/>
+      <text x="535" y="228" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#2c1a10">"Priya", 92</text>
+      <text x="575" y="285" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#5a4a3a">$students = [</text>
+      <text x="575" y="298" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#5a4a3a">["Amit",85],["Priya",92]</text>
+      <text x="575" y="311" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#5a4a3a">];</text>
+    </svg>
+    <p class="diagram-caption">Fig 5.1 — Three fundamental array types in PHP</p>
+  </div>
+
+  <h3>Creating Arrays</h3>
+  <p>There are two syntactic ways to create an array in modern PHP. The long form uses the <code>array()</code> construct: <code>$colors = array("Red", "Green", "Blue");</code>. The short form, available since PHP 5.4, uses square brackets: <code>$colors = ["Red", "Green", "Blue"];</code>. Both are functionally identical, and either is acceptable in examinations, though the short form is now considered more idiomatic in contemporary PHP.</p>
+
+<pre><code>&lt;?php
+  // ── Indexed Array ──
+  $fruits = ["Apple", "Banana", "Cherry", "Date"];
+  echo $fruits[0];          // Output: Apple
+  echo count($fruits);       // Output: 4
+  $fruits[] = "Elderberry"; // Append to end (index 4)
+
+  // ── Associative Array ──
+  $student = [
+      "name"  =&gt; "Amit Kumar",
+      "roll"  =&gt; 101,
+      "marks" =&gt; 87.5,
+      "grade" =&gt; "A"
+  ];
+  echo $student["name"];    // Output: Amit Kumar
+
+  // ── Multidimensional Array ──
+  $class = [
+      ["Amit",  85, "CS"],
+      ["Priya", 92, "IT"],
+      ["Rahul", 78, "ECE"]
+  ];
+  echo $class[1][0];        // Output: Priya (row 1, column 0)
+  echo $class[1][1];        // Output: 92
+
+  // ── Iterating over arrays ──
+  foreach ($student as $key =&gt; $value) {
+      echo ucfirst($key) . ": $value&lt;br&gt;";
+  }
+?&gt;</code></pre>
+
+  <h3>PHP Array Sort Functions</h3>
+  <p>PHP provides a rich set of built-in array sorting functions, each with a specific behavior regarding key preservation and sort order. Understanding these functions and their distinctions is essential because examinations frequently ask students to write sorting code or compare the functions' behaviors.</p>
+
+  <table>
+    <tr><th>Function</th><th>Sorts By</th><th>Key Reindexed?</th><th>Order</th></tr>
+    <tr><td><code>sort()</code></td><td>Values</td><td>Yes (numeric 0,1,2…)</td><td>Ascending</td></tr>
+    <tr><td><code>rsort()</code></td><td>Values</td><td>Yes</td><td>Descending</td></tr>
+    <tr><td><code>asort()</code></td><td>Values</td><td>No (preserves keys)</td><td>Ascending</td></tr>
+    <tr><td><code>arsort()</code></td><td>Values</td><td>No</td><td>Descending</td></tr>
+    <tr><td><code>ksort()</code></td><td>Keys</td><td>No</td><td>Ascending by key</td></tr>
+    <tr><td><code>krsort()</code></td><td>Keys</td><td>No</td><td>Descending by key</td></tr>
+    <tr><td><code>usort()</code></td><td>User-defined</td><td>Yes</td><td>Custom comparator</td></tr>
+  </table>
+
+<pre><code>&lt;?php
+  // ── Sort associative array by key in descending order ──
+  $grades = [
+      "Amit"   =&gt; 85,
+      "Priya"  =&gt; 92,
+      "Rahul"  =&gt; 78,
+      "Sneha"  =&gt; 90,
+      "Vikram" =&gt; 66
+  ];
+
+  krsort($grades);  // Sort by key, descending
+
+  echo "Grades sorted by name (descending):&lt;br&gt;";
+  foreach ($grades as $name =&gt; $score) {
+      echo "$name: $score&lt;br&gt;";
+  }
+  // Output:
+  // Vikram: 66
+  // Sneha: 90
+  // Rahul: 78
+  // Priya: 92
+  // Amit: 85
+?&gt;</code></pre>
+
+  <div class="box box-exam">
+    <span class="box-label">Exam Note</span>
+    <p>The PYQ "Write a PHP script to sort a given associative array in descending order according to key" is testing your knowledge of <code>krsort()</code>. The critical point to mention in your answer is that <code>krsort()</code> preserves the key-value associations (unlike <code>rsort()</code>, which would reindex the array and destroy the string keys). Always state which function you are using and why.</p>
+  </div>
+
+  <h3>Other Useful Array Functions</h3>
+  <ul>
+    <li><code>count($arr)</code> — returns the number of elements</li>
+    <li><code>array_push($arr, $val)</code> — adds element to end</li>
+    <li><code>array_pop($arr)</code> — removes and returns last element</li>
+    <li><code>array_shift($arr)</code> — removes and returns first element</li>
+    <li><code>array_unshift($arr, $val)</code> — adds element to beginning</li>
+    <li><code>array_merge($a, $b)</code> — merges two arrays</li>
+    <li><code>array_search($needle, $haystack)</code> — searches for a value, returns key</li>
+    <li><code>in_array($needle, $haystack)</code> — checks if value exists</li>
+    <li><code>array_reverse($arr)</code> — returns reversed array</li>
+    <li><code>array_unique($arr)</code> — removes duplicate values</li>
+    <li><code>array_sum($arr)</code> — returns sum of all values</li>
+    <li><code>array_map($callback, $arr)</code> — applies function to each element</li>
+    <li><code>array_filter($arr, $callback)</code> — filters elements by callback</li>
+  </ul>
+
+  <div class="exam-q">
+    <p><strong>PYQ:</strong> What is meant by an associative array in PHP? Write a PHP script to create an associative array of student names and their grades.</p>
+    <p><strong>PYQ:</strong> Explain the PHP array sort functions with examples. Write a PHP script to sort a given associative array in descending order according to key.</p>
+    <p><strong>PYQ:</strong> Write a PHP program for creating and manipulating: Indexed array, Associative array, Multidimensional array.</p>
+    <p><strong>PYQ:</strong> Create a PHP function that takes an array of numbers as input and returns the sum of all the numbers in the array.</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 6: FUNCTIONS ═══════════════════ -->
+<article class="section" id="s6">
+  <span class="section-number">Section 06</span>
+  <h2>Functions in PHP</h2>
+  <p class="section-subtitle">Reusable blocks of logic — built-in and user-defined</p>
+
+  <p class="drop-cap">Functions are the primary mechanism for organizing code into reusable, testable, and comprehensible units. In PHP, a function is a block of statements that can be called by name, optionally accept input parameters, optionally return a value, and maintain its own local scope. PHP has thousands of built-in functions — over 7,000 in the standard library — covering string manipulation, array operations, mathematical computation, file handling, date and time processing, and much more. Beyond these, programmers can define their own functions using the <code>function</code> keyword, and this ability is what transforms a sequence of scripts into a structured program.</p>
+
+  <h3>Defining and Calling Functions</h3>
+<pre><code>&lt;?php
+  // ── Basic function ──
+  function greet($name) {
+      return "Hello, $name! Welcome to PHP.";
+  }
+  echo greet("Amit");
+  // Output: Hello, Amit! Welcome to PHP.
+
+  // ── Default parameter values ──
+  function calculateArea($length, $width = 10) {
+      return $length * $width;
+  }
+  echo calculateArea(5, 20);   // Output: 100
+  echo calculateArea(5);       // Output: 50 (width defaults to 10)
+
+  // ── Returning multiple values via array ──
+  function getStudentInfo() {
+      return [
+          "name" =&gt; "Priya",
+          "roll" =&gt; 102,
+          "marks" =&gt; 95
+      ];
+  }
+  $info = getStudentInfo();
+  echo $info["name"];         // Output: Priya
+
+  // ── Type declarations (PHP 7+) ──
+  function add(int $a, int $b): int {
+      return $a + $b;
+  }
+  echo add(5, 3);              // Output: 8
+  // echo add(5, "hello");     // TypeError in strict mode
+
+  // ── Sum of array function (PYQ) ──
+  function sumArray(array $numbers): float {
+      $total = 0;
+      foreach ($numbers as $num) {
+          $total += $num;
+      }
+      return $total;
+  }
+  $nums = [10, 20, 30, 40, 50];
+  echo "Sum: " . sumArray($nums);
+  // Output: Sum: 150
+?&gt;</code></pre>
+
+  <h3>Variable Scope</h3>
+  <p>PHP has three variable scopes: <strong>local</strong>, <strong>global</strong>, and <strong>static</strong>. A variable declared inside a function is local to that function and cannot be accessed outside it. A variable declared outside all functions is global and cannot be accessed inside a function by default — to use a global variable inside a function, you must explicitly declare it with the <code>global</code> keyword or access it through the <code>$GLOBALS</code> superglobal array. A static variable, declared with the <code>static</code> keyword inside a function, retains its value between function calls — unlike a local variable, which is destroyed when the function returns.</p>
+
+<pre><code>&lt;?php
+  // ── Global and Static scope demonstration ──
+  $globalVar = "I am global";
+
+  function testScope() {
+      // echo $globalVar;    // ERROR: undefined inside function
+      global $globalVar;      // Now accessible
+      echo $globalVar . "&lt;br&gt;";
+  }
+  testScope();  // Output: I am global
+
+  // Static variable retains value between calls
+  function counter() {
+      static $count = 0;     // Initialized only once
+      $count++;
+      echo "Called $count times&lt;br&gt;";
+  }
+  counter();  // Called 1 times
+  counter();  // Called 2 times
+  counter();  // Called 3 times
+?&gt;</code></pre>
+
+  <h3>Built-in String Functions (Quick Reference)</h3>
+  <p>PHP has an extensive library of string functions that are commonly tested in examinations. The functions <code>explode()</code> and <code>implode()</code> deserve special attention because they appear frequently in previous year questions.</p>
+
+  <table>
+    <tr><th>Function</th><th>Purpose</th><th>Example</th></tr>
+    <tr><td><code>strlen($str)</code></td><td>Returns string length</td><td><code>strlen("Hello")</code> → 5</td></tr>
+    <tr><td><code>strtoupper($str)</code></td><td>Converts to uppercase</td><td><code>strtoupper("hello")</code> → "HELLO"</td></tr>
+    <tr><td><code>strtolower($str)</code></td><td>Converts to lowercase</td><td><code>strtolower("HELLO")</code> → "hello"</td></tr>
+    <tr><td><code>str_replace($find, $replace, $str)</code></td><td>Replaces occurrences</td><td><code>str_replace("world","PHP","Hello world")</code></td></tr>
+    <tr><td><code>substr($str, $start, $length)</code></td><td>Extracts substring</td><td><code>substr("Hello", 1, 3)</code> → "ell"</td></tr>
+    <tr><td><code>strpos($haystack, $needle)</code></td><td>Finds position of needle</td><td><code>strpos("Hello","ll")</code> → 2</td></tr>
+    <tr><td><code>trim($str)</code></td><td>Removes whitespace from both ends</td><td><code>trim("  Hi  ")</code> → "Hi"</td></tr>
+    <tr><td><code>explode($delimiter, $str)</code></td><td>Splits string into array</td><td><code>explode(",","a,b,c")</code> → ["a","b","c"]</td></tr>
+    <tr><td><code>implode($glue, $arr)</code></td><td>Joins array into string</td><td><code>implode("-",["a","b"])</code> → "a-b"</td></tr>
+    <tr><td><code>strrev($str)</code></td><td>Reverses string</td><td><code>strrev("Hello")</code> → "olleH"</td></tr>
+    <tr><td><code>ucfirst($str)</code></td><td>Capitalizes first character</td><td><code>ucfirst("hello")</code> → "Hello"</td></tr>
+    <tr><td><code>nl2br($str)</code></td><td>Converts newlines to <code>&lt;br&gt;</code></td><td>Useful for displaying multiline text</td></tr>
+  </table>
+
+<pre><code>&lt;?php
+  // ── explode() and implode() demonstration ──
+  $csv = "Amit,Priya,Rahul,Sneha,Vikram";
+  $names = explode(",", $csv);
+  echo "Array: ";
+  print_r($names);
+
+  $rejoined = implode(" | ", $names);
+  echo "Rejoined: $rejoined";
+  // Output: Amit | Priya | Rahul | Sneha | Vikram
+
+  // ── compact() and extract() ──
+  // compact() creates an array from variable names
+  $name = "Amit";
+  $age = 21;
+  $city = "Mumbai";
+  $data = compact("name", "age", "city");
+  print_r($data);
+  // Array ( [name] =&gt; Amit [age] =&gt; 21 [city] =&gt; Mumbai )
+
+  // extract() creates variables from array keys
+  $record = ["firstName" =&gt; "Priya", "lastName" =&gt; "Sharma", "score" =&gt; 95];
+  extract($record);
+  echo "$firstName $lastName scored $score";
+  // Output: Priya Sharma scored 95
+
+  // ── Combining first and last name (PYQ) ──
+  function combineNames($first, $last) {
+      $first = trim($first);
+      $last = trim($last);
+      return $first . " " . $last;
+  }
+  echo combineNames("  Amit ", " Kumar  ");
+  // Output: Amit Kumar
+?&gt;</code></pre>
+
+  <h3>Variable Functions</h3>
+  <p>PHP supports "variable functions" — the ability to call a function whose name is stored in a variable. If <code>$func = "strlen";</code>, then <code>$func("Hello")</code> is equivalent to <code>strlen("Hello")</code>. This feature, combined with functions like <code>gettype()</code>, <code>settype()</code>, <code>isset()</code>, and <code>unset()</code>, gives PHP a metaprogramming capability that is occasionally tested in examinations.</p>
+
+<pre><code>&lt;?php
+  // ── Variable function demo ──
+  $funcName = "strtoupper";
+  echo $funcName("hello php");   // Output: HELLO PHP
+
+  // ── gettype(), settype(), isset(), unset() ──
+  $value = "42";
+  echo gettype($value);           // Output: string
+  settype($value, "integer");
+  echo gettype($value);           // Output: integer
+  echo $value;                    // Output: 42
+
+  $x = 10;
+  echo isset($x) ? "Set" : "Not Set";  // Output: Set
+  unset($x);
+  echo isset($x) ? "Set" : "Not Set";  // Output: Not Set
+?&gt;</code></pre>
+
+  <div class="box box-exam">
+    <span class="box-label">Exam Note</span>
+    <p>The <code>split()</code> function mentioned in some PYQs has been <strong>deprecated since PHP 5.3</strong> and <strong>removed in PHP 7.0</strong>. It has been replaced by <code>explode()</code> (for string delimiters) and <code>preg_split()</code> (for regex patterns). If a question asks about <code>split()</code>, you should explain it historically and then note its replacement. This demonstrates awareness of PHP version evolution and impresses examiners.</p>
+  </div>
+
+  <div class="exam-q">
+    <p><strong>PYQ:</strong> Create a PHP function that takes an array of numbers as input and returns the sum of all the numbers in the array.</p>
+    <p><strong>PYQ:</strong> What is the use of explode() and split() functions in PHP? Write a program to implement explode(), implode(), compact(), and extract().</p>
+    <p><strong>PYQ:</strong> Write a PHP program to demonstrate the variable functions gettype(), settype(), isset(), and unset().</p>
+    <p><strong>PYQ:</strong> Write a PHP script to show global and static scope of a variable.</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 7: BROWSER CONTROL ═══════════════════ -->
+<article class="section" id="s7">
+  <span class="section-number">Section 07</span>
+  <h2>Browser Control &amp; Detection</h2>
+  <p class="section-subtitle">Identifying the client environment from the server side</p>
+
+  <p class="drop-cap">Although PHP runs on the server, it has access to information about the client's browser through the HTTP headers sent with each request. The <code>$_SERVER['HTTP_USER_AGENT']</code> superglobal contains a string that identifies the browser, its version, and the operating system. PHP provides the <code>get_browser()</code> function, which parses this user-agent string and returns an object containing detailed information about the browser's capabilities. This capability is useful for serving browser-specific content, though modern web development increasingly favors responsive design and feature detection over browser sniffing.</p>
+
+<pre><code>&lt;?php
+  // ── Browser Detection ──
+  echo "User Agent String: " . $_SERVER['HTTP_USER_AGENT'] . "&lt;br&gt;&lt;br&gt;";
+
+  // Using get_browser() — requires browscap.ini
+  // $browser = get_browser(null, true);
+  // echo "Browser: " . $browser['browser'] . "&lt;br&gt;";
+  // echo "Version: " . $browser['version'] . "&lt;br&gt;";
+  // echo "Platform: " . $browser['platform'] . "&lt;br&gt;";
+
+  // Manual detection using strpos
+  $ua = $_SERVER['HTTP_USER_AGENT'];
+
+  if (strpos($ua, "Firefox") !== false) {
+      $browser = "Mozilla Firefox";
+  } elseif (strpos($ua, "Chrome") !== false) {
+      $browser = "Google Chrome";
+  } elseif (strpos($ua, "Safari") !== false) {
+      $browser = "Apple Safari";
+  } elseif (strpos($ua, "Edge") !== false) {
+      $browser = "Microsoft Edge";
+  } elseif (strpos($ua, "MSIE") !== false || strpos($ua, "Trident") !== false) {
+      $browser = "Internet Explorer";
+  } else {
+      $browser = "Unknown Browser";
+  }
+
+  echo "Detected Browser: $browser";
+
+  // ── The header() function ──
+  // Used to send raw HTTP headers before any output
+  // header("Location: https://example.com");  // Redirect
+  // header("Content-Type: application/json"); // Set content type
+  // header("Cache-Control: no-cache");        // Control caching
+  // NOTE: Must be called BEFORE any HTML/echo output
+?&gt;</code></pre>
+
+  <h3>The <code>header()</code> Function</h3>
+  <p>The <code>header()</code> function sends a raw HTTP header to the client. It must be called before any actual output is sent — before any HTML, echo statements, or even blank lines outside PHP tags. Common use cases include redirecting the user (<code>header("Location: login.php");</code>), setting the content type (<code>header("Content-Type: application/json");</code>), and controlling caching. If <code>header()</code> is called after output has already been sent, PHP will produce the dreaded "headers already sent" warning, which is one of the most common errors students encounter.</p>
+
+  <div class="box box-confusion">
+    <span class="box-label">Common Confusion</span>
+    <p>Students often confuse <code>$_SERVER['HTTP_USER_AGENT']</code> with something PHP determines on its own. In reality, this information comes directly from the browser's HTTP request headers — the browser identifies itself voluntarily. A user can easily spoof this string, which is why browser detection is not a reliable security mechanism.</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 8: STRINGS ═══════════════════ -->
+<article class="section" id="s8">
+  <span class="section-number">Section 08</span>
+  <h2>String Handling in PHP</h2>
+  <p class="section-subtitle">Manipulating text — the bread and butter of server-side programming</p>
+
+  <p class="drop-cap">Strings are arguably the most frequently manipulated data type in PHP, because virtually all web output is ultimately a string of HTML, and virtually all user input arrives as a string. PHP offers over 100 string functions in its standard library, covering everything from basic operations like finding length and changing case to advanced pattern matching with regular expressions. For university examinations, the emphasis is typically on the core functions: <code>strlen()</code>, <code>strtoupper()</code>, <code>strtolower()</code>, <code>str_replace()</code>, <code>substr()</code>, <code>strpos()</code>, <code>trim()</code>, <code>explode()</code>, <code>implode()</code>, <code>strrev()</code>, <code>ucfirst()</code>, <code>nl2br()</code>, and <code>number_format()</code>. Understanding these functions well — knowing not just what they do, but what they return when the needle is not found, what happens with empty strings, and how they handle multibyte characters — will serve you in both theoretical and practical examinations.</p>
+
+  <h3>String Concatenation</h3>
+  <p>PHP uses the dot operator (<code>.</code>) for string concatenation, not the plus sign as in JavaScript or the ampersand as in VBScript. This is one of the first syntax differences students must internalize: <code>"Hello" . " " . "World"</code> produces "Hello World". The dot-assignment operator (<code>.=</code>) appends to an existing string: <code>$greeting = "Hello"; $greeting .= " World";</code>.</p>
+
+<pre><code>&lt;?php
+  // ── String functions demo ──
+  $text = "  Hello, World! PHP is Amazing.  ";
+
+  echo strlen($text);                          // 31 (includes spaces)
+  echo trim($text);                            // "Hello, World! PHP is Amazing."
+  echo strtoupper($text);                      // ALL CAPS
+  echo strtolower($text);                      // all lowercase
+  echo substr(trim($text), 7, 5);              // "World"
+  echo strpos($text, "World");                 // 9
+  echo str_replace("World", "PHP", $text);     // "Hello, PHP!..."
+  echo strrev("Hello");                        // "olleH"
+  echo ucfirst("hello world");                 // "Hello world"
+  echo ucwords("hello world");                 // "Hello World"
+
+  // nl2br — converts newlines to &lt;br&gt; for browser display
+  $multiline = "Line 1\nLine 2\nLine 3";
+  echo nl2br($multiline);
+
+  // number_format — formatting numbers
+  $price = 1234567.891;
+  echo number_format($price, 2, ".", ",");      // "1,234,567.89"
+?&gt;</code></pre>
+
+  <h3>Working with Substrings and Search</h3>
+  <p>The <code>substr()</code> function extracts a portion of a string. Its signature is <code>substr(string $string, int $start, ?int $length = null)</code>. If <code>$start</code> is negative, counting begins from the end of the string. If <code>$length</code> is omitted, the function returns everything from <code>$start</code> to the end. The <code>strpos()</code> function finds the position of the first occurrence of a substring. A critical gotcha: if the substring is found at position 0 (the very beginning of the string), <code>strpos()</code> returns 0, which evaluates to false in a loose comparison. Therefore, you must always use the strict comparison <code>!== false</code> when checking whether a substring exists, never the loose <code>!= false</code> or the implicit Boolean check.</p>
+
+  <div class="box box-memory">
+    <span class="box-label">Memory Anchor</span>
+    <p>The <code>strpos()</code> gotcha: "Finding something at the start is not the same as not finding it at all." Position 0 means "found at the beginning"; false means "not found." These are both "falsy" in loose comparison, which is why <code>=== false</code> is mandatory. Think of it like opening a book: the word you seek might be on page 0 (the cover), which is not the same as the word not being in the book.</p>
+  </div>
+
+  <div class="exam-q">
+    <p><strong>PYQ:</strong> Explain what is an array and string in PHP. Write a PHP program to accept a user's firstname and lastname, combine them, and output the result.</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 9: FORM PROCESSING ═══════════════════ -->
+<article class="section" id="s9">
+  <span class="section-number">Section 09</span>
+  <h2>Form Processing</h2>
+  <p class="section-subtitle">Collecting user input — the bridge between HTML forms and PHP scripts</p>
+
+  <p class="drop-cap">The fundamental interaction model of the early web — and still the most common one — involves a user filling out an HTML form, submitting it, and the server processing the submitted data. PHP makes this process exceptionally natural because the form data arrives in superglobal arrays (<code>$_GET</code>, <code>$_POST</code>, <code>$_REQUEST</code>) that are immediately accessible from any part of the script. Understanding form processing requires understanding three interconnected pieces: the HTML form with its attributes, the HTTP methods GET and POST, and the PHP code that receives, validates, and acts upon the data.</p>
+
+  <h3>The HTML Form</h3>
+  <p>An HTML form is defined with the <code>&lt;form&gt;</code> tag, which has two critical attributes: <code>action</code>, which specifies the URL of the PHP script that will process the form, and <code>method</code>, which specifies the HTTP method used to send the data. The form contains input elements — text fields, passwords, checkboxes, radio buttons, select dropdowns, textareas, and file uploads — each identified by a <code>name</code> attribute. It is this <code>name</code> attribute that becomes the key in the <code>$_POST</code> or <code>$_GET</code> array on the server side.</p>
+
+  <h3>GET vs POST Methods</h3>
+
+  <div class="compare-grid">
+    <div class="compare-col">
+      <h5>GET Method</h5>
+      <ul>
+        <li>Data appended to URL as query string: <code>page.php?name=Amit&amp;age=21</code></li>
+        <li>Visible in browser address bar and history</li>
+        <li>Bookmarked and shared via URL</li>
+        <li>Maximum URL length (~2048 characters)</li>
+        <li>NOT suitable for sensitive data (passwords)</li>
+        <li>NOT suitable for large data</li>
+        <li>Idempotent — can be safely retried</li>
+        <li>Use case: search queries, pagination, filtering</li>
+      </ul>
+    </div>
+    <div class="compare-col">
+      <h5>POST Method</h5>
+      <ul>
+        <li>Data sent in HTTP request body (not in URL)</li>
+        <li>NOT visible in address bar</li>
+        <li>Cannot be bookmarked with data</li>
+        <li>No practical size limit</li>
+        <li>Suitable for sensitive data (with HTTPS)</li>
+        <li>Suitable for file uploads</li>
+        <li>Non-idempotent — changes server state</li>
+        <li>Use case: login forms, registration, file upload</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Form Processing Flow">
+      <rect x="0" y="0" width="700" height="300" rx="6" fill="#faf7ef"/>
+      <text x="350" y="30" text-anchor="middle" font-family="Playfair Display, serif" font-size="16" font-weight="600" fill="#7a2040">PHP Form Processing Flow</text>
+      <!-- HTML Form -->
+      <rect x="30" y="60" width="130" height="80" rx="4" fill="#2a6a6a"/>
+      <text x="95" y="90" text-anchor="middle" font-family="Source Serif 4, serif" font-size="12" font-weight="600" fill="#fff">HTML Form</text>
+      <text x="95" y="108" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#d0e8e8">&lt;form method="POST"&gt;</text>
+      <text x="95" y="122" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#d0e8e8">name, email, ...</text>
+      <!-- Arrow -->
+      <line x1="160" y1="100" x2="210" y2="100" stroke="#7a2040" stroke-width="1.5" marker-end="url(#arr1)"/>
+      <text x="185" y="90" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#7a2040">Submit</text>
+      <!-- GET/POST Decision -->
+      <polygon points="265,60 335,100 265,140 195,100" fill="#b8862a"/>
+      <text x="265" y="95" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#fff">GET</text>
+      <text x="265" y="110" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#fff">POST</text>
+      <!-- Arrow to PHP -->
+      <line x1="335" y1="100" x2="385" y2="100" stroke="#7a2040" stroke-width="1.5" marker-end="url(#arr1)"/>
+      <!-- PHP Script -->
+      <rect x="385" y="55" width="140" height="90" rx="4" fill="#5a6a30"/>
+      <text x="455" y="80" text-anchor="middle" font-family="Source Serif 4, serif" font-size="12" font-weight="600" fill="#fff">PHP Script</text>
+      <text x="455" y="98" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#d8e0c0">$_POST['name']</text>
+      <text x="455" y="112" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#d8e0c0">Validation</text>
+      <text x="455" y="126" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#d8e0c0">Processing</text>
+      <!-- Arrow to Validation -->
+      <line x1="455" y1="145" x2="455" y2="180" stroke="#7a2040" stroke-width="1.5" marker-end="url(#arr1)"/>
+      <!-- Validation Decision -->
+      <rect x="370" y="180" width="170" height="45" rx="3" fill="#7a2040"/>
+      <text x="455" y="200" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" font-weight="600" fill="#fff">Validate Input</text>
+      <text x="455" y="215" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#f0d0d0">empty? format? range?</text>
+      <!-- Valid path -->
+      <line x1="455" y1="225" x2="455" y2="255" stroke="#2a6a6a" stroke-width="1.5" marker-end="url(#arr1)"/>
+      <text x="465" y="245" font-family="JetBrains Mono, monospace" font-size="7" fill="#2a6a6a">Valid</text>
+      <!-- Database -->
+      <rect x="395" y="255" width="120" height="35" rx="3" fill="#b8862a"/>
+      <text x="455" y="277" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" font-weight="600" fill="#fff">Database</text>
+      <!-- Error path -->
+      <line x1="540" y1="202" x2="590" y2="202" stroke="#a0522d" stroke-width="1.5" marker-end="url(#arr1)"/>
+      <text x="565" y="192" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#a0522d">Invalid</text>
+      <rect x="590" y="185" width="90" height="40" rx="3" fill="#a0522d"/>
+      <text x="635" y="205" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" font-weight="600" fill="#fff">Error</text>
+      <text x="635" y="218" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#f0d0d0">Show message</text>
+      <!-- defs -->
+      <defs>
+        <marker id="arr1" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#7a2040"/>
+        </marker>
+      </defs>
+    </svg>
+    <p class="diagram-caption">Fig 9.1 — Form Processing Flow with Validation</p>
+  </div>
+
+  <h3>Complete Registration Form with Validation (PYQ)</h3>
+<pre><code>&lt;!-- HTML Form: register.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Registration Form&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+    &lt;h2&gt;Student Registration&lt;/h2&gt;
+    &lt;form action="process.php" method="POST"&gt;
+        Name: &lt;input type="text" name="name" required&gt;&lt;br&gt;&lt;br&gt;
+        Address: &lt;textarea name="address" rows="3" cols="30" required&gt;&lt;/textarea&gt;&lt;br&gt;&lt;br&gt;
+        Email: &lt;input type="email" name="email" required&gt;&lt;br&gt;&lt;br&gt;
+        Mobile: &lt;input type="text" name="mobile" pattern="[0-9]{10}" required&gt;&lt;br&gt;&lt;br&gt;
+        &lt;input type="submit" value="Register"&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<pre><code>&lt;?php
+  // process.php — Server-side validation and database insertion
+
+  if ($_SERVER["REQUEST_METHOD"] === "POST") {
+
+      // ── 1. Retrieve and sanitize inputs ──
+      $name    = trim($_POST["name"]);
+      $address = trim($_POST["address"]);
+      $email   = trim($_POST["email"]);
+      $mobile  = trim($_POST["mobile"]);
+
+      $errors = [];
+
+      // ── 2. Server-side validation ──
+      // Name: not empty, only letters and spaces
+      if (empty($name)) {
+          $errors[] = "Name is required.";
+      } elseif (!preg_match("/^[a-zA-Z\s]{2,50}$/", $name)) {
+          $errors[] = "Name must contain only letters and spaces (2-50 chars).";
+      }
+
+      // Address: not empty
+      if (empty($address)) {
+          $errors[] = "Address is required.";
+      }
+
+      // Email: valid format
+      if (empty($email)) {
+          $errors[] = "Email is required.";
+      } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+          $errors[] = "Invalid email format.";
+      }
+
+      // Mobile: exactly 10 digits
+      if (empty($mobile)) {
+          $errors[] = "Mobile number is required.";
+      } elseif (!preg_match("/^[0-9]{10}$/", $mobile)) {
+          $errors[] = "Mobile must be exactly 10 digits.";
+      }
+
+      // ── 3. If valid, insert into database ──
+      if (empty($errors)) {
+          $conn = new mysqli("localhost", "root", "", "college_db");
+          if ($conn-&gt;connect_error) {
+              die("Connection failed: " . $conn-&gt;connect_error);
+          }
+
+          $stmt = $conn-&gt;prepare("INSERT INTO students (name, address, email, mobile) VALUES (?, ?, ?, ?)");
+          $stmt-&gt;bind_param("ssss", $name, $address, $email, $mobile);
+
+          if ($stmt-&gt;execute()) {
+              echo "&lt;h3 style='color:green'&gt;Registration successful!&lt;/h3&gt;";
+          } else {
+              echo "&lt;h3 style='color:red'&gt;Error: " . $stmt-&gt;error . "&lt;/h3&gt;";
+          }
+          $stmt-&gt;close();
+          $conn-&gt;close();
+      } else {
+          // ── 4. Display errors ──
+          echo "&lt;h3 style='color:red'&gt;Please fix the following errors:&lt;/h3&gt;";
+          echo "&lt;ul&gt;";
+          foreach ($errors as $err) {
+              echo "&lt;li&gt;$err&lt;/li&gt;";
+          }
+          echo "&lt;/ul&gt;";
+          echo '&lt;a href="register.html"&gt;Go back&lt;/a&gt;';
+      }
+  } else {
+      header("Location: register.html");
+      exit();
+  }
+?&gt;</code></pre>
+
+  <div class="box box-exam">
+    <span class="box-label">Exam Writing Material</span>
+    <p>This is a comprehensive answer for the PYQ: "Write a PHP program to accept values from a form (name, residential address, email, mobile). Apply server-side validations on it and insert the data into an appropriate table or show an error." In a 15-mark answer, explain each validation rule separately, describe why server-side validation is necessary even when client-side validation exists (client-side can be bypassed), and show the database insertion with prepared statements. Mention SQL injection prevention as a bonus point.</p>
+  </div>
+
+  <div class="exam-q">
+    <p><strong>PYQ:</strong> Write a PHP script to implement super global variables <code>$_GET</code>, <code>$_POST</code>, and <code>$_REQUEST</code>. Differentiate between GET and POST methods.</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 10: FILE HANDLING ═══════════════════ -->
+<article class="section" id="s10">
+  <span class="section-number">Section 10</span>
+  <h2>File Handling in PHP</h2>
+  <p class="section-subtitle">Reading, writing, and manipulating files on the server</p>
+
+  <p class="drop-cap">File handling is a fundamental capability of any server-side language, and PHP provides a comprehensive set of functions modeled on the C standard library's file I/O paradigm. The core workflow involves three steps: opening a file with <code>fopen()</code>, performing read or write operations with functions like <code>fread()</code>, <code>fwrite()</code>, <code>fgets()</code>, <code>fgetc()</code>, <code>file_get_contents()</code>, and <code>file_put_contents()</code>, and closing the file with <code>fclose()</code>. Understanding file permissions — the mode parameter of <code>fopen()</code> — is essential both for writing correct code and for answering examination questions.</p>
+
+  <h3>File Opening Modes</h3>
+  <table>
+    <tr><th>Mode</th><th>Description</th><th>File Must Exist?</th><th>Pointer Position</th></tr>
+    <tr><td><code>"r"</code></td><td>Read only</td><td>Yes</td><td>Beginning</td></tr>
+    <tr><td><code>"r+"</code></td><td>Read and write</td><td>Yes</td><td>Beginning</td></tr>
+    <tr><td><code>"w"</code></td><td>Write only (truncates file)</td><td>No (creates if absent)</td><td>Beginning</td></tr>
+    <tr><td><code>"w+"</code></td><td>Read and write (truncates)</td><td>No</td><td>Beginning</td></tr>
+    <tr><td><code>"a"</code></td><td>Append only</td><td>No</td><td>End of file</td></tr>
+    <tr><td><code>"a+"</code></td><td>Read and append</td><td>No</td><td>End of file</td></tr>
+    <tr><td><code>"x"</code></td><td>Create new file for writing</td><td>No (fails if exists)</td><td>Beginning</td></tr>
+  </table>
+
+  <div class="box box-confusion">
+    <span class="box-label">Common Confusion</span>
+    <p>The modes <code>"w"</code> and <code>"a"</code> are often confused. <code>"w"</code> opens the file for writing and <strong>erases all existing content</strong> (truncates to zero length). <code>"a"</code> opens for writing but <strong>preserves existing content</strong> and places the pointer at the end, so new data is appended. Using <code>"w"</code> when you intended <code>"a"</code> is a mistake that destroys data irreversibly.</p>
+  </div>
+
+  <h3>File Operations — Complete Examples</h3>
+<pre><code>&lt;?php
+  // ── Writing to a file ──
+  $fp = fopen("students.txt", "w");
+  if ($fp) {
+      fwrite($fp, "Name: Amit Kumar\n");
+      fwrite($fp, "Roll: 101\n");
+      fwrite($fp, "Branch: CSE\n\n");
+      fwrite($fp, "Name: Priya Sharma\n");
+      fwrite($fp, "Roll: 102\n");
+      fwrite($fp, "Branch: IT\n");
+      fclose($fp);
+      echo "Data written successfully.";
+  } else {
+      echo "Error opening file for writing.";
+  }
+
+  // ── Reading entire file at once ──
+  $content = file_get_contents("students.txt");
+  echo "&lt;pre&gt;$content&lt;/pre&gt;";
+
+  // ── Reading line by line ──
+  $fp = fopen("students.txt", "r");
+  if ($fp) {
+      while (!feof($fp)) {           // feof() checks End-Of-File
+          $line = fgets($fp);        // fgets() reads one line
+          echo $line . "&lt;br&gt;";
+      }
+      fclose($fp);
+  }
+
+  // ── Reading character by character ──
+  $fp = fopen("students.txt", "r");
+  if ($fp) {
+      while (!feof($fp)) {
+          $char = fgetc($fp);        // fgetc() reads one character
+          echo $char;
+      }
+      fclose($fp);
+  }
+
+  // ── Practical: Separate vowels and consonants (PYQ) ──
+  $content = file_get_contents("students.txt");
+  $vowels = "";
+  $consonants = "";
+
+  $content = strtolower($content);
+  $vowelChars = "aeiou";
+
+  for ($i = 0; $i &lt; strlen($content); $i++) {
+      $char = $content[$i];
+      if (ctype_alpha($char)) {              // Is it a letter?
+          if (strpos($vowelChars, $char) !== false) {
+              $vowels .= $char;
+          } else {
+              $consonants .= $char;
+          }
+      }
+  }
+
+  file_put_contents("vowels.txt", $vowels);
+  file_put_contents("consonants.txt", $consonants);
+  echo "Vowels and consonants separated into files.";
+
+  // ── File upload handling ──
+  // In HTML: &lt;form method="POST" enctype="multipart/form-data"&gt;
+  //          &lt;input type="file" name="profile_pic"&gt;
+  // In PHP:
+  if (isset($_FILES["profile_pic"])) {
+      $target = "uploads/" . basename($_FILES["profile_pic"]["name"]);
+      $fileType = strtolower(pathinfo($target, PATHINFO_EXTENSION));
+      $fileSize = $_FILES["profile_pic"]["size"];
+
+      // Check: is it an image?
+      $check = getimagesize($_FILES["profile_pic"]["tmp_name"]);
+      if ($check === false) {
+          echo "File is not an image.";
+      }
+      // Check: is it JPEG?
+      elseif ($fileType !== "jpg" &amp;&amp; $fileType !== "jpeg") {
+          echo "Only JPEG files are allowed.";
+      }
+      // Check: size &lt;= 50000 bytes (~50KB)
+      elseif ($fileSize &gt; 50000) {
+          echo "File size must be 50KB or less.";
+      }
+      else {
+          if (move_uploaded_file($_FILES["profile_pic"]["tmp_name"], $target)) {
+              echo "File uploaded successfully.";
+          } else {
+              echo "Upload failed.";
+          }
+      }
+  }
+?&gt;</code></pre>
+
+  <h3><code>include</code> vs <code>require</code></h3>
+  <p>Both <code>include</code> and <code>require</code> insert the contents of one PHP file into another, but they differ in how they handle failure. If the specified file is not found, <code>include</code> produces a warning (E_WARNING) and the script continues executing, while <code>require</code> produces a fatal error (E_COMPILE_ERROR) and halts the script entirely. The variants <code>include_once</code> and <code>require_once</code> behave identically to their counterparts but ensure that the file is included only once, preventing problems from duplicate function or class definitions.</p>
+
+  <table>
+    <tr><th>Function</th><th>On Failure</th><th>Multiple Inclusions?</th><th>Typical Use</th></tr>
+    <tr><td><code>include</code></td><td>Warning, script continues</td><td>Allowed</td><td>Headers, footers, non-critical content</td></tr>
+    <tr><td><code>include_once</code></td><td>Warning, script continues</td><td>Prevented</td><td>Config files, function libraries</td></tr>
+    <tr><td><code>require</code></td><td>Fatal error, script halts</td><td>Allowed</td><td>Database connections, critical dependencies</td></tr>
+    <tr><td><code>require_once</code></td><td>Fatal error, script halts</td><td>Prevented</td><td>Class definitions, essential configuration</td></tr>
+  </table>
+
+  <div class="exam-q">
+    <p><strong>PYQ:</strong> Describe file handling in PHP. Write syntax for file handling like open file, read file, write file in PHP.</p>
+    <p><strong>PYQ:</strong> Write a PHP program to open a file and read contents char by char till the end of the file, find all the consonants in a separate file and vowels in a separate file. Explain fopen() permissions.</p>
+    <p><strong>PYQ:</strong> Write client-side and server-side code to save an uploaded file in PHP. Write a program to upload an image to the server (check type is image, size ≤ 50000, jpeg only).</p>
+    <p><strong>PYQ:</strong> Explain include vs require function in PHP. What is the main difference between require() and require_once()?</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 11: COOKIES & SESSIONS ═══════════════════ -->
+<article class="section" id="s11">
+  <span class="section-number">Section 11</span>
+  <h2>Cookies &amp; Sessions</h2>
+  <p class="section-subtitle">Maintaining state in a stateless protocol — the twin pillars of user tracking</p>
+
+  <p class="drop-cap">The HTTP protocol is fundamentally stateless: each request from a browser to a server is independent, carrying no memory of previous interactions. This is fine for serving static documents, but it creates a serious problem for dynamic web applications that need to remember who the user is, what they have in their shopping cart, or whether they have already logged in. Cookies and sessions are the two primary mechanisms that PHP provides to solve this problem, and understanding them — their creation, storage, lifecycle, security implications, and differences — is one of the most important topics in this unit. Examinations test this topic heavily, both in theory and in practical coding questions.</p>
+
+  <h3>Cookies</h3>
+  <p>A cookie is a small piece of data that the server instructs the browser to store locally. When the browser makes subsequent requests to the same server, it automatically includes the cookie in the HTTP headers, allowing the server to recognize the client. In PHP, cookies are set using the <code>setcookie()</code> function, which must be called before any output is sent to the browser (just like <code>header()</code>). The function signature is <code>setcookie(string $name, string $value, int $expire, string $path, string $domain, bool $secure, bool $httponly)</code>. Cookies are accessed via the <code>$_COOKIE</code> superglobal array.</p>
+
+  <h3>Sessions</h3>
+  <p>A session, unlike a cookie, stores data on the server side. When <code>session_start()</code> is called, PHP creates a unique session ID (a long random string) and sends it to the browser as a cookie named <code>PHPSESSID</code> (by default). On subsequent requests, the browser sends this session ID back, and PHP uses it to look up the corresponding session data file on the server. Session variables are stored in the <code>$_SESSION</code> superglobal array. Sessions are generally preferred over cookies for storing sensitive information because the actual data never leaves the server — only the session ID travels back and forth.</p>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Cookie vs Session Architecture">
+      <rect x="0" y="0" width="700" height="340" rx="6" fill="#faf7ef"/>
+      <text x="350" y="30" text-anchor="middle" font-family="Playfair Display, serif" font-size="16" font-weight="600" fill="#7a2040">Cookie vs Session — Where Data Lives</text>
+      <!-- Cookie side -->
+      <text x="175" y="60" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#2a6a6a">COOKIE</text>
+      <rect x="40" y="75" width="120" height="50" rx="4" fill="#2a6a6a"/>
+      <text x="100" y="97" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" font-weight="600" fill="#fff">Server</text>
+      <text x="100" y="113" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#d0e8e8">setcookie()</text>
+      <line x1="100" y1="125" x2="100" y2="165" stroke="#2a6a6a" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <text x="115" y="148" font-family="JetBrains Mono, monospace" font-size="7" fill="#2a6a6a">sends cookie</text>
+      <rect x="40" y="170" width="120" height="70" rx="4" fill="#b8862a"/>
+      <text x="100" y="192" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" font-weight="600" fill="#fff">Browser</text>
+      <text x="100" y="210" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#f0d8a0">Stores data</text>
+      <text x="100" y="225" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#f0d8a0">on CLIENT</text>
+      <line x1="100" y1="240" x2="100" y2="265" stroke="#b8862a" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr3)"/>
+      <text x="115" y="258" font-family="JetBrains Mono, monospace" font-size="7" fill="#b8862a">sends back</text>
+      <text x="100" y="295" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4a3a">$_COOKIE['name']</text>
+      <text x="100" y="315" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#8a7a6a">Persists after browser</text>
+      <text x="100" y="328" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#8a7a6a">close (if expiry set)</text>
+      <!-- Session side -->
+      <text x="525" y="60" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#7a2040">SESSION</text>
+      <rect x="390" y="75" width="120" height="50" rx="4" fill="#7a2040"/>
+      <text x="450" y="97" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" font-weight="600" fill="#fff">Server</text>
+      <text x="450" y="113" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#f0d0d0">$_SESSION['x']=val</text>
+      <rect x="415" y="135" width="70" height="30" rx="2" fill="#5a6a30"/>
+      <text x="450" y="155" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#fff">Data stored</text>
+      <text x="450" y="175" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="7" fill="#5a6a30">HERE (server)</text>
+      <line x1="540" y1="100" x2="580" y2="100" stroke="#7a2040" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <text x="560" y="92" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#7a2040">session ID</text>
+      <rect x="580" y="75" width="100" height="50" rx="4" fill="#b8862a"/>
+      <text x="630" y="95" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" font-weight="600" fill="#fff">Browser</text>
+      <text x="630" y="113" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#f0d8a0">Only ID cookie</text>
+      <line x1="580" y1="100" x2="540" y2="100" stroke="#b8862a" stroke-width="1" stroke-dasharray="3,3" marker-end="url(#arr3)"/>
+      <text x="560" y="115" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="6" fill="#b8862a">sends ID back</text>
+      <text x="510" y="215" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="8" fill="#5a4a3a">$_SESSION['name']</text>
+      <text x="510" y="240" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#8a7a6a">Destroyed when browser</text>
+      <text x="510" y="253" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#8a7a6a">closes or session_destroy()</text>
+      <!-- Divider -->
+      <line x1="345" y1="55" x2="345" y2="330" stroke="#d4cabb" stroke-width="1" stroke-dasharray="4,3"/>
+      <defs>
+        <marker id="arr2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#2a6a6a"/>
+        </marker>
+        <marker id="arr3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#b8862a"/>
+        </marker>
+      </defs>
+    </svg>
+    <p class="diagram-caption">Fig 11.1 — Cookie vs Session: Where data is stored and how it travels</p>
+  </div>
+
+  <h3>Key Differences: Cookie vs Session</h3>
+  <table>
+    <tr><th>Feature</th><th>Cookie</th><th>Session</th></tr>
+    <tr><td><strong>Storage Location</strong></td><td>Client (browser)</td><td>Server (file or database)</td></tr>
+    <tr><td><strong>Lifetime</strong></td><td>Persists until expiry (can be years)</td><td>Until browser closes or timeout (~24 min default)</td></tr>
+    <tr><td><strong>Data Size Limit</strong></td><td>~4KB per cookie</td><td>Practically unlimited (server memory)</td></tr>
+    <tr><td><strong>Security</strong></td><td>Less secure (data visible in browser)</td><td>More secure (data stays on server)</td></tr>
+    <tr><td><strong>Sensitive Data</strong></td><td>Not recommended</td><td>Suitable (passwords, tokens, user details)</td></tr>
+    <tr><td><strong>Server Load</strong></td><td>None (stored on client)</td><td>Server must manage files/memory</td></tr>
+    <tr><td><strong>Access Superglobal</strong></td><td><code>$_COOKIE</code></td><td><code>$_SESSION</code></td></tr>
+  </table>
+
+  <h3>Complete Login with Remember Me (PYQ)</h3>
+<pre><code>&lt;!-- login.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Login&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+    &lt;h2&gt;Student Login&lt;/h2&gt;
+    &lt;form action="login.php" method="POST"&gt;
+        Username: &lt;input type="text" name="username" required&gt;&lt;br&gt;&lt;br&gt;
+        Password: &lt;input type="password" name="password" required&gt;&lt;br&gt;&lt;br&gt;
+        &lt;input type="checkbox" name="remember" value="1"&gt; Remember Me&lt;br&gt;&lt;br&gt;
+        &lt;input type="submit" value="Login"&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<pre><code>&lt;?php
+  // login.php
+  session_start();
+
+  // ── Check if already logged in via session ──
+  if (isset($_SESSION['username'])) {
+      header("Location: dashboard.php");
+      exit();
+  }
+
+  // ── Check "Remember Me" cookie ──
+  if (isset($_COOKIE['remember_user']) &amp;&amp; isset($_COOKIE['remember_pass'])) {
+      $_SESSION['username'] = $_COOKIE['remember_user'];
+      header("Location: dashboard.php");
+      exit();
+  }
+
+  // ── Process login form ──
+  if ($_SERVER["REQUEST_METHOD"] === "POST") {
+      $username = trim($_POST["username"]);
+      $password = trim($_POST["password"]);
+
+      // Database authentication
+      $conn = new mysqli("localhost", "root", "", "college_db");
+      $stmt = $conn-&gt;prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+      $stmt-&gt;bind_param("ss", $username, md5($password));  // Note: use password_hash in production
+      $stmt-&gt;execute();
+      $result = $stmt-&gt;get_result();
+
+      if ($result-&gt;num_rows === 1) {
+          // Login successful
+          $_SESSION['username'] = $username;
+          $_SESSION['login_time'] = time();
+
+          // "Remember Me" — store in cookies (expire in 7 days)
+          if (isset($_POST['remember'])) {
+              setcookie("remember_user", $username, time() + (7 * 24 * 60 * 60), "/");
+              setcookie("remember_pass", md5($password), time() + (7 * 24 * 60 * 60), "/");
+          }
+
+          header("Location: dashboard.php");
+          exit();
+      } else {
+          $error = "Invalid username or password.";
+      }
+      $stmt-&gt;close();
+      $conn-&gt;close();
+  }
+?&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;body&gt;
+    &lt;h2&gt;Login&lt;/h2&gt;
+    &lt;?php if (isset($error)) echo "&lt;p style='color:red'&gt;$error&lt;/p&gt;"; ?&gt;
+    &lt;form method="POST"&gt;
+        Username: &lt;input type="text" name="username" required&gt;&lt;br&gt;&lt;br&gt;
+        Password: &lt;input type="password" name="password" required&gt;&lt;br&gt;&lt;br&gt;
+        &lt;input type="checkbox" name="remember" value="1"&gt; Remember Me&lt;br&gt;&lt;br&gt;
+        &lt;input type="submit" value="Login"&gt;
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+<pre><code>&lt;?php
+  // logout.php
+  session_start();
+
+  // Destroy all session variables
+  $_SESSION = array();
+
+  // Delete the session cookie
+  if (ini_get("session.use_cookies")) {
+      $params = session_get_cookie_params();
+      setcookie(session_name(), '', time() - 42000,
+          $params["path"], $params["domain"],
+          $params["secure"], $params["httponly"]
+      );
+  }
+
+  // Delete "Remember Me" cookies
+  setcookie("remember_user", "", time() - 3600, "/");
+  setcookie("remember_pass", "", time() - 3600, "/");
+
+  // Destroy the session
+  session_destroy();
+
+  echo "You have been logged out. &lt;a href='login.html'&gt;Login again&lt;/a&gt;";
+?&gt;</code></pre>
+
+  <div class="exam-q">
+    <p><strong>PYQ:</strong> What are cookies and sessions in PHP? Explain both with the help of a program. Explain 3 differences between a cookie and a session.</p>
+    <p><strong>PYQ:</strong> Write a program to design a login page with remember me. If checked, store credentials in cookies and sessions. Destroy sessions upon logout.</p>
+    <p><strong>PYQ:</strong> Explain the concept of sessions in PHP. How are sessions maintained, and how can session variables be accessed?</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 12: PHP & MYSQL ═══════════════════ -->
+<article class="section" id="s12">
+  <span class="section-number">Section 12</span>
+  <h2>PHP &amp; MySQL Database Operations</h2>
+  <p class="section-subtitle">Connecting PHP to MySQL — the backbone of data-driven web applications</p>
+
+  <p class="drop-cap">The combination of PHP and MySQL is arguably the most important technology pairing in the history of web development. Together, they power everything from WordPress blogs to large-scale e-commerce platforms. In the Indian university context, the PHP-MySQL integration section is heavily tested in both theory and practical examinations. Students must be able to write code for connecting to a database, creating databases and tables, inserting data, querying data, updating records, deleting records, and performing these operations in the context of real-world scenarios like login systems and registration forms.</p>
+
+  <h3>The PHP-MySQL Architecture</h3>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 350" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PHP MySQL Architecture">
+      <rect x="0" y="0" width="700" height="350" rx="6" fill="#faf7ef"/>
+      <text x="350" y="30" text-anchor="middle" font-family="Playfair Display, serif" font-size="16" font-weight="600" fill="#7a2040">PHP-MySQL Communication Architecture</text>
+      <!-- Layer 1: PHP Script -->
+      <rect x="220" y="55" width="260" height="45" rx="4" fill="#5a6a30"/>
+      <text x="350" y="82" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" font-weight="600" fill="#fff">PHP Script (Your Code)</text>
+      <!-- Arrow down -->
+      <line x1="350" y1="100" x2="350" y2="130" stroke="#7a2040" stroke-width="2" marker-end="url(#arr4)"/>
+      <text x="380" y="120" font-family="JetBrains Mono, monospace" font-size="7" fill="#7a2040">API Call</text>
+      <!-- Layer 2: MySQLi / PDO -->
+      <rect x="180" y="135" width="340" height="45" rx="4" fill="#b8862a"/>
+      <text x="350" y="155" text-anchor="middle" font-family="Source Serif 4, serif" font-size="12" font-weight="600" fill="#fff">PHP Database Extension</text>
+      <text x="350" y="170" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#f0d8a0">MySQLi  |  PDO  |  mysql_* (deprecated)</text>
+      <!-- Arrow down -->
+      <line x1="350" y1="180" x2="350" y2="210" stroke="#7a2040" stroke-width="2" marker-end="url(#arr4)"/>
+      <text x="380" y="200" font-family="JetBrains Mono, monospace" font-size="7" fill="#7a2040">SQL Query</text>
+      <!-- Layer 3: TCP Connection -->
+      <rect x="250" y="215" width="200" height="35" rx="3" fill="#2a6a6a"/>
+      <text x="350" y="237" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#fff">TCP/IP  —  Port 3306</text>
+      <!-- Arrow down -->
+      <line x1="350" y1="250" x2="350" y2="270" stroke="#7a2040" stroke-width="2" marker-end="url(#arr4)"/>
+      <!-- Layer 4: MySQL Server -->
+      <rect x="200" y="275" width="300" height="50" rx="4" fill="#7a2040"/>
+      <text x="350" y="297" text-anchor="middle" font-family="Source Serif 4, serif" font-size="13" font-weight="600" fill="#fff">MySQL Server</text>
+      <text x="350" y="315" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="9" fill="#f0d0d0">Parse → Optimize → Execute → Return Result Set</text>
+      <defs>
+        <marker id="arr4" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto">
+          <polygon points="0 0, 10 3.5, 0 7" fill="#7a2040"/>
+        </marker>
+      </defs>
+    </svg>
+    <p class="diagram-caption">Fig 12.1 — Layers of PHP-MySQL communication</p>
+  </div>
+
+  <h3>Connecting to MySQL</h3>
+  <p>PHP offers two primary extensions for connecting to MySQL: <strong>MySQLi</strong> (MySQL Improved) and <strong>PDO</strong> (PHP Data Objects). MySQLi is specific to MySQL databases and supports both procedural and object-oriented styles. PDO is a database-agnostic abstraction layer that supports twelve different database drivers, making it more portable. For university examinations, MySQLi is typically expected, though mentioning PDO as an alternative earns bonus marks.</p>
+
+<pre><code>&lt;?php
+  // ── Method 1: MySQLi Object-Oriented ──
+  $servername = "localhost";
+  $username = "root";
+  $password = "";        // Default XAMPP has no password for root
+  $dbname = "college_db";
+
+  // Create connection
+  $conn = new mysqli($servername, $username, $password, $dbname);
+
+  // Check connection
+  if ($conn-&gt;connect_error) {
+      die("Connection failed: " . $conn-&gt;connect_error);
+  }
+  echo "Connected successfully!";
+
+  // Always close when done
+  $conn-&gt;close();
+
+  // ── Method 2: PDO (alternative) ──
+  try {
+      $pdo = new PDO("mysql:host=localhost;dbname=college_db", "root", "");
+      $pdo-&gt;setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      echo "PDO Connected successfully!";
+  } catch (PDOException $e) {
+      die("Connection failed: " . $e-&gt;getMessage());
+  }
+?&gt;</code></pre>
+
+  <h3>Creating Database and Tables</h3>
+<pre><code>&lt;?php
+  $conn = new mysqli("localhost", "root", "");
+  if ($conn-&gt;connect_error) die("Connection failed: " . $conn-&gt;connect_error);
+
+  // ── Create Database ──
+  $sql = "CREATE DATABASE IF NOT EXISTS college_db";
+  if ($conn-&gt;query($sql) === TRUE) {
+      echo "Database created successfully&lt;br&gt;";
+  }
+
+  // ── Select Database ──
+  $conn-&gt;select_db("college_db");
+
+  // ── List All Databases ──
+  $result = $conn-&gt;query("SHOW DATABASES");
+  echo "&lt;h4&gt;All Databases:&lt;/h4&gt;";
+  while ($row = $result-&gt;fetch_assoc()) {
+      echo $row['Database'] . "&lt;br&gt;";
+  }
+
+  // ── Create Table ──
+  $sql = "CREATE TABLE IF NOT EXISTS students (
+      id INT(11) AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      email VARCHAR(100) UNIQUE NOT NULL,
+      mobile VARCHAR(15) NOT NULL,
+      course VARCHAR(50) DEFAULT 'BCA',
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )";
+  if ($conn-&gt;query($sql) === TRUE) {
+      echo "Table 'students' created successfully&lt;br&gt;";
+  }
+
+  // ── List All Tables ──
+  $result = $conn-&gt;query("SHOW TABLES");
+  echo "&lt;h4&gt;All Tables:&lt;/h4&gt;";
+  while ($row = $result-&gt;fetch_row()) {
+      echo $row[0] . "&lt;br&gt;";
+  }
+
+  $conn-&gt;close();
+?&gt;</code></pre>
+
+  <h3>CRUD Operations — Complete Guide</h3>
+
+  <h4>INSERT — Adding Records</h4>
+<pre><code>&lt;?php
+  $conn = new mysqli("localhost", "root", "", "college_db");
+
+  // ── Simple INSERT ──
+  $sql = "INSERT INTO students (name, email, mobile, course)
+          VALUES ('Amit Kumar', 'amit@email.com', '9876543210', 'BCA')";
+  if ($conn-&gt;query($sql) === TRUE) {
+      echo "Record inserted. ID: " . $conn-&gt;insert_id;
+  }
+
+  // ── INSERT with Prepared Statement (SECURE — recommended) ──
+  $stmt = $conn-&gt;prepare("INSERT INTO students (name, email, mobile, course) VALUES (?, ?, ?, ?)");
+  $stmt-&gt;bind_param("ssss", $name, $email, $mobile, $course);
+
+  // Insert multiple records
+  $records = [
+      ["Priya Sharma", "priya@email.com", "9876543211", "BCA"],
+      ["Rahul Verma", "rahul@email.com", "9876543212", "B.Tech"],
+      ["Sneha Patel", "sneha@email.com", "9876543213", "MCA"],
+      ["Vikram Singh", "vikram@email.com", "9876543214", "BCA"],
+  ];
+
+  foreach ($records as $rec) {
+      $name = $rec[0];
+      $email = $rec[1];
+      $mobile = $rec[2];
+      $course = $rec[3];
+      $stmt-&gt;execute();
+  }
+  echo "5 records inserted successfully!";
+
+  $stmt-&gt;close();
+  $conn-&gt;close();
+?&gt;</code></pre>
+
+  <h4>SELECT — Retrieving Records</h4>
+<pre><code>&lt;?php
+  $conn = new mysqli("localhost", "root", "", "college_db");
+
+  // ── Fetch all records ──
+  $result = $conn-&gt;query("SELECT * FROM students");
+
+  if ($result-&gt;num_rows &gt; 0) {
+      echo "&lt;table border='1' cellpadding='8'&gt;";
+      echo "&lt;tr&gt;&lt;th&gt;ID&lt;/th&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Email&lt;/th&gt;&lt;th&gt;Mobile&lt;/th&gt;&lt;th&gt;Course&lt;/th&gt;&lt;/tr&gt;";
+
+      while ($row = $result-&gt;fetch_assoc()) {
+          echo "&lt;tr&gt;";
+          echo "&lt;td&gt;" . $row["id"] . "&lt;/td&gt;";
+          echo "&lt;td&gt;" . htmlspecialchars($row["name"]) . "&lt;/td&gt;";
+          echo "&lt;td&gt;" . htmlspecialchars($row["email"]) . "&lt;/td&gt;";
+          echo "&lt;td&gt;" . $row["mobile"] . "&lt;/td&gt;";
+          echo "&lt;td&gt;" . $row["course"] . "&lt;/td&gt;";
+          echo "&lt;/tr&gt;";
+      }
+      echo "&lt;/table&gt;";
+  } else {
+      echo "No records found. Table is empty.";
+  }
+
+  // ── Check if table is empty ──
+  $count_result = $conn-&gt;query("SELECT COUNT(*) as total FROM students");
+  $count_row = $count_result-&gt;fetch_assoc();
+  if ($count_row['total'] == 0) {
+      echo "The table is empty.";
+  } else {
+      echo "Total records: " . $count_row['total'];
+  }
+
+  // ── Fetch methods ──
+  // fetch_assoc()  — returns associative array (column name =&gt; value)
+  // fetch_row()    — returns numeric array (0, 1, 2...)
+  // fetch_array()  — returns both (associative + numeric)
+  // fetch_object() — returns an object
+
+  $conn-&gt;close();
+?&gt;</code></pre>
+
+  <h4>UPDATE and DELETE</h4>
+<pre><code>&lt;?php
+  $conn = new mysqli("localhost", "root", "", "college_db");
+
+  // ── UPDATE a record ──
+  $stmt = $conn-&gt;prepare("UPDATE students SET course = ? WHERE id = ?");
+  $stmt-&gt;bind_param("si", $newCourse, $studentId);
+  $newCourse = "MCA";
+  $studentId = 1;
+  $stmt-&gt;execute();
+  echo $stmt-&gt;affected_rows . " row(s) updated.";
+  $stmt-&gt;close();
+
+  // ── DELETE a record ──
+  $stmt = $conn-&gt;prepare("DELETE FROM students WHERE id = ?");
+  $stmt-&gt;bind_param("i", $deleteId);
+  $deleteId = 3;
+  $stmt-&gt;execute();
+  echo $stmt-&gt;affected_rows . " row(s) deleted.";
+  $stmt-&gt;close();
+
+  // ── ALTER table (add a column) ──
+  $conn-&gt;query("ALTER TABLE students ADD COLUMN address VARCHAR(255) DEFAULT ''");
+
+  // ── Drop (delete) table ──
+  // $conn-&gt;query("DROP TABLE IF EXISTS students");
+
+  // ── Drop (delete) database ──
+  // $conn-&gt;query("DROP DATABASE IF EXISTS college_db");
+
+  $conn-&gt;close();
+?&gt;</code></pre>
+
+  <h3>Complete Login and Student Records System (PYQ)</h3>
+<pre><code>&lt;?php
+  // index.php — Student Records Dashboard (after login)
+  session_start();
+
+  if (!isset($_SESSION['username'])) {
+      header("Location: login.html");
+      exit();
+  }
+
+  $conn = new mysqli("localhost", "root", "", "college_db");
+
+  // ── INSERT new record ──
+  if (isset($_POST['add'])) {
+      $stmt = $conn-&gt;prepare("INSERT INTO students (name, email, mobile, course) VALUES (?, ?, ?, ?)");
+      $stmt-&gt;bind_param("ssss", $_POST['name'], $_POST['email'], $_POST['mobile'], $_POST['course']);
+      $stmt-&gt;execute();
+      $stmt-&gt;close();
+      header("Location: index.php");
+      exit();
+  }
+
+  // ── DELETE record ──
+  if (isset($_GET['delete'])) {
+      $stmt = $conn-&gt;prepare("DELETE FROM students WHERE id = ?");
+      $stmt-&gt;bind_param("i", $_GET['delete']);
+      $stmt-&gt;execute();
+      $stmt-&gt;close();
+      header("Location: index.php");
+      exit();
+  }
+
+  // ── EDIT record ──
+  if (isset($_POST['update'])) {
+      $stmt = $conn-&gt;prepare("UPDATE students SET name=?, email=?, mobile=?, course=? WHERE id=?");
+      $stmt-&gt;bind_param("ssssi", $_POST['name'], $_POST['email'], $_POST['mobile'], $_POST['course'], $_POST['id']);
+      $stmt-&gt;execute();
+      $stmt-&gt;close();
+      header("Location: index.php");
+      exit();
+  }
+
+  // ── Fetch all records ──
+  $result = $conn-&gt;query("SELECT * FROM students ORDER BY id DESC");
+?&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;&lt;title&gt;Student Records&lt;/title&gt;&lt;/head&gt;
+&lt;body&gt;
+    &lt;h2&gt;Welcome, &lt;?= htmlspecialchars($_SESSION['username']) ?&gt;!&lt;/h2&gt;
+    &lt;a href="logout.php"&gt;Logout&lt;/a&gt;
+    &lt;hr&gt;
+
+    &lt;!-- Add New Student Form --&gt;
+    &lt;h3&gt;Add New Student&lt;/h3&gt;
+    &lt;form method="POST"&gt;
+        Name: &lt;input type="text" name="name" required&gt;
+        Email: &lt;input type="email" name="email" required&gt;
+        Mobile: &lt;input type="text" name="mobile" required&gt;
+        Course: &lt;input type="text" name="course" value="BCA"&gt;
+        &lt;input type="submit" name="add" value="Add Student"&gt;
+    &lt;/form&gt;
+    &lt;hr&gt;
+
+    &lt;!-- Display Records --&gt;
+    &lt;h3&gt;Student Records&lt;/h3&gt;
+    &lt;table border="1" cellpadding="8"&gt;
+        &lt;tr&gt;&lt;th&gt;ID&lt;/th&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Email&lt;/th&gt;&lt;th&gt;Mobile&lt;/th&gt;&lt;th&gt;Course&lt;/th&gt;&lt;th&gt;Actions&lt;/th&gt;&lt;/tr&gt;
+        &lt;?php while ($row = $result-&gt;fetch_assoc()): ?&gt;
+        &lt;tr&gt;
+            &lt;td&gt;&lt;?= $row['id'] ?&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;?= htmlspecialchars($row['name']) ?&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;?= htmlspecialchars($row['email']) ?&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;?= $row['mobile'] ?&gt;&lt;/td&gt;
+            &lt;td&gt;&lt;?= $row['course'] ?&gt;&lt;/td&gt;
+            &lt;td&gt;
+                &lt;a href="?delete=&lt;?= $row['id'] ?&gt;" onclick="return confirm('Delete this record?')"&gt;Delete&lt;/a&gt;
+            &lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;?php endwhile; ?&gt;
+    &lt;/table&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+  <div class="box box-exam">
+    <span class="box-label">Exam-Writing Material</span>
+    <p>For 15-mark questions on "How to create a MySQL connection and database in PHP," structure your answer as follows: (1) Explain the concept of server-side scripting connecting to a database, (2) Explain the MySQLi extension and its two styles (procedural and OOP), (3) Show connection code with error handling, (4) Demonstrate CREATE DATABASE, CREATE TABLE, INSERT, SELECT, UPDATE, DELETE — one code example for each, (5) Explain prepared statements and why they prevent SQL injection, (6) Show a practical example like a login verification or student records, (7) Mention PDO as an alternative. This structure will earn full marks.</p>
+  </div>
+
+  <h3>Retrieving Data from Result Sets</h3>
+  <p>When you execute a SELECT query, the result is a result set object. PHP provides several methods to extract data from this result set, and examinations frequently ask about the differences between them.</p>
+
+  <table>
+    <tr><th>Method</th><th>Returns</th><th>Best For</th></tr>
+    <tr><td><code>fetch_assoc()</code></td><td>Associative array: <code>["name" =&gt; "Amit"]</code></td><td>When you want to access columns by name</td></tr>
+    <tr><td><code>fetch_row()</code></td><td>Numeric array: <code>[0 =&gt; "Amit"]</code></td><td>When you want indexed access</td></tr>
+    <tr><td><code>fetch_array()</code></td><td>Both associative and numeric</td><td>When you need both (uses more memory)</td></tr>
+    <tr><td><code>fetch_object()</code></td><td>Object: <code>$row-&gt;name</code></td><td>Object-oriented style access</td></tr>
+    <tr><td><code>fetch_all()</code></td><td>Array of all rows at once</td><td>Small result sets (memory-intensive for large sets)</td></tr>
+  </table>
+
+  <div class="exam-q">
+    <p><strong>PYQ:</strong> How to create a MySQL connection and Database in PHP? How do you connect to a MySQL database using PHP?</p>
+    <p><strong>PYQ:</strong> Write a PHP program to query a database and check if a table is empty or not. Print rows from the table.</p>
+    <p><strong>PYQ:</strong> Write a PHP script to create a student table and insert at least 5 records in it.</p>
+    <p><strong>PYQ:</strong> Write a PHP program to connect to a database and check if a username-password combination is correct.</p>
+    <p><strong>PYQ:</strong> How can we retrieve the data in the result set of MySQL using PHP?</p>
+    <p><strong>PYQ:</strong> Write a PHP program to upload a registration form into a database and display the registration form from the database.</p>
+    <p><strong>PYQ:</strong> Create an HTML form taking username and password. On login, redirect to an index page with student records. Write insert, edit, and delete queries on the records table and execute them with PHP.</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 13: SUPERGLOBALS ═══════════════════ -->
+<article class="section" id="s13">
+  <span class="section-number">Section 13</span>
+  <h2>Super Global Variables</h2>
+  <p class="section-subtitle">PHP's built-in arrays that are accessible everywhere — the nerve center of web interaction</p>
+
+  <p class="drop-cap">Super global variables in PHP are predefined arrays that are accessible in every scope — inside functions, inside classes, and in the global scope — without needing the <code>global</code> keyword. They are the primary mechanism through which PHP interacts with the external world: receiving form data, reading cookies, accessing server information, and managing environment variables. Understanding each superglobal, what data it contains, and when to use it is essential for both practical programming and examinations.</p>
+
+  <table>
+    <tr><th>Superglobal</th><th>Contents</th><th>Typical Use</th></tr>
+    <tr><td><code>$_GET</code></td><td>Variables passed via URL query string</td><td>Search queries, pagination, filtering</td></tr>
+    <tr><td><code>$_POST</code></td><td>Variables sent via HTTP POST method</td><td>Form submissions, login credentials</td></tr>
+    <tr><td><code>$_REQUEST</code></td><td>Combined: $_GET + $_POST + $_COOKIE</td><td>When method-agnostic access is needed</td></tr>
+    <tr><td><code>$_COOKIE</code></td><td>Cookie variables sent by browser</td><td>Remember me, preferences</td></tr>
+    <tr><td><code>$_SESSION</code></td><td>Session variables stored on server</td><td>Login state, user data, shopping cart</td></tr>
+    <tr><td><code>$_FILES</code></td><td>File upload information</td><td>Handling uploaded files</td></tr>
+    <tr><td><code>$_SERVER</code></td><td>Server and execution environment info</td><td>URL, headers, script path, IP address</td></tr>
+    <tr><td><code>$_ENV</code></td><td>Environment variables</td><td>Configuration from environment</td></tr>
+    <tr><td><code>$GLOBALS</code></td><td>All global variables in the script</td><td>Accessing global scope from functions</td></tr>
+  </table>
+
+  <div class="box box-confusion">
+    <span class="box-label">True/False Answer</span>
+    <p><strong>True/False: <code>$_GLOBALS</code> is a super global variable.</strong> — <strong>FALSE.</strong> The correct name is <code>$GLOBALS</code> (with one underscore, preceded by a dollar sign). <code>$_GLOBALS</code> does not exist. This is a common trick question. Note the naming difference: all other superglobals start with <code>$_</code> (two characters), but <code>$GLOBALS</code> starts with only <code>$</code>.</p>
+  </div>
+
+<pre><code>&lt;?php
+  // ── $_GET example ──
+  // URL: page.php?name=Amit&amp;age=21
+  echo $_GET['name'];   // "Amit"
+  echo $_GET['age'];    // "21"
+
+  // ── $_POST example ──
+  // Form with method="POST"
+  echo $_POST['username'];
+  echo $_POST['password'];
+
+  // ── $_REQUEST combines GET, POST, and COOKIE ──
+  echo $_REQUEST['name'];  // Works regardless of GET or POST
+
+  // ── $_SERVER examples ──
+  echo $_SERVER['PHP_SELF'];              // Current script path
+  echo $_SERVER['SERVER_NAME'];           // localhost
+  echo $_SERVER['HTTP_USER_AGENT'];       // Browser info
+  echo $_SERVER['REMOTE_ADDR'];           // Client IP address
+  echo $_SERVER['REQUEST_METHOD'];        // GET or POST
+  echo $_SERVER['DOCUMENT_ROOT'];         // Server document root
+
+  // ── $GLOBALS example ──
+  $color = "blue";
+  function testGlobal() {
+      echo $GLOBALS['color'];  // Accesses $color without 'global' keyword
+  }
+  testGlobal();  // Output: blue
+?&gt;</code></pre>
+
+  <div class="exam-q">
+    <p><strong>PYQ:</strong> Write a PHP script to implement super global variables <code>$_GET</code>, <code>$_POST</code>, and <code>$_REQUEST</code>. Differentiate between GET and POST methods, explaining use cases and security.</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 14: ERROR HANDLING & MAGIC ═══════════════════ -->
+<article class="section" id="s14">
+  <span class="section-number">Section 14</span>
+  <h2>Error Handling &amp; Magic Constants</h2>
+  <p class="section-subtitle">Managing failures gracefully and using PHP's introspective constants</p>
+
+  <p class="drop-cap">Error handling is the practice of anticipating, detecting, and responding to runtime errors in a controlled manner, rather than allowing the script to crash with an ugly error message visible to end users. PHP has evolved significantly in its error handling capabilities: early versions relied on error reporting levels and the <code>set_error_handler()</code> function, while modern PHP (7.x and 8.x) supports structured exception handling with try-catch-finally blocks, custom exception classes, and the Throwable interface. For examinations, students should understand both the legacy error handling mechanisms and the modern exception-based approach.</p>
+
+  <h3>Error Levels in PHP</h3>
+  <table>
+    <tr><th>Constant</th><th>Value</th><th>Description</th></tr>
+    <tr><td><code>E_ERROR</code></td><td>1</td><td>Fatal runtime error — script halts</td></tr>
+    <tr><td><code>E_WARNING</code></td><td>2</td><td>Runtime warning — script continues</td></tr>
+    <tr><td><code>E_PARSE</code></td><td>4</td><td>Compile-time parse error</td></tr>
+    <tr><td><code>E_NOTICE</code></td><td>8</td><td>Runtime notice — possibly an error (e.g., undefined variable)</td></tr>
+    <tr><td><code>E_STRICT</code></td><td>2048</td><td>Suggestions for code interoperability</td></tr>
+    <tr><td><code>E_ALL</code></td><td>32767</td><td>All errors, warnings, and notices</td></tr>
+  </table>
+
+  <h3>Exception Handling with try-catch</h3>
+<pre><code>&lt;?php
+  // ── Basic exception handling ──
+  function divide($a, $b) {
+      if ($b == 0) {
+          throw new Exception("Division by zero is not allowed.");
+      }
+      return $a / $b;
+  }
+
+  try {
+      echo divide(10, 0);
+  } catch (Exception $e) {
+      echo "Error: " . $e-&gt;getMessage();
+  } finally {
+      echo "&lt;br&gt;This always executes.";
+  }
+
+  // ── Custom exception class ──
+  class DatabaseException extends Exception {
+      public function __construct($message, $code = 0) {
+          parent::__construct($message, $code);
+      }
+  }
+
+  // ── Real-world: database connection with error handling ──
+  try {
+      $conn = new mysqli("localhost", "root", "", "college_db");
+      if ($conn-&gt;connect_error) {
+          throw new DatabaseException("Connection failed: " . $conn-&gt;connect_error);
+      }
+      // ... perform operations ...
+  } catch (DatabaseException $e) {
+      echo "Database Error: " . $e-&gt;getMessage();
+  } catch (Exception $e) {
+      echo "General Error: " . $e-&gt;getMessage();
+  } finally {
+      if (isset($conn)) $conn-&gt;close();
+  }
+
+  // ── Suppressing errors (not recommended but appears in exams) ──
+  $result = @file_get_contents("nonexistent.txt");
+  // The @ operator suppresses the warning
+?&gt;</code></pre>
+
+  <h3>Magic Constants</h3>
+  <p>PHP provides several "magic constants" that change their value depending on where they are used. They start and end with double underscores (dunders), which is why they are sometimes called "dunder constants."</p>
+
+  <table>
+    <tr><th>Constant</th><th>Description</th><th>Example Value</th></tr>
+    <tr><td><code>__LINE__</code></td><td>Current line number of the file</td><td>42</td></tr>
+    <tr><td><code>__FILE__</code></td><td>Full path and filename of the file</td><td><code>/xampp/htdocs/test.php</code></td></tr>
+    <tr><td><code>__DIR__</code></td><td>Directory of the file</td><td><code>/xampp/htdocs</code></td></tr>
+    <tr><td><code>__FUNCTION__</code></td><td>Current function name</td><td><code>"greet"</code></td></tr>
+    <tr><td><code>__CLASS__</code></td><td>Current class name</td><td><code>"Student"</code></td></tr>
+    <tr><td><code>__METHOD__</code></td><td>Current class method name</td><td><code>"Student::getName"</code></td></tr>
+    <tr><td><code>__NAMESPACE__</code></td><td>Current namespace</td><td><code>"App\Controllers"</code></td></tr>
+    <tr><td><code>__TRAIT__</code></td><td>Current trait name</td><td><code>"Loggable"</code></td></tr>
+  </table>
+
+<pre><code>&lt;?php
+  echo "This is line " . __LINE__ . "&lt;br&gt;";       // Line 2
+  echo "File: " . __FILE__ . "&lt;br&gt;";
+  echo "Directory: " . __DIR__ . "&lt;br&gt;";
+
+  function sampleFunction() {
+      echo "Inside function: " . __FUNCTION__ . "&lt;br&gt;";
+  }
+  sampleFunction();  // Inside function: sampleFunction
+?&gt;</code></pre>
+
+  <div class="exam-q">
+    <p><strong>PYQ:</strong> Explain the concept of error handling in PHP. How can errors and exceptions be handled effectively?</p>
+    <p><strong>PYQ:</strong> What is the use of the header() function in PHP? What are magic constants in PHP?</p>
+  </div>
+</article>
+
+<!-- ═══════════════════ SECTION 15: EXAM REVISION ═══════════════════ -->
+<article class="section" id="s15">
+  <span class="section-number">Section 15</span>
+  <h2>Exam Revision Arsenal</h2>
+  <p class="section-subtitle">Quick-reference cards, mnemonics, and answer frameworks for the night before the exam</p>
+
+  <div class="revision-card">
+    <h4>Ultra-Quick PHP Syntax Cheat Sheet</h4>
+    <ul>
+      <li>PHP delimiters: <code>&lt;?php ... ?&gt;</code></li>
+      <li>Variables start with <code>$</code> — case-sensitive</li>
+      <li>Statements end with <code>;</code></li>
+      <li>String concatenation: <code>.</code> (dot operator)</li>
+      <li>Comments: <code>//</code> single-line, <code>/* */</code> multi-line</li>
+      <li>Output: <code>echo</code> (no return) or <code>print</code> (returns 1)</li>
+      <li>Variable variable: <code>$$var</code> — name stored in another variable</li>
+      <li>String interpolation: double quotes only (<code>"$var"</code> works, <code>'$var'</code> does not)</li>
+    </ul>
+  </div>
+
+  <div class="revision-card">
+    <h4>Array Functions You Must Know</h4>
+    <ul>
+      <li><code>count()</code> — number of elements</li>
+      <li><code>sort()</code> — values ascending, reindexed</li>
+      <li><code>rsort()</code> — values descending, reindexed</li>
+      <li><code>asort()</code> — values ascending, keys preserved</li>
+      <li><code>krsort()</code> — keys descending ← PYQ favorite</li>
+      <li><code>array_push()</code>, <code>array_pop()</code>, <code>array_shift()</code></li>
+      <li><code>array_merge()</code>, <code>array_search()</code>, <code>in_array()</code></li>
+      <li><code>array_sum()</code>, <code>array_unique()</code>, <code>array_reverse()</code></li>
+    </ul>
+  </div>
+
+  <div class="revision-card">
+    <h4>String Functions — Quick Reference</h4>
+    <ul>
+      <li><code>strlen()</code> — length</li>
+      <li><code>strtoupper()</code> / <code>strtolower()</code> — case</li>
+      <li><code>str_replace(find, replace, string)</code> — replacement</li>
+      <li><code>substr(string, start, length)</code> — substring extraction</li>
+      <li><code>strpos(haystack, needle)</code> — find position (use <code>!== false</code>)</li>
+      <li><code>explode(delimiter, string)</code> — string → array</li>
+      <li><code>implode(glue, array)</code> — array → string</li>
+      <li><code>trim()</code> — remove whitespace</li>
+      <li><code>ucfirst()</code> / <code>ucwords()</code> — capitalization</li>
+    </ul>
+  </div>
+
+  <div class="revision-card">
+    <h4>Cookie vs Session — 3 Key Differences (PYQ)</h4>
+    <ul>
+      <li><strong>Storage:</strong> Cookie = client; Session = server</li>
+      <li><strong>Security:</strong> Cookie data visible in browser; Session data hidden on server</li>
+      <li><strong>Lifetime:</strong> Cookie persists until expiry; Session ends when browser closes or <code>session_destroy()</code></li>
+    </ul>
+  </div>
+
+  <div class="revision-card">
+    <h4>MySQLi CRUD — The 4 Operations</h4>
+    <ul>
+      <li><strong>CREATE:</strong> <code>INSERT INTO table (cols) VALUES (vals)</code></li>
+      <li><strong>READ:</strong> <code>SELECT * FROM table WHERE condition</code></li>
+      <li><strong>UPDATE:</strong> <code>UPDATE table SET col=val WHERE condition</code></li>
+      <li><strong>DELETE:</strong> <code>DELETE FROM table WHERE condition</code></li>
+      <li>Always use <strong>prepared statements</strong> (<code>bind_param</code>) to prevent SQL injection</li>
+      <li><code>fetch_assoc()</code> for associative array, <code>fetch_row()</code> for numeric</li>
+    </ul>
+  </div>
+
+  <h3>How to Structure a 10-Mark Answer</h3>
+  <div class="box box-tip">
+    <span class="box-label">Answer Framework</span>
+    <p><strong>For "Explain X with example" (10 marks):</strong></p>
+    <ol>
+      <li><strong>Definition</strong> (1 mark): State what X is in 2-3 sentences with the formal definition.</li>
+      <li><strong>Need/Motivation</strong> (1 mark): Why does X exist? What problem does it solve?</li>
+      <li><strong>Detailed Explanation</strong> (3 marks): How does X work? Describe the mechanism, components, and flow.</li>
+      <li><strong>Code Example</strong> (3 marks): Write clean, commented code demonstrating X. Include output.</li>
+      <li><strong>Advantages/Disadvantages</strong> or <strong>Differences</strong> (1 mark): Brief comparison or tradeoff analysis.</li>
+      <li><strong>Diagram</strong> (1 mark): If applicable, draw and label a diagram. Even a rough diagram shows effort.</li>
+    </ol>
+    <p>This framework consistently earns full marks because it addresses every rubric point that university examiners look for.</p>
+  </div>
+
+  <h3>Most Commonly Confused Points</h3>
+  <div class="box box-confusion">
+    <span class="box-label">Confusion Busters</span>
+    <p><strong>1. <code>==</code> vs <code>===</code>:</strong> <code>==</code> compares values after type coercion (<code>"5" == 5</code> is true); <code>===</code> compares both value and type (<code>"5" === 5</code> is false).</p>
+    <p><strong>2. <code>echo</code> vs <code>print</code>:</strong> <code>echo</code> can take multiple parameters and returns nothing; <code>print</code> takes one parameter and returns 1.</p>
+    <p><strong>3. <code>include</code> vs <code>require</code>:</strong> <code>include</code> gives a warning on failure (script continues); <code>require</code> gives a fatal error (script halts).</p>
+    <p><strong>4. <code>sort()</code> vs <code>asort()</code>:</strong> Both sort by value, but <code>sort()</code> reindexes keys (destroys string keys); <code>asort()</code> preserves key-value associations.</p>
+    <p><strong>5. <code>$_REQUEST</code> vs <code>$_POST</code>:</strong> <code>$_REQUEST</code> contains GET + POST + COOKIE data combined; <code>$_POST</code> contains only POST data. Using <code>$_REQUEST</code> can cause security issues if a GET parameter shadows a POST parameter.</p>
+    <p><strong>6. <code>$GLOBALS</code> vs <code>$_GLOBALS</code>:</strong> The correct superglobal is <code>$GLOBALS</code>. There is no <code>$_GLOBALS</code>.</p>
+    <p><strong>7. <code>"w"</code> vs <code>"a"</code> in fopen:</strong> <code>"w"</code> truncates (erases) the file before writing; <code>"a"</code> appends to the existing content.</p>
+    <p><strong>8. <code>session_start()</code> placement:</strong> Must be called before ANY output — before HTML, before echo, before even a blank line outside PHP tags.</p>
+  </div>
+
+  <h3>Most Likely PYQ-Style Questions — Final Checklist</h3>
+  <details>
+    <summary>Click to expand full question checklist</summary>
+    <div class="details-body">
+      <div class="exam-q"><p>1. What is PHP? Explain advantages and disadvantages. (5-10 marks)</p></div>
+      <div class="exam-q"><p>2. Explain XAMPP and its components. (2-5 marks)</p></div>
+      <div class="exam-q"><p>3. What is the difference between GET and POST? (5 marks)</p></div>
+      <div class="exam-q"><p>4. What are cookies and sessions? Explain with program and 3 differences. (10 marks)</p></div>
+      <div class="exam-q"><p>5. Explain array types with examples. (5-10 marks)</p></div>
+      <div class="exam-q"><p>6. Write PHP program for form validation and database insertion. (15 marks)</p></div>
+      <div class="exam-q"><p>7. Explain file handling — fopen modes, reading, writing. (10 marks)</p></div>
+      <div class="exam-q"><p>8. What are superglobal variables? Explain with examples. (5-10 marks)</p></div>
+      <div class="exam-q"><p>9. Explain include vs require vs include_once vs require_once. (5 marks)</p></div>
+      <div class="exam-q"><p>10. How to connect PHP with MySQL? Write CRUD operations. (10-15 marks)</p></div>
+      <div class="exam-q"><p>11. Explain explode(), implode(), compact(), extract(). (5 marks)</p></div>
+      <div class="exam-q"><p>12. What is the difference between $var and $$var? (2 marks)</p></div>
+      <div class="exam-q"><p>13. Explain error handling in PHP. (5 marks)</p></div>
+      <div class="exam-q"><p>14. What are magic constants? List and explain. (2-5 marks)</p></div>
+      <div class="exam-q"><p>15. Write a login page with remember me, session management, and logout. (15 marks)</p></div>
+      <div class="exam-q"><p>16. Explain header() function with use cases. (2-5 marks)</p></div>
+      <div class="exam-q"><p>17. Explain gettype(), settype(), isset(), unset() with program. (5 marks)</p></div>
+      <div class="exam-q"><p>18. Sort functions of array in PHP. (5 marks)</p></div>
+      <div class="exam-q"><p>19. What is the use of get_browser() in PHP? (2 marks)</p></div>
+      <div class="exam-q"><p>20. Upload image to server with type and size validation. (10 marks)</p></div>
+    </div>
+  </details>
+
+  <h3>Viva Voce — Quick Conceptual Answers</h3>
+  <details>
+    <summary>Click to expand viva preparation</summary>
+    <div class="details-body">
+      <p><strong>Q: Why is PHP called a server-side language?</strong><br>
+      A: Because PHP code is executed on the web server by the PHP interpreter. The browser receives only the resulting HTML output, not the PHP source code.</p>
+
+      <p><strong>Q: What happens if you forget the semicolon in PHP?</strong><br>
+      A: PHP will produce a parse error. The error message typically points to the line <em>after</em> the missing semicolon, because PHP realizes the error only when it encounters something unexpected on the next line.</p>
+
+      <p><strong>Q: Can PHP run without a web server?</strong><br>
+      A: Yes, PHP can be executed from the command line using <code>php filename.php</code>. This is called PHP-CLI (Command Line Interface).</p>
+
+      <p><strong>Q: What is the difference between <code>unset()</code> and assigning <code>NULL</code>?</strong><br>
+      A: <code>unset($var)</code> destroys the variable entirely — <code>isset($var)</code> returns false. Assigning <code>$var = NULL</code> sets the value to NULL but the variable still exists — <code>isset($var)</code> returns false in both cases, but <code>array_key_exists()</code> behavior differs.</p>
+
+      <p><strong>Q: Why use prepared statements?</strong><br>
+      A: Prepared statements separate SQL logic from data. The query template is sent to the database first, then the data is bound separately. This prevents SQL injection because user input is never directly concatenated into the SQL string.</p>
+
+      <p><strong>Q: What is htmlspecialchars()?</strong><br>
+      A: It converts special HTML characters to their entity equivalents (e.g., <code>&lt;</code> becomes <code>&amp;lt;</code>). This prevents Cross-Site Scripting (XSS) attacks when displaying user input in HTML.</p>
+    </div>
+  </details>
+
+  <div class="pull-quote">
+    "The mark of a well-prepared student is not the ability to recall facts under pressure, but the confidence that comes from having understood the machinery beneath every concept."
+  </div>
+</article>
+
+</main>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer style="text-align:center; padding:3rem 2rem; border-top:3px double var(--border); margin-top:2rem;">
+  <div class="hero-ornament"></div>
+  <p style="font-family:var(--font-display); font-size:1.1rem; color:var(--accent-burgundy); margin-top:1rem;">Unit 4 — PHP, Sessions &amp; Database</p>
+  <p style="font-family:var(--font-mono); font-size:0.7rem; color:var(--text-muted); margin-top:0.5rem; letter-spacing:0.15em; text-transform:uppercase;">
+    Complete Scholar's Guide &nbsp;·&nbsp; Designed for University Examination Excellence
+  </p>
+  <p style="font-family:var(--font-body); font-size:0.85rem; color:var(--text-secondary); margin-top:1rem; font-style:italic;">
+    Every concept explained. Every PYQ answered. Every diagram drawn.
+  </p>
+</footer>
+
+<script>
+// Smooth scroll for TOC items
+document.querySelectorAll('.toc-item').forEach((item, i) => {
+  item.addEventListener('click', () => {
+    const sectionId = 's' + (i + 1);
+    const target = document.getElementById(sectionId);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  item.style.cursor = 'pointer';
+});
+
+// Print all details before printing
+window.addEventListener('beforeprint', () => {
+  document.querySelectorAll('details').forEach(d => d.setAttribute('open', ''));
+});
+</script>
+
+</body>
+</html>

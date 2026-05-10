@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Computer Networks — Course Index</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg: #f4efe7;
+      --card: rgba(255,255,255,0.35);
+      --border: #d8c5b4;
+      --text: #2b1e15;
+      --muted: #8d715f;
+      --accent: #a85d3a;
+      --shadow: rgba(70, 45, 20, 0.08);
+    }
+
+    *{
+      margin:0;
+      padding:0;
+      box-sizing:border-box;
+    }
+
+    body{
+      min-height:100vh;
+      background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      overflow-x:hidden;
+      position:relative;
+    }
+
+    /* Decorative top strip */
+    .top-pattern{
+      height:10px;
+      width:100%;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          #6d4c2f 0 14px,
+          #b37a34 14px 28px,
+          #7a8b42 28px 42px,
+          #c39a3d 42px 56px,
+          #4d5f2a 56px 70px
+        );
+    }
+
+    /* Soft background blobs */
+    .bg-blur{
+      position:absolute;
+      border-radius:50%;
+      filter: blur(70px);
+      opacity:0.25;
+      z-index:0;
+    }
+
+    .blur1{
+      width:300px;
+      height:300px;
+      background:#d6b69f;
+      top:15%;
+      left:-80px;
+    }
+
+    .blur2{
+      width:250px;
+      height:250px;
+      background:#e5c8b4;
+      bottom:10%;
+      right:-50px;
+    }
+
+    .container{
+      position:relative;
+      z-index:2;
+      min-height:calc(100vh - 10px);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      padding:50px 20px;
+    }
+
+    .course-tag{
+      border:1px solid var(--border);
+      padding:12px 28px;
+      letter-spacing:6px;
+      font-size:0.78rem;
+      color:var(--muted);
+      margin-bottom:45px;
+      background:rgba(255,255,255,0.25);
+      backdrop-filter: blur(8px);
+    }
+
+    h1{
+      font-family:'Cormorant Garamond', serif;
+      font-size:7rem;
+      font-weight:500;
+      line-height:0.9;
+      margin-bottom:20px;
+      color:#2c2018;
+    }
+
+    .subtitle{
+      font-family:'Cormorant Garamond', serif;
+      font-size:2.4rem;
+      font-style:italic;
+      color:var(--accent);
+      text-align:center;
+      line-height:1.5;
+      max-width:900px;
+      margin-bottom:70px;
+    }
+
+    .units-grid{
+      width:100%;
+      max-width:1100px;
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+      gap:24px;
+    }
+
+    .unit-card{
+      text-decoration:none;
+      color:inherit;
+      background:var(--card);
+      border:1px solid rgba(216, 197, 180, 0.9);
+      border-radius:28px;
+      padding:32px 24px;
+      backdrop-filter: blur(12px);
+      box-shadow:0 10px 30px var(--shadow);
+      transition: all 0.35s ease;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .unit-card::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(
+        135deg,
+        rgba(255,255,255,0.45),
+        rgba(255,255,255,0.05)
+      );
+      opacity:0;
+      transition:0.35s ease;
+    }
+
+    .unit-card:hover{
+      transform:translateY(-8px);
+      border-color:#b48768;
+      box-shadow:0 20px 40px rgba(60,40,20,0.12);
+    }
+
+    .unit-card:hover::before{
+      opacity:1;
+    }
+
+    .unit-number{
+      font-family:'Cormorant Garamond', serif;
+      font-size:3.5rem;
+      line-height:1;
+      margin-bottom:12px;
+      color:#2d2017;
+      position:relative;
+      z-index:2;
+    }
+
+    .unit-title{
+      font-size:0.95rem;
+      letter-spacing:2px;
+      text-transform:uppercase;
+      color:var(--muted);
+      position:relative;
+      z-index:2;
+    }
+
+    .footer{
+      margin-top:60px;
+      color:#a08a79;
+      font-size:0.85rem;
+      letter-spacing:2px;
+    }
+
+    @media(max-width:768px){
+
+      h1{
+        font-size:4.5rem;
+      }
+
+      .subtitle{
+        font-size:1.7rem;
+        margin-bottom:50px;
+      }
+
+      .course-tag{
+        letter-spacing:4px;
+        text-align:center;
+      }
+
+      .units-grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-pattern"></div>
+
+  <div class="bg-blur blur1"></div>
+  <div class="bg-blur blur2"></div>
+
+  <main class="container">
+
+    <div class="course-tag">
+      Full stack web development 
+    </div>
+
+    <h1>Course Index</h1>
+
+    <section class="units-grid">
+
+      <a href="unit_1.html" class="unit-card">
+        <div class="unit-number">1</div>
+        <div class="unit-title">Unit One</div>
+      </a>
+
+      <a href="unit_2.html" class="unit-card">
+        <div class="unit-number">2</div>
+        <div class="unit-title">Unit Two</div>
+      </a>
+
+      <a href="unit_3.html" class="unit-card">
+        <div class="unit-number">3</div>
+        <div class="unit-title">Unit Three</div>
+      </a>
+
+      <a href="unit_4.html" class="unit-card">
+        <div class="unit-number">4</div>
+        <div class="unit-title">Unit Four</div>
+      </a>
+
+      <a href="unit_5.html" class="unit-card">
+        <div class="unit-number">5</div>
+        <div class="unit-title">Unit Five</div>
+      </a>
+
+    </section>
+
+
+
+  </main>
+
+</body>
+</html>

@@ -1,0 +1,2455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Software Engineering — Unit I: Introduction & SDLC | The Complete Examination Guide</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;1,8..60,400;1,8..60,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #F5F0E1;
+  --bg-deep: #EDE7D4;
+  --surface: #FFFCF3;
+  --surface-alt: #F0EBD8;
+  --accent-primary: #B8452A;
+  --accent-secondary: #2B5C4A;
+  --accent-gold: #C4973B;
+  --accent-rose: #C27856;
+  --accent-blue: #3E6B7B;
+  --text: #2C2418;
+  --text-muted: #7A6E5C;
+  --text-light: #A09480;
+  --border: #D6CEBC;
+  --border-light: #E8E2D4;
+  --shadow: rgba(44, 36, 24, 0.08);
+  --shadow-deep: rgba(44, 36, 24, 0.15);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 17px; }
+
+body {
+  font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.82;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Grain Texture Overlay ── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  opacity: 0.03;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ── Typography ── */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', Georgia, serif;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+.section-number {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+h1 { font-size: 2.8rem; font-weight: 700; letter-spacing: -0.02em; }
+h2 { font-size: 2.1rem; font-weight: 600; margin: 3rem 0 1.2rem; letter-spacing: -0.015em; }
+h3 { font-size: 1.55rem; font-weight: 600; margin: 2.2rem 0 0.8rem; }
+h4 { font-size: 1.2rem; font-weight: 600; margin: 1.8rem 0 0.6rem; font-family: 'Cormorant Garamond', Georgia, serif; }
+
+p { margin-bottom: 1.15rem; text-align: justify; }
+
+.lead {
+  font-size: 1.18rem;
+  line-height: 1.9;
+  color: var(--text-muted);
+  font-style: italic;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+}
+
+strong { font-weight: 600; color: var(--text); }
+em { font-style: italic; }
+
+/* ── Navigation ── */
+.nav-sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 280px;
+  height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 1000;
+  padding: 2rem 1.2rem;
+  transform: translateX(-100%);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-sidebar.open { transform: translateX(0); }
+
+.nav-sidebar h3 {
+  font-size: 0.85rem;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  margin: 1.5rem 0 0.8rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.nav-sidebar h3:first-child { margin-top: 0; }
+
+.nav-sidebar a {
+  display: block;
+  padding: 0.35rem 0.5rem;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-weight: 500;
+  line-height: 1.5;
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.nav-sidebar a:hover {
+  color: var(--accent-primary);
+  background: var(--surface-alt);
+}
+
+.nav-toggle {
+  position: fixed;
+  left: 1.2rem;
+  top: 1.2rem;
+  width: 44px;
+  height: 44px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px var(--shadow);
+  transition: all 0.2s;
+}
+
+.nav-toggle:hover { box-shadow: 0 4px 16px var(--shadow-deep); }
+
+.nav-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--text);
+  position: relative;
+  transition: all 0.3s;
+}
+
+.nav-toggle span::before, .nav-toggle span::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 2px;
+  background: var(--text);
+  left: 0;
+  transition: all 0.3s;
+}
+
+.nav-toggle span::before { top: -6px; }
+.nav-toggle span::after { top: 6px; }
+
+.nav-toggle.active span { background: transparent; }
+.nav-toggle.active span::before { transform: rotate(45deg); top: 0; }
+.nav-toggle.active span::after { transform: rotate(-45deg); top: 0; }
+
+.nav-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(44, 36, 24, 0.3);
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.nav-overlay.active { opacity: 1; pointer-events: auto; }
+
+/* ── Main Layout ── */
+.page-container {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ── Header ── */
+.hero-header {
+  padding: 6rem 0 3rem;
+  text-align: center;
+  position: relative;
+}
+
+.hero-header::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: var(--accent-primary);
+  margin: 2.5rem auto 0;
+}
+
+.course-code {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.hero-header h1 {
+  font-size: 3.2rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  margin-bottom: 0.6rem;
+}
+
+.hero-subtitle {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 300;
+  color: var(--text-muted);
+  font-style: italic;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.hero-meta {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 2rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+.hero-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ── Decorative Dividers ── */
+.divider-ornamental {
+  text-align: center;
+  margin: 3.5rem 0;
+  position: relative;
+}
+
+.divider-ornamental::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--border);
+}
+
+.divider-ornamental span {
+  background: var(--bg);
+  padding: 0 1.5rem;
+  position: relative;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 1rem;
+  color: var(--accent-primary);
+}
+
+/* ── Section Containers ── */
+.chapter-section {
+  padding: 2rem 0;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.chapter-section:last-child { border-bottom: none; }
+
+/* ── Pull Quotes ── */
+.pull-quote {
+  margin: 2.5rem 0;
+  padding: 2rem 2.5rem;
+  position: relative;
+  border-left: 3px solid var(--accent-gold);
+  background: linear-gradient(135deg, rgba(196, 151, 59, 0.04) 0%, transparent 100%);
+}
+
+.pull-quote p {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.7;
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.pull-quote cite {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+  font-style: normal;
+}
+
+/* ── Definition Boxes ── */
+.def-box {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.8rem 2rem;
+  margin: 1.8rem 0;
+  position: relative;
+}
+
+.def-box::before {
+  content: 'DEFINITION';
+  position: absolute;
+  top: -0.6rem;
+  left: 1.5rem;
+  background: var(--bg);
+  padding: 0 0.6rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--accent-primary);
+}
+
+.def-box p:last-child { margin-bottom: 0; }
+
+/* ── Exam Tip Boxes ── */
+.exam-tip {
+  background: linear-gradient(135deg, rgba(184, 69, 42, 0.05) 0%, rgba(184, 69, 42, 0.02) 100%);
+  border: 1px solid rgba(184, 69, 42, 0.2);
+  border-radius: 4px;
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.exam-tip::before {
+  content: 'EXAM TIP';
+  position: absolute;
+  top: -0.6rem;
+  left: 1.5rem;
+  background: var(--bg);
+  padding: 0 0.6rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--accent-primary);
+}
+
+.exam-tip p:last-child { margin-bottom: 0; }
+
+/* ── Memory Anchor Boxes ── */
+.memory-box {
+  background: linear-gradient(135deg, rgba(43, 92, 74, 0.06) 0%, rgba(43, 92, 74, 0.02) 100%);
+  border: 1px solid rgba(43, 92, 74, 0.2);
+  border-radius: 4px;
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.memory-box::before {
+  content: 'MEMORY ANCHOR';
+  position: absolute;
+  top: -0.6rem;
+  left: 1.5rem;
+  background: var(--bg);
+  padding: 0 0.6rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--accent-secondary);
+}
+
+.memory-box p:last-child { margin-bottom: 0; }
+
+/* ── Confusion Box ── */
+.confusion-box {
+  background: linear-gradient(135deg, rgba(196, 151, 59, 0.06) 0%, rgba(196, 151, 59, 0.02) 100%);
+  border: 1px solid rgba(196, 151, 59, 0.25);
+  border-radius: 4px;
+  padding: 1.5rem 2rem;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.confusion-box::before {
+  content: 'COMMON CONFUSION';
+  position: absolute;
+  top: -0.6rem;
+  left: 1.5rem;
+  background: var(--bg);
+  padding: 0 0.6rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--accent-gold);
+}
+
+.confusion-box p:last-child { margin-bottom: 0; }
+
+/* ── Diagram Container ── */
+.diagram-container {
+  margin: 2.5rem 0;
+  padding: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  text-align: center;
+  overflow-x: auto;
+}
+
+.diagram-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+.diagram-caption {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-top: 1rem;
+  text-transform: uppercase;
+}
+
+/* ── Tables ── */
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 2rem 0;
+  font-size: 0.92rem;
+}
+
+.comparison-table thead th {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--surface);
+  background: var(--text);
+  padding: 1rem 1.2rem;
+  text-align: left;
+  font-weight: 500;
+}
+
+.comparison-table tbody td {
+  padding: 0.9rem 1.2rem;
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: top;
+}
+
+.comparison-table tbody tr:nth-child(even) { background: var(--surface-alt); }
+.comparison-table tbody tr:hover { background: rgba(196, 151, 59, 0.06); }
+
+/* ── Collapsible / Accordion ── */
+.collapsible-section {
+  margin: 1.5rem 0;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.collapsible-header {
+  background: var(--surface);
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text);
+  transition: background 0.2s;
+  user-select: none;
+}
+
+.collapsible-header:hover { background: var(--surface-alt); }
+
+.collapsible-header .toggle-icon {
+  font-family: 'DM Mono', monospace;
+  font-size: 1.2rem;
+  transition: transform 0.3s;
+  color: var(--accent-primary);
+}
+
+.collapsible-header.active .toggle-icon { transform: rotate(45deg); }
+
+.collapsible-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.collapsible-body-inner {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-light);
+}
+
+/* ── Lists ── */
+ul, ol { margin: 0.8rem 0 1.2rem 1.5rem; }
+li { margin-bottom: 0.45rem; }
+
+/* ── Viva Questions ── */
+.viva-list {
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+}
+
+.viva-list li {
+  padding: 0.8rem 1.2rem;
+  background: var(--surface);
+  border-left: 3px solid var(--accent-blue);
+  margin-bottom: 0.6rem;
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 1.02rem;
+  font-weight: 500;
+  border-radius: 0 3px 3px 0;
+}
+
+/* ── Quick Revision Cards ── */
+.revision-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.revision-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 1.3rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.revision-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--shadow);
+}
+
+.revision-card h5 {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--accent-primary);
+  margin-bottom: 0.6rem;
+}
+
+.revision-card p {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+/* ── Timeline ── */
+.timeline {
+  position: relative;
+  padding-left: 2.5rem;
+  margin: 2rem 0;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0.5rem;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--border);
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2rem;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: -2.15rem;
+  top: 0.4rem;
+  width: 10px;
+  height: 10px;
+  background: var(--accent-primary);
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+}
+
+.timeline-year {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  color: var(--accent-gold);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+
+.timeline-item p { font-size: 0.95rem; }
+
+/* ── Numbered Answer Guide ── */
+.answer-guide {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2rem;
+  margin: 2rem 0;
+  position: relative;
+}
+
+.answer-guide::before {
+  content: 'HOW TO WRITE THIS IN EXAMS';
+  position: absolute;
+  top: -0.6rem;
+  left: 1.5rem;
+  background: var(--bg);
+  padding: 0 0.6rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--accent-secondary);
+}
+
+/* ── Footer ── */
+.page-footer {
+  margin-top: 4rem;
+  padding: 3rem 0;
+  border-top: 2px solid var(--text);
+  text-align: center;
+}
+
+.page-footer p {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  color: var(--text-light);
+  text-align: center;
+}
+
+/* ── Animations ── */
+.fade-in {
+  opacity: 0;
+  transform: translateY(18px);
+  animation: fadeUp 0.6s ease forwards;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+
+/* ── Print Styles ── */
+@media print {
+  .nav-toggle, .nav-sidebar, .nav-overlay { display: none !important; }
+  body::before { display: none; }
+  .page-container { max-width: 100%; padding: 0; }
+  .collapsible-body { max-height: none !important; }
+  .diagram-container { page-break-inside: avoid; }
+  .chapter-section { page-break-inside: avoid; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  html { font-size: 15px; }
+  .page-container { padding: 0 1.2rem; }
+  .hero-header h1 { font-size: 2.2rem; }
+  h2 { font-size: 1.7rem; }
+  .revision-grid { grid-template-columns: 1fr; }
+  .hero-meta { flex-direction: column; gap: 0.5rem; }
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-light); }
+
+/* ── Inline code ── */
+code {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.85em;
+  background: var(--surface-alt);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  color: var(--accent-secondary);
+}
+
+/* ── Superscript references ── */
+sup { font-size: 0.7em; color: var(--accent-primary); }
+</style>
+</head>
+
+<body>
+
+<!-- ═══════════ NAVIGATION ═══════════ -->
+<button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+  <span></span>
+</button>
+<div class="nav-overlay" id="navOverlay"></div>
+
+<nav class="nav-sidebar" id="navSidebar">
+  <h3>Part I — Foundations</h3>
+  <a href="#sec-1-1">1.1 What is Software Engineering?</a>
+  <a href="#sec-1-2">1.2 The Software Crisis</a>
+  <a href="#sec-1-3">1.3 Evolution of a System Product</a>
+  <a href="#sec-1-4">1.4 Characteristics of Software</a>
+  <a href="#sec-1-5">1.5 Brooks' No Silver Bullet</a>
+  <a href="#sec-1-6">1.6 Software Myths</a>
+
+  <h3>Part II — Life Cycle Models</h3>
+  <a href="#sec-2-0">2.0 The Development Process</a>
+  <a href="#sec-2-1">2.1 Code-and-Fix</a>
+  <a href="#sec-2-2">2.2 Waterfall Model</a>
+  <a href="#sec-2-3">2.3 Evolutionary Model</a>
+  <a href="#sec-2-4">2.4 Incremental Model</a>
+  <a href="#sec-2-5">2.5 Prototyping</a>
+  <a href="#sec-2-6">2.6 Spiral Model</a>
+  <a href="#sec-2-7">2.7 Software Reuse</a>
+  <a href="#sec-2-8">2.8 Critical Comparisons</a>
+
+  <h3>Part III — Modern Processes</h3>
+  <a href="#sec-3-1">3.1 Rational Unified Process</a>
+  <a href="#sec-3-2">3.2 Rapid Application Dev.</a>
+  <a href="#sec-3-3">3.3 Agile Development</a>
+  <a href="#sec-3-4">3.4 Scrum Framework</a>
+  <a href="#sec-3-5">3.5 Extreme Programming</a>
+
+  <h3>Exam Resources</h3>
+  <a href="#sec-revision">Quick Revision Sheet</a>
+  <a href="#sec-pyq">Previous Year Questions</a>
+  <a href="#sec-viva">Viva Preparation</a>
+</nav>
+
+<!-- ═══════════ MAIN CONTENT ═══════════ -->
+<div class="page-container">
+
+  <!-- ──── HERO HEADER ──── -->
+  <header class="hero-header fade-in">
+    <span class="course-code">TCS-602 / TCS-611 — Software Engineering</span>
+    <h1>Unit I</h1>
+    <p class="hero-subtitle">Introduction to Software Engineering &amp; Software Development Life Cycles — A Complete Examination Guide</p>
+    <div class="hero-meta">
+      <span>~ 22,000 words</span>
+      <span>All PYQs covered</span>
+      <span>Designed for handwritten exams</span>
+    </div>
+  </header>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--             PART I: FOUNDATIONS                -->
+  <!-- ══════════════════════════════════════════════ -->
+
+  <section class="chapter-section fade-in" id="sec-1-1">
+    <span class="section-number">Section 1.1</span>
+    <h2>What is Software Engineering?</h2>
+
+    <p class="lead">Before one can appreciate the elaborate machinery of process models, design methodologies, and quality frameworks that constitute the discipline of software engineering, one must first grapple with a deceptively simple question: what, precisely, do we mean by the term? The answer turns out to be less obvious than it appears, because software engineering is not merely a collection of programming techniques — it is a philosophy of organised construction, a response to historical catastrophe, and an ongoing negotiation between human ambition and computational reality.</p>
+
+    <p>The term <strong>"Software Engineering"</strong> was first coined at a NATO conference held in Garmisch, Germany, in October 1968. This was not a casual academic gathering; it was convened precisely because the software industry was in a state of genuine crisis — projects were failing at alarming rates, costs were spiralling out of control, and the gap between what was promised and what was delivered had become an embarrassment to the entire computing profession. The conference organisers deliberately chose the provocative term "engineering" to signal that the construction of software needed to adopt the rigour, discipline, and systematic methodology of traditional engineering fields such as civil, mechanical, and electrical engineering. The implication was clear: programming, as it was then practised, was insufficient. Something more was needed, and that something came to be called software engineering.</p>
+
+    <div class="def-box">
+      <p><strong>Software Engineering</strong> is the systematic, disciplined, and quantifiable approach to the development, operation, and maintenance of software — that is, the application of engineering to software. It encompasses a set of methods, tools, and procedures that aim to produce high-quality software that meets user requirements, is delivered on time and within budget, and is maintainable over its intended lifespan. (IEEE Standard 610.12-1990)</p>
+    </div>
+
+    <p>At its core, software engineering recognises that building large software systems is fundamentally different from writing small programs. A talented individual programmer can write a ten-thousand-line utility in a weekend, but that same programmer, placed in charge of a million-line banking system with dozens of stakeholders, regulatory requirements, legacy integration constraints, and a team of fifty engineers, faces a qualitatively different kind of problem. The challenge shifts from pure logic and algorithm design to communication, coordination, planning, risk management, quality assurance, and the management of staggering complexity. Software engineering is the discipline that addresses these larger-than-individual-coding challenges.</p>
+
+    <h3>Historical Context and Motivation</h3>
+
+    <p>The history of software engineering is, in many ways, the history of learning from spectacular failures. The earliest electronic computers of the 1940s and 1950s — machines like ENIAC, EDVAC, and the Manchester Baby — were programmed in raw machine code, and the people who programmed them were mathematicians and electrical engineers who viewed programming as a tedious but necessary chore rather than a discipline worthy of its own theoretical foundations. Software, in those days, was simply the instructions you fed into the hardware; the hardware was the star of the show, and software was its unglamorous servant.</p>
+
+    <p>By the early 1960s, this attitude had begun to produce dangerous consequences. As computers grew more powerful and organisations began entrusting them with larger and more critical tasks — airline reservations, military command-and-control systems, payroll processing for corporations with tens of thousands of employees — the software that ran on these machines grew proportionally in size and complexity. But the <em>methods</em> used to develop software had not kept pace. Programmers still worked largely as individual craftspeople, each with their own idiosyncratic habits, with little in the way of systematic design, testing, or documentation practices. The results were predictable: enormous cost overruns, catastrophic schedule delays, and software that was riddled with defects.</p>
+
+    <div class="timeline">
+      <div class="timeline-item">
+        <span class="timeline-year">1940s–1950s</span>
+        <p><strong>Machine Code Era:</strong> Programming in raw binary or assembly. No concept of "software" as a discipline distinct from hardware. Programs were small, typically a few hundred instructions.</p>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">1950s–1960s</span>
+        <p><strong>High-Level Languages Emerge:</strong> FORTRAN (1957), COBOL (1959), LISP (1958), and ALGOL (1960) make programming more accessible. Programs grow larger; team-based development begins. Documentation and testing practices remain primitive.</p>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">1965–1970</span>
+        <p><strong>The Software Crisis Deepens:</strong> High-profile project failures mount. The IBM OS/360 project, managed by Fred Brooks, becomes a legendary case study in schedule slippage and cost overrun. The NATO Software Engineering Conference (1968) coins the term "software engineering" and calls for engineering discipline.</p>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">1970s</span>
+        <p><strong>Foundations Laid:</strong> Winston Royce formalises the Waterfall model (1970). Structured programming (Dijkstra), structured design (Yourdon & Constantine), and the first software lifecycle models emerge. The term "software engineering" gains academic credibility.</p>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">1980s</span>
+        <p><strong>Maturity and Methodologies:</strong> Object-oriented programming (Smalltalk, C++) transforms design thinking. The Software Engineering Institute (SEI) at Carnegie Mellon develops the Capability Maturity Model (CMM). CASE tools proliferate.</p>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">1990s</span>
+        <p><strong>Process and Patterns:</strong> The Unified Modeling Language (UML), the Rational Unified Process (RUP), design patterns (Gamma et al.), and software architecture as a formal discipline emerge. The internet transforms software delivery.</p>
+      </div>
+      <div class="timeline-item">
+        <span class="timeline-year">2001–Present</span>
+        <p><strong>Agile Revolution:</strong> The Agile Manifesto (2001) catalyses a paradigm shift toward iterative, people-centric development. DevOps, continuous integration/deployment, cloud-native architectures, and microservices reshape how software is built and delivered.</p>
+      </div>
+    </div>
+
+    <h3>System Engineering vs. Software Engineering</h3>
+
+    <p>An important distinction that frequently appears in university examinations is the difference between <strong>system engineering</strong> and <strong>software engineering</strong>. These are related but not synonymous, and understanding their relationship is essential for appreciating the context in which software engineering operates.</p>
+
+    <p><strong>System engineering</strong> is the broader discipline concerned with the design, integration, and management of complex systems over their entire lifecycle. A "system" in this context may include not only software but also hardware, human operators, manual procedures, facilities, and data. System engineering asks questions like: What should this system do? What components (hardware, software, human) are needed? How should they interact? How will the system be verified and validated? System engineers work at a higher level of abstraction and are responsible for requirements that span multiple engineering disciplines.</p>
+
+    <p><strong>Software engineering</strong>, by contrast, is focused specifically on the software component of a system. It addresses the systematic development of software that fulfils the requirements allocated to it by the system engineering process. While system engineering defines <em>what</em> the overall system must accomplish, software engineering defines <em>how</em> the software portion of that system will be designed, built, tested, and maintained. In practice, for projects that are purely software (like a web application or a mobile app), the two roles may blur; but in large embedded systems, avionics, medical devices, and defence projects, the distinction is critical.</p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>System Engineering</th>
+          <th>Software Engineering</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Scope</strong></td>
+          <td>Entire system (hardware, software, people, processes)</td>
+          <td>Software component only</td>
+        </tr>
+        <tr>
+          <td><strong>Abstraction</strong></td>
+          <td>Higher — system-level requirements and architecture</td>
+          <td>Lower — software design, code, testing</td>
+        </tr>
+        <tr>
+          <td><strong>Disciplines Involved</strong></td>
+          <td>Multiple (electrical, mechanical, human factors, software)</td>
+          <td>Primarily computer science and programming</td>
+        </tr>
+        <tr>
+          <td><strong>Key Concern</strong></td>
+          <td>System-level requirements, integration, and trade-offs</td>
+          <td>Software quality, maintainability, delivery</td>
+        </tr>
+        <tr>
+          <td><strong>Output</strong></td>
+          <td>System specification, architecture, integration plan</td>
+          <td>Software specification, design, code, test cases</td>
+        </tr>
+        <tr>
+          <td><strong>Typical Domain</strong></td>
+          <td>Aerospace, defence, medical devices, automotive</td>
+          <td>Web apps, mobile apps, enterprise systems, embedded</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="exam-tip">
+      <p><strong>Frequently asked:</strong> "What is software engineering? How is it different from system engineering?" — This is a classic 2-mark or 5-mark question. Always define both terms, mention the NATO 1968 conference for historical context, and present the comparison table for higher marks.</p>
+    </div>
+
+    <h3>Two Fundamental Principles for Managing Complexity</h3>
+
+    <p>A question that often appears in examinations asks about the two well-known principles used in software engineering to tackle the complexity of developing large applications. These are <strong>abstraction</strong> and <strong>decomposition</strong> (also known as divide and conquer).</p>
+
+    <p><strong>Abstraction</strong> is the principle of focusing on the essential features of an object or system while ignoring irrelevant details. In software engineering, abstraction operates at every level: at the highest level, we abstract a complex system into a set of modules with well-defined interfaces; at the design level, we abstract data into classes and objects; at the code level, we abstract sequences of operations into functions and procedures. The power of abstraction lies in its ability to reduce the cognitive load on the human mind — instead of comprehending a million lines of code simultaneously, a developer can understand the system as a collection of interacting abstractions, each of manageable complexity.</p>
+
+    <p><strong>Decomposition</strong> (or modularisation) is the principle of breaking a large problem into smaller, more manageable sub-problems, each of which can be solved independently. This is the engineering application of the ancient problem-solving heuristic known as "divide and conquer." In software engineering, decomposition leads to the practice of designing systems as collections of modules, each responsible for a well-defined subset of functionality, connected by clean interfaces. The goal is to maximise cohesion within modules (each module does one thing well) and minimise coupling between modules (modules depend on each other as little as possible). Together, abstraction and decomposition form the intellectual foundation upon which all software engineering methods are built.</p>
+
+    <div class="memory-box">
+      <p><strong>Remember:</strong> Abstraction = hiding complexity by focusing on essentials. Decomposition = dividing complexity into manageable parts. These two principles are the bedrock of ALL software engineering. When in doubt about any methodology or model, trace it back to how it applies these two ideas. Every answer about "principles of SE" should mention both.</p>
+    </div>
+  </section>
+
+
+  <!-- ──── SOFTWARE CRISIS ──── -->
+  <section class="chapter-section fade-in" id="sec-1-2">
+    <span class="section-number">Section 1.2</span>
+    <h2>The Software Crisis</h2>
+
+    <p class="lead">The software crisis was not a single event but a sustained period of reckoning — the moment when the computing world collectively realised that writing software was far harder, far more expensive, and far more error-prone than anyone had anticipated. Understanding the software crisis is essential because it is the <em>reason</em> software engineering exists as a discipline; without the crisis, there would have been no impetus to formalise the practices we now take for granted.</p>
+
+    <p>The term "software crisis" came into widespread use in the late 1960s, although the conditions that produced it had been building throughout the decade. By the mid-1960s, computers had become powerful enough to tackle problems of enormous scale — airline reservation systems, nationwide banking networks, military logistics, and space exploration. The hardware was advancing at a breathtaking pace: transistors were replacing vacuum circuits, memory was growing cheaper, and processing speed was increasing exponentially. But the software that ran on this increasingly powerful hardware was not keeping pace. Writing reliable software for these complex applications proved to be orders of magnitude more difficult than anyone had expected.</p>
+
+    <p>The symptoms of the software crisis were manifold and devastating. Projects routinely exceeded their budgets — sometimes by factors of two, three, or more. Delivery schedules slipped by months or years. The software that was eventually delivered was often riddled with defects, missing critical features, or so far removed from what the customer actually needed that it was practically unusable. In some cases, projects were abandoned entirely after consuming millions of dollars and years of effort. The human cost was significant as well: developers worked under crushing pressure, quality suffered as a result, and the relationship between software teams and their customers was characterised by mutual frustration and mistrust.</p>
+
+    <h3>Key Causes of the Software Crisis</h3>
+
+    <p>Several interrelated factors combined to produce the software crisis, and understanding each of them is important for exam answers because professors expect students to demonstrate analytical depth rather than merely listing symptoms.</p>
+
+    <p><strong>Increasing complexity of software systems.</strong> As organisations began to rely on software for mission-critical operations, the size and complexity of software systems grew far more rapidly than the ability of developers to manage that complexity. A payroll system for a large corporation, for instance, had to account for different tax jurisdictions, union rules, benefit structures, overtime policies, and regulatory requirements — all interacting in subtle and often contradictory ways. The number of possible states and interactions in such a system was astronomical, and testing even a fraction of them was practically impossible with the tools and methods available at the time.</p>
+
+    <p><strong>Inadequate development methods.</strong> The methods used to develop software in the 1960s were largely ad hoc. Individual programmers or small teams would begin coding with only a vague understanding of what the finished system should do, and the design would evolve organically as coding proceeded. This approach, sometimes called "code and fix," worked tolerably well for small programs but collapsed spectacularly when applied to large systems. Without systematic requirements analysis, design, testing, and project management, large projects descended into chaos.</p>
+
+    <p><strong>The "softness" of software.</strong> Unlike hardware, which is constrained by the laws of physics and the realities of manufacturing, software is infinitely malleable in principle. This seems like an advantage, but it is in fact a trap: because software can be changed so easily (at least in theory), requirements tend to proliferate, scope creeps continuously, and the temptation to keep adding features rather than freezing the design is nearly irresistible. Hardware engineers, constrained by the cost of physical materials and manufacturing processes, are forced to complete their designs before production begins; software developers face no such natural checkpoint.</p>
+
+    <p><strong>Poor communication between stakeholders.</strong> Large software projects involve multiple stakeholders — customers, users, managers, developers, testers — who often have fundamentally different vocabularies, priorities, and mental models. The customer describes what they want in business terms; the developer interprets these descriptions in technical terms; the gap between the two is fertile ground for misunderstanding. Requirements documents, when they existed at all, were often ambiguous, incomplete, or contradictory.</p>
+
+    <p><strong>The lack of theoretical foundations.</strong> In the 1960s, computer science was a young discipline, and the theoretical foundations for managing software development — formal methods, complexity theory, software metrics, quality models — were in their infancy. Developers lacked the conceptual tools to reason systematically about the correctness, reliability, and maintainability of their code.</p>
+
+    <div class="pull-quote">
+      <p>"The major cause of the software crisis is that the machines have become several orders of magnitude more powerful! To put it quite bluntly: as long as there were no machines, programming was no problem at all; when we had a few weak computers, programming became a mild problem, and now we have gigantic computers, programming had become an equally gigantic problem."</p>
+      <cite>— Edsger W. Dijkstra, 1972</cite>
+    </div>
+
+    <h3>Classic Examples of the Software Crisis</h3>
+
+    <p>Several high-profile failures became emblematic of the software crisis and are worth mentioning in exams because they demonstrate the real-world consequences of inadequate software engineering practices.</p>
+
+    <p>The <strong>IBM OS/360</strong> project (mid-1960s) is perhaps the most famous early example. IBM's ambitious plan to create a single operating system that would run on its entire new line of System/360 computers consumed an estimated five thousand person-years of effort and was delivered years late. Fred Brooks, who managed the project, later wrote <em>The Mythical Man-Month</em> (1975), in which he distilled the painful lessons learned. His observation that "adding manpower to a late software project makes it later" — now known as Brooks's Law — became one of the most quoted aphorisms in the field.</p>
+
+    <p>The <strong>Therac-25</strong> radiation therapy machine failures (1985–1987) resulted in at least six patients receiving massive overdoses of radiation due to software errors, killing three people and causing serious injuries to the others. This case demonstrated in the most tragic terms possible that software defects can have lethal consequences and that the stakes of software engineering extend far beyond schedule and budget concerns.</p>
+
+    <p>The <strong>Denver International Airport baggage system</strong> (1994–2005) was designed to be a fully automated baggage handling system, but software problems rendered it inoperable for over a year after the airport's construction was complete, costing the city approximately $1 million per day in delays and eventually requiring a complete redesign. The system was so unreliable that the airport had to revert to manual baggage handling.</p>
+
+    <h3>Was Y2K a Software Crisis?</h3>
+
+    <p>This question appears frequently in examinations and deserves careful treatment. The Year 2000 problem, commonly known as <strong>Y2K</strong>, arose because many legacy systems represented calendar years using only two digits (e.g., "98" for 1998) to save precious memory in an era when storage was extremely expensive. The fear was that when the year rolled over from 1999 to 2000, these systems would interpret "00" as 1900 rather than 2000, potentially causing widespread failures in banking systems, air traffic control, power grids, medical equipment, and countless other critical infrastructure systems.</p>
+
+    <p>Whether Y2K constitutes a "software crisis" is a matter of interpretation, and a nuanced answer earns more marks than a simple yes or no. On one hand, Y2K was not a crisis in the same sense as the 1960s software crisis — it was not caused by the inherent difficulty of building software or by the lack of engineering discipline. It was caused by a specific, well-understood design decision (two-digit year representation) that was perfectly rational at the time it was made but became problematic decades later when the systems using it were still in operation. In this sense, Y2K was a <strong>legacy software maintenance problem</strong> rather than a software engineering crisis per se.</p>
+
+    <p>On the other hand, Y2K can legitimately be called a software crisis because it exposed several deep truths about the software industry: that software systems have lifespans far longer than anyone anticipates, that seemingly minor design decisions can have catastrophic consequences when scaled across millions of systems, and that the economic and social infrastructure of modern civilisation is far more dependent on software than most people realise. The estimated global cost of Y2K remediation was over $300 billion, which is a staggering figure by any measure. Moreover, the fact that the world narrowly averted widespread catastrophe — largely because of an enormous, last-minute remediation effort — demonstrates that the crisis was real, even if its worst effects were prevented.</p>
+
+    <div class="exam-tip">
+      <p><strong>How to answer "Was Y2K a software crisis?":</strong> Present both sides. Acknowledge that it was a specific maintenance/legacy issue rather than a general crisis of software development methodology, but argue that it qualifies as a crisis in terms of scope, cost, risk, and the lessons it taught about software longevity and dependency. This balanced approach demonstrates analytical thinking and earns top marks in both short and long answers.</p>
+    </div>
+
+    <div class="answer-guide">
+      <p><strong>Structuring a 10-mark answer on the Software Crisis:</strong></p>
+      <ol>
+        <li>Define the term "software crisis" (2 marks worth of content)</li>
+        <li>List and explain at least 4 causes (3 marks)</li>
+        <li>Give 2–3 concrete examples with dates and consequences (2 marks)</li>
+        <li>Explain how the crisis led to the birth of software engineering (2 marks)</li>
+        <li>Conclude with a forward-looking statement about how the lessons remain relevant (1 mark)</li>
+      </ol>
+    </div>
+  </section>
+
+
+  <!-- ──── EVOLUTION OF A PROGRAMMING SYSTEM PRODUCT ──── -->
+  <section class="chapter-section fade-in" id="sec-1-3">
+    <span class="section-number">Section 1.3</span>
+    <h2>Evolution of a Programming System Product</h2>
+
+    <p class="lead">One of the most elegant conceptual frameworks for understanding why software development is so much harder than it appears was articulated by Fred Brooks in his landmark paper "No Silver Bullet" (1986). Brooks distinguished four forms that a piece of software can take, arranged along two dimensions of increasing difficulty. Understanding this framework is essential not merely for passing examinations but for truly grasping why the gap between "writing a program" and "delivering a software product" is so vast.</p>
+
+    <p>Brooks begins with the simplest entity: a <strong>program</strong>. A program is a piece of code that works, that runs on the developer's own machine, and that is used primarily by the developer or a small number of people who have direct access to the developer for support. A program written by a talented individual for their own use — a script to process data, a tool to automate a personal task — is a program in this sense. It may be clever and effective, but it exists in a protected ecosystem: the person who wrote it is the person who uses it, and any problems can be fixed on the spot through direct communication between the developer and the user (who happen to be the same person, or at least sit in the same room).</p>
+
+    <p>The first transformation occurs when a program is made reusable by others — when it is documented, generalised, and prepared for use by people other than its author. At this point, it becomes what Brooks calls a <strong>programming product</strong>. This transformation is enormously expensive: Brooks estimated that making a program usable by others costs three times as much effort as writing the original program. The additional effort goes into testing across a wider range of inputs and environments, writing user documentation, designing interfaces that are intuitive to people who do not share the developer's mental model, and handling edge cases that the developer would have known to avoid but an external user might not.</p>
+
+    <p>The second transformation occurs when a program is combined with other programs to form a larger system — when it becomes a component that must interact with databases, user interfaces, network protocols, operating systems, and other modules developed by other people. At this point, it becomes a <strong>programming system</strong>. This transformation also costs roughly three times the effort of writing the original program, because the developer must now deal with integration testing, interface specifications, performance constraints imposed by the larger system, and the need to conform to architectural decisions made by others.</p>
+
+    <p>When both transformations are applied simultaneously — when a piece of software must be both reusable by external users <em>and</em> integrated into a larger system — the result is a <strong>programming system product</strong>. This is the form that commercial software, enterprise applications, and most professional software development actually produces. Brooks estimated that a programming system product costs <strong>nine times</strong> the effort of writing the original program (3 × 3 = 9). This multiplicative factor explains why a prototype that works perfectly in a developer's lab can require months or years of additional work before it is ready for commercial deployment.</p>
+
+    <div class="diagram-container">
+      <svg width="700" height="420" viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" font-family="'Source Serif 4', Georgia, serif">
+        <!-- Background grid -->
+        <defs>
+          <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#E8E2D4" stroke-width="0.5"/>
+          </pattern>
+        </defs>
+        <rect width="700" height="420" fill="#FFFCF3"/>
+        <rect width="700" height="420" fill="url(#grid)"/>
+
+        <!-- Axes -->
+        <line x1="100" y1="370" x2="650" y2="370" stroke="#2C2418" stroke-width="1.5"/>
+        <line x1="100" y1="370" x2="100" y2="30" stroke="#2C2418" stroke-width="1.5"/>
+
+        <!-- Axis labels -->
+        <text x="375" y="410" text-anchor="middle" font-size="12" fill="#7A6E5C" font-family="'DM Mono', monospace" letter-spacing="0.15em">REUSABLE BY OTHERS (DOCUMENTATION, GENERALIZATION, TESTING)</text>
+        <text x="35" y="200" text-anchor="middle" font-size="12" fill="#7A6E5C" font-family="'DM Mono', monospace" letter-spacing="0.15em" transform="rotate(-90, 35, 200)">COMPOSABLE INTO SYSTEMS</text>
+
+        <!-- Arrow heads -->
+        <polygon points="650,370 640,365 640,375" fill="#2C2418"/>
+        <polygon points="100,30 95,40 105,40" fill="#2C2418"/>
+
+        <!-- Quadrant labels -->
+        <!-- Program (bottom-left) -->
+        <rect x="150" y="260" width="170" height="90" rx="4" fill="#B8452A" opacity="0.12" stroke="#B8452A" stroke-width="1.5"/>
+        <text x="235" y="295" text-anchor="middle" font-size="16" font-weight="700" fill="#B8452A" font-family="'Playfair Display', Georgia, serif">Program</text>
+        <text x="235" y="318" text-anchor="middle" font-size="11" fill="#7A6E5C" font-family="'DM Mono', monospace">Effort: 1× (baseline)</text>
+        <text x="235" y="338" text-anchor="middle" font-size="10" fill="#A09480" font-family="'Source Serif 4', serif" font-style="italic">Works on developer's machine</text>
+
+        <!-- Programming Product (bottom-right) -->
+        <rect x="380" y="260" width="190" height="90" rx="4" fill="#C4973B" opacity="0.12" stroke="#C4973B" stroke-width="1.5"/>
+        <text x="475" y="295" text-anchor="middle" font-size="16" font-weight="700" fill="#C4973B" font-family="'Playfair Display', Georgia, serif">Programming</text>
+        <text x="475" y="315" text-anchor="middle" font-size="16" font-weight="700" fill="#C4973B" font-family="'Playfair Display', Georgia, serif">Product</text>
+        <text x="475" y="338" text-anchor="middle" font-size="11" fill="#7A6E5C" font-family="'DM Mono', monospace">Effort: 3×</text>
+
+        <!-- Programming System (top-left) -->
+        <rect x="150" y="90" width="170" height="90" rx="4" fill="#2B5C4A" opacity="0.12" stroke="#2B5C4A" stroke-width="1.5"/>
+        <text x="235" y="125" text-anchor="middle" font-size="16" font-weight="700" fill="#2B5C4A" font-family="'Playfair Display', Georgia, serif">Programming</text>
+        <text x="235" y="145" text-anchor="middle" font-size="16" font-weight="700" fill="#2B5C4A" font-family="'Playfair Display', Georgia, serif">System</text>
+        <text x="235" y="168" text-anchor="middle" font-size="11" fill="#7A6E5C" font-family="'DM Mono', monospace">Effort: 3×</text>
+
+        <!-- Programming System Product (top-right) -->
+        <rect x="380" y="90" width="190" height="90" rx="4" fill="#B8452A" opacity="0.18" stroke="#B8452A" stroke-width="2.5"/>
+        <text x="475" y="120" text-anchor="middle" font-size="16" font-weight="700" fill="#B8452A" font-family="'Playfair Display', Georgia, serif">Programming</text>
+        <text x="475" y="140" text-anchor="middle" font-size="16" font-weight="700" fill="#B8452A" font-family="'Playfair Display', Georgia, serif">System Product</text>
+        <text x="475" y="168" text-anchor="middle" font-size="11" fill="#7A6E5C" font-family="'DM Mono', monospace">Effort: 9×</text>
+
+        <!-- Arrows showing transformation -->
+        <line x1="320" y1="305" x2="380" y2="305" stroke="#C4973B" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <polygon points="380,305 373,301 373,309" fill="#C4973B"/>
+        <text x="350" y="297" text-anchor="middle" font-size="9" fill="#C4973B" font-family="'DM Mono', monospace">×3</text>
+
+        <line x1="235" y1="180" x2="235" y2="260" stroke="#2B5C4A" stroke-width="1.5" stroke-dasharray="5,3"/>
+        <polygon points="235,260 231,253 239,253" fill="#2B5C4A"/>
+        <text x="248" y="225" font-size="9" fill="#2B5C4A" font-family="'DM Mono', monospace">×3</text>
+
+        <line x1="475" y1="180" x2="475" y2="260" stroke="#C4973B" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+        <line x1="570" y1="305" x2="570" y2="180" stroke="#2B5C4A" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+
+        <!-- Title -->
+        <text x="375" y="60" text-anchor="middle" font-size="15" font-weight="600" fill="#2C2418" font-family="'Playfair Display', Georgia, serif">Brooks' Four Quadrants of Software Evolution</text>
+        <text x="375" y="78" text-anchor="middle" font-size="11" fill="#7A6E5C" font-family="'Cormorant Garamond', Georgia, serif" font-style="italic">A program costs 1 unit; a programming system product costs 9 units.</text>
+      </svg>
+      <div class="diagram-caption">Fig. 1 — Brooks' Four Forms of Software: The Multiplicative Cost of Generalisation and Integration</div>
+    </div>
+
+    <p>This framework has profound practical implications that examiners expect students to understand. When a manager or client says "the prototype works, so why can't you just ship it?", they are failing to appreciate the difference between a program and a programming system product. The prototype is a program: it runs, it produces correct output for the developer's test cases, it demonstrates the feasibility of the core algorithms. But turning it into a product requires robust error handling, cross-platform compatibility, user documentation, installer scripts, security hardening, performance optimisation, integration with existing systems, compliance with regulatory requirements, and exhaustive testing across the full range of inputs and environments that real users will encounter. These are not trivial embellishments; they represent the bulk of the actual development effort.</p>
+
+    <div class="memory-box">
+      <p><strong>Exam recall trick:</strong> Think of it as a 3×3 matrix. Making a program usable by <em>other people</em> costs 3×. Making it work within a <em>larger system</em> costs 3×. Both together = 3 × 3 = <strong>9×</strong>. This is Brooks' key insight about why software is harder than it looks.</p>
+    </div>
+  </section>
+
+
+  <!-- ──── CHARACTERISTICS OF SOFTWARE ──── -->
+  <section class="chapter-section fade-in" id="sec-1-4">
+    <span class="section-number">Section 1.4</span>
+    <h2>Characteristics of Software</h2>
+
+    <p class="lead">To understand why software engineering exists as a discipline distinct from traditional engineering, one must first understand the unique characteristics of software itself. Software is unlike any other engineered artifact: it does not wear out, it is not manufactured in the conventional sense, and its behaviour is governed entirely by logical rules rather than physical laws. These distinctions have deep consequences for how software must be designed, built, tested, and maintained.</p>
+
+    <p>The most fundamental characteristic of software is that it is <strong>logical rather than physical</strong>. A bridge is constrained by the tensile strength of steel, the compressive strength of concrete, and the laws of statics; a software system is constrained only by the imagination of its designers and the logical consistency of its specification. This means that software can, in principle, do anything that can be precisely specified — but it also means that the sources of failure in software are entirely different from the sources of failure in physical systems. A bridge fails because of material fatigue, overload, or environmental degradation; software fails because of logical errors, incorrect assumptions, misunderstood requirements, or unforeseen interactions between components.</p>
+
+    <p>Software <strong>does not wear out</strong> in the physical sense. A mechanical component degrades over time as friction, corrosion, and fatigue take their toll; its failure rate follows the classic "bathtub curve" — high during the initial burn-in period, low during the useful life, and rising again as wear-out approaches. Software, by contrast, does not degrade through use. A program that runs correctly today will run correctly tomorrow, and the day after, and a thousand years from now, unless something in its environment changes. However — and this is a crucial distinction — software does undergo a phenomenon analogous to wear-out through the accumulation of modifications. Each change to a software system introduces the risk of new defects, and over time, as change upon change is layered on top of the original design, the system becomes increasingly fragile and difficult to maintain. This is sometimes called "software entropy" or "software rot," and it is why maintenance consumes such a large fraction (typically 60–80%) of total software lifecycle costs.</p>
+
+    <p>Software is <strong>not manufactured in the conventional sense</strong>. Once a software system is designed, the "manufacturing" step — copying the executable from one medium to another — is essentially trivial and costs virtually nothing. This means that the economics of software are radically different from those of physical products. In traditional manufacturing, the cost per unit decreases with volume as fixed costs are amortised; in software, nearly all the cost is in development (a fixed cost), and the marginal cost of producing additional copies approaches zero. This has profound consequences for pricing, licensing, and business models in the software industry.</p>
+
+    <h3>Key Characteristics — Comprehensive List</h3>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Characteristic</th>
+          <th>Explanation</th>
+          <th>Exam Significance</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Logical / Intangible</strong></td>
+          <td>Software is a set of instructions, not a physical object. It cannot be touched, weighed, or measured with physical instruments.</td>
+          <td>Explains why traditional engineering metrics (tensile strength, heat tolerance) don't apply</td>
+        </tr>
+        <tr>
+          <td><strong>Does Not Wear Out</strong></td>
+          <td>Software does not degrade with use. Failure is due to design defects, not material fatigue. However, "software rot" through accumulated changes produces a similar effect.</td>
+          <td>Frequently asked: "Software does not wear out. Explain." — Must discuss software rot</td>
+        </tr>
+        <tr>
+          <td><strong>Not Manufactured — Developed</strong></td>
+          <td>The cost of software is almost entirely in development, not production. Copying is trivially cheap.</td>
+          <td>Implications for cost models, pricing, piracy concerns</td>
+        </tr>
+        <tr>
+          <td><strong>Highly Flexible / Malleable</strong></td>
+          <td>Software can be changed easily (in principle), leading to requirements creep and scope changes.</td>
+          <td>Double-edged sword: flexibility is both an advantage and a risk</td>
+        </tr>
+        <tr>
+          <td><strong>Complex</strong></td>
+          <td>The number of possible states in a non-trivial software system is astronomically large, making exhaustive testing impossible.</td>
+          <td>Connects to the software crisis and the need for formal methods</td>
+        </tr>
+        <tr>
+          <td><strong>Custom-Built</strong></td>
+          <td>Most software is developed for specific requirements rather than being mass-produced from standard designs (though reusable components are increasing).</td>
+          <td>Differs from hardware engineering where standardised parts are the norm</td>
+        </tr>
+        <tr>
+          <td><strong>Environment-Dependent</strong></td>
+          <td>Software behaviour depends on the hardware, operating system, network, and other software in its environment.</td>
+          <td>Portability and compatibility challenges</td>
+        </tr>
+        <tr>
+          <td><strong>Easy to Modify (but Dangerous)</strong></td>
+          <td>Changes are easy to make but hard to verify. A single-line change can have cascading effects throughout a large system.</td>
+          <td>Importance of regression testing, version control, change management</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="confusion-box">
+      <p><strong>Commonly confused:</strong> Students often say "software does not wear out" and stop there. Examiners expect you to qualify this statement by explaining <em>software rot</em> — the phenomenon where, although the software itself doesn't physically degrade, the accumulation of patches, changes, and environmental shifts produces a system that <em>behaves</em> as if it has worn out. Always mention both the literal truth (no physical wear) and the practical reality (software rot through change accumulation).</p>
+    </div>
+
+    <h3>Characteristics of Quality Software</h3>
+
+    <p>Beyond the intrinsic characteristics of software as an artifact, there are the desired characteristics of <em>good</em> software — the qualities that software engineering practices aim to achieve. The ISO/IEC 25010 standard (formerly ISO 9126) defines a comprehensive quality model that is frequently referenced in examinations.</p>
+
+    <p><strong>Functionality</strong> refers to the set of functions that satisfy specified or implied needs. This includes suitability (does the software provide the right functions?), accuracy (do the results meet the required precision?), interoperability (can it exchange information with other systems?), security (does it protect against unauthorised access?), and compliance with standards.</p>
+
+    <p><strong>Reliability</strong> is the capability of the software to maintain its level of performance under stated conditions for a stated period. This includes maturity (frequency of failures), fault tolerance (does it continue operating despite faults?), and recoverability (can it recover data and state after a failure?).</p>
+
+    <p><strong>Usability</strong> concerns the effort required to use the software. This includes learnability (how quickly can a new user become productive?), understandability (does the user comprehend what the software is doing?), and attractiveness (is the interface pleasant and engaging?).</p>
+
+    <p><strong>Efficiency</strong> relates to the performance relative to the resources used. This includes time behaviour (response times, processing speed) and resource utilisation (memory, disk, network bandwidth).</p>
+
+    <p><strong>Maintainability</strong> is the ease with which the software can be modified. This includes analysability (ease of diagnosing problems), changeability (ease of implementing changes), stability (does a change risk breaking existing functionality?), and testability (ease of verifying that changes work correctly).</p>
+
+    <p><strong>Portability</strong> is the ease with which the software can be transferred from one environment to another. This includes adaptability, installability, coexistence with other software, and replaceability.</p>
+
+    <div class="exam-tip">
+      <p><strong>For a 10-mark question on software characteristics:</strong> First list the intrinsic characteristics (logical, does not wear out, not manufactured, flexible, complex) with explanations and examples for each. Then list the quality characteristics (functionality, reliability, usability, efficiency, maintainability, portability) from ISO 9126/25010. Conclude with a statement about how these characteristics together define the unique challenges of software engineering.</p>
+    </div>
+  </section>
+
+
+  <!-- ──── BROOKS' NO SILVER BULLET ──── -->
+  <section class="chapter-section fade-in" id="sec-1-5">
+    <span class="section-number">Section 1.5</span>
+    <h2>Brooks' "No Silver Bullet"</h2>
+
+    <p class="lead">In 1986, Fred Brooks published what may be the most influential single paper in the history of software engineering: "No Silver Bullet — Essence and Accident in Software Engineering." The paper's central thesis is startlingly bold: there is no single technique, tool, methodology, or technology that will produce an order-of-magnitude improvement in software productivity within a decade. Not structured programming, not object-oriented design, not artificial intelligence, not automatic programming, not anything. The reason, Brooks argues, lies in a fundamental distinction between two kinds of difficulty in software development.</p>
+
+    <p>Brooks divides the difficulties of software development into two categories: <strong>essential difficulties</strong> and <strong>accidental difficulties</strong>. Essential difficulties are those that are inherent in the nature of software itself — they arise from the fundamental complexity of the problems that software solves, and no amount of technological progress can eliminate them. Accidental difficulties are those that arise from the particular tools, methods, and technologies we happen to use — they are artifacts of our current approach, not inherent in the problem, and they can in principle be eliminated by better tools and techniques.</p>
+
+    <p>Brooks identifies four essential difficulties:</p>
+
+    <p><strong>1. Complexity.</strong> Software is the most complex entity ever constructed by humans. Unlike physical systems, which are constrained by the laws of nature to be relatively regular and modular, software has no natural laws to constrain its structure. A software system can (and often does) have millions of interacting components with no spatial or physical regularity. This inherent complexity means that software development is fundamentally harder than hardware engineering, and no tool can change this fact. Moreover, the complexity of software grows superlinearly with size — doubling the size of a system more than doubles its complexity.</p>
+
+    <p><strong>2. Conformity.</strong> Software must conform to the arbitrary, messy, and ever-changing requirements of the real world. A bridge must obey the laws of physics, but it does not have to interface with a legacy payroll system or comply with the latest tax regulations. Software, by contrast, must accommodate the idiosyncrasies of business rules, government regulations, user habits, and existing systems that were designed by other people with different assumptions. This conformity to external constraints is an essential difficulty because it arises from the nature of the problem, not from the tools used to solve it.</p>
+
+    <p><strong>3. Changeability.</strong> Software is constantly subject to change — not because software engineers are careless, but because the environment in which software operates is itself constantly changing. Business requirements evolve, regulations change, hardware platforms are upgraded, user expectations shift. Because software is "soft" (easily modified in principle), there is irresistible pressure to modify it whenever the environment changes. This is an essential difficulty because it arises from the nature of software's role in the world, not from any deficiency in development methods.</p>
+
+    <p><strong>4. Invisibility.</strong> Software is inherently invisible and unvisualisable. Unlike a building or a machine, a software system has no physical form that can be inspected, walked through, or photographed. Even the best diagrams — data flow diagrams, class diagrams, sequence diagrams — capture only partial views of the system. The lack of a natural, intuitive way to represent the structure and behaviour of a complete software system makes it extraordinarily difficult for humans to reason about, communicate about, and manage large software projects.</p>
+
+    <div class="pull-quote">
+      <p>"There is no single development, in either technology or management technique, which by itself promises even one order-of-magnitude improvement in productivity, in reliability, in simplicity."</p>
+      <cite>— Fred Brooks, "No Silver Bullet," 1986</cite>
+    </div>
+
+    <p>The implication of Brooks' argument is that the dramatic improvements in hardware productivity (following Moore's Law) cannot be replicated in software, because software's difficulties are fundamentally different in nature. Hardware improvements are driven by miniaturisation and manufacturing advances that reduce accidental difficulties; software's essential difficulties resist such reduction. The best we can hope for, Brooks argues, is incremental improvement through disciplined practices: buying rather than building software where possible (because the essential complexity has already been addressed by someone else), using rapid prototyping to grow software organically, hiring and developing great designers, and investing in the conceptual integrity of the design.</p>
+
+    <h3>Impact on Modern Software Engineering</h3>
+
+    <p>Brooks' paper has been remarkably prescient. Nearly four decades later, his essential difficulties remain as intractable as ever. The explosion of new tools, languages, frameworks, and methodologies — from object-oriented programming to microservices, from Agile to DevOps, from cloud computing to machine learning — has produced genuine improvements in productivity, but nothing approaching an order-of-magnitude improvement. This is precisely what Brooks predicted. The gains we have achieved have come from addressing accidental difficulties (better languages reduce coding effort, better tools reduce debugging time, better frameworks reduce boilerplate), but the essential difficulties of complexity, conformity, changeability, and invisibility remain stubbornly resistant to technological solution.</p>
+
+    <p>The Agile movement, in a sense, can be understood as a response to Brooks' essential difficulties. Agile methods do not claim to eliminate complexity; instead, they manage it by delivering small increments, getting rapid feedback, and adapting to change. Rapid prototyping, which Brooks himself championed, is a core Agile practice. The emphasis on face-to-face communication addresses the invisibility problem by substituting direct human interaction for formal documentation. In this light, the Agile Manifesto (2001) is less a revolutionary break from the past and more a practical acceptance of the truths that Brooks articulated fifteen years earlier.</p>
+
+    <div class="exam-tip">
+      <p><strong>This is a high-value topic.</strong> "Explain Brooks' No Silver Bullet" or "What are essential and accidental difficulties?" is a frequent 10–15 mark question. Structure your answer as: (1) Introduction and thesis statement, (2) Define essential vs. accidental difficulties, (3) List and explain all four essential difficulties with examples, (4) Discuss why no silver bullet exists, (5) Relevance to modern SE practices. This gives you 800+ words easily.</p>
+    </div>
+  </section>
+
+
+  <!-- ──── SOFTWARE MYTHS ──── -->
+  <section class="chapter-section fade-in" id="sec-1-6">
+    <span class="section-number">Section 1.6</span>
+    <h2>Software Myths</h2>
+
+    <p class="lead">Every established field of human endeavour accumulates folklore — beliefs that are widely held, confidently repeated, and fundamentally wrong. Software engineering is no exception. The software myths are misconceptions believed by various stakeholders — managers, customers, practitioners — that impede the adoption of sound software engineering practices. Understanding and debunking these myths is important not merely as an academic exercise but because these myths directly cause project failures when they are allowed to influence decision-making.</p>
+
+    <h3>Myths Believed by Managers</h3>
+
+    <p><strong>Myth 1: "If we fall behind schedule, we can add more programmers and catch up."</strong> This is perhaps the most destructive myth in software management, and it is the direct inverse of Brooks' Law ("adding manpower to a late software project makes it later"). The reason this doesn't work is that new people must be trained by existing team members, communication overhead increases quadratically with team size (because the number of communication channels grows as n(n-1)/2), and the division of work among more people introduces coordination costs that may exceed the additional productive capacity. In practice, adding people to a late project typically makes it later, because the existing developers must divert their attention from productive work to training and coordinating the newcomers.</p>
+
+    <p><strong>Myth 2: "If I decide to outsource the software project to a third party, I can just relax and let them handle it."</strong> This myth reflects a fundamental misunderstanding of the customer's role in software development. The customer must be actively involved throughout the development process — providing requirements, reviewing designs, testing prototypes, accepting deliverables. No external contractor, no matter how skilled, can produce satisfactory software without continuous engagement from the people who understand the business needs. Outsourcing without active management typically results in software that technically meets the contract but fails to address the real needs of the organisation.</p>
+
+    <p><strong>Myth 3: "A general statement of objectives is sufficient to begin writing programs — we can fill in the details later."</strong> This myth underestimates the importance of thorough requirements analysis. Vague or incomplete requirements are the single most common cause of project failure. If the development team does not have a clear, detailed, and agreed-upon understanding of what the software must do, the result will inevitably be software that does not satisfy the customer — not because the developers were incompetent, but because they were working from an incomplete or incorrect specification. The cost of fixing a requirements error increases exponentially the later it is discovered: a requirements error found during coding costs ten times more to fix than one found during requirements analysis; one found during system testing costs a hundred times more; one found after deployment can cost a thousand times more.</p>
+
+    <h3>Myths Believed by Practitioners</h3>
+
+    <p><strong>Myth 4: "Once the program is written, our work is done."</strong> This myth reflects a dangerously narrow view of what constitutes software development. In reality, coding is only about 15–20% of the total effort in a typical software project. The remaining effort is distributed among requirements analysis, design, testing, integration, deployment, documentation, training, and — overwhelmingly — maintenance. The belief that delivery marks the end of the developer's responsibility is a recipe for unmaintainable software and frustrated users.</p>
+
+    <p><strong>Myth 5: "Until I get the program running, there is no way to assess its quality."</strong> This myth is particularly insidious because it implies that quality is something you discover at the end rather than build in from the beginning. In reality, quality can and must be assessed at every stage: requirements reviews can catch ambiguities and inconsistencies before a single line of code is written; design reviews can identify architectural flaws; code reviews can catch bugs before testing; test planning can begin during requirements analysis. Waiting until the program runs to assess quality is like waiting until a building is complete to check whether the foundations are sound.</p>
+
+    <p><strong>Myth 6: "The only deliverable working program matters."</strong> While the working program is certainly the most visible deliverable, it is far from the only one that matters. Design documents, test plans, user manuals, API specifications, and maintenance guides are all essential for the long-term viability of a software system. A working program without documentation is like a time bomb — it works today, but the next developer who must modify it will have no way to understand its design rationale, its assumptions, or its hidden dependencies.</p>
+
+    <h3>Myths Believed by Customers</h3>
+
+    <p><strong>Myth 7: "A vague description of software requirements is enough — the developer should be able to figure out the rest."</strong> This myth places an impossible burden on the developer. No matter how talented, a developer cannot read the customer's mind. The customer must invest time and effort in articulating their needs clearly, reviewing prototypes, and providing feedback throughout the development process.</p>
+
+    <p><strong>Myth 8: "Software requirements continually change, but the changes can easily be accommodated because software is flexible."</strong> While it is true that requirements change, it is not true that changes can be accommodated cheaply at any stage. Changes made during the requirements or design phase are relatively inexpensive; changes made during coding are moderately expensive; changes made after deployment are extremely expensive. The myth that software is infinitely malleable leads to irresponsible scope creep and "gold plating" (adding unnecessary features) that doom projects to schedule and budget overruns.</p>
+
+    <div class="memory-box">
+      <p><strong>Quick mnemonic for the 8 myths:</strong> Think of three stakeholders — <strong>M</strong>anager, <strong>P</strong>ractitioner, <strong>C</strong>ustomer. Managers believe: add people, outsource, vague specs suffice. Practitioners believe: code = done, can't check quality early, only code matters. Customers believe: vague requirements are fine, changes are free. <strong>M-P-C</strong>: Myths Perpetuated Constantly.</p>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--         PART II: LIFE CYCLE MODELS             -->
+  <!-- ══════════════════════════════════════════════ -->
+
+  <div class="divider-ornamental"><span>II</span></div>
+
+  <section class="chapter-section fade-in" id="sec-2-0">
+    <span class="section-number">Section 2.0</span>
+    <h2>The Software Development Process</h2>
+
+    <p class="lead">A software development process, also called a software development life cycle (SDLC), is a structured framework that defines the activities performed at each step in the software development process. It provides a systematic approach to building software, from the initial conception of an idea through requirements gathering, design, implementation, testing, deployment, and maintenance. The SDLC is not a rigid prescription but rather a roadmap — a way of thinking about the problem of organising human effort to produce reliable software on time and within budget.</p>
+
+    <p>The concept of a life cycle model arises from the recognition that software development, despite its creative and intellectual character, can be decomposed into a set of recognisable phases, each with its own activities, deliverables, quality criteria, and personnel requirements. The specific phases vary from model to model, but the general idea is universal: break the enormous, overwhelming task of building a large software system into a series of smaller, more manageable tasks, each of which can be planned, executed, and verified independently.</p>
+
+    <p>Every software development process, regardless of its specific structure, must address certain fundamental questions: What does the customer need? How will the system be designed? How will it be implemented? How will we verify that it works correctly? How will it be delivered and maintained? The different SDLC models represent different answers to the question of <em>when</em> and <em>how</em> these activities should be performed, how much iteration and feedback should be allowed, and how much documentation and planning should be produced before coding begins.</p>
+
+    <p>The general phases that appear across most SDLC models include:</p>
+
+    <ol>
+      <li><strong>Requirements Analysis and Specification:</strong> Understanding what the customer needs and documenting these needs in a precise, unambiguous form.</li>
+      <li><strong>System Design:</strong> Defining the overall architecture of the system — its major components, their interfaces, and the data structures and algorithms that will be used.</li>
+      <li><strong>Implementation (Coding):</strong> Translating the design into source code in an appropriate programming language.</li>
+      <li><strong>Testing:</strong> Verifying that the software meets its requirements and is free from defects.</li>
+      <li><strong>Deployment:</strong> Installing the software in the customer's environment and making it operational.</li>
+      <li><strong>Maintenance:</strong> Modifying the software after deployment to fix defects, adapt to environmental changes, or add new features.</li>
+    </ol>
+
+    <p>It is worth noting that software maintenance is by far the most expensive phase of the life cycle, typically consuming 60–80% of total lifecycle cost. This is why maintainability is such an important quality attribute, and why design decisions that favour maintainability — even at the cost of initial development speed — are almost always worthwhile in the long run. The difficulty of improving software development lies partly in the inherently creative nature of the activity, partly in the essential difficulties identified by Brooks, and partly in the fact that the most expensive phase (maintenance) is the one that begins last and continues longest, making its costs the hardest to predict and control at the outset.</p>
+  </section>
+
+
+  <!-- ──── CODE-AND-FIX ──── -->
+  <section class="chapter-section fade-in" id="sec-2-1">
+    <span class="section-number">Section 2.1</span>
+    <h2>The Code-and-Fix Model</h2>
+
+    <p class="lead">The code-and-fix model is not so much a model as the absence of one — it is the default approach that people fall into when they have no explicit process at all. It is the oldest, simplest, and most natural way to develop software: write some code, try it, fix whatever is wrong, try it again, and repeat until the software seems to work well enough. Despite its simplicity (or perhaps because of it), this model is worth understanding because it illuminates, by negative example, precisely why the more structured models were developed.</p>
+
+    <p>In the code-and-fix model, there is no requirements specification, no design phase, no test plan, and no documentation beyond the code itself. The developer begins with a vague idea of what the software should do and immediately starts coding. When bugs are found, they are fixed; when new features are needed, they are added. The process is entirely reactive — the developer responds to problems as they arise rather than planning for them in advance.</p>
+
+    <p>This model works tolerably well for small programs — a throwaway script, a prototype, a utility used by a single person. If the program is small enough to hold entirely in one person's head, the lack of formal process is not a serious liability. However, the code-and-fix model fails catastrophically for any non-trivial software project. Without requirements analysis, the developer does not know what to build; without design, the architecture degrades into a tangled mess as features are tacked on; without testing, defects accumulate undetected; without documentation, no one other than the original developer can understand or modify the code. The result is software that is fragile, buggy, unmaintainable, and unlikely to meet the user's actual needs.</p>
+
+    <div class="memory-box">
+      <p><strong>Key point:</strong> Code-and-fix is not really a "model" — it is the absence of process. It is included in the syllabus as a cautionary example and as the baseline against which all other models can be understood. Always characterise it as ad hoc, reactive, and suitable only for trivial programs.</p>
+    </div>
+  </section>
+
+
+  <!-- ──── WATERFALL MODEL ──── -->
+  <section class="chapter-section fade-in" id="sec-2-2">
+    <span class="section-number">Section 2.2</span>
+    <h2>The Waterfall Model</h2>
+
+    <p class="lead">The waterfall model is the oldest and most widely discussed formal software development process, first described by Winston Royce in a 1970 paper that has become one of the most cited (and most misunderstood) documents in the history of software engineering. Ironically, Royce himself did not advocate the pure waterfall model as it is commonly taught; his paper presented it as a flawed approach and then proposed modifications. But the simplified version — a strict, linear sequence of phases with no iteration — became enormously influential anyway, and it remains the standard against which all subsequent models are measured.</p>
+
+    <p>The waterfall model divides the software development process into a series of sequential phases, each of which must be completed before the next begins. The classic formulation includes the following phases: <strong>Requirements Analysis</strong>, <strong>System Design</strong>, <strong>Implementation (Coding)</strong>, <strong>Testing and Integration</strong>, <strong>Deployment</strong>, and <strong>Maintenance</strong>. The name "waterfall" comes from the visual representation of the model, in which each phase flows downward into the next like water cascading over a series of ledges. There is no provision for going back to a previous phase once it has been completed — the model assumes that each phase produces a complete and correct deliverable that serves as the input for the next phase.</p>
+
+    <div class="diagram-container">
+      <svg width="600" height="520" viewBox="0 0 600 520" xmlns="http://www.w3.org/2000/svg" font-family="'Source Serif 4', Georgia, serif">
+        <rect width="600" height="520" fill="#FFFCF3"/>
+
+        <!-- Phases as staggered blocks -->
+        <rect x="80" y="20" width="440" height="52" rx="3" fill="#B8452A" opacity="0.15" stroke="#B8452A" stroke-width="1.5"/>
+        <text x="300" y="52" text-anchor="middle" font-size="15" font-weight="600" fill="#B8452A" font-family="'Playfair Display', Georgia, serif">1. Requirements Analysis &amp; Specification</text>
+
+        <!-- Arrow -->
+        <line x1="300" y1="72" x2="300" y2="92" stroke="#7A6E5C" stroke-width="1.2"/>
+        <polygon points="300,96 295,88 305,88" fill="#7A6E5C"/>
+
+        <rect x="60" y="96" width="440" height="52" rx="3" fill="#C4973B" opacity="0.15" stroke="#C4973B" stroke-width="1.5"/>
+        <text x="280" y="128" text-anchor="middle" font-size="15" font-weight="600" fill="#C4973B" font-family="'Playfair Display', Georgia, serif">2. System Design</text>
+
+        <line x1="300" y1="148" x2="300" y2="168" stroke="#7A6E5C" stroke-width="1.2"/>
+        <polygon points="300,172 295,164 305,164" fill="#7A6E5C"/>
+
+        <rect x="40" y="172" width="440" height="52" rx="3" fill="#2B5C4A" opacity="0.15" stroke="#2B5C4A" stroke-width="1.5"/>
+        <text x="260" y="204" text-anchor="middle" font-size="15" font-weight="600" fill="#2B5C4A" font-family="'Playfair Display', Georgia, serif">3. Implementation (Coding)</text>
+
+        <line x1="300" y1="224" x2="300" y2="244" stroke="#7A6E5C" stroke-width="1.2"/>
+        <polygon points="300,248 295,240 305,240" fill="#7A6E5C"/>
+
+        <rect x="60" y="248" width="440" height="52" rx="3" fill="#3E6B7B" opacity="0.15" stroke="#3E6B7B" stroke-width="1.5"/>
+        <text x="280" y="280" text-anchor="middle" font-size="15" font-weight="600" fill="#3E6B7B" font-family="'Playfair Display', Georgia, serif">4. Testing &amp; Integration</text>
+
+        <line x1="300" y1="300" x2="300" y2="320" stroke="#7A6E5C" stroke-width="1.2"/>
+        <polygon points="300,324 295,316 305,316" fill="#7A6E5C"/>
+
+        <rect x="80" y="324" width="440" height="52" rx="3" fill="#B8452A" opacity="0.15" stroke="#B8452A" stroke-width="1.5"/>
+        <text x="300" y="356" text-anchor="middle" font-size="15" font-weight="600" fill="#B8452A" font-family="'Playfair Display', Georgia, serif">5. Deployment</text>
+
+        <line x1="300" y1="376" x2="300" y2="396" stroke="#7A6E5C" stroke-width="1.2"/>
+        <polygon points="300,400 295,392 305,392" fill="#7A6E5C"/>
+
+        <rect x="60" y="400" width="440" height="52" rx="3" fill="#C4973B" opacity="0.15" stroke="#C4973B" stroke-width="1.5"/>
+        <text x="280" y="432" text-anchor="middle" font-size="15" font-weight="600" fill="#C4973B" font-family="'Playfair Display', Georgia, serif">6. Maintenance</text>
+
+        <!-- Feedback arrow (dashed, upward) showing that Royce proposed iteration -->
+        <path d="M 530 426 Q 570 240 530 52" fill="none" stroke="#B8452A" stroke-width="1.2" stroke-dasharray="6,4" opacity="0.5"/>
+        <polygon points="530,56 525,64 535,64" fill="#B8452A" opacity="0.5"/>
+        <text x="568" y="245" text-anchor="middle" font-size="9" fill="#B8452A" font-family="'DM Mono', monospace" opacity="0.6" transform="rotate(-90, 568, 245)">FEEDBACK (ROYCE'S ADDITION)</text>
+
+        <!-- Labels -->
+        <text x="300" y="488" text-anchor="middle" font-size="12" fill="#7A6E5C" font-family="'Cormorant Garamond', Georgia, serif" font-style="italic">Each phase produces a deliverable that serves as input to the next.</text>
+        <text x="300" y="505" text-anchor="middle" font-size="12" fill="#7A6E5C" font-family="'Cormorant Garamond', Georgia, serif" font-style="italic">In the pure model, there is no iteration — feedback was Royce's recommendation.</text>
+      </svg>
+      <div class="diagram-caption">Fig. 2 — The Waterfall Model: Sequential Phases with Feedback (as Royce Originally Proposed)</div>
+    </div>
+
+    <h3>When Does the Waterfall Model Work Well?</h3>
+
+    <p>The waterfall model is most appropriate when the requirements are well understood, stable, and unlikely to change significantly during development. This is the case for certain types of projects: software that reimplements an existing system with well-understood functionality, safety-critical systems where thorough documentation and verification are mandated by regulatory requirements, and projects where the technology and domain are familiar to the development team. In such situations, the discipline of the waterfall model — requiring complete and correct completion of each phase before proceeding to the next — actually provides significant benefits in terms of predictability, documentation quality, and project control.</p>
+
+    <h3>Problems with the Waterfall Model</h3>
+
+    <p>The waterfall model has several well-documented weaknesses that have led to its gradual displacement by more iterative approaches in most (but not all) application domains. The most fundamental problem is its <strong>inflexibility with respect to changing requirements</strong>. Because the model assumes that each phase is completed before the next begins, there is no natural mechanism for incorporating requirements changes once the design or coding phases are underway. In practice, requirements almost always change during development — the customer discovers new needs, the market shifts, regulatory requirements evolve — and the waterfall model handles such changes poorly, if at all.</p>
+
+    <p>A second major problem is that the waterfall model <strong>delays testing until late in the process</strong>. In the pure waterfall model, the customer does not see a working system until the implementation and testing phases are complete, which may be months or even years after the project began. If the requirements were misunderstood (which they often are, because the customer may not fully understand their own needs until they see a working system), the resulting software may be technically excellent and completely useless. The cost of discovering and correcting such errors late in the development cycle is enormous.</p>
+
+    <p>A third problem is that the waterfall model assumes that each phase can be completed with perfect information about all subsequent phases. In reality, design decisions are often influenced by implementation considerations that are not apparent during the design phase, and implementation frequently reveals design flaws that could not have been anticipated during design. The rigid phase boundaries of the waterfall model make it difficult to revisit and revise decisions based on new information.</p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>Advantages</th>
+          <th>Disadvantages</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Structure</strong></td>
+          <td>Clear phases with well-defined deliverables</td>
+          <td>Rigid, inflexible structure</td>
+        </tr>
+        <tr>
+          <td><strong>Documentation</strong></td>
+          <td>Extensive documentation at each phase</td>
+          <td>Documentation overhead can be excessive</td>
+        </tr>
+        <tr>
+          <td><strong>Planning</strong></td>
+          <td>Easy to plan, schedule, and budget</td>
+          <td>Assumes requirements are fixed (rarely true)</td>
+        </tr>
+        <tr>
+          <td><strong>Testing</strong></td>
+          <td>Thorough testing planned from requirements</td>
+          <td>Testing begins very late; errors found late are expensive</td>
+        </tr>
+        <tr>
+          <td><strong>Customer Involvement</strong></td>
+          <td>Customer involved at beginning and end</td>
+          <td>Customer sees working software very late</td>
+        </tr>
+        <tr>
+          <td><strong>Best Suited For</strong></td>
+          <td>Well-understood, stable requirements</td>
+          <td>Poor fit for projects with evolving requirements</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="confusion-box">
+      <p><strong>Frequently confused:</strong> Royce's original 1970 paper actually <em>criticised</em> the pure waterfall model and proposed adding feedback loops between phases. The "pure" waterfall model (no iteration) is the simplified version that became widely taught. In exams, mentioning that Royce himself proposed modifications demonstrates deeper understanding and earns extra marks.</p>
+    </div>
+  </section>
+
+
+  <!-- ──── EVOLUTIONARY MODEL ──── -->
+  <section class="chapter-section fade-in" id="sec-2-3">
+    <span class="section-number">Section 2.3</span>
+    <h2>The Evolutionary Model</h2>
+
+    <p class="lead">The evolutionary model represents a fundamental philosophical departure from the waterfall model's assumption that software can be specified completely in advance and then built to that specification. Instead, the evolutionary model recognises that in many projects — particularly those where the requirements are not fully understood at the outset — the best strategy is to build a preliminary version of the system quickly, expose it to the customer for feedback, and then refine it through a series of successive approximations until the final product emerges.</p>
+
+    <p>The evolutionary model (sometimes called the "evolutionary prototyping" model) is based on the principle that it is often easier for a customer to evaluate a working system than to articulate their requirements in the abstract. Rather than asking the customer to describe in detail what they want (which they may not be able to do, because they don't fully understand their own needs until they see a concrete realisation), the evolutionary model asks the developer to build a working version of the system as quickly as possible, present it to the customer, collect feedback, and then build an improved version. This cycle repeats until the customer is satisfied.</p>
+
+    <p>In practice, the evolutionary model works as follows. The development team begins with a set of core requirements — the most important features that the customer has identified — and builds an initial operational prototype that implements these features. This is not a throwaway prototype; it is the first version of the actual system. The customer evaluates this version and provides feedback: features that are missing, features that work incorrectly, features that should behave differently, and new requirements that were not anticipated. The development team incorporates this feedback into the next iteration, producing an improved version. This cycle — build, evaluate, refine — continues until the system converges on its final form.</p>
+
+    <p>The evolutionary model has several significant advantages. It accommodates changing and incomplete requirements gracefully, because requirements can be discovered and refined throughout the development process rather than being frozen at the beginning. It provides the customer with early and continuous visibility into the project, reducing the risk of unpleasant surprises at delivery time. And it allows the development team to deliver core functionality early and add features incrementally, which is valuable in situations where time-to-market is more important than feature completeness.</p>
+
+    <p>However, the evolutionary model also has significant disadvantages. Because there is no rigid plan or specification, the development process can be unpredictable and difficult to manage. The lack of a detailed design phase can lead to architectural problems that are expensive to correct later. The model requires close and continuous collaboration between developers and customers, which is not always feasible. And because the system is built incrementally without a comprehensive upfront design, it may accumulate technical debt — quick-and-dirty solutions that work in the short term but make the system progressively harder to modify.</p>
+
+    <div class="exam-tip">
+      <p><strong>Comparing Evolutionary and Waterfall:</strong> This is a common exam question. The key distinction is philosophical: Waterfall assumes requirements can be known in advance; Evolutionary assumes they cannot. Waterfall emphasises planning and documentation; Evolutionary emphasises feedback and adaptation. Waterfall is suitable for stable, well-understood domains; Evolutionary is suitable for innovative or poorly understood domains.</p>
+    </div>
+  </section>
+
+
+  <!-- ──── INCREMENTAL MODEL ──── -->
+  <section class="chapter-section fade-in" id="sec-2-4">
+    <span class="section-number">Section 2.4</span>
+    <h2>The Incremental Model</h2>
+
+    <p class="lead">The incremental model combines elements of the waterfall model's discipline with the evolutionary model's flexibility. Rather than delivering the entire system at once (as in the waterfall model) or evolving the system through unstructured iterations (as in the evolutionary model), the incremental model delivers the software as a series of "increments" — functional subsets of the complete system, each building on the previous one, until the full system is assembled.</p>
+
+    <p>In the incremental model, the overall system requirements are analysed at the beginning, and the system is divided into a series of increments. The first increment constitutes the core of the system — the most essential functionality that provides immediate value to the customer. This core is developed using a waterfall-like process (requirements, design, code, test) and delivered to the customer as a working product. Subsequent increments add new features and capabilities, each building on the previously delivered increments. The customer thus has access to a working (if incomplete) system early in the project and can provide feedback that influences the development of later increments.</p>
+
+    <div class="diagram-container">
+      <svg width="680" height="340" viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" font-family="'Source Serif 4', Georgia, serif">
+        <rect width="680" height="340" fill="#FFFCF3"/>
+
+        <!-- Time axis -->
+        <line x1="40" y1="290" x2="650" y2="290" stroke="#2C2418" stroke-width="1.2"/>
+        <polygon points="650,290 642,285 642,295" fill="#2C2418"/>
+        <text x="660" y="295" font-size="10" fill="#7A6E5C" font-family="'DM Mono', monospace">TIME</text>
+
+        <!-- Increment 1 -->
+        <rect x="60" y="200" width="120" height="80" rx="3" fill="#B8452A" opacity="0.12" stroke="#B8452A" stroke-width="1.2"/>
+        <text x="120" y="235" text-anchor="middle" font-size="12" font-weight="600" fill="#B8452A" font-family="'Playfair Display', Georgia, serif">Increment 1</text>
+        <text x="120" y="255" text-anchor="middle" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">Core Features</text>
+        <text x="120" y="270" text-anchor="middle" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">R → D → C → T</text>
+
+        <!-- Delivery 1 -->
+        <line x1="120" y1="200" x2="120" y2="175" stroke="#B8452A" stroke-width="1" stroke-dasharray="3,3"/>
+        <polygon points="120,172 116,180 124,180" fill="#B8452A"/>
+        <text x="120" y="165" text-anchor="middle" font-size="9" fill="#B8452A" font-family="'DM Mono', monospace">DELIVER v1.0</text>
+
+        <!-- Increment 2 -->
+        <rect x="200" y="170" width="120" height="110" rx="3" fill="#C4973B" opacity="0.12" stroke="#C4973B" stroke-width="1.2"/>
+        <text x="260" y="210" text-anchor="middle" font-size="12" font-weight="600" fill="#C4973B" font-family="'Playfair Display', Georgia, serif">Increment 2</text>
+        <text x="260" y="230" text-anchor="middle" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">Additional Features</text>
+        <text x="260" y="245" text-anchor="middle" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">R → D → C → T</text>
+
+        <line x1="260" y1="170" x2="260" y2="145" stroke="#C4973B" stroke-width="1" stroke-dasharray="3,3"/>
+        <polygon points="260,142 256,150 264,150" fill="#C4973B"/>
+        <text x="260" y="135" text-anchor="middle" font-size="9" fill="#C4973B" font-family="'DM Mono', monospace">DELIVER v2.0</text>
+
+        <!-- Increment 3 -->
+        <rect x="340" y="140" width="120" height="140" rx="3" fill="#2B5C4A" opacity="0.12" stroke="#2B5C4A" stroke-width="1.2"/>
+        <text x="400" y="180" text-anchor="middle" font-size="12" font-weight="600" fill="#2B5C4A" font-family="'Playfair Display', Georgia, serif">Increment 3</text>
+        <text x="400" y="200" text-anchor="middle" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">More Features</text>
+        <text x="400" y="215" text-anchor="middle" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">R → D → C → T</text>
+
+        <line x1="400" y1="140" x2="400" y2="115" stroke="#2B5C4A" stroke-width="1" stroke-dasharray="3,3"/>
+        <polygon points="400,112 396,120 404,120" fill="#2B5C4A"/>
+        <text x="400" y="105" text-anchor="middle" font-size="9" fill="#2B5C4A" font-family="'DM Mono', monospace">DELIVER v3.0</text>
+
+        <!-- Increment 4 -->
+        <rect x="480" y="110" width="120" height="170" rx="3" fill="#3E6B7B" opacity="0.12" stroke="#3E6B7B" stroke-width="1.2"/>
+        <text x="540" y="160" text-anchor="middle" font-size="12" font-weight="600" fill="#3E6B7B" font-family="'Playfair Display', Georgia, serif">Increment 4</text>
+        <text x="540" y="180" text-anchor="middle" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">Final Features</text>
+        <text x="540" y="195" text-anchor="middle" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">R → D → C → T</text>
+
+        <line x1="540" y1="110" x2="540" y2="85" stroke="#3E6B7B" stroke-width="1" stroke-dasharray="3,3"/>
+        <polygon points="540,82 536,90 544,90" fill="#3E6B7B"/>
+        <text x="540" y="72" text-anchor="middle" font-size="9" fill="#3E6B7B" font-family="'DM Mono', monospace">DELIVER v4.0 (COMPLETE)</text>
+
+        <!-- Building blocks effect -->
+        <text x="350" y="320" text-anchor="middle" font-size="11" fill="#7A6E5C" font-family="'Cormorant Garamond', Georgia, serif" font-style="italic">Each increment adds to the previously delivered system. Customer gets working software early.</text>
+      </svg>
+      <div class="diagram-caption">Fig. 3 — The Incremental Model: Delivering Functionality in Successive Builds</div>
+    </div>
+
+    <p>The key distinction between the incremental model and the evolutionary model is that in the incremental model, the overall architecture is designed upfront, and the increments are planned in advance. This architectural foresight helps to avoid the technical debt problem that can plague purely evolutionary approaches. The incremental model is also distinct from the waterfall model in that it delivers working software early and allows customer feedback to influence the development of later increments. In practice, the incremental model is widely used in commercial software development: Microsoft Windows, for instance, has historically been developed using an incremental approach, with each version adding new features on top of the existing architecture.</p>
+
+    <h3>Advantages of the Incremental Model</h3>
+    <ul>
+      <li>Working software is delivered early, providing immediate value to the customer.</li>
+      <li>Customer feedback is incorporated into later increments, reducing the risk of building the wrong system.</li>
+      <li>Core functionality is tested extensively through successive increments, improving reliability.</li>
+      <li>The model is flexible — if priorities change, later increments can be reprioritised or cancelled.</li>
+      <li>Risk is managed by tackling the highest-risk features first.</li>
+    </ul>
+
+    <h3>Disadvantages of the Incremental Model</h3>
+    <ul>
+      <li>Requires good architectural planning upfront to ensure that increments integrate cleanly.</li>
+      <li>The overall system may not be fully specified until all increments are delivered.</li>
+      <li>Integration of increments can be challenging if interfaces between increments are not well-defined.</li>
+      <li>Requires active customer participation throughout the project.</li>
+    </ul>
+  </section>
+
+
+  <!-- ──── PROTOTYPING ──── -->
+  <section class="chapter-section fade-in" id="sec-2-5">
+    <span class="section-number">Section 2.5</span>
+    <h2>The Prototyping Model</h2>
+
+    <p class="lead">Prototyping is the practice of building a preliminary, incomplete version of a software system to explore requirements, evaluate design alternatives, or demonstrate feasibility. The prototype is not the final product; it is a tool for learning — a concrete, tangible way for developers and customers to discover what the system should do and how it should behave before committing to a full-scale development effort. The prototyping model is one of the most important innovations in software engineering because it directly addresses the most common cause of project failure: misunderstanding of requirements.</p>
+
+    <p>The prototyping model typically proceeds through the following phases. First, <strong>requirements gathering</strong>: the developer works with the customer to identify the key requirements, even if these are vague or incomplete. The goal is not to produce a perfect specification but to identify enough requirements to build a useful prototype. Second, <strong>quick design</strong>: the developer designs a simplified version of the system, focusing on the user interface and the most visible aspects of the functionality, while deliberately ignoring detailed design issues like performance optimisation, error handling, and exception processing. Third, <strong>construction of the prototype</strong>: the developer builds the prototype as quickly as possible, using whatever shortcuts and simplifications are necessary. Fourth, <strong>customer evaluation</strong>: the customer uses the prototype and provides feedback. Fifth, <strong>refinement</strong>: based on the feedback, the requirements are refined, and the prototype is modified or (more commonly) discarded and replaced with a new version. This cycle repeats until the customer is satisfied with the requirements and the design.</p>
+
+    <div class="diagram-container">
+  <svg width="720" height="520" viewBox="0 0 720 520" xmlns="http://www.w3.org/2000/svg" style="background-color: #FCFAF5;">
+    
+    <defs>
+      <marker id="arrow-grey" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#686259" />
+      </marker>
+      <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#34614E" />
+      </marker>
+    </defs>
+
+    <style>
+      .node-text { font-family: 'Playfair Display', Georgia, serif; font-size: 14px; font-weight: 600; text-anchor: middle; }
+      .label-text { font-family: 'Courier New', Courier, monospace; font-size: 11px; font-weight: 600; }
+      .italic-center { font-family: 'Cormorant Garamond', Georgia, serif; font-size: 13px; font-style: italic; fill: #9C968B; text-anchor: middle; }
+      .caption-text { font-family: 'Courier New', Courier, monospace; font-size: 12px; fill: #7C7A75; text-anchor: middle; letter-spacing: 1px; }
+
+      .box-top { fill: #F5E6E1; }
+      .box-right { fill: #F6EEDA; }
+      .box-botright { fill: #E1E8E2; }
+      .box-botleft { fill: #DEE8EA; }
+      .box-engineer { fill: #DFE7DF; stroke: #34614E; stroke-width: 0.5; }
+      
+      .text-top { fill: #A03B2A; }
+      .text-right { fill: #A8813B; }
+      .text-botright { fill: #2E5F4C; }
+      .text-botleft { fill: #376475; }
+
+      .path-main { fill: none; stroke: #686259; stroke-width: 1.5; marker-end: url(#arrow-grey); }
+      .path-yes { fill: none; stroke: #34614E; stroke-width: 1.5; marker-end: url(#arrow-green); }
+      
+      .diamond { fill: #FDF3F1; stroke: none; }
+      .diamond-text { font-family: 'Courier New', Courier, monospace; font-size: 10px; fill: #B8452A; text-anchor: middle; }
+    </style>
+
+    <circle cx="360" cy="230" r="160" fill="none" stroke="#D6CEBC" stroke-width="1.2" stroke-dasharray="6,6"/>
+    <text x="360" y="225" class="italic-center">Iterative</text>
+    <text x="360" y="245" class="italic-center">Loop</text>
+
+    <path class="path-main" d="M 420 90 Q 500 90 510 142" />
+    <path class="path-main" d="M 545 200 Q 555 250 510 293" />
+    <path class="path-main" d="M 450 325 Q 380 345 318 325" />
+    <path class="path-main" d="M 245 300 C 180 250, 180 150, 305 105" />
+
+    <path class="path-yes" d="M 175 205 Q 100 205 100 320 Q 100 440 190 440" />
+    
+    <text x="-310" y="90" class="label-text" fill="#34614E" transform="rotate(-90)">YES</text>
+    
+    <text x="375" y="420" class="label-text" fill="#B8452A">NO — Refine &amp; Iterate</text>
+
+    <polygon class="diamond" points="205,175 235,205 205,235 175,205" />
+    <text x="205" y="208" class="diamond-text">OK?</text>
+
+    <rect x="295" y="60" width="130" height="55" rx="4" class="box-top"/>
+    <text x="360" y="82" class="node-text text-top">Requirements</text>
+    <text x="360" y="102" class="node-text text-top">Gathering</text>
+
+    <rect x="480" y="150" width="130" height="50" rx="4" class="box-right"/>
+    <text x="545" y="170" class="node-text text-right">Quick</text>
+    <text x="545" y="190" class="node-text text-right">Design</text>
+
+    <rect x="450" y="300" width="130" height="50" rx="4" class="box-botright"/>
+    <text x="515" y="320" class="node-text text-botright">Build</text>
+    <text x="515" y="340" class="node-text text-botright">Prototype</text>
+
+    <rect x="180" y="300" width="130" height="50" rx="4" class="box-botleft"/>
+    <text x="245" y="320" class="node-text text-botleft">Customer</text>
+    <text x="245" y="340" class="node-text text-botleft">Evaluation</text>
+
+    <rect x="200" y="420" width="160" height="40" rx="4" class="box-engineer"/>
+    <text x="280" y="445" class="node-text text-botright">Engineer Product</text>
+
+    <text x="360" y="500" class="caption-text">FIG. 4 — THE PROTOTYPING MODEL: ITERATIVE REFINEMENT THROUGH CUSTOMER FEEDBACK</text>
+  </svg>
+</div>
+    <h3>Types of Prototyping</h3>
+
+    <p>There are two fundamentally different approaches to prototyping, and understanding the distinction between them is important both conceptually and for exams. <strong>Throwaway prototyping</strong> (also called rapid prototyping) involves building a prototype quickly, using it to gather feedback and refine requirements, and then throwing it away and building the real system from scratch using the refined requirements. The prototype is a tool for learning, not a foundation for the final product. This approach is useful when the primary risk is in requirements — when the customer doesn't know what they want, and the prototype is needed to help them discover it.</p>
+
+    <p><strong>Evolutionary prototyping</strong> (discussed earlier under the evolutionary model) involves building a prototype with the intention that it will evolve into the final product. Rather than throwing the prototype away, the developer refines and extends it iteratively until it becomes the production system. This approach is useful when the primary risk is in the design or the technology — when the developer needs to explore different approaches and learn from experience, and the cost of starting over from scratch would be prohibitive.</p>
+
+    <h3>Does Prototyping Always Increase Cost?</h3>
+
+    <p>This is a nuanced question that appears in examinations. The short answer is: not necessarily. While building a prototype does require additional effort upfront, it can actually <em>reduce</em> total project cost by preventing the far more expensive error of building the wrong system. The cost of fixing a requirements error discovered after deployment is orders of magnitude greater than the cost of building a prototype to discover the error early. In this sense, prototyping is an investment in risk reduction. However, prototyping can increase cost if it is used inappropriately — for example, if a prototype is built for a project where the requirements are already well understood (in which case the prototyping effort is wasted), or if the prototype is not properly discarded and the team attempts to evolve a poorly designed prototype into a production system (which can lead to technical debt that costs more to fix than building from scratch).</p>
+
+    <div class="exam-tip">
+      <p><strong>Common exam question:</strong> "Under what circumstances is it beneficial to construct a prototype model? Does the construction of a prototype always increase the overall cost of software development?" — Answer: Prototyping is beneficial when requirements are unclear, the user interface is critical, or new technology is being explored. It does not always increase cost — it can reduce total cost by catching requirements errors early. But inappropriate prototyping (when requirements are stable) can waste resources.</p>
+    </div>
+  </section>
+
+
+  <!-- ──── SPIRAL MODEL ──── -->
+  <section class="chapter-section fade-in" id="sec-2-6">
+    <span class="section-number">Section 2.6</span>
+    <h2>The Spiral Model</h2>
+
+    <p class="lead">The spiral model, proposed by Barry Boehm in 1988, is one of the most sophisticated and intellectually elegant software development process models ever devised. It combines the systematic discipline of the waterfall model with the iterative flexibility of the prototyping model, while adding an explicit emphasis on risk analysis that is absent from most other models. The spiral model is not merely a process model; it is a risk-driven meta-model that can encompass any of the other models as special cases.</p>
+
+    <p>In the spiral model, the software development process is visualised as a spiral rather than a sequence of phases. The spiral begins at the centre and winds outward, with each loop representing a phase of the process. Each loop passes through four quadrants (also called "task regions"):</p>
+
+    <p><strong>Quadrant 1: Objective Setting.</strong> In this quadrant, the objectives, alternatives, and constraints for the current iteration are identified. What are the specific goals of this phase? What alternative approaches are available? What constraints (cost, schedule, performance, technology) must be respected?</p>
+
+    <p><strong>Quadrant 2: Risk Assessment and Reduction.</strong> This is the quadrant that distinguishes the spiral model from all other process models. For each alternative identified in Quadrant 1, the risks are analysed in detail. Prototypes may be built to evaluate high-risk options. Risk analysis might involve building a prototype to test a new technology, conducting a user study to evaluate a proposed interface, or performing a detailed cost-benefit analysis to determine whether a proposed feature is worth the investment. The goal is to identify and mitigate the most significant risks before committing to a full-scale implementation.</p>
+
+    <p><strong>Quadrant 3: Development and Validation.</strong> Based on the risk analysis, a development model is chosen for the current iteration. This is where the spiral model demonstrates its generality: the development model for any given iteration might be a waterfall, a prototype, an incremental build, or any other appropriate approach. The choice is driven by the nature of the risks and the objectives of the current iteration, not by a rigid prescription.</p>
+
+    <p><strong>Quadrant 4: Planning.</strong> The results of the current iteration are evaluated, and plans are made for the next iteration. The project is reviewed: Were the objectives met? Were the risks adequately mitigated? What new risks have emerged? Should the project proceed to the next spiral, or should it be terminated?</p>
+
+    <div class="diagram-container">
+      <svg width="560" height="520" viewBox="0 0 560 520" xmlns="http://www.w3.org/2000/svg" font-family="'Source Serif 4', Georgia, serif">
+        <rect width="560" height="520" fill="#FFFCF3"/>
+
+        <!-- Spiral arcs -->
+        <path d="M 280 260 Q 280 210 330 210 Q 380 210 380 260 Q 380 310 330 320 Q 260 335 230 280 Q 200 220 250 180 Q 310 130 400 160 Q 470 185 460 280 Q 450 380 340 400 Q 200 420 150 310 Q 110 220 180 140" fill="none" stroke="#B8452A" stroke-width="2" opacity="0.6"/>
+
+        <!-- Center point -->
+        <circle cx="280" cy="260" r="4" fill="#B8452A"/>
+        <text x="280" y="255" text-anchor="middle" font-size="8" fill="#B8452A" font-family="'DM Mono', monospace">START</text>
+
+        <!-- Quadrant labels -->
+        <text x="310" y="195" text-anchor="middle" font-size="12" font-weight="600" fill="#2B5C4A" font-family="'Playfair Display', Georgia, serif">Q1: Objectives</text>
+        <text x="390" y="270" text-anchor="middle" font-size="12" font-weight="600" fill="#C4973B" font-family="'Playfair Display', Georgia, serif">Q2: Risk Analysis</text>
+        <text x="310" y="340" text-anchor="middle" font-size="12" font-weight="600" fill="#B8452A" font-family="'Playfair Display', Georgia, serif">Q3: Development</text>
+        <text x="220" y="270" text-anchor="middle" font-size="12" font-weight="600" fill="#3E6B7B" font-family="'Playfair Display', Georgia, serif">Q4: Planning</text>
+
+        <!-- Iteration labels on spiral -->
+        <circle cx="330" cy="210" r="6" fill="#2B5C4A" opacity="0.3"/>
+        <text x="355" y="205" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">Iter 1</text>
+
+        <circle cx="250" cy="180" r="6" fill="#2B5C4A" opacity="0.3"/>
+        <text x="230" y="170" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">Iter 2</text>
+
+        <circle cx="180" cy="140" r="6" fill="#2B5C4A" opacity="0.3"/>
+        <text x="155" y="135" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">Iter 3</text>
+
+        <!-- Quadrant dividers -->
+        <line x1="280" y1="130" x2="280" y2="390" stroke="#D6CEBC" stroke-width="0.8" stroke-dasharray="4,4"/>
+        <line x1="150" y1="260" x2="410" y2="260" stroke="#D6CEBC" stroke-width="0.8" stroke-dasharray="4,4"/>
+
+        <!-- Radius increasing label -->
+        <text x="280" y="490" text-anchor="middle" font-size="11" fill="#7A6E5C" font-family="'Cormorant Garamond', Georgia, serif" font-style="italic">Each loop of the spiral represents one iteration. Radius = cumulative cost.</text>
+        <text x="280" y="508" text-anchor="middle" font-size="11" fill="#7A6E5C" font-family="'Cormorant Garamond', Georgia, serif" font-style="italic">Risk analysis is the distinguishing feature of this model.</text>
+      </svg>
+      <div class="diagram-caption">Fig. 5 — Boehm's Spiral Model: Risk-Driven Iterative Development</div>
+    </div>
+
+    <h3>Advantages of the Spiral Model</h3>
+
+    <p>The spiral model has several compelling advantages that make it particularly suitable for large, complex, high-risk projects. Its explicit emphasis on risk analysis means that the most dangerous aspects of the project are addressed first, before significant resources have been committed. Its iterative nature means that the requirements can evolve over time without derailing the project. Its generality means that it can accommodate any development approach for the actual coding and testing phases. And its built-in review points mean that the project can be evaluated and, if necessary, terminated at any point, limiting the damage from an ill-conceived project.</p>
+
+    <p>Compared to the waterfall model, the spiral model is more flexible, more responsive to changing requirements, and better at managing risk. Compared to the evolutionary model, the spiral model provides more structure and more explicit planning. The primary disadvantage of the spiral model is its complexity: it requires skilled management to execute properly, and the risk analysis that is its distinguishing feature requires experience and expertise that may not be available in every organisation. Additionally, the model can be overkill for small, low-risk projects where a simpler approach would suffice.</p>
+
+    <div class="exam-tip">
+      <p><strong>Always mention:</strong> (1) Four task regions/quadrants, (2) Risk analysis as the distinguishing feature, (3) Generality — it subsumes other models, (4) Suitable for large, complex, high-risk projects, (5) Disadvantages: complexity, requires expertise, may be excessive for small projects.</p>
+    </div>
+  </section>
+
+
+  <!-- ──── SOFTWARE REUSE ──── -->
+  <section class="chapter-section fade-in" id="sec-2-7">
+    <span class="section-number">Section 2.7</span>
+    <h2>Software Reuse</h2>
+
+    <p class="lead">Software reuse is the practice of using existing software artifacts — code, designs, specifications, test cases, documentation — in the construction of new systems. It is one of the oldest and most compelling ideas in software engineering, dating back to the earliest days of subroutine libraries, and it remains one of the most effective strategies for reducing development cost, improving software quality, and accelerating time-to-market. Fred Brooks himself identified "buy versus build" as one of the most promising approaches to addressing the essential difficulties of software development.</p>
+
+    <p>The economic logic of software reuse is straightforward and powerful. If a component has already been developed, tested, debugged, and documented, reusing it in a new system avoids the cost of developing it again. Moreover, a reused component that has been used in multiple systems has been exposed to a wider range of inputs, environments, and use cases, which means it has been tested more thoroughly than a newly written component would be. In theory, therefore, software reuse should simultaneously reduce cost and improve quality — a rare and valuable combination.</p>
+
+    <p>In practice, effective software reuse is harder than it appears. The primary obstacles to reuse include the following. First, <strong>component discovery</strong>: finding existing components that meet the required specifications is often difficult, particularly when the repository of available components is large and poorly indexed. Second, <strong>component adaptation</strong>: existing components rarely match the exact requirements of a new system, and modifying them without introducing defects or losing the benefits of previous testing can be challenging. Third, <strong>trust and certification</strong>: a reused component must be trusted to behave correctly in its new context, which requires documentation of its interfaces, assumptions, error behaviour, and performance characteristics. Fourth, <strong>organisational and cultural barriers</strong>: developers may prefer to write their own code rather than reuse someone else's, either because they believe they can do it better or because they don't trust code they didn't write.</p>
+
+    <h3>Levels of Reuse</h3>
+
+    <p>Software reuse can operate at many different levels, from the most granular (reusing individual lines of code through copy-paste, which is reuse at its most primitive and dangerous) to the most abstract (reusing entire architectures, design patterns, or process models). The most common and productive levels of reuse include:</p>
+
+    <ul>
+      <li><strong>Function and class libraries:</strong> Pre-built collections of reusable functions or classes, such as the Java Standard Library, the C++ Standard Template Library, or Python's extensive package ecosystem.</li>
+      <li><strong>Frameworks:</strong> Semi-complete applications that provide a reusable architecture and common functionality, requiring the developer to fill in application-specific details. Examples include Spring (Java), Django (Python), and .NET (Microsoft).</li>
+      <li><strong>Design patterns:</strong> Reusable solutions to commonly occurring design problems, such as the Singleton, Observer, Factory, and Strategy patterns described in the seminal "Gang of Four" book.</li>
+      <li><strong>Component-based development:</strong> Building systems by assembling pre-built, self-contained components (e.g., COM components, Enterprise JavaBeans, microservices) that communicate through well-defined interfaces.</li>
+      <li><strong>Product line engineering:</strong> Developing a family of related software products from a common set of core assets, maximising reuse across the product line.</li>
+      <li><strong>Commercial Off-The-Shelf (COTS) software:</strong> Purchasing existing software products rather than building custom solutions.</li>
+    </ul>
+
+    <div class="memory-box">
+      <p><strong>Remember for exams:</strong> Software reuse is not just about copying code. It operates at multiple levels — libraries, frameworks, patterns, components, product lines, and COTS. The key barriers are discovery, adaptation, trust, and culture. Always mention that reuse simultaneously reduces cost AND improves quality (tested components).</p>
+    </div>
+  </section>
+
+
+  <!-- ──── CRITICAL COMPARISONS ──── -->
+  <section class="chapter-section fade-in" id="sec-2-8">
+    <span class="section-number">Section 2.8</span>
+    <h2>Critical Comparisons of SDLC Models</h2>
+
+    <p class="lead">One of the most important skills in software engineering — and one that examiners consistently reward — is the ability to critically compare different process models and recommend the appropriate model for a given situation. No single model is universally superior; the choice depends on the characteristics of the project, the stability of the requirements, the experience of the team, the risk profile, and the organisational culture. A student who can articulate these trade-offs demonstrates genuine understanding rather than mere memorisation.</p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Model</th>
+          <th>Requirements</th>
+          <th>Risk Handling</th>
+          <th>Customer Involvement</th>
+          <th>Best For</th>
+          <th>Weakness</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Code-and-Fix</strong></td>
+          <td>None / vague</td>
+          <td>None</td>
+          <td>Minimal</td>
+          <td>Throwaway prototypes, trivial programs</td>
+          <td>No process; fails for anything non-trivial</td>
+        </tr>
+        <tr>
+          <td><strong>Waterfall</strong></td>
+          <td>Well-understood, stable</td>
+          <td>Low (risks discovered late)</td>
+          <td>Beginning and end only</td>
+          <td>Stable requirements, regulated domains</td>
+          <td>Inflexible; late testing</td>
+        </tr>
+        <tr>
+          <td><strong>Evolutionary</strong></td>
+          <td>Unclear, evolving</td>
+          <td>Moderate</td>
+          <td>Continuous</td>
+          <td>Exploratory projects, innovative products</td>
+          <td>Lack of structure; technical debt</td>
+        </tr>
+        <tr>
+          <td><strong>Incremental</strong></td>
+          <td>Partially known; core features stable</td>
+          <td>Moderate</td>
+          <td>Regular (at each increment)</td>
+          <td>Large projects where early delivery is valuable</td>
+          <td>Requires good upfront architecture</td>
+        </tr>
+        <tr>
+          <td><strong>Prototyping</strong></td>
+          <td>Unclear; needs exploration</td>
+          <td>Moderate</td>
+          <td>Very high</td>
+          <td>UI-intensive systems, requirements discovery</td>
+          <td>Can lead to premature commitment to prototype design</td>
+        </tr>
+        <tr>
+          <td><strong>Spiral</strong></td>
+          <td>Any (model adapts)</td>
+          <td>High (explicit risk analysis)</td>
+          <td>High (at each spiral iteration)</td>
+          <td>Large, complex, high-risk projects</td>
+          <td>Complex to manage; requires expertise</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>When to Use Which Model — Decision Guide</h3>
+
+    <p>If the requirements are well understood, the technology is familiar, and the project is not too large, the <strong>waterfall model</strong> provides a disciplined, predictable process with clear milestones and extensive documentation. If the requirements are unclear or likely to change, an <strong>evolutionary</strong> or <strong>prototyping</strong> approach is more appropriate because it allows the requirements to be discovered through concrete experience. If the project is large and can be decomposed into independently valuable features, the <strong>incremental model</strong> allows early delivery of core functionality and risk management through prioritisation. If the project is large, complex, and high-risk, the <strong>spiral model</strong> provides the most comprehensive framework for managing risk while accommodating flexibility. In practice, many organisations use hybrid approaches that combine elements of multiple models.</p>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--        PART III: NON-TRADITIONAL & AGILE       -->
+  <!-- ══════════════════════════════════════════════ -->
+
+  <div class="divider-ornamental"><span>III</span></div>
+
+  <section class="chapter-section fade-in" id="sec-3-1">
+    <span class="section-number">Section 3.1</span>
+    <h2>The Rational Unified Process (RUP)</h2>
+
+    <p class="lead">The Rational Unified Process, developed by Rational Software (now a division of IBM), is a comprehensive software development process framework that combines the best practices of iterative development, object-oriented design, and use-case-driven analysis into a unified approach. RUP is not a single, rigid process but rather a configurable framework that can be tailored to the specific needs of different projects and organisations. It represents one of the most influential non-traditional approaches to software development and is particularly significant because it was the process framework behind the development of the Unified Modeling Language (UML).</p>
+
+    <p>RUP is organised along two dimensions: the <strong>static dimension</strong> (which describes the workflows or engineering disciplines involved) and the <strong>dynamic dimension</strong> (which describes the phases of the project over time). This dual-dimensional structure is one of RUP's most distinctive features and a frequent exam topic.</p>
+
+    <h3>The Dynamic Dimension — Phases</h3>
+
+    <p>RUP divides the project lifecycle into four sequential phases, each culminating in a major milestone:</p>
+
+    <p><strong>Inception.</strong> The inception phase establishes the business case for the project and defines its scope. The key activities include identifying the critical use cases, identifying key risks, producing a rough estimate of cost and schedule, and establishing the project's feasibility. The milestone at the end of the inception phase is the <em>Life Cycle Objective</em> milestone, which answers the question: "Is this project worth pursuing?"</p>
+
+    <p><strong>Elaboration.</strong> The elaboration phase is the most critical phase of RUP. During elaboration, the architecture of the system is designed and validated by building an executable architectural prototype. The key risks are addressed, the requirements are refined and stabilised, and the project plan is baselined. The milestone at the end of the elaboration phase is the <em>Life Cycle Architecture</em> milestone, which answers the question: "Is the architecture stable and the plan credible?"</p>
+
+    <p><strong>Construction.</strong> The construction phase is where the bulk of the coding takes place. The system is built incrementally, with each increment adding new features and components to the architecture established during elaboration. The construction phase produces the first operational version of the system (beta release). The milestone is the <em>Initial Operational Capability</em> milestone.</p>
+
+    <p><strong>Transition.</strong> The transition phase delivers the system to the user community. Activities include beta testing, user training, deployment, and final bug fixing. The milestone at the end of the transition phase is the <em>Product Release</em> milestone.</p>
+
+    <div class="diagram-container">
+      <svg width="680" height="280" viewBox="0 0 680 280" xmlns="http://www.w3.org/2000/svg" font-family="'Source Serif 4', Georgia, serif">
+        <rect width="680" height="280" fill="#FFFCF3"/>
+
+        <!-- Time axis -->
+        <line x1="40" y1="200" x2="650" y2="200" stroke="#2C2418" stroke-width="1.2"/>
+        <polygon points="650,200 642,195 642,205" fill="#2C2418"/>
+
+        <!-- Phases as blocks of increasing width (work effort) -->
+        <rect x="60" y="130" width="100" height="70" rx="3" fill="#B8452A" opacity="0.12" stroke="#B8452A" stroke-width="1.2"/>
+        <text x="110" y="165" text-anchor="middle" font-size="13" font-weight="600" fill="#B8452A" font-family="'Playfair Display', Georgia, serif">Inception</text>
+        <text x="110" y="182" text-anchor="middle" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">~10% effort</text>
+
+        <rect x="160" y="100" width="150" height="100" rx="3" fill="#C4973B" opacity="0.12" stroke="#C4973B" stroke-width="1.2"/>
+        <text x="235" y="150" text-anchor="middle" font-size="13" font-weight="600" fill="#C4973B" font-family="'Playfair Display', Georgia, serif">Elaboration</text>
+        <text x="235" y="167" text-anchor="middle" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">~30% effort</text>
+
+        <rect x="310" y="60" width="210" height="140" rx="3" fill="#2B5C4A" opacity="0.12" stroke="#2B5C4A" stroke-width="1.2"/>
+        <text x="415" y="130" text-anchor="middle" font-size="13" font-weight="600" fill="#2B5C4A" font-family="'Playfair Display', Georgia, serif">Construction</text>
+        <text x="415" y="147" text-anchor="middle" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">~50% effort</text>
+
+        <rect x="520" y="120" width="110" height="80" rx="3" fill="#3E6B7B" opacity="0.12" stroke="#3E6B7B" stroke-width="1.2"/>
+        <text x="575" y="160" text-anchor="middle" font-size="13" font-weight="600" fill="#3E6B7B" font-family="'Playfair Display', Georgia, serif">Transition</text>
+        <text x="575" y="177" text-anchor="middle" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">~10% effort</text>
+
+        <!-- Milestones -->
+        <circle cx="160" cy="200" r="5" fill="#B8452A"/>
+        <text x="160" y="225" text-anchor="middle" font-size="8" fill="#B8452A" font-family="'DM Mono', monospace">LCO</text>
+
+        <circle cx="310" cy="200" r="5" fill="#C4973B"/>
+        <text x="310" y="225" text-anchor="middle" font-size="8" fill="#C4973B" font-family="'DM Mono', monospace">LCA</text>
+
+        <circle cx="520" cy="200" r="5" fill="#2B5C4A"/>
+        <text x="520" y="225" text-anchor="middle" font-size="8" fill="#2B5C4A" font-family="'DM Mono', monospace">IOC</text>
+
+        <circle cx="630" cy="200" r="5" fill="#3E6B7B"/>
+        <text x="630" y="225" text-anchor="middle" font-size="8" fill="#3E6B7B" font-family="'DM Mono', monospace">PR</text>
+
+        <!-- Work effort curve -->
+        <path d="M 60 160 Q 110 50 235 40 Q 350 30 415 25 Q 480 30 575 60 Q 620 80 630 150" fill="none" stroke="#B8452A" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.4"/>
+        <text x="340" y="22" text-anchor="middle" font-size="9" fill="#B8452A" font-family="'DM Mono', monospace" opacity="0.6">WORK EFFORT (STAFF)</text>
+
+        <!-- Title -->
+        <text x="350" y="260" text-anchor="middle" font-size="11" fill="#7A6E5C" font-family="'Cormorant Garamond', Georgia, serif" font-style="italic">LCO = Life Cycle Objective | LCA = Life Cycle Architecture | IOC = Initial Operational Capability | PR = Product Release</text>
+      </svg>
+      <div class="diagram-caption">Fig. 6 — RUP Dynamic Dimension: Phases, Effort Distribution, and Milestones</div>
+    </div>
+
+    <h3>The Static Dimension — Workflows</h3>
+
+    <p>RUP defines nine workflows (engineering disciplines) that are performed throughout the project, though with varying intensity in each phase:</p>
+
+    <p><strong>Core Process Workflows:</strong> (1) Business Modelling — understanding the business context; (2) Requirements — capturing functional and non-functional requirements using use cases; (3) Analysis and Design — translating requirements into a design; (4) Implementation — writing code; (5) Test — verifying the system; (6) Deployment — delivering the system to users.</p>
+
+    <p><strong>Supporting Workflows:</strong> (7) Configuration and Change Management — managing versions and changes; (8) Project Management — planning, staffing, monitoring; (9) Environment — providing tools and process guidance to the development team.</p>
+
+    <p>The key insight of RUP is that these workflows are not sequential phases but rather <em>activities that are performed in every iteration</em>, with varying emphasis. In the inception phase, business modelling and requirements dominate; in elaboration, analysis and design dominate; in construction, implementation dominates; in transition, testing and deployment dominate. This gives RUP both the structure of defined disciplines and the flexibility of iterative development.</p>
+
+    <div class="exam-tip">
+      <p><strong>For a question on RUP:</strong> Always describe both the static view (9 workflows) and the dynamic view (4 phases with milestones). The dual-dimensional structure is RUP's defining feature. Mention that it is use-case-driven, architecture-centric, and iterative. Explain how it provides "best practices" that can be tailored to different projects.</p>
+    </div>
+  </section>
+
+
+  <!-- ──── RAD ──── -->
+  <section class="chapter-section fade-in" id="sec-3-2">
+    <span class="section-number">Section 3.2</span>
+    <h2>Rapid Application Development (RAD)</h2>
+
+    <p class="lead">Rapid Application Development (RAD) is a software development methodology that prioritises rapid prototyping and quick feedback over long, drawn-out development and testing cycles. First popularised by James Martin in his 1991 book of the same name, RAD emerged as a direct response to the perceived rigidity and slowness of traditional waterfall-style processes. The central insight of RAD is that in many business application domains, time-to-market is the most critical success factor, and a system that is delivered quickly with 80% of the desired functionality is more valuable than a system that is delivered late with 100% of the functionality.</p>
+
+    <p>RAD is characterised by several distinctive practices. It uses <strong>prototyping extensively</strong> — the development team builds working prototypes rapidly and iteratively, refining them based on user feedback until the desired system emerges. It relies on <strong>timeboxing</strong> — fixing the delivery date and adjusting the feature set to fit, rather than fixing the feature set and allowing the schedule to slip. It emphasises <strong>component-based construction</strong> — using pre-built components, visual development tools, and code generators to minimise hand-coding. And it demands <strong>intense user involvement</strong> — users are embedded in the development team and provide continuous feedback throughout the process.</p>
+
+    <p>The typical RAD life cycle consists of four phases: (1) <strong>Requirements Planning</strong> — a compressed version of traditional requirements analysis, using workshops and joint application development (JAD) sessions; (2) <strong>User Design</strong> — users and developers work together to design the system through iterative prototyping; (3) <strong>Construction</strong> — the system is built using the design from the previous phase, with continued user feedback and refinement; and (4) <strong>Cutover</strong> — the system is tested, deployed, and the user community is trained.</p>
+
+    <p>RAD's strengths are its speed, its responsiveness to user needs, and its ability to deliver working systems quickly. Its weaknesses include its dependence on having highly skilled developers and committed users, its difficulty in scaling to very large projects, its tendency to produce systems with poor architecture (because speed is prioritised over design quality), and its unsuitability for projects with high technical risk or non-functional requirements that are difficult to prototype (such as performance or security requirements).</p>
+  </section>
+
+
+  <!-- ──── AGILE ──── -->
+  <section class="chapter-section fade-in" id="sec-3-3">
+    <span class="section-number">Section 3.3</span>
+    <h2>Agile Development</h2>
+
+    <p class="lead">The Agile movement is, in many ways, the defining paradigm shift in software engineering of the early twenty-first century. It emerged from a growing dissatisfaction with heavyweight, document-driven processes that seemed to produce more paperwork than working software, and from a growing recognition that the traditional plan-driven approach was poorly suited to the rapidly changing business environments in which most software is developed. The Agile Manifesto, published in February 2001 by a group of seventeen software practitioners who gathered at a ski resort in Snowbird, Utah, articulated a set of values and principles that have since transformed the practice of software development worldwide.</p>
+
+    <h3>The Agile Manifesto</h3>
+
+    <div class="def-box">
+      <p><strong>The Agile Manifesto (2001) declares four core values:</strong></p>
+      <ol>
+        <li><strong>Individuals and interactions</strong> over processes and tools</li>
+        <li><strong>Working software</strong> over comprehensive documentation</li>
+        <li><strong>Customer collaboration</strong> over contract negotiation</li>
+        <li><strong>Responding to change</strong> over following a plan</li>
+      </ol>
+      <p><em>That is, while there is value in the items on the right, we value the items on the left more.</em></p>
+    </div>
+
+    <p>It is essential to understand that the Agile Manifesto does not reject the items on the right — it does not say that documentation, processes, contracts, and plans are worthless. It says that when forced to choose, the items on the left are more valuable. This is a subtle but important distinction that many practitioners (and exam answers) get wrong. Agile does not mean "no documentation" or "no planning" — it means that documentation and planning should serve the goal of delivering working software, not become goals in their own right.</p>
+
+    <h3>The 12 Principles Behind the Agile Manifesto</h3>
+
+    <p>The four values of the Agile Manifesto are supported by twelve principles that provide more specific guidance. The most frequently examined principles include:</p>
+
+    <ol>
+      <li>Our highest priority is to satisfy the customer through early and continuous delivery of valuable software.</li>
+      <li>Welcome changing requirements, even late in development. Agile processes harness change for the customer's competitive advantage.</li>
+      <li>Deliver working software frequently, from a couple of weeks to a couple of months, with a preference to the shorter timescale.</li>
+      <li>Business people and developers must work together daily throughout the project.</li>
+      <li>Build projects around motivated individuals. Give them the environment and support they need, and trust them to get the job done.</li>
+      <li>The most efficient and effective method of conveying information to and within a development team is face-to-face conversation.</li>
+      <li>Working software is the primary measure of progress.</li>
+      <li>Agile processes promote sustainable development. The sponsors, developers, and users should be able to maintain a constant pace indefinitely.</li>
+      <li>Continuous attention to technical excellence and good design enhances agility.</li>
+      <li>Simplicity — the art of maximising the amount of work not done — is essential.</li>
+      <li>The best architectures, requirements, and designs emerge from self-organising teams.</li>
+      <li>At regular intervals, the team reflects on how to become more effective, then tunes and adjusts its behaviour accordingly.</li>
+    </ol>
+
+    <h3>How Agile Differs from Traditional Models</h3>
+
+    <p>The traditional (plan-driven, heavyweight) approach to software development follows a pattern of extensive upfront planning, detailed documentation, sequential phases, and late delivery. The Agile approach inverts this: minimal upfront planning, just-enough documentation, iterative and incremental development, and frequent delivery of working software. The differences can be summarised along several dimensions:</p>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>Dimension</th>
+          <th>Traditional (Plan-Driven)</th>
+          <th>Agile</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Requirements</strong></td>
+          <td>Detailed, frozen early</td>
+          <td>Evolving, embraced throughout</td>
+        </tr>
+        <tr>
+          <td><strong>Delivery</strong></td>
+          <td>Big-bang delivery at end</td>
+          <td>Frequent, small releases</td>
+        </tr>
+        <tr>
+          <td><strong>Documentation</strong></td>
+          <td>Comprehensive, formal</td>
+          <td>Minimal, just enough</td>
+        </tr>
+        <tr>
+          <td><strong>Team Structure</strong></td>
+          <td>Hierarchical, specialised</td>
+          <td>Self-organising, cross-functional</td>
+        </tr>
+        <tr>
+          <td><strong>Customer Role</strong></td>
+          <td>Involved at beginning and end</td>
+          <td>Continuously involved</td>
+        </tr>
+        <tr>
+          <td><strong>Change</strong></td>
+          <td>Resisted; formal change control</td>
+          <td>Welcomed; expected and managed</td>
+        </tr>
+        <tr>
+          <td><strong>Success Metric</strong></td>
+          <td>Conformance to plan</td>
+          <td>Working software delivered to customer</td>
+        </tr>
+        <tr>
+          <td><strong>Planning</strong></td>
+          <td>Detailed upfront plan</td>
+          <td>Adaptive; re-planning at each iteration</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="exam-tip">
+      <p><strong>High-frequency question:</strong> "Explain how the Manifesto principles underlying agile methods lead to the accelerated development and deployment of software." — Structure: (1) Define Agile and state the 4 values, (2) Explain how each value accelerates delivery (e.g., "working software over documentation" reduces overhead; "responding to change" prevents wasted effort on wrong features), (3) Give examples of Agile methods (XP, Scrum), (4) Conclude with how Agile reduces time-to-market.</p>
+    </div>
+  </section>
+
+
+  <!-- ──── SCRUM ──── -->
+  <section class="chapter-section fade-in" id="sec-3-4">
+    <span class="section-number">Section 3.4</span>
+    <h2>The Scrum Framework</h2>
+
+    <p class="lead">Scrum is the most widely adopted Agile framework in the world, used by organisations ranging from tiny startups to Fortune 500 corporations. Originally described by Ken Schwaber and Jeff Sutherland in the mid-1990s, Scrum provides a lightweight framework for managing complex product development through iterative and incremental practices. Unlike a methodology, which prescribes specific practices and techniques, Scrum is a framework — it defines the roles, events, and artifacts necessary for a team to apply empirical process control, but it leaves the specific engineering practices (how to code, test, design, etc.) to the team's discretion.</p>
+
+    <h3>Scrum Roles</h3>
+
+    <p>Scrum defines exactly three roles, and this simplicity is one of its strengths. The <strong>Product Owner</strong> is the voice of the customer and the business. They are responsible for maximising the value of the product by managing the Product Backlog — a prioritised list of all the features, enhancements, and fixes that constitute the requirements for the system. The Product Owner decides what gets built and in what order, based on business value, risk, and dependencies. They are the single person who has the authority to change the priorities of the Product Backlog, which eliminates the confusion that arises when multiple stakeholders give conflicting directions to the development team.</p>
+
+    <p>The <strong>Scrum Master</strong> is a servant-leader and coach for the Scrum team. They are responsible for ensuring that the team follows the Scrum framework, removing impediments that block the team's progress, and facilitating the Scrum events. The Scrum Master is <em>not</em> a traditional project manager — they do not assign tasks, make technical decisions, or control the team. Their role is to create an environment in which the team can be maximally productive.</p>
+
+    <p>The <strong>Development Team</strong> is a self-organising, cross-functional group of professionals who do the actual work of building the product. The team is typically 3–9 members, and it includes all the skills necessary to deliver a working increment of the product (programming, testing, design, database, etc.) without depending on people outside the team. The Development Team decides how to do the work — the Product Owner decides what to do, but the team decides how to do it.</p>
+
+    <h3>Scrum Events (Ceremonies)</h3>
+
+    <p>Scrum defines five events that create regularity and structure within the framework:</p>
+
+    <p><strong>The Sprint</strong> is the heartbeat of Scrum — a time-boxed iteration of 1–4 weeks (most commonly 2 weeks) during which the team produces a potentially shippable increment of the product. Each Sprint begins with Sprint Planning and ends with a Sprint Review and Sprint Retrospective. Sprints have a fixed duration; they are never extended. If the work is not complete at the end of the Sprint, the incomplete items are returned to the Product Backlog for reprioritisation.</p>
+
+    <p><strong>Sprint Planning</strong> is a collaborative meeting at the beginning of each Sprint in which the team decides what work will be accomplished during the Sprint. The Product Owner presents the highest-priority items from the Product Backlog, and the team selects the items they believe they can complete, creating the Sprint Backlog. The team also creates a plan for how they will accomplish the work.</p>
+
+    <p><strong>The Daily Scrum</strong> (also called the Daily Stand-up) is a 15-minute daily meeting for the Development Team to synchronise activities and create a plan for the next 24 hours. Each team member answers three questions: What did I do yesterday? What will I do today? Are there any impediments?</p>
+
+    <p><strong>The Sprint Review</strong> is a meeting at the end of the Sprint in which the team demonstrates the completed increment to the Product Owner and other stakeholders. The purpose is to gather feedback and inspect the product. The Product Backlog may be adjusted based on what is learned.</p>
+
+    <p><strong>The Sprint Retrospective</strong> is a meeting after the Sprint Review in which the Scrum team inspects its own process and identifies opportunities for improvement. The focus is on the <em>process</em>, not the product: What went well? What could be improved? What will we change in the next Sprint?</p>
+
+    <h3>Scrum Artifacts</h3>
+
+    <p>Scrum defines three artifacts that provide transparency and opportunities for inspection and adaptation:</p>
+
+    <p>The <strong>Product Backlog</strong> is an ordered list of everything that is known to be needed in the product. It is the single source of requirements for any changes to the product. The Product Owner is responsible for its content, availability, and ordering. It is dynamic — it constantly evolves as the product and the market evolve.</p>
+
+    <p>The <strong>Sprint Backlog</strong> is the set of Product Backlog items selected for the Sprint plus a plan for delivering the product increment and realising the Sprint Goal. It is a forecast by the Development Team about what functionality will be in the next increment and the work needed to deliver that functionality.</p>
+
+    <p>The <strong>Increment</strong> is the sum of all the Product Backlog items completed during a Sprint and the value of the increments of all previous Sprints. At the end of a Sprint, the new increment must be in a "Done" condition — meaning it is in a useable state and meets the Scrum team's definition of "Done."</p>
+
+    <div class="diagram-container">
+      <svg width="660" height="380" viewBox="0 0 660 380" xmlns="http://www.w3.org/2000/svg" font-family="'Source Serif 4', Georgia, serif">
+        <rect width="660" height="380" fill="#FFFCF3"/>
+
+        <!-- Product Backlog -->
+        <rect x="20" y="20" width="160" height="60" rx="4" fill="#B8452A" opacity="0.12" stroke="#B8452A" stroke-width="1.5"/>
+        <text x="100" y="48" text-anchor="middle" font-size="12" font-weight="600" fill="#B8452A" font-family="'Playfair Display', Georgia, serif">Product</text>
+        <text x="100" y="65" text-anchor="middle" font-size="12" font-weight="600" fill="#B8452A" font-family="'Playfair Display', Georgia, serif">Backlog</text>
+
+        <!-- Arrow to Sprint Planning -->
+        <line x1="180" y1="50" x2="210" y2="120" stroke="#7A6E5C" stroke-width="1"/>
+        <polygon points="210,120 205,112 213,116" fill="#7A6E5C"/>
+
+        <!-- Sprint Planning -->
+        <rect x="210" y="110" width="130" height="50" rx="4" fill="#C4973B" opacity="0.12" stroke="#C4973B" stroke-width="1.2"/>
+        <text x="275" y="138" text-anchor="middle" font-size="11" font-weight="600" fill="#C4973B" font-family="'Playfair Display', Georgia, serif">Sprint Planning</text>
+
+        <!-- Sprint Backlog -->
+        <line x1="340" y1="135" x2="370" y2="135" stroke="#7A6E5C" stroke-width="1"/>
+        <polygon points="370,135 363,131 363,139" fill="#7A6E5C"/>
+
+        <rect x="370" y="110" width="130" height="50" rx="4" fill="#2B5C4A" opacity="0.12" stroke="#2B5C4A" stroke-width="1.2"/>
+        <text x="435" y="133" text-anchor="middle" font-size="11" font-weight="600" fill="#2B5C4A" font-family="'Playfair Display', Georgia, serif">Sprint</text>
+        <text x="435" y="148" text-anchor="middle" font-size="11" font-weight="600" fill="#2B5C4A" font-family="'Playfair Display', Georgia, serif">Backlog</text>
+
+        <!-- Sprint Box -->
+        <rect x="330" y="185" width="200" height="100" rx="6" fill="none" stroke="#7A6E5C" stroke-width="1.5" stroke-dasharray="6,3"/>
+        <text x="430" y="207" text-anchor="middle" font-size="12" font-weight="700" fill="#7A6E5C" font-family="'Playfair Display', Georgia, serif">SPRINT (2–4 weeks)</text>
+
+        <!-- Daily Scrum inside Sprint -->
+        <rect x="345" y="215" width="80" height="30" rx="3" fill="#3E6B7B" opacity="0.12" stroke="#3E6B7B" stroke-width="1"/>
+        <text x="385" y="234" text-anchor="middle" font-size="9" fill="#3E6B7B" font-family="'DM Mono', monospace">Daily Scrum</text>
+
+        <!-- Development inside Sprint -->
+        <rect x="435" y="215" width="80" height="30" rx="3" fill="#B8452A" opacity="0.12" stroke="#B8452A" stroke-width="1"/>
+        <text x="475" y="234" text-anchor="middle" font-size="9" fill="#B8452A" font-family="'DM Mono', monospace">Development</text>
+
+        <!-- Arrow from Sprint Backlog to Sprint -->
+        <line x1="435" y1="160" x2="430" y2="185" stroke="#7A6E5C" stroke-width="1"/>
+
+        <!-- Increment -->
+        <line x1="430" y1="285" x2="430" y2="310" stroke="#7A6E5C" stroke-width="1"/>
+        <polygon points="430,314 425,306 435,306" fill="#7A6E5C"/>
+
+        <rect x="355" y="314" width="150" height="50" rx="4" fill="#C4973B" opacity="0.15" stroke="#C4973B" stroke-width="1.5"/>
+        <text x="430" y="338" text-anchor="middle" font-size="12" font-weight="600" fill="#C4973B" font-family="'Playfair Display', Georgia, serif">Increment</text>
+        <text x="430" y="353" text-anchor="middle" font-size="9" fill="#7A6E5C" font-family="'DM Mono', monospace">("Done" state)</text>
+
+        <!-- Sprint Review and Retrospective -->
+        <line x1="530" y1="235" x2="555" y2="235" stroke="#7A6E5C" stroke-width="1"/>
+
+        <rect x="555" y="200" width="90" height="35" rx="3" fill="#3E6B7B" opacity="0.1" stroke="#3E6B7B" stroke-width="1"/>
+        <text x="600" y="220" text-anchor="middle" font-size="8" fill="#3E6B7B" font-family="'DM Mono', monospace">Sprint Review</text>
+
+        <rect x="555" y="245" width="90" height="35" rx="3" fill="#3E6B7B" opacity="0.1" stroke="#3E6B7B" stroke-width="1"/>
+        <text x="600" y="265" text-anchor="middle" font-size="8" fill="#3E6B7B" font-family="'DM Mono', monospace">Retrospective</text>
+
+        <!-- Feedback arrow back to Product Backlog -->
+        <path d="M 600 200 Q 640 100 550 50 Q 300 -10 180 35" fill="none" stroke="#B8452A" stroke-width="1" stroke-dasharray="4,3" opacity="0.4"/>
+        <text x="550" y="85" font-size="8" fill="#B8452A" font-family="'DM Mono', monospace" opacity="0.5">REFINED PB</text>
+      </svg>
+      <div class="diagram-caption">Fig. 7 — The Scrum Framework: Roles, Events, and Artifacts in a Single Sprint</div>
+    </div>
+  </section>
+
+
+  <!-- ──── EXTREME PROGRAMMING ──── -->
+  <section class="chapter-section fade-in" id="sec-3-5">
+    <span class="section-number">Section 3.5</span>
+    <h2>Extreme Programming (XP)</h2>
+
+    <p class="lead">Extreme Programming, created by Kent Beck in the late 1990s, is the most prescriptive of the Agile methods — it does not merely state values and principles but prescribes specific engineering practices that must be followed. The name "extreme" comes from the idea of taking proven software engineering practices and turning the "dial" to the extreme: if code reviews are good, review code continuously (pair programming); if testing is good, write tests before code (test-driven development); if simplicity is good, design for today's needs only (YAGNI — You Aren't Gonna Need It); if integration is good, integrate many times a day (continuous integration).</p>
+
+    <h3>XP Values, Principles, and Practices</h3>
+
+    <p>XP is built on five <strong>values</strong>: <strong>Communication</strong> (problems arise from poor communication; XP emphasises face-to-face conversation, pair programming, and collective code ownership), <strong>Simplicity</strong> (do the simplest thing that could possibly work; don't build for hypothetical future needs), <strong>Feedback</strong> (get feedback as quickly as possible through testing, pair programming, and frequent releases), <strong>Courage</strong> (the courage to make and reverse decisions — to refactor when code is messy, to throw away code that isn't needed, to tell the truth about进度), and <strong>Respect</strong> (team members respect each other's contributions and value each other's work).</p>
+
+    <p>The key <strong>practices</strong> of XP include:</p>
+
+    <p><strong>Pair Programming:</strong> All production code is written by two programmers working together at one workstation. One programmer (the "driver") writes code while the other (the "navigator") reviews each line as it is typed. They switch roles frequently. Research has shown that pair programming produces code with fewer defects (15–60% fewer in various studies) at only a modest increase in development time (15–25%), resulting in a net improvement in cost-effectiveness when the reduced defect-fixing cost is included.</p>
+
+    <p><strong>Test-Driven Development (TDD):</strong> Developers write automated tests <em>before</em> writing the production code. The cycle is: write a failing test, write the minimum code to make the test pass, refactor the code for simplicity and clarity. This practice ensures that all code is tested, that the test suite is comprehensive, and that the design emerges organically from the requirements expressed in the tests.</p>
+
+    <p><strong>Continuous Integration:</strong> Team members integrate their work frequently — ideally many times per day. Each integration is verified by an automated build and test suite, which catches integration errors immediately rather than allowing them to accumulate.</p>
+
+    <p><strong>Refactoring:</strong> The practice of continuously improving the internal structure of the code without changing its external behaviour. Refactoring keeps the code clean and maintainable as the system evolves, preventing the accumulation of technical debt.</p>
+
+    <p><strong>Collective Code Ownership:</strong> Any developer can modify any part of the codebase at any time. This prevents knowledge silos, encourages shared understanding of the system, and enables faster response to changing requirements.</p>
+
+    <p><strong>On-Site Customer:</strong> A real customer (or a representative with decision-making authority) is available full-time to answer questions, make decisions, write acceptance tests, and set priorities. This eliminates the delays and misunderstandings that arise from communicating through documents or intermediaries.</p>
+
+    <div class="exam-tip">
+      <p><strong>For "Define agility and explain how it is achieved in XP":</strong> Define agility as the ability to respond quickly and effectively to change. Then list the 5 XP values and explain the key practices (pair programming, TDD, continuous integration, refactoring, collective ownership, on-site customer) — showing how each practice contributes to one or more of the Agile principles. This demonstrates both breadth and depth and supports a 10–15 mark answer.</p>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════════════════════ -->
+  <!--              EXAM RESOURCES                    -->
+  <!-- ══════════════════════════════════════════════ -->
+
+  <div class="divider-ornamental"><span>Exam Resources</span></div>
+
+  <!-- ──── QUICK REVISION ──── -->
+  <section class="chapter-section fade-in" id="sec-revision">
+    <span class="section-number">Revision</span>
+    <h2>Quick Revision Sheet</h2>
+    <p class="lead">For the night before the exam. Read through these cards to refresh every major concept in minutes.</p>
+
+    <div class="revision-grid">
+      <div class="revision-card">
+        <h5>Software Engineering</h5>
+        <p>Systematic, disciplined, quantifiable approach to software development. Coined at NATO 1968 conference. Applies engineering principles to software.</p>
+      </div>
+      <div class="revision-card">
+        <h5>Software Crisis</h5>
+        <p>1960s: projects failing, costs exploding, software unreliable. Causes: complexity, bad methods, poor communication, no theory. Led to SE as discipline.</p>
+      </div>
+      <div class="revision-card">
+        <h5>Brooks: 4 Forms</h5>
+        <p>Program (1×) → Programming Product (3×) → Programming System (3×) → Programming System Product (9×). Why prototypes ≠ products.</p>
+      </div>
+      <div class="revision-card">
+        <h5>No Silver Bullet</h5>
+        <p>Essential difficulties: Complexity, Conformity, Changeability, Invisibility. Accidental: tools/methods. No 10× improvement possible in a decade.</p>
+      </div>
+      <div class="revision-card">
+        <h5>Software Myths</h5>
+        <p>Manager: add people, outsource, vague specs OK. Practitioner: code = done, can't test early. Customer: vague requirements OK, changes are free.</p>
+      </div>
+      <div class="revision-card">
+        <h5>Waterfall</h5>
+        <p>Sequential: Req → Design → Code → Test → Deploy → Maintain. Good for stable requirements. Bad: inflexible, late testing. Royce added feedback loops.</p>
+      </div>
+      <div class="revision-card">
+        <h5>Prototyping</h5>
+        <p>Build quickly → customer evaluates → refine → repeat. Throwaway vs. evolutionary. Reduces requirements risk. Does not always increase cost.</p>
+      </div>
+      <div class="revision-card">
+        <h5>Spiral Model</h5>
+        <p>Boehm 1988. 4 quadrants per iteration: Objectives, Risk Analysis, Development, Planning. Risk-driven. Subsumes other models. For large/high-risk projects.</p>
+      </div>
+      <div class="revision-card">
+        <h5>Incremental Model</h5>
+        <p>Deliver core first, add features in planned increments. Architecture designed upfront. Customer gets working software early. Like building floors of a building.</p>
+      </div>
+      <div class="revision-card">
+        <h5>RUP</h5>
+        <p>Static: 9 workflows. Dynamic: 4 phases (Inception → Elaboration → Construction → Transition). Use-case-driven, architecture-centric, iterative.</p>
+      </div>
+      <div class="revision-card">
+        <h5>RAD</h5>
+        <p>Rapid Application Development. Prototyping + timeboxing + visual tools. 4 phases. Speed over completeness. Requires skilled team and committed users.</p>
+      </div>
+      <div class="revision-card">
+        <h5>Agile</h5>
+        <p>2001 Manifesto. 4 values: people > process, working SW > docs, collaboration > contracts, change > plan. 12 principles. Iterative, incremental, adaptive.</p>
+      </div>
+      <div class="revision-card">
+        <h5>Scrum</h5>
+        <p>3 roles: Product Owner, Scrum Master, Dev Team. Events: Sprint, Sprint Planning, Daily Scrum, Review, Retrospective. Artifacts: PB, SB, Increment.</p>
+      </div>
+      <div class="revision-card">
+        <h5>XP</h5>
+        <p>5 values: Communication, Simplicity, Feedback, Courage, Respect. Key practices: Pair Programming, TDD, CI, Refactoring, Collective Ownership.</p>
+      </div>
+      <div class="revision-card">
+        <h5>Software Characteristics</h5>
+        <p>Logical/intangible, doesn't wear out (but rots), not manufactured, flexible, complex, custom-built. Quality: Func, Reliab, Usab, Eff, Maint, Port.</p>
+      </div>
+      <div class="revision-card">
+        <h5>SE Principles</h5>
+        <p>Abstraction: hide complexity, focus on essentials. Decomposition: divide into modules, high cohesion + low coupling. These underpin ALL of SE.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ──── PYQ BANK ──── -->
+  <section class="chapter-section fade-in" id="sec-pyq">
+    <span class="section-number">Previous Year Questions</span>
+    <h2>University Examination Questions</h2>
+    <p class="lead">Organised by topic and mark weightage. Use these to practice writing answers under exam conditions.</p>
+
+    <div class="collapsible-section">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <span>2-Mark Questions (Short Answer / Definitions)</span>
+        <span class="toggle-icon">+</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <ol>
+            <li>Define Software Engineering.</li>
+            <li>What is the Software Crisis?</li>
+            <li>What is a Software Process Model?</li>
+            <li>Define the term "prototyping."</li>
+            <li>What are the four values of the Agile Manifesto?</li>
+            <li>What is Brooks' Law?</li>
+            <li>Define SDLC.</li>
+            <li>What is the difference between a program and a programming product?</li>
+            <li>What are essential difficulties according to Brooks?</li>
+            <li>Define RAD.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="collapsible-section">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <span>5-Mark Questions (Medium-Length Descriptive)</span>
+        <span class="toggle-icon">+</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <ol>
+            <li>List and explain the characteristics of software.</li>
+            <li>Explain the Waterfall model with a neat diagram.</li>
+            <li>Distinguish between system engineering and software engineering.</li>
+            <li>What are the four essential difficulties described by Brooks?</li>
+            <li>List any 5 software myths and explain them briefly.</li>
+            <li>Explain the incremental model of software development.</li>
+            <li>Describe the Scrum framework with its roles and events.</li>
+            <li>Explain the two fundamental principles of SE (abstraction and decomposition).</li>
+            <li>Was Y2K a software crisis? Justify your answer.</li>
+            <li>Compare the Waterfall and Prototyping models.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="collapsible-section">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <span>10-Mark Questions (Long Descriptive)</span>
+        <span class="toggle-icon">+</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <ol>
+            <li>Define Software Engineering with its historical development. What were the major issues that led to the Software Crisis?</li>
+            <li>Explain Brooks' "No Silver Bullet" argument. What are the essential and accidental difficulties?</li>
+            <li>Explain the Spiral model with a diagram. List the task regions. Discuss advantages over the Waterfall model.</li>
+            <li>Explain the Waterfall model. What problems are encountered? Compare with the Prototyping model.</li>
+            <li>How does the Prototype Model contribute to software development? Under what circumstances is it beneficial?</li>
+            <li>Describe the RUP phases and workflows. What are the advantages of static and dynamic views?</li>
+            <li>Explain the software re-use concept with examples.</li>
+            <li>Explain all phases of the Software Development Life Cycle in detail.</li>
+            <li>Discuss various circumstances where different lifecycle models are used.</li>
+            <li>Enlist and elaborate the characteristics of software. Describe characteristics of quality software.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <div class="collapsible-section">
+      <div class="collapsible-header" onclick="toggleCollapsible(this)">
+        <span>15-Mark Questions (Extended Long-Form)</span>
+        <span class="toggle-icon">+</span>
+      </div>
+      <div class="collapsible-body">
+        <div class="collapsible-body-inner">
+          <ol>
+            <li>Describe non-traditional software development processes including RUP, RAD, and Agile Development. How do these vary from conventional models?</li>
+            <li>Define agility. List principles of agility and explain how they are achieved in XP. Explain how the Manifesto principles lead to accelerated development.</li>
+            <li>What is the Scrum framework? How does it enable iterative and incremental product development through its roles, events, and artifacts?</li>
+            <li>Discuss all SDLC models in detail with diagrams. Compare them critically and suggest which model is suitable under what circumstances.</li>
+            <li>Explain Brooks' "No Silver Bullet" in full detail. How do essential difficulties impact modern SE? Give examples.</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ──── VIVA PREPARATION ──── -->
+  <section class="chapter-section fade-in" id="sec-viva">
+    <span class="section-number">Viva Preparation</span>
+    <h2>Viva Voce Questions</h2>
+    <p class="lead">These are conceptual questions typically asked during practical or oral examinations. Answer them conversationally, with examples.</p>
+
+    <ul class="viva-list">
+      <li>Why can't we just start coding? Why do we need a process model?</li>
+      <li>If software doesn't wear out, why does it need maintenance?</li>
+      <li>Is Agile always better than Waterfall? When would you choose Waterfall?</li>
+      <li>What happens if you skip the requirements phase?</li>
+      <li>Why did Brooks say adding people makes a project later?</li>
+      <li>What is the difference between a prototype and the final product?</li>
+      <li>Can you use the Spiral model for a small project? Should you?</li>
+      <li>Why is documentation important if Agile says "working software over documentation"?</li>
+      <li>Explain pair programming to a non-technical person. Why would two people write one program?</li>
+      <li>What is the most expensive phase of the SDLC, and why?</li>
+      <li>If you were starting a new software company, which process model would you adopt and why?</li>
+      <li>Explain the concept of software rot with a real-world analogy.</li>
+      <li>Why is it called "Extreme" Programming?</li>
+      <li>What is the role of the Scrum Master? Is it the same as a project manager?</li>
+      <li>How does the spiral model reduce risk compared to the waterfall model?</li>
+    </ul>
+  </section>
+
+
+  <!-- ──── HOW TO STRUCTURE ANSWERS ──── -->
+  <section class="chapter-section fade-in">
+    <span class="section-number">Exam Strategy</span>
+    <h2>How to Structure Long Answers</h2>
+
+    <div class="answer-guide">
+      <h4 style="margin-top:0">Template: 10-Mark Answer on Any Model (Waterfall / Spiral / etc.)</h4>
+      <ol>
+        <li><strong>Opening definition</strong> (2–3 sentences): Define the model, mention who proposed it and when.</li>
+        <li><strong>Diagram</strong>: Draw a clear, labelled diagram. Always include a caption.</li>
+        <li><strong>Phase-by-phase explanation</strong> (1–2 paragraphs per phase): Explain each phase's purpose, activities, and deliverables.</li>
+        <li><strong>Advantages</strong> (3–5 points with brief explanations).</li>
+        <li><strong>Disadvantages</strong> (3–5 points with brief explanations).</li>
+        <li><strong>When to use</strong> (1 paragraph): Describe the ideal project characteristics.</li>
+        <li><strong>Comparison with one other model</strong> (brief table or paragraph).</li>
+        <li><strong>Real-world example</strong> (optional but earns bonus marks).</li>
+      </ol>
+      <p style="margin-top:1rem; font-style:italic; color: var(--text-muted);">This structure easily generates 800–1000 words and covers everything a professor expects.</p>
+    </div>
+
+    <div class="answer-guide">
+      <h4 style="margin-top:0">Template: 5-Mark Answer</h4>
+      <ol>
+        <li><strong>Definition</strong> (1–2 sentences)</li>
+        <li><strong>Diagram</strong> (small but clear)</li>
+        <li><strong>Explanation</strong> (2–3 paragraphs covering the key points)</li>
+        <li><strong>Advantages/Disadvantages</strong> (2–3 points each)</li>
+      </ol>
+      <p style="margin-top:1rem; font-style:italic; color: var(--text-muted);">Target: 300–400 words.</p>
+    </div>
+
+    <div class="answer-guide">
+      <h4 style="margin-top:0">Template: 2-Mark Answer</h4>
+      <ol>
+        <li><strong>One-sentence definition</strong></li>
+        <li><strong>One supporting sentence</strong> (example or key property)</li>
+      </ol>
+      <p style="margin-top:1rem; font-style:italic; color: var(--text-muted);">Target: 30–50 words. Be precise.</p>
+    </div>
+  </section>
+
+
+  <!-- ──── FOOTER ──── -->
+  <footer class="page-footer">
+    <p>Software Engineering — Unit I &middot; Complete Examination Guide</p>
+    <p style="margin-top:0.5rem;">TCS-602 / TCS-611 &middot; Designed for Indian University Examinations</p>
+    <p style="margin-top:0.5rem; font-size:0.6rem;">This document contains approximately 22,000 words of exam-oriented content with diagrams, tables, and revision aids.</p>
+  </footer>
+
+</div> <!-- end .page-container -->
+
+
+<!-- ═══════════ JAVASCRIPT ═══════════ -->
+<script>
+// ── Navigation Toggle ──
+const navToggle = document.getElementById('navToggle');
+const navSidebar = document.getElementById('navSidebar');
+const navOverlay = document.getElementById('navOverlay');
+
+navToggle.addEventListener('click', function() {
+  this.classList.toggle('active');
+  navSidebar.classList.toggle('open');
+  navOverlay.classList.toggle('active');
+});
+
+navOverlay.addEventListener('click', function() {
+  navToggle.classList.remove('active');
+  navSidebar.classList.remove('open');
+  navOverlay.classList.remove('active');
+});
+
+// Close nav when clicking a link
+navSidebar.querySelectorAll('a').forEach(function(link) {
+  link.addEventListener('click', function() {
+    navToggle.classList.remove('active');
+    navSidebar.classList.remove('open');
+    navOverlay.classList.remove('active');
+  });
+});
+
+// ── Collapsible Sections ──
+function toggleCollapsible(header) {
+  const body = header.nextElementSibling;
+  const isOpen = header.classList.contains('active');
+
+  if (isOpen) {
+    header.classList.remove('active');
+    body.style.maxHeight = '0';
+  } else {
+    header.classList.add('active');
+    body.style.maxHeight = body.scrollHeight + 'px';
+  }
+}
+
+// ── Scroll-triggered fade-in ──
+const observer = new IntersectionObserver(function(entries) {
+  entries.forEach(function(entry) {
+    if (entry.isIntersecting) {
+      entry.target.style.animationPlayState = 'running';
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-in').forEach(function(el) {
+  el.style.animationPlayState = 'paused';
+  observer.observe(el);
+});
+
+// ── Active nav link highlighting ──
+const sections = document.querySelectorAll('.chapter-section[id]');
+const navLinks = navSidebar.querySelectorAll('a[href^="#"]');
+
+window.addEventListener('scroll', function() {
+  let current = '';
+  sections.forEach(function(section) {
+    const sectionTop = section.offsetTop - 120;
+    if (window.scrollY >= sectionTop) {
+      current = section.getAttribute('id');
+    }
+  });
+
+  navLinks.forEach(function(link) {
+    link.style.color = '';
+    link.style.background = '';
+    if (link.getAttribute('href') === '#' + current) {
+      link.style.color = 'var(--accent-primary)';
+      link.style.background = 'var(--surface-alt)';
+    }
+  });
+});
+</script>
+
+</body>
+</html>

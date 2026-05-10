@@ -1,0 +1,2480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 5 — Software Maintenance, Project Management & SQA | TCS-602</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400;1,600&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #faf6ed;
+  --bg-alt: #f3ece0;
+  --surface: #eee6d6;
+  --surface-alt: #e8ddca;
+  --accent: #b84233;
+  --accent-light: #d4634f;
+  --accent-muted: #c97a6e;
+  --teal: #2d6b6a;
+  --teal-light: #3a8a88;
+  --teal-muted: #5a9e9c;
+  --brown: #6b4e37;
+  --brown-light: #8b6b50;
+  --brown-dark: #3d2a1a;
+  --text: #2c2016;
+  --text-secondary: #5c4e3c;
+  --text-muted: #8a7d6b;
+  --gold: #c9a84c;
+  --gold-light: #e0c76e;
+  --border: #d4c9b5;
+  --border-light: #e4ddd0;
+  --shadow: rgba(44, 32, 22, 0.08);
+  --shadow-deep: rgba(44, 32, 22, 0.15);
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Crimson Pro', Georgia, serif;
+  --font-mono: 'DM Mono', 'Courier New', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { font-size: 18px; scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.78;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ======================== COVER ======================== */
+.cover {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 2rem;
+  background: linear-gradient(175deg, #f5eedd 0%, var(--bg) 40%, var(--surface) 100%);
+  border-bottom: 3px solid var(--border);
+  position: relative;
+}
+
+.cover::before {
+  content: '';
+  position: absolute;
+  top: 2rem; left: 2rem; right: 2rem; bottom: 2rem;
+  border: 1px solid var(--border);
+  pointer-events: none;
+}
+
+.cover-ornament {
+  width: 200px;
+  height: 2px;
+  background: var(--accent);
+  margin: 1.5rem auto;
+  position: relative;
+}
+
+.cover-ornament::before {
+  content: '◆';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: var(--accent);
+  font-size: 0.7rem;
+  background: var(--bg);
+  padding: 0 0.5rem;
+}
+
+.cover-unit {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  font-weight: 500;
+}
+
+.cover h1 {
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--brown-dark);
+  max-width: 700px;
+  margin-bottom: 0.5rem;
+}
+
+.cover h2 {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin-bottom: 1.5rem;
+}
+
+.cover-meta {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.cover-border-top, .cover-border-bottom {
+  position: absolute;
+  left: 3rem; right: 3rem;
+  height: 1px;
+  background: repeating-linear-gradient(90deg, var(--border) 0, var(--border) 8px, transparent 8px, transparent 12px);
+}
+
+.cover-border-top { top: 3rem; }
+.cover-border-bottom { bottom: 3rem; }
+
+/* ======================== NAVIGATION ======================== */
+.toc {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 4rem 2rem 3rem;
+}
+
+.toc-header {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--brown-dark);
+  margin-bottom: 0.5rem;
+}
+
+.toc-subheader {
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+}
+
+.toc-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+}
+
+.toc-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  text-decoration: none;
+  color: var(--text);
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.toc-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--accent);
+  transform: scaleY(0);
+  transition: transform 0.3s ease;
+}
+
+.toc-card:hover::before { transform: scaleY(1); }
+
+.toc-card:hover {
+  background: var(--bg);
+  box-shadow: 0 4px 20px var(--shadow);
+  transform: translateY(-2px);
+}
+
+.toc-number {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+.toc-title {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-bottom: 0.3rem;
+}
+
+.toc-desc {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* ======================== MAIN CONTENT ======================== */
+.main-content {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+
+/* Section breaks */
+.section-break {
+  text-align: center;
+  padding: 4rem 0 3rem;
+  position: relative;
+}
+
+.section-break::before {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), var(--accent), var(--border), transparent);
+  margin-bottom: 3rem;
+}
+
+.section-break .section-number {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.8rem;
+}
+
+.section-break h2 {
+  font-family: var(--font-display);
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--brown-dark);
+  line-height: 1.2;
+  margin-bottom: 0.4rem;
+}
+
+.section-break .section-subtitle {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.05rem;
+  color: var(--text-secondary);
+}
+
+/* Subsection headers */
+h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--brown-dark);
+  margin: 3rem 0 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--accent);
+  display: inline-block;
+}
+
+h4 {
+  font-family: var(--font-display);
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: var(--teal);
+  margin: 2.2rem 0 0.8rem;
+}
+
+h5 {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--brown);
+  margin: 1.8rem 0 0.6rem;
+}
+
+p {
+  margin-bottom: 1.2rem;
+  font-size: 1rem;
+  text-align: justify;
+  hyphens: auto;
+}
+
+strong { font-weight: 600; color: var(--brown-dark); }
+
+/* Pull quotes */
+.pull-quote {
+  margin: 2.5rem 0;
+  padding: 2rem 2.5rem;
+  border-left: 4px solid var(--accent);
+  border-right: 1px solid var(--border-light);
+  background: var(--surface);
+  position: relative;
+}
+
+.pull-quote::before {
+  content: '"';
+  font-family: var(--font-display);
+  font-size: 4rem;
+  color: var(--accent-muted);
+  position: absolute;
+  top: -0.3rem;
+  left: 1rem;
+  line-height: 1;
+  opacity: 0.4;
+}
+
+.pull-quote p {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+  text-align: left;
+}
+
+.pull-quote .pq-attr {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  color: var(--text-muted);
+  margin-top: 0.8rem;
+  text-transform: uppercase;
+}
+
+/* Definition boxes */
+.def-box {
+  margin: 2rem 0;
+  padding: 1.8rem 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--teal);
+}
+
+.def-box .def-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 0.6rem;
+  display: block;
+}
+
+.def-box p { margin-bottom: 0.8rem; }
+.def-box p:last-child { margin-bottom: 0; }
+
+/* Exam tip boxes */
+.exam-tip {
+  margin: 2.5rem 0;
+  padding: 1.8rem 2rem;
+  background: linear-gradient(135deg, #fdf6e8, #faf0d6);
+  border: 1px solid var(--gold);
+  border-left: 5px solid var(--gold);
+  position: relative;
+}
+
+.exam-tip .tip-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  font-weight: 500;
+  margin-bottom: 0.6rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.exam-tip .tip-label::before {
+  content: '★';
+  font-size: 0.75rem;
+}
+
+.exam-tip p { margin-bottom: 0.8rem; font-size: 0.95rem; }
+.exam-tip p:last-child { margin-bottom: 0; }
+.exam-tip ul { margin: 0.5rem 0; padding-left: 1.5rem; }
+.exam-tip li { margin-bottom: 0.4rem; font-size: 0.95rem; }
+
+/* Memory anchors */
+.memory-anchor {
+  margin: 2rem 0;
+  padding: 1.5rem 2rem;
+  background: var(--bg-alt);
+  border: 1px dashed var(--accent-muted);
+  border-radius: 2px;
+}
+
+.memory-anchor .ma-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+/* Collapsible sections */
+details {
+  margin: 1.5rem 0;
+  border: 1px solid var(--border);
+  background: var(--surface);
+}
+
+details summary {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--brown-dark);
+  background: var(--surface-alt);
+  border-bottom: 1px solid var(--border);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  transition: background 0.2s ease;
+}
+
+details summary::before {
+  content: '▸';
+  font-size: 0.8rem;
+  color: var(--accent);
+  transition: transform 0.2s ease;
+}
+
+details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+details summary:hover { background: var(--bg-alt); }
+
+details .details-content {
+  padding: 1.5rem;
+}
+
+/* Tables */
+.table-wrapper {
+  margin: 2rem 0;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+
+thead th {
+  font-family: var(--font-display);
+  font-weight: 600;
+  background: var(--brown-dark);
+  color: var(--bg);
+  padding: 0.9rem 1rem;
+  text-align: left;
+  font-size: 0.82rem;
+  letter-spacing: 0.05em;
+}
+
+tbody td {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: top;
+  line-height: 1.55;
+}
+
+tbody tr:nth-child(even) { background: var(--surface); }
+tbody tr:hover { background: var(--bg-alt); }
+
+/* Diagram containers */
+.diagram-container {
+  margin: 2.5rem 0;
+  padding: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.diagram-container .diagram-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--brown-dark);
+  margin-bottom: 1.2rem;
+}
+
+.diagram-container .diagram-caption {
+  font-family: var(--font-body);
+  font-style: italic;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+}
+
+.diagram-container svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Lists */
+ul, ol {
+  margin: 0.8rem 0 1.2rem 1.5rem;
+}
+
+li {
+  margin-bottom: 0.5rem;
+  font-size: 0.98rem;
+}
+
+li strong { color: var(--teal); }
+
+/* Code-like formulas */
+.formula {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 0.88rem;
+  background: var(--surface);
+  padding: 0.15rem 0.6rem;
+  border: 1px solid var(--border);
+  color: var(--teal);
+  margin: 0.1rem 0.2rem;
+}
+
+.formula-block {
+  display: block;
+  margin: 1.5rem 0;
+  padding: 1.5rem 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--teal);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 2;
+  color: var(--teal);
+  overflow-x: auto;
+}
+
+/* Annotation / margin note style */
+.annotation {
+  margin: 1.5rem 0;
+  padding: 1rem 1.5rem;
+  border-left: 3px solid var(--gold);
+  background: linear-gradient(90deg, #fdf9ee, transparent);
+  font-size: 0.9rem;
+  font-style: italic;
+  color: var(--text-secondary);
+}
+
+.annotation::before {
+  content: '✎ NOTE';
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  font-style: normal;
+  font-weight: 500;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 0.4rem;
+}
+
+/* Viva box */
+.viva-box {
+  margin: 2rem 0;
+  padding: 1.8rem 2rem;
+  background: linear-gradient(135deg, #edf5f4, #e5efee);
+  border: 1px solid var(--teal-muted);
+  border-left: 5px solid var(--teal);
+}
+
+.viva-box .viva-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 0.8rem;
+  display: block;
+  font-weight: 500;
+}
+
+.viva-box ul { margin: 0.3rem 0 0.8rem 1.2rem; }
+.viva-box li { margin-bottom: 0.5rem; font-size: 0.92rem; }
+.viva-box li:last-child { margin-bottom: 0; }
+
+/* Comparison cards */
+.comparison-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.comp-card {
+  padding: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  position: relative;
+}
+
+.comp-card::before {
+  content: attr(data-label);
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: white;
+  background: var(--teal);
+  padding: 0.2rem 0.8rem;
+  position: absolute;
+  top: 0;
+  left: 1.5rem;
+  transform: translateY(-50%);
+}
+
+.comp-card h5 { margin-top: 0.5rem; }
+
+/* Revision card */
+.rev-card {
+  margin: 1rem 0;
+  padding: 1.2rem 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.rev-card .rev-num {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  min-width: 2.5rem;
+  text-align: center;
+}
+
+.rev-card .rev-body h5 {
+  margin-top: 0;
+  color: var(--brown-dark);
+}
+
+.rev-card .rev-body p {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+/* PYQ section */
+.pyq-section {
+  margin: 3rem 0;
+  padding: 2rem;
+  background: linear-gradient(180deg, var(--surface), var(--bg-alt));
+  border: 1px solid var(--border);
+}
+
+.pyq-section .pyq-header {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pyq-section .pyq-header::before, .pyq-section .pyq-header::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.pyq-item {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.pyq-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+
+.pyq-q {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--brown-dark);
+  margin-bottom: 0.8rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+
+.pyq-q::before {
+  content: 'Q.';
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.pyq-a {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  padding-left: 1.5rem;
+}
+
+/* Scroll to top */
+.scroll-top {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 44px;
+  height: 44px;
+  background: var(--brown-dark);
+  color: var(--bg);
+  border: none;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 1000;
+  border: 1px solid var(--brown);
+}
+
+.scroll-top.visible { opacity: 1; }
+.scroll-top:hover { transform: translateY(-3px); background: var(--accent); }
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding: 4rem 2rem;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.footer p {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+/* ======================== RESPONSIVE ======================== */
+@media (max-width: 768px) {
+  html { font-size: 16px; }
+  .cover h1 { font-size: 2.2rem; }
+  .toc-grid { grid-template-columns: 1fr; }
+  .comparison-row { grid-template-columns: 1fr; }
+  .cover::before { left: 1rem; right: 1rem; top: 1rem; bottom: 1rem; }
+  .cover-border-top, .cover-border-bottom { left: 1.5rem; right: 1.5rem; }
+  .main-content { padding: 0 1.2rem 3rem; }
+  .pull-quote { padding: 1.5rem; }
+  .formula-block { padding: 1rem; font-size: 0.8rem; }
+}
+
+@media print {
+  body::before { display: none; }
+  .scroll-top { display: none; }
+  details { border: none; }
+  details summary { display: none; }
+  details .details-content { padding: 0; }
+  details[open] { display: block; }
+  .section-break { page-break-before: always; }
+  .diagram-container { page-break-inside: avoid; }
+}
+
+/* ======================== ANIMATIONS ======================== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-in {
+  opacity: 0;
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.animate-in:nth-child(2) { animation-delay: 0.1s; }
+.animate-in:nth-child(3) { animation-delay: 0.2s; }
+.animate-in:nth-child(4) { animation-delay: 0.3s; }
+</style>
+</head>
+<body>
+
+<!-- ======================== COVER ======================== -->
+<header class="cover">
+  <div class="cover-border-top"></div>
+  <div class="cover-border-bottom"></div>
+  <span class="cover-unit">Unit V · TCS-602 / TCS-611 · Software Engineering</span>
+  <div class="cover-ornament"></div>
+  <h1>Software Maintenance,<br>Project Management<br>& Quality Assurance</h1>
+  <div class="cover-ornament"></div>
+  <h2>A comprehensive study document for deep understanding, long-term retention, and confident exam reproduction</h2>
+  <div class="cover-ornament"></div>
+  <p class="cover-meta">COCOMO &middot; SCM &middot; SQA &middot; SEI-CMM &middot; ISO 9000 &middot; Risk Management &middot; CASE Tools</p>
+</header>
+
+<!-- ======================== TABLE OF CONTENTS ======================== -->
+<nav class="toc" id="toc">
+  <h2 class="toc-header">Table of Contents</h2>
+  <p class="toc-subheader">A Map of What Lies Ahead</p>
+  <div class="toc-grid">
+    <a href="#sec-5-1" class="toc-card animate-in">
+      <span class="toc-number">Section 5.1</span>
+      <div class="toc-title">Software Maintenance &amp; Re-Engineering</div>
+      <p class="toc-desc">Evolutionary nature, maintenance categories, costs, re-engineering, and reverse engineering</p>
+    </a>
+    <a href="#sec-5-2" class="toc-card animate-in">
+      <span class="toc-number">Section 5.2</span>
+      <div class="toc-title">Software Project Management &amp; SCM</div>
+      <p class="toc-desc">SPM activities, change control, version control, and CASE tools</p>
+    </a>
+    <a href="#sec-5-3" class="toc-card animate-in">
+      <span class="toc-number">Section 5.3</span>
+      <div class="toc-title">COCOMO &amp; Risk Management</div>
+      <p class="toc-desc">Estimation models, worked numerical problems, and risk analysis</p>
+    </a>
+    <a href="#sec-5-4" class="toc-card animate-in">
+      <span class="toc-number">Section 5.4</span>
+      <div class="toc-title">Software Quality Assurance</div>
+      <p class="toc-desc">SQA plans, ISO 9000, SEI-CMM maturity levels and KPAs</p>
+    </a>
+    <a href="#sec-rev" class="toc-card animate-in">
+      <span class="toc-number">Revision</span>
+      <div class="toc-title">Exam Night Recap Sheet</div>
+      <p class="toc-desc">Formulas, mnemonics, diagram guide, and most likely questions</p>
+    </a>
+    <a href="#sec-pyq" class="toc-card animate-in">
+      <span class="toc-number">Appendix</span>
+      <div class="toc-title">PYQ Answer Bank</div>
+      <p class="toc-desc">University-style model answers for every question in the syllabus</p>
+    </a>
+  </div>
+</nav>
+
+<!-- ======================== MAIN CONTENT ======================== -->
+<main class="main-content">
+
+<!-- ============================================================ -->
+<!-- SECTION 5.1                                                    -->
+<!-- ============================================================ -->
+<div class="section-break" id="sec-5-1">
+  <span class="section-number">Section 5.1</span>
+  <h2>Software Maintenance<br>&amp; Re-Engineering</h2>
+  <p class="section-subtitle">On why software is never truly finished, only abandoned</p>
+</div>
+
+<!-- Software as Evolutionary Entity -->
+<h3>Software as an Evolutionary Entity</h3>
+
+<p>There is a deeply ingrained misconception among those who have never managed a large software system — and even among some who have — that software, once written, is essentially done. The code exists; the features work; the system has been deployed; the team moves on. This view treats software the way one might treat a bridge or a building: once the last bolt is tightened and the ribbon is cut, the structure stands on its own, requiring only occasional paint and inspection. But software is not a bridge. Software is more like a living organism embedded in an ecosystem that never stops changing, and it must change with that ecosystem or it dies. The operating system upgrades. The hardware evolves. The business requirements shift because the market shifted because a competitor launched something nobody anticipated three years ago. The database vendor deprecated an API. A government regulation changed how tax must be calculated. Users discovered they need a feature nobody thought to ask about during the original requirements phase. The law library was updated. The currency symbol changed. Each of these external perturbations sends a ripple through the software, and the software must respond or become obsolete.</p>
+
+<p>This insight was formalized most influentially by Meir Manny Lehman, a computer scientist who spent decades studying the evolution of large-scale software systems at IBM and later at Imperial College London. Lehman observed that real-world software systems do not follow a simple birth-and-stable-life pattern but rather exhibit continuous, predictable patterns of growth and change throughout their operational lifetimes. He codified these observations into what are now known as <strong>Lehman's Laws of Software Evolution</strong>, a set of eight empirical laws that describe how software systems behave in practice. The most important of these laws for our purposes are: (1) the <strong>Law of Continuing Change</strong>, which states that a program that is used in a real-world environment must necessarily change or become progressively less useful in that environment; (2) the <strong>Law of Increasing Complexity</strong>, which observes that as a system evolves, its complexity increases unless work is done to reduce it; (3) the <strong>Law of Conservation of Familiarity</strong>, which notes that the perceived functionality of a system remains roughly constant across its lifetime even as the code itself grows, because users acclimate to the rate of change; and (4) the <strong>Law of Declining Quality</strong>, which warns that the quality of a system will appear to decline unless it is rigorously maintained and adapted to changes in its operational environment.</p>
+
+<p>Lehman divided all software into two broad categories. <strong>S-type software</strong> (static-type) is software that can be completely specified and, once written, need never change because the problem it solves is formally defined and unchanging — a calculator that computes square roots, for instance, or a tax form printer for a specific year. <strong>E-type software</strong> (embedded-type) is software that is embedded in a real-world environment and must therefore co-evolve with that environment. Virtually all large-scale, commercially important software systems are E-type: banking systems, hospital management systems, airline reservation platforms, e-commerce sites, government databases, operating systems. For E-type software, maintenance is not a regrettable afterthought; it is the dominant activity across the software's entire lifecycle, consuming the majority of all effort and expenditure ever invested in the system.</p>
+
+<div class="pull-quote">
+  <p>The real problem is not whether machines think, but whether software, once deployed, can continue to function in a world that refuses to stand still.</p>
+  <p class="pq-attr">— Paraphrasing the spirit of Lehman's empirical programme</p>
+</div>
+
+<p>The practical implication of viewing software as an evolutionary entity is profound and far-reaching. It means that the initial development of a software system — the phase most students learn about most thoroughly in their software engineering courses — accounts for only a fraction of the total cost and effort over the system's lifetime. Industry data consistently shows that <strong>60 to 80 percent of the total lifecycle cost</strong> of a large software system is consumed by maintenance activities. Some estimates push this figure even higher for defence and government systems with long operational lifetimes. The Indian banking sector, for example, maintains enormous COBOL-based core banking systems that have been continuously modified for decades, and the annual maintenance budget for these systems dwarfs the original development cost many times over. When Infosys or TCS takes on a maintenance contract for a multinational client, they are not merely fixing bugs in old code; they are shepherding a complex, evolving organism through an environment that never stops changing.</p>
+
+<!-- Need for Maintenance -->
+<h3>The Need for Maintenance</h3>
+
+<p>Why does software need maintenance? The answer seems obvious when stated plainly, but the depth and breadth of the reasons are often underappreciated. Consider the various forces that conspire to demand changes in a deployed software system. The most intuitive reason is <strong>defects</strong> — bugs that escaped detection during testing and were discovered by users in production. No testing process, however rigorous, can guarantee the absence of all defects in a complex system, and some bugs manifest only under specific combinations of data, timing, user behaviour, or environmental conditions that were never exercised during development. A payroll system might calculate taxes incorrectly only when an employee has exactly three dependents and earns between two specific salary bands in a leap year. Such defects must be found and fixed after deployment, and that fix constitutes maintenance.</p>
+
+<p>But defects are only one reason, and often not the most expensive one. <strong>Adaptive changes</strong> are required whenever the environment in which the software operates changes. A new version of the operating system is released. The database management system is upgraded. The web browser drops support for a plugin the application depends upon. A hardware platform is phased out and the software must be ported to a new one. India's transition from GST implementation required modifications to virtually every accounting and invoicing software in the country — not because the existing software was defective, but because the external regulatory environment had changed. Similarly, when the European Union enacted GDPR, every software system that handled European user data had to be modified to comply with new data protection requirements.</p>
+
+<p><strong>Perfective changes</strong> arise from the desire to improve the software's performance, usability, or functionality based on user feedback and evolving business needs. Users discover that the workflow they thought they wanted is not quite what they actually need. A feature that seemed adequate during requirements analysis turns out to be clunky and slow in daily use. A new business opportunity requires adding a module that nobody conceived of during the original design. Competitive pressure demands that the software's user interface be modernised because a rival product now looks and feels significantly better. These enhancements are maintenance too, and they are often the largest category of maintenance work in commercial software.</p>
+
+<p><strong>Preventive changes</strong> are proactive modifications made not because something is currently broken, but because the development team recognises that the software's architecture, code structure, or documentation has degraded to a point where future changes will become prohibitively difficult and expensive if the degradation is not addressed now. This is analogous to preventive medicine: you exercise and eat well not because you are currently ill, but because you want to reduce the risk of future illness. In software, preventive maintenance includes refactoring code to reduce complexity, updating documentation to reflect the current state of the system, replacing obsolete components with modern alternatives, and restructuring databases to improve query performance. Lehman's Law of Increasing Complexity warns us that without such preventive effort, the complexity of a system will grow until it becomes effectively unmodifiable — a state sometimes called "software entropy" or "bit rot."</p>
+
+<div class="annotation">
+  Every major IT services company in India — TCS, Infosys, Wipro, HCL — derives a significant portion of its revenue from maintenance contracts. Understanding maintenance is not just academically important; it is the bread and butter of the Indian software industry.
+</div>
+
+<!-- Categories of Maintenance -->
+<h3>Categories of Maintenance</h3>
+
+<p>Software maintenance is categorised into four principal types, each addressing a different kind of change and driven by different motivations. Understanding these categories is essential not only for academic purposes but also for practical project management, because the mix of maintenance types in a given system determines the skills required, the risk profile, and the cost structure of the maintenance effort.</p>
+
+<h4>1. Corrective Maintenance</h4>
+
+<p>Corrective maintenance is the most intuitive category: it involves diagnosing and fixing errors, defects, and faults discovered in the software after it has been deployed. These faults may have been introduced during any phase of development — faulty logic in the design, a coding error, an incomplete test case, a misunderstood requirement — but they only become visible when the software is exercised in the production environment by real users with real data. Corrective maintenance includes fixing crashes, resolving data corruption issues, correcting incorrect calculations, repairing security vulnerabilities, and addressing any other behaviour that deviates from the software's intended and specified behaviour. In a well-run organisation, corrective maintenance is triggered by bug reports submitted through a defect tracking system, and each fix follows a structured process: reproduce the defect, diagnose the root cause, implement the fix, test the fix, and deploy the corrected version. It is worth noting that corrective maintenance typically accounts for only about 20-25% of all maintenance effort, a fact that surprises many students who assume that "maintenance" means "fixing bugs."</p>
+
+<h4>2. Adaptive Maintenance</h4>
+
+<p>Adaptive maintenance involves modifying the software to keep it functional in a changing environment. The software itself may be perfectly correct and complete as originally delivered, but the world around it has changed, and the software must adapt to continue operating correctly. Examples include porting the software to a new operating system (moving from Windows 7 to Windows 10, for instance), upgrading to a new version of a database management system, modifying the software to comply with new regulatory requirements (such as changes in tax law, data protection legislation, or industry standards), adapting to new hardware platforms, or updating interfaces to work with new versions of third-party APIs and libraries. Adaptive maintenance accounts for roughly 20-25% of maintenance effort and is particularly common in enterprise systems that must integrate with many external systems and comply with evolving regulatory frameworks. In the Indian context, adaptive maintenance surges whenever the government changes tax structures, introduces new financial regulations, or mandates new compliance standards.</p>
+
+<h4>3. Perfective Maintenance</h4>
+
+<p>Perfective maintenance is the largest category, consuming approximately 40-50% of all maintenance effort. It involves improving the software by enhancing its functionality, performance, or usability. This includes adding new features requested by users, optimising the system's performance to handle increased load, improving the user interface based on usability studies, enhancing documentation, and restructuring code to improve maintainability for future changes. Perfective maintenance is driven by the recognition that the initial release of any software system is rarely the final word on what the system should do. Users learn what they truly need by using the system, and their feedback generates a continuous stream of enhancement requests. A hospital management system might initially support only patient registration and billing, but over time, perfective maintenance adds modules for laboratory results, pharmacy management, appointment scheduling, telemedicine integration, and analytics dashboards. Each addition is perfective maintenance.</p>
+
+<h4>4. Preventive Maintenance</h4>
+
+<p>Preventive maintenance, sometimes called "software re-engineering" when it involves significant restructuring, is proactive work done to improve the software's maintainability and reliability without changing its observable functionality. The goal is to make the system easier to understand, modify, and test in the future. Activities include refactoring tangled code into cleaner structures, updating outdated comments and documentation, converting legacy code to modern programming languages, reorganising database schemas to improve query performance and reduce redundancy, and replacing deprecated libraries with supported alternatives. Preventive maintenance typically accounts for about 5-10% of total maintenance effort, but this proportion tends to increase as systems age and their original architectural assumptions become increasingly mismatched with current requirements. A system that has been maintained through years of corrective, adaptive, and perfective changes without adequate preventive maintenance will eventually reach a state where every change introduces new defects and the cost of modification becomes prohibitive.</p>
+
+<div class="diagram-container">
+  <div class="diagram-title">The Four Categories of Software Maintenance</div>
+  <svg viewBox="0 0 700 400" xmlns="http://www.w3.org/2000/svg" style="max-width: 600px;">
+    <!-- Background -->
+    <rect x="50" y="30" width="600" height="340" rx="3" fill="#faf6ed" stroke="#d4c9b5" stroke-width="1"/>
+    <!-- Title bar -->
+    <rect x="50" y="30" width="600" height="36" rx="3" fill="#3d2a1a"/>
+    <text x="350" y="54" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#faf6ed">Software Maintenance Categories — Proportional Effort</text>
+
+    <!-- Corrective -->
+    <rect x="80" y="90" width="130" height="120" rx="3" fill="#e8ddca" stroke="#b84233" stroke-width="2"/>
+    <text x="145" y="118" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="700" fill="#b84233">Corrective</text>
+    <text x="145" y="140" text-anchor="middle" font-family="DM Mono, monospace" font-size="22" font-weight="500" fill="#3d2a1a">~20%</text>
+    <text x="145" y="160" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" fill="#5c4e3c">Fixing bugs &amp;</text>
+    <text x="145" y="174" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" fill="#5c4e3c">defects</text>
+    <text x="145" y="200" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#8a7d6b" font-style="italic">Reactive</text>
+
+    <!-- Adaptive -->
+    <rect x="225" y="90" width="130" height="120" rx="3" fill="#e8ddca" stroke="#2d6b6a" stroke-width="2"/>
+    <text x="290" y="118" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="700" fill="#2d6b6a">Adaptive</text>
+    <text x="290" y="140" text-anchor="middle" font-family="DM Mono, monospace" font-size="22" font-weight="500" fill="#3d2a1a">~25%</text>
+    <text x="290" y="160" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" fill="#5c4e3c">Environment</text>
+    <text x="290" y="174" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" fill="#5c4e3c">changes</text>
+    <text x="290" y="200" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#8a7d6b" font-style="italic">Reactive</text>
+
+    <!-- Perfective -->
+    <rect x="370" y="90" width="130" height="120" rx="3" fill="#e8ddca" stroke="#c9a84c" stroke-width="2"/>
+    <text x="435" y="118" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="700" fill="#6b4e37">Perfective</text>
+    <text x="435" y="140" text-anchor="middle" font-family="DM Mono, monospace" font-size="22" font-weight="500" fill="#3d2a1a">~50%</text>
+    <text x="435" y="160" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" fill="#5c4e3c">Enhancements &amp;</text>
+    <text x="435" y="174" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" fill="#5c4e3c">improvements</text>
+    <text x="435" y="200" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#8a7d6b" font-style="italic">Proactive</text>
+
+    <!-- Preventive -->
+    <rect x="515" y="90" width="110" height="120" rx="3" fill="#e8ddca" stroke="#6b4e37" stroke-width="2"/>
+    <text x="570" y="118" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="700" fill="#6b4e37">Preventive</text>
+    <text x="570" y="140" text-anchor="middle" font-family="DM Mono, monospace" font-size="22" font-weight="500" fill="#3d2a1a">~5%</text>
+    <text x="570" y="160" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" fill="#5c4e3c">Future-</text>
+    <text x="570" y="174" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" fill="#5c4e3c">proofing</text>
+    <text x="570" y="200" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#8a7d6b" font-style="italic">Proactive</text>
+
+    <!-- Divider line -->
+    <line x1="365" y1="230" x2="365" y2="250" stroke="#d4c9b5" stroke-width="1" stroke-dasharray="4,3"/>
+
+    <!-- Bottom labels -->
+    <text x="210" y="275" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#b84233" letter-spacing="0.1em">← REACTIVE MAINTENANCE →</text>
+    <text x="510" y="275" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#6b4e37" letter-spacing="0.1em">← PROACTIVE MAINTENANCE →</text>
+
+    <!-- Bar chart visual -->
+    <rect x="100" y="305" width="100" height="18" rx="2" fill="#b84233" opacity="0.8"/>
+    <text x="95" y="318" text-anchor="end" font-family="DM Mono, monospace" font-size="9" fill="#5c4e3c">20%</text>
+    <rect x="100" y="328" width="125" height="18" rx="2" fill="#2d6b6a" opacity="0.8"/>
+    <text x="95" y="341" text-anchor="end" font-family="DM Mono, monospace" font-size="9" fill="#5c4e3c">25%</text>
+    <rect x="100" y="351" width="250" height="18" rx="2" fill="#c9a84c" opacity="0.8"/>
+    <text x="95" y="364" text-anchor="end" font-family="DM Mono, monospace" font-size="9" fill="#5c4e3c">50%</text>
+  </svg>
+  <p class="diagram-caption">Fig. 5.1 — The four categories of software maintenance and their approximate proportional effort. Note that perfective maintenance (enhancements and improvements) dominates the maintenance landscape.</p>
+</div>
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Aspect</th>
+        <th>Corrective</th>
+        <th>Adaptive</th>
+        <th>Perfective</th>
+        <th>Preventive</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>What triggers it</strong></td>
+        <td>Bugs, defects, faults in production</td>
+        <td>Changes in the external environment (OS, hardware, regulations)</td>
+        <td>User requests, performance issues, usability feedback</td>
+        <td>Code degradation, rising complexity, architectural erosion</td>
+      </tr>
+      <tr>
+        <td><strong>When it's done</strong></td>
+        <td>After a defect is reported</td>
+        <td>When the environment changes</td>
+        <td>Based on business priorities and user feedback</td>
+        <td>Proactively, before problems become severe</td>
+      </tr>
+      <tr>
+        <td><strong>Nature</strong></td>
+        <td>Reactive</td>
+        <td>Reactive</td>
+        <td>Both reactive and proactive</td>
+        <td>Proactive</td>
+      </tr>
+      <tr>
+        <td><strong>Effect on functionality</strong></td>
+        <td>Fixes incorrect behaviour to match specification</td>
+        <td>Preserves existing functionality in a new environment</td>
+        <td>Adds or improves functionality</td>
+        <td>No change to external functionality; improves internal structure</td>
+      </tr>
+      <tr>
+        <td><strong>Typical effort share</strong></td>
+        <td>~20%</td>
+        <td>~25%</td>
+        <td>~50%</td>
+        <td>~5%</td>
+      </tr>
+      <tr>
+        <td><strong>Example</strong></td>
+        <td>Fix a calculation error in a payroll module</td>
+        <td>Port an application from Python 2 to Python 3</td>
+        <td>Add a reporting dashboard to an ERP system</td>
+        <td>Refactor a monolithic module into microservices</td>
+      </tr>
+      <tr>
+        <td><strong>Risk level</strong></td>
+        <td>Low to medium (localised fix)</td>
+        <td>Medium to high (broad impact)</td>
+        <td>Medium (new code may introduce new defects)</td>
+        <td>Low (no functional change, but structural risk)</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="exam-tip">
+  <div class="tip-label">Exam Writing Strategy — 10-Mark Question on Maintenance Categories</div>
+  <p>When answering a question on maintenance categories in a 10-mark question, structure your answer as follows:</p>
+  <ul>
+    <li><strong>Opening paragraph:</strong> Define software maintenance (one paragraph). State that it consumes 60-80% of lifecycle cost.</li>
+    <li><strong>Body (four sections):</strong> Dedicate one well-developed paragraph to each category — Corrective, Adaptive, Perfective, Preventive. For each, define it, explain the motivation, give a concrete example, and state its approximate effort share.</li>
+    <li><strong>Table:</strong> Draw a comparison table (even a simple one) to demonstrate structured understanding.</li>
+    <li><strong>Closing paragraph:</strong> Discuss why understanding these categories matters for project planning and resource allocation. Reference Lehman's laws briefly.</li>
+    <li>This structure should comfortably generate 500-800 words.</li>
+  </ul>
+</div>
+
+<h4>Common Student Confusion: Adaptive vs. Perfective</h4>
+
+<p>Students frequently confuse adaptive and perfective maintenance, and the confusion is understandable because both involve making changes to the software. The distinction lies in the <strong>source of the change request</strong>. In adaptive maintenance, the change is driven by something external to the software itself — the operating system changed, the hardware platform changed, the law changed, the database vendor changed. The software must adapt to survive in its new environment, even though the software's own intended functionality has not changed. In perfective maintenance, the change is driven by the software's users or stakeholders who want the software to do something different or better — a new feature, a faster algorithm, a more intuitive interface. Here, the software's intended functionality itself is being modified or extended. A helpful mnemonic: <strong>adaptive maintenance changes the software to match a changing world; perfective maintenance changes the software to better serve its users.</strong></p>
+
+<div class="memory-anchor">
+  <span class="ma-label">Memory Anchor</span>
+  <p><strong>C-A-P-P</strong> — <strong>C</strong>orrective (fixing), <strong>A</strong>daptive (adapting to environment), <strong>P</strong>erfective (perfecting/enhancing), <strong>P</strong>reventive (preventing future problems). Alternatively: "CAP-P is the CAP of maintenance — Corrective fixes the Past, Adaptive handles the Present environment, Perfective pursues the Possible future, Preventive Protects against problems."</p>
+</div>
+
+<!-- Cost of Maintenance -->
+<h3>Cost of Maintenance</h3>
+
+<p>The cost of software maintenance is not merely a financial abstraction; it is the single most important factor in the economic viability of long-lived software systems, and it directly influences decisions about whether to maintain an existing system, replace it with a new one, or simply let it deteriorate. Industry studies consistently show that maintenance consumes between 60% and 80% of the total lifecycle cost of a software system, with some government and defence systems reporting figures as high as 90%. These numbers are not surprising when one considers the forces at work: software is deployed into a world that changes continuously, and every change in the world potentially requires a change in the software.</p>
+
+<p>Several factors influence the cost of maintenance. The <strong>age and size</strong> of the software system are primary determinants — older and larger systems tend to be more expensive to maintain because they have accumulated more technical debt, more complex interdependencies, and more undocumented knowledge. The <strong>quality of the original design and documentation</strong> has an enormous impact: a well-designed system with clear documentation, modular architecture, and comprehensive test suites is far easier and cheaper to maintain than a poorly designed system with tangled code, missing documentation, and no automated tests. The <strong>skills and experience of the maintenance team</strong> matter greatly, particularly the team's familiarity with the system's domain and architecture. The <strong>tools and infrastructure</strong> available for maintenance — defect tracking systems, version control, automated testing frameworks, continuous integration pipelines — also affect cost. Finally, the <strong>stability of the environment</strong> in which the software operates influences maintenance costs: software deployed in a rapidly changing regulatory or technological environment will incur higher adaptive maintenance costs.</p>
+
+<div class="diagram-container">
+  <div class="diagram-title">Factors Influencing Software Maintenance Cost</div>
+  <svg viewBox="0 0 700 350" xmlns="http://www.w3.org/2000/svg" style="max-width: 600px;">
+    <!-- Central node -->
+    <circle cx="350" cy="175" r="55" fill="#3d2a1a" stroke="#b84233" stroke-width="2"/>
+    <text x="350" y="170" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" font-weight="700" fill="#faf6ed">Maintenance</text>
+    <text x="350" y="186" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" font-weight="700" fill="#faf6ed">Cost</text>
+
+    <!-- Age & Size -->
+    <line x1="300" y1="140" x2="160" y2="60" stroke="#d4c9b5" stroke-width="1.5"/>
+    <circle cx="140" cy="50" r="38" fill="#e8ddca" stroke="#2d6b6a" stroke-width="1.5"/>
+    <text x="140" y="46" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#2d6b6a">Age &amp;</text>
+    <text x="140" y="60" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#2d6b6a">Size</text>
+
+    <!-- Documentation Quality -->
+    <line x1="395" y1="135" x2="540" y2="55" stroke="#d4c9b5" stroke-width="1.5"/>
+    <circle cx="560" cy="45" r="38" fill="#e8ddca" stroke="#c9a84c" stroke-width="1.5"/>
+    <text x="560" y="41" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#6b4e37">Documentation</text>
+    <text x="560" y="55" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#6b4e37">Quality</text>
+
+    <!-- Team Skills -->
+    <line x1="300" y1="210" x2="140" y2="280" stroke="#d4c9b5" stroke-width="1.5"/>
+    <circle cx="125" cy="290" r="38" fill="#e8ddca" stroke="#b84233" stroke-width="1.5"/>
+    <text x="125" y="286" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#b84233">Team</text>
+    <text x="125" y="300" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#b84233">Skills</text>
+
+    <!-- Tools & Infra -->
+    <line x1="395" y1="215" x2="560" y2="285" stroke="#d4c9b5" stroke-width="1.5"/>
+    <circle cx="575" cy="295" r="38" fill="#e8ddca" stroke="#6b4e37" stroke-width="1.5"/>
+    <text x="575" y="291" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#6b4e37">Tools &amp;</text>
+    <text x="575" y="305" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#6b4e37">Infrastructure</text>
+
+    <!-- Environment Stability -->
+    <line x1="405" y1="175" x2="640" y2="175" stroke="#d4c9b5" stroke-width="1.5"/>
+    <circle cx="650" cy="175" r="30" fill="#e8ddca" stroke="#2d6b6a" stroke-width="1.5"/>
+    <text x="650" y="171" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" font-weight="600" fill="#2d6b6a">Environment</text>
+    <text x="650" y="184" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" font-weight="600" fill="#2d6b6a">Stability</text>
+
+    <!-- Design Quality -->
+    <line x1="295" y1="175" x2="60" y2="175" stroke="#d4c9b5" stroke-width="1.5"/>
+    <circle cx="50" cy="175" r="30" fill="#e8ddca" stroke="#c9a84c" stroke-width="1.5"/>
+    <text x="50" y="171" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" font-weight="600" fill="#6b4e37">Design</text>
+    <text x="50" y="184" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" font-weight="600" fill="#6b4e37">Quality</text>
+  </svg>
+  <p class="diagram-caption">Fig. 5.2 — The six principal factors that influence the cost of software maintenance. Each factor contributes independently, but their effects are multiplicative: a poorly designed, undocumented legacy system maintained by an inexperienced team in a rapidly changing environment will be catastrophically expensive to maintain.</p>
+</div>
+
+<!-- Re-Engineering -->
+<h3>Software Re-Engineering</h3>
+
+<p>Software re-engineering is the process of examining and modifying an existing software system to reconstitute it in a new form, with the goal of improving its quality, maintainability, and performance without changing its essential functionality. Think of it as renovating an old house: the walls stay in roughly the same place, the rooms serve the same purposes, but the wiring is brought up to code, the plumbing is modernised, the insulation is improved, and the facade is refreshed. The house looks and works better, but it is recognisably the same house in the same location. Re-engineering is not the same as building a new system from scratch; it deliberately preserves the existing system's accumulated knowledge, business logic, and user familiarity while improving its internal structure and external qualities.</p>
+
+<p>The re-engineering process typically involves several sequential activities. First, <strong>inventory analysis</strong> examines the portfolio of existing systems to identify which ones are candidates for re-engineering based on their business value, maintenance cost, technical quality, and strategic importance. Second, <strong>document restructuring</strong> improves or creates the documentation for the existing system, because a system that cannot be understood cannot be effectively re-engineered. Third, <strong>reverse engineering</strong> analyses the existing system to extract its design, architecture, and business rules from the source code — essentially working backward from implementation to specification. Fourth, <strong>code restructuring</strong> modifies the source code to improve its structure without changing its behaviour — refactoring in the modern terminology. Fifth, <strong>data restructuring</strong> reorganises the system's data structures and database schemas to improve data quality, reduce redundancy, and support new requirements. Sixth, <strong>forward engineering</strong> uses the improved design and documentation to rebuild parts of the system using modern development practices, tools, and technologies.</p>
+
+<div class="diagram-container">
+  <div class="diagram-title">The Software Re-Engineering Process</div>
+  <svg viewBox="0 0 700 420" xmlns="http://www.w3.org/2000/svg" style="max-width: 620px;">
+    <!-- Background -->
+    <rect x="30" y="10" width="640" height="400" rx="3" fill="#faf6ed" stroke="#d4c9b5" stroke-width="1"/>
+
+    <!-- Step 1: Inventory -->
+    <rect x="60" y="30" width="150" height="60" rx="3" fill="#3d2a1a"/>
+    <text x="135" y="55" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" font-weight="600" fill="#faf6ed">1. Inventory</text>
+    <text x="135" y="72" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#d4c9b5">Analysis</text>
+
+    <!-- Arrow 1→2 -->
+    <line x1="210" y1="60" x2="240" y2="60" stroke="#b84233" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+
+    <!-- Step 2: Document -->
+    <rect x="245" y="30" width="150" height="60" rx="3" fill="#2d6b6a"/>
+    <text x="320" y="55" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" font-weight="600" fill="#faf6ed">2. Document</text>
+    <text x="320" y="72" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#d4c9b5">Restructuring</text>
+
+    <!-- Arrow 2→3 -->
+    <line x1="395" y1="60" x2="425" y2="60" stroke="#b84233" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+
+    <!-- Step 3: Reverse Eng -->
+    <rect x="430" y="30" width="170" height="60" rx="3" fill="#6b4e37"/>
+    <text x="515" y="55" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" font-weight="600" fill="#faf6ed">3. Reverse</text>
+    <text x="515" y="72" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#d4c9b5">Engineering</text>
+
+    <!-- Arrow 3→4 (down) -->
+    <line x1="515" y1="90" x2="515" y2="130" stroke="#b84233" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+
+    <!-- Step 4: Code Restructuring -->
+    <rect x="430" y="135" width="170" height="60" rx="3" fill="#b84233"/>
+    <text x="515" y="160" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" font-weight="600" fill="#faf6ed">4. Code</text>
+    <text x="515" y="177" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#faf6ed">Restructuring</text>
+
+    <!-- Arrow 4→5 -->
+    <line x1="430" y1="165" x2="370" y2="165" stroke="#b84233" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+
+    <!-- Step 5: Data Restructuring -->
+    <rect x="195" y="135" width="170" height="60" rx="3" fill="#c9a84c"/>
+    <text x="280" y="160" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" font-weight="600" fill="#3d2a1a">5. Data</text>
+    <text x="280" y="177" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#3d2a1a">Restructuring</text>
+
+    <!-- Arrow 5→6 (down) -->
+    <line x1="280" y1="195" x2="280" y2="240" stroke="#b84233" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+
+    <!-- Step 6: Forward Engineering -->
+    <rect x="200" y="245" width="160" height="60" rx="3" fill="#3d2a1a"/>
+    <text x="280" y="270" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" font-weight="600" fill="#faf6ed">6. Forward</text>
+    <text x="280" y="287" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#d4c9b5">Engineering</text>
+
+    <!-- Output: Re-engineered System -->
+    <line x1="280" y1="305" x2="280" y2="340" stroke="#b84233" stroke-width="1.5" marker-end="url(#arrow-red)"/>
+    <rect x="170" y="345" width="220" height="50" rx="3" fill="#2d6b6a"/>
+    <text x="280" y="367" text-anchor="middle" font-family="Playfair Display, serif" font-size="11" font-weight="700" fill="#faf6ed">Re-Engineered System</text>
+    <text x="280" y="384" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#d4c9b5">Improved quality · Same functionality</text>
+
+    <!-- Arrow marker -->
+    <defs>
+      <marker id="arrow-red" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#b84233"/>
+      </marker>
+    </defs>
+
+    <!-- Labels -->
+    <text x="350" y="128" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#8a7d6b" letter-spacing="0.1em">ANALYSIS PHASE</text>
+    <text x="595" y="128" text-anchor="start" font-family="DM Mono, monospace" font-size="8" fill="#8a7d6b" letter-spacing="0.1em">RESTRUCTURING PHASE</text>
+    <text x="135" y="280" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#8a7d6b" letter-spacing="0.1em">REBUILD PHASE</text>
+  </svg>
+  <p class="diagram-caption">Fig. 5.3 — The six sequential phases of the software re-engineering process, from initial inventory analysis through to the delivery of an improved system that preserves the original functionality.</p>
+</div>
+
+<p>The economic rationale for re-engineering rather than replacement is compelling. Building a new system from scratch involves enormous risk and cost: the requirements must be gathered again, the design must be created again, the code must be written and tested again, and the new system must be validated against the same complex business rules that the old system already embodies. Industry estimates suggest that the cost of replacing a legacy system is typically three to five times the cost of re-engineering it, and the risk of failure is substantially higher because the new development team must re-discover knowledge that was already embedded — however imperfectly — in the existing system. Re-engineering preserves that embedded knowledge while improving the system's technical quality, making it a pragmatic and economically rational strategy for many organisations.</p>
+
+<!-- Reverse Engineering -->
+<h3>Reverse Engineering</h3>
+
+<p>Reverse engineering is the process of analysing an existing system to identify its components, their interrelationships, and the principles by which they operate, in order to create representations of the system at a higher level of abstraction. If forward engineering moves from specification to implementation (design → code), reverse engineering moves from implementation back toward specification (code → design → understanding). It is the critical intellectual core of the re-engineering process, because you cannot improve a system you do not understand, and many legacy systems have outlived their documentation, their original developers, and any organisational memory of why certain design decisions were made.</p>
+
+<p>Reverse engineering is performed at multiple levels of abstraction. At the lowest level, <strong>code-level reverse engineering</strong> analyses source code to extract structural information: control flow graphs, data flow diagrams, module dependency maps, and call hierarchies. At the middle level, <strong>design-level reverse engineering</strong> uses the structural information extracted from code to reconstruct the system's architectural design: its modules, interfaces, data structures, and the patterns used to organise them. At the highest level, <strong>domain-level reverse engineering</strong> attempts to recover the system's business rules and domain knowledge — the understanding of the problem domain that motivated the system's design. This is the most difficult and most valuable form of reverse engineering, because business rules are rarely explicit in the code; they are implicit in the combination of data structures, algorithms, control flows, and user interface elements that the code implements.</p>
+
+<p>Tools for reverse engineering include static analysis tools that examine source code without executing it (such as Understand, SonarGraph, and various IDE features), dynamic analysis tools that observe the system's behaviour during execution (profilers, debuggers, trace analysers), and specialised reverse engineering environments that combine static and dynamic analysis to produce comprehensive models of the existing system. In the Indian IT industry, reverse engineering is particularly important in the context of legacy modernisation projects, where large COBOL or mainframe systems must be understood well enough to be migrated to modern platforms.</p>
+
+<div class="annotation">
+  Reverse engineering of software for the purpose of understanding, maintaining, or improving interoperability is generally legal and ethically accepted. However, reverse engineering for the purpose of copying or cloning proprietary software raises significant legal and ethical issues. Always be aware of the intellectual property context when performing reverse engineering.
+</div>
+
+<!-- SPM Section -->
+<!-- ============================================================ -->
+<!-- SECTION 5.2                                                    -->
+<!-- ============================================================ -->
+<div class="section-break" id="sec-5-2">
+  <span class="section-number">Section 5.2</span>
+  <h2>Software Project Management<br>&amp; Configuration Management</h2>
+  <p class="section-subtitle">The discipline of turning chaos into organised progress</p>
+</div>
+
+<h3>Software Project Management (SPM)</h3>
+
+<p>Software Project Management is the art and discipline of planning, organising, staffing, directing, and controlling the activities of a software project so that the desired software product is delivered within the constraints of time, cost, quality, and scope. It is tempting to think of software project management as a purely administrative function — scheduling meetings, tracking milestones, filing status reports — but in practice it is a deeply technical activity that requires an intimate understanding of the software development process, the capabilities and limitations of the development team, the nature of the problem being solved, and the myriad risks that can derail even the most carefully planned project. The software project manager must simultaneously be a technical leader who understands the architectural decisions being made, a business analyst who understands the stakeholders' needs and priorities, a psychologist who understands the dynamics of the development team, and a risk manager who can anticipate and mitigate the things that can go wrong.</p>
+
+<p>The activities of Software Project Management can be understood as a sequence of interdependent functions that span the entire project lifecycle. <strong>Project planning</strong> involves defining the project's scope, objectives, and deliverables; estimating the effort, cost, and schedule required; identifying the resources needed; and creating the project plan that will guide all subsequent activities. <strong>Project staffing and organising</strong> involves assembling the development team, defining roles and responsibilities, establishing communication channels, and creating the organisational structure that will enable effective collaboration. <strong>Project directing</strong> involves motivating and guiding the team, making technical decisions, resolving conflicts, and ensuring that the team's daily work is aligned with the project's objectives. <strong>Project monitoring and control</strong> involves tracking progress against the plan, measuring actual effort and cost against estimates, identifying deviations from the plan, and taking corrective action when necessary. <strong>Project risk management</strong> involves identifying, assessing, and mitigating the risks that threaten the project's success. Finally, <strong>project closure</strong> involves delivering the product, obtaining customer acceptance, documenting lessons learned, and releasing resources.</p>
+
+<h4>Steps from Project Initiation to Completion</h4>
+
+<p>The lifecycle of a software project, from its inception to its completion, follows a sequence of stages that can be described as follows. <strong>Feasibility study and project initiation</strong> examines whether the proposed software system is technically feasible, economically viable, and operationally desirable. This stage produces a feasibility report that recommends whether to proceed. <strong>Requirements analysis and specification</strong> elicits, analyses, documents, and validates the requirements for the software system, producing a Software Requirements Specification (SRS) document. <strong>Project planning</strong> uses the requirements to estimate effort, cost, and schedule; allocate resources; identify risks; and produce a comprehensive project plan. <strong>Design</strong> creates the architectural and detailed design of the system, defining the modules, interfaces, data structures, and algorithms. <strong>Implementation (coding)</strong> translates the design into executable code using the chosen programming languages and tools. <strong>Testing</strong> verifies that the software meets its requirements and is free from defects, through unit testing, integration testing, system testing, and acceptance testing. <strong>Deployment and delivery</strong> installs the software in the customer's environment, trains users, and transitions the system to operational status. <strong>Maintenance and evolution</strong> — which, as we discussed at length, consumes the majority of the system's lifecycle effort — provides ongoing support, defect correction, adaptation, and enhancement throughout the system's operational life.</p>
+
+<h4>Agile and Software Project Management</h4>
+
+<p>The Agile methodology, and particularly the <strong>Scrum framework</strong>, has become one of the most widely adopted approaches to software project management in the modern software industry. Scrum supports SPM by providing a lightweight, iterative framework that organises work into short cycles called <strong>sprints</strong> (typically 2-4 weeks), each of which produces a potentially shippable increment of the product. The Scrum framework defines three roles: the <strong>Product Owner</strong>, who represents the stakeholders and prioritises the work; the <strong>Scrum Master</strong>, who facilitates the process and removes impediments; and the <strong>Development Team</strong>, which self-organises to complete the work. The key Scrum ceremonies — <strong>Sprint Planning</strong>, <strong>Daily Standup</strong>, <strong>Sprint Review</strong>, and <strong>Sprint Retrospective</strong> — provide regular touchpoints for planning, monitoring, and adapting the project's direction. Scrum's emphasis on iterative delivery, continuous feedback, and adaptive planning makes it particularly well-suited to software projects where requirements are uncertain or likely to change, which describes the vast majority of real-world software projects.</p>
+
+<!-- SCM -->
+<h3>Software Configuration Management (SCM)</h3>
+
+<p>Software Configuration Management is a set of activities, principles, and practices for identifying, organising, controlling, and tracking changes to the various artifacts (source code, documents, test cases, configuration files, user manuals, and other work products) produced during a software project. The fundamental problem that SCM addresses is one of <strong>controlled change in the face of complexity and collaboration</strong>. In any non-trivial software project, hundreds or thousands of artifacts are produced by dozens of people over a period of months or years. These artifacts are interdependent — a change in one artifact may require corresponding changes in others — and they evolve continuously as defects are fixed, features are added, and the system adapts to changing requirements. Without a systematic approach to managing this evolution, the project quickly descends into chaos: developers overwrite each other's work, nobody knows which version of the code is the "correct" one, bugs that were fixed reappear because someone checked in an older version of a file, and the ability to reproduce any particular version of the system for debugging or auditing purposes is lost.</p>
+
+<p>SCM addresses these problems through several interrelated activities. <strong>Configuration identification</strong> defines what artifacts are subject to configuration management and assigns each a unique identifier. <strong>Configuration control</strong> provides a structured process for proposing, evaluating, approving, and implementing changes to configuration items. <strong>Configuration status accounting</strong> records and reports the status of configuration items and the history of changes made to them. <strong>Configuration auditing</strong> verifies that configuration items conform to their specifications and that changes have been properly implemented and documented. Together, these activities ensure that the project's artifacts are consistently identified, carefully controlled, accurately tracked, and periodically verified.</p>
+
+<h4>Change Control Process</h4>
+
+<p>The change control process is the formal mechanism by which changes to configuration items are proposed, evaluated, approved or rejected, and implemented. Without change control, any developer can modify any artifact at any time, and the resulting disorder makes it impossible to maintain a coherent, reliable system. The change control process typically follows these steps. A <strong>change request</strong> is submitted, describing the proposed change, its rationale, its urgency, and its expected impact. The change request is reviewed by a <strong>Change Control Board (CCB)</strong>, also called the Configuration Control Board, which evaluates the change's technical merit, its impact on other artifacts and on the project's schedule and budget, and the risk of implementing it. The CCB either approves the change (possibly with modifications), defers it for further analysis, or rejects it. If approved, the change is assigned to a developer, implemented, tested, and documented. The change request is then updated to reflect its completion, and the status accounting records are updated. This process ensures that every change is intentional, evaluated, and traceable.</p>
+
+<div class="diagram-container">
+  <div class="diagram-title">The Change Control Process</div>
+  <svg viewBox="0 0 700 350" xmlns="http://www.w3.org/2000/svg" style="max-width: 620px;">
+    <defs>
+      <marker id="arrow-b" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#3d2a1a"/>
+      </marker>
+    </defs>
+
+    <!-- Step 1 -->
+    <rect x="40" y="40" width="130" height="55" rx="3" fill="#b84233"/>
+    <text x="105" y="62" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="600" fill="#faf6ed">1. Change</text>
+    <text x="105" y="78" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="600" fill="#faf6ed">Request</text>
+
+    <line x1="170" y1="67" x2="210" y2="67" stroke="#3d2a1a" stroke-width="1.5" marker-end="url(#arrow-b)"/>
+
+    <!-- Step 2 -->
+    <rect x="215" y="40" width="130" height="55" rx="3" fill="#2d6b6a"/>
+    <text x="280" y="62" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="600" fill="#faf6ed">2. CCB</text>
+    <text x="280" y="78" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="600" fill="#faf6ed">Review</text>
+
+    <!-- Decision diamond -->
+    <polygon points="350,67 390,40 430,67 390,94" fill="#c9a84c" stroke="#6b4e37" stroke-width="1.5"/>
+    <text x="390" y="71" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#3d2a1a" font-weight="500">Approve?</text>
+
+    <!-- Yes path -->
+    <line x1="430" y1="67" x2="465" y2="67" stroke="#3d2a1a" stroke-width="1.5" marker-end="url(#arrow-b)"/>
+    <text x="447" y="60" font-family="DM Mono, monospace" font-size="8" fill="#2d6b6a">Yes</text>
+
+    <!-- No path -->
+    <line x1="390" y1="94" x2="390" y2="130" stroke="#3d2a1a" stroke-width="1.5" marker-end="url(#arrow-b)"/>
+    <text x="400" y="115" font-family="DM Mono, monospace" font-size="8" fill="#b84233">No</text>
+
+    <!-- Reject box -->
+    <rect x="330" y="135" width="120" height="40" rx="3" fill="#e8ddca" stroke="#b84233" stroke-width="1"/>
+    <text x="390" y="158" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" fill="#b84233">Reject / Defer</text>
+
+    <!-- Step 3 -->
+    <rect x="470" y="40" width="130" height="55" rx="3" fill="#6b4e37"/>
+    <text x="535" y="62" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="600" fill="#faf6ed">3. Implement</text>
+    <text x="535" y="78" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="600" fill="#faf6ed">&amp; Test</text>
+
+    <line x1="600" y1="67" x2="640" y2="115" stroke="#3d2a1a" stroke-width="1.5" marker-end="url(#arrow-b)"/>
+
+    <!-- Step 4 -->
+    <rect x="560" y="120" width="130" height="55" rx="3" fill="#3d2a1a"/>
+    <text x="625" y="142" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="600" fill="#faf6ed">4. Verify</text>
+    <text x="625" y="158" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="600" fill="#faf6ed">&amp; Validate</text>
+
+    <line x1="560" y1="147" x2="470" y2="195" stroke="#3d2a1a" stroke-width="1.5" marker-end="url(#arrow-b)"/>
+
+    <!-- Step 5 -->
+    <rect x="370" y="200" width="160" height="55" rx="3" fill="#2d6b6a"/>
+    <text x="450" y="222" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="600" fill="#faf6ed">5. Update</text>
+    <text x="450" y="238" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="600" fill="#faf6ed">Baseline &amp; Audit</text>
+
+    <line x1="370" y1="227" x2="280" y2="270" stroke="#3d2a1a" stroke-width="1.5" marker-end="url(#arrow-b)"/>
+
+    <!-- Step 6 -->
+    <rect x="180" y="275" width="160" height="55" rx="3" fill="#c9a84c"/>
+    <text x="260" y="297" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="600" fill="#3d2a1a">6. Close</text>
+    <text x="260" y="313" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="600" fill="#3d2a1a">Change Request</text>
+  </svg>
+  <p class="diagram-caption">Fig. 5.4 — The change control process from change request submission through CCB review, implementation, verification, baseline update, and closure. Note the decision point where the CCB can reject or defer a change request.</p>
+</div>
+
+<h4>Software Version Control</h4>
+
+<p>Version control (also called revision control or source control) is a system that records changes to a file or set of files over time so that specific versions can be recalled later. It is one of the most fundamental and indispensable tools in modern software development, and its absence in a project is a reliable indicator of organisational dysfunction. A version control system maintains a complete history of every change made to every tracked file, including who made the change, when it was made, and a comment explaining why the change was made. This history enables several critical capabilities: developers can retrieve any previous version of any file; they can compare different versions to understand what changed and why; they can create <strong>branches</strong> to work on features or fixes in isolation without affecting the main codebase; they can <strong>merge</strong> branches back together when the work is complete; and they can <strong>tag</strong> specific versions (such as releases) for easy reference.</p>
+
+<p>Modern version control systems are typically classified into two categories. <strong>Centralised version control systems</strong> (such as Subversion/SVN and CVS) use a single central repository that all developers connect to; changes are committed directly to the central repository, and developers must have network access to perform most operations. <strong>Distributed version control systems</strong> (such as Git and Mercurial) give each developer a complete copy of the repository, including its full history; developers can commit changes, create branches, and perform most operations locally, and changes are shared between repositories through push and pull operations. Git, created by Linus Torvalds in 2005, has become the de facto standard for version control in the software industry, and platforms like GitHub, GitLab, and Bitbucket have made Git-based collaboration ubiquitous. In the context of SCM, version control provides the foundation upon which all other configuration management activities are built: it ensures that every artifact is identified, every change is tracked, and every version is recoverable.</p>
+
+<!-- CASE Tools -->
+<h3>Overview of CASE Tools</h3>
+
+<p>CASE stands for <strong>Computer-Aided Software Engineering</strong>, and CASE tools are software applications that support, automate, and enhance various activities in the software development lifecycle. The concept emerged in the 1980s as the software industry recognised that many development activities — diagramming, coding, testing, project management, documentation — could be significantly improved through tool support. CASE tools can be classified along two primary dimensions: by the phase of the lifecycle they support, and by the degree of integration they provide.</p>
+
+<p>By lifecycle phase, CASE tools are classified as <strong>Upper CASE tools</strong> (also called front-end CASE tools) that support the early phases of the lifecycle — requirements analysis, specification, and design — through tools for drawing data flow diagrams, entity-relationship diagrams, UML diagrams, and other design notations; <strong>Lower CASE tools</strong> (also called back-end CASE tools) that support the later phases — coding, testing, and maintenance — through tools for code generation, test case generation, debugging, and code analysis; and <strong>Integrated CASE tools (I-CASE)</strong> that provide support across all phases of the lifecycle within a single, unified environment. By integration level, CASE tools are classified as <strong>standalone tools</strong> that support a single activity (such as Microsoft Project for project management or Jira for issue tracking), <strong>workbench tools</strong> that integrate several related activities (such as an IDE that combines editing, compiling, debugging, and testing), and <strong>environments</strong> that provide comprehensive, integrated support for the entire development process.</p>
+
+<p>The benefits of CASE tools include improved productivity through automation of tedious and error-prone tasks, improved quality through built-in validation and consistency checking, improved communication through standardised notations and shared repositories, improved maintainability through better documentation and traceability, and improved project management through integrated planning and tracking capabilities. In the Indian IT industry, CASE tools are used extensively: Rational Rose and Enterprise Architect for UML modelling, Jira and Azure DevOps for project management and issue tracking, Jenkins and GitLab CI for continuous integration, Selenium and JUnit for automated testing, and SonarQube for code quality analysis.</p>
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>CASE Tool Category</th>
+        <th>Phase Supported</th>
+        <th>Examples</th>
+        <th>Key Benefits</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Upper CASE</strong></td>
+        <td>Requirements, Design</td>
+        <td>Enterprise Architect, Rational Rose, StarUML</td>
+        <td>Visual modelling, requirements traceability</td>
+      </tr>
+      <tr>
+        <td><strong>Lower CASE</strong></td>
+        <td>Coding, Testing, Maintenance</td>
+        <td>IDEs (Eclipse, IntelliJ), JUnit, Selenium</td>
+        <td>Code generation, automated testing</td>
+      </tr>
+      <tr>
+        <td><strong>I-CASE</strong></td>
+        <td>All phases</td>
+        <td>IBM Rational Suite, Microsoft Visual Studio</td>
+        <td>End-to-end lifecycle support, integration</td>
+      </tr>
+      <tr>
+        <td><strong>Project Management</strong></td>
+        <td>Planning, Tracking</td>
+        <td>Microsoft Project, Jira, Trello</td>
+        <td>Scheduling, resource allocation, tracking</td>
+      </tr>
+      <tr>
+        <td><strong>SCM Tools</strong></td>
+        <td>Configuration Management</td>
+        <td>Git, SVN, ClearCase, Perforce</td>
+        <td>Version control, change tracking</td>
+      </tr>
+      <tr>
+        <td><strong>Documentation</strong></td>
+        <td>All phases</td>
+        <td>Doxygen, Confluence, ReadTheDocs</td>
+        <td>Auto-generated docs, knowledge management</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 5.3                                                    -->
+<!-- ============================================================ -->
+<div class="section-break" id="sec-5-3">
+  <span class="section-number">Section 5.3</span>
+  <h2>Estimation Models<br>&amp; Risk Management</h2>
+  <p class="section-subtitle">On the science (and art) of predicting the unpredictable</p>
+</div>
+
+<h3>Why Estimation Matters</h3>
+
+<p>One of the most persistent and consequential challenges in software engineering is the problem of estimation: predicting how much effort, time, cost, and human resources a software project will require before the project is complete. The history of the software industry is littered with projects that failed not because of technical shortcomings but because their estimates were wildly wrong — projects that were expected to take six months took two years, projects budgeted for ten developers required thirty, projects estimated to cost a million dollars consumed five million. The Standish Group's CHAOS reports, which have tracked software project success rates for decades, consistently find that a majority of software projects exceed their estimated cost and schedule, and a significant fraction are cancelled outright. Accurate estimation is therefore not merely a technical nicety; it is a survival skill for software organisations.</p>
+
+<p>Estimation in software engineering is fundamentally different from estimation in many other engineering disciplines because software is intangible, requirements are often ambiguous and volatile, the productivity of individual developers varies enormously, and the relationship between project size and effort is nonlinear. You cannot simply measure the "weight" of a software system and multiply by a unit cost, the way you might estimate the cost of a bridge by weighing its steel. Instead, software estimation relies on models that relate observable characteristics of the project — its size, complexity, team experience, technology platform, and other factors — to the effort, time, and cost required to complete it.</p>
+
+<h3>The COCOMO Model</h3>
+
+<p>The <strong>Constructive Cost Model (COCOMO)</strong> is the most widely studied and most influential software cost estimation model in the history of software engineering. It was developed by Barry Boehm at the University of Southern California in 1981, based on an analysis of sixty-three software projects completed at TRW, a major US defence contractor. COCOMO's enduring importance stems from its combination of theoretical elegance, empirical grounding, and practical applicability: it provides a structured, repeatable method for estimating software project effort, schedule, and cost based on the size of the software (measured in thousands of delivered source instructions, or KDSI, which is roughly equivalent to KLOC — thousands of lines of code) and a set of project characteristics that adjust the estimate for the specific conditions of the project.</p>
+
+<p>Boehm defined three categories of software projects, each of which follows different estimation equations because the relationship between size and effort differs depending on the project's complexity and constraints:</p>
+
+<ul>
+  <li><strong>Organic mode:</strong> Projects where the software is developed within a well-understood environment by an experienced team working on a familiar problem. The team understands the requirements thoroughly, the technology is mature, and the project constraints are relaxed. Examples include small utility programs, simple data processing applications, and straightforward extensions to existing systems. Organic projects are characterised by small teams, relatively simple problems, and familiar environments.</li>
+  <li><strong>Semi-detached mode:</strong> Projects of intermediate complexity, where the team has mixed experience levels, the problem is moderately well understood, and the constraints are neither extremely relaxed nor extremely tight. Examples include new operating system modules, new database management systems, and large inventory control systems. Semi-detached projects involve a broader range of capabilities and more complex coordination than organic projects.</li>
+  <li><strong>Embedded mode:</strong> Projects where the software must operate within tight constraints — rigid hardware limitations, real-time performance requirements, stringent safety regulations, or complex interactions with other systems. The development environment is highly constrained, and the team may be working with unfamiliar technology or problem domains. Examples include avionics software, spacecraft control systems, and large-scale defence systems. Embedded projects are the most expensive and most difficult to estimate accurately.</li>
+</ul>
+
+<div class="diagram-container">
+  <div class="diagram-title">COCOMO Project Classification</div>
+  <svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" style="max-width: 580px;">
+    <!-- Three column headers -->
+    <rect x="40" y="20" width="190" height="50" rx="3" fill="#2d6b6a"/>
+    <text x="135" y="42" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="700" fill="#faf6ed">Organic</text>
+    <text x="135" y="58" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#d4c9b5">Well-understood, relaxed</text>
+
+    <rect x="250" y="20" width="190" height="50" rx="3" fill="#c9a84c"/>
+    <text x="345" y="42" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="700" fill="#3d2a1a">Semi-Detached</text>
+    <text x="345" y="58" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#3d2a1a">Intermediate complexity</text>
+
+    <rect x="460" y="20" width="190" height="50" rx="3" fill="#b84233"/>
+    <text x="555" y="42" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="700" fill="#faf6ed">Embedded</text>
+    <text x="555" y="58" text-anchor="middle" font-family="Crimson Pro, serif" font-size="9" fill="#d4c9b5">Tight constraints, complex</text>
+
+    <!-- Effort formulas -->
+    <rect x="40" y="85" width="190" height="55" rx="2" fill="#e8ddca" stroke="#2d6b6a" stroke-width="1"/>
+    <text x="135" y="106" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#2d6b6a">E = 2.4 × (KLOC)^1.05</text>
+    <text x="135" y="126" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#2d6b6a">D = 2.5 × (E)^0.38</text>
+
+    <rect x="250" y="85" width="190" height="55" rx="2" fill="#e8ddca" stroke="#c9a84c" stroke-width="1"/>
+    <text x="345" y="106" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#6b4e37">E = 3.0 × (KLOC)^1.12</text>
+    <text x="345" y="126" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#6b4e37">D = 2.5 × (E)^0.35</text>
+
+    <rect x="460" y="85" width="190" height="55" rx="2" fill="#e8ddca" stroke="#b84233" stroke-width="1"/>
+    <text x="555" y="106" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#b84233">E = 3.6 × (KLOC)^1.20</text>
+    <text x="555" y="126" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#b84233">D = 2.5 × (E)^0.32</text>
+
+    <!-- Labels -->
+    <text x="350" y="165" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#8a7d6b">E = Effort (person-months) · D = Development Time (months) · KLOC = size</text>
+
+    <!-- Bottom: key insight -->
+    <rect x="120" y="180" width="460" height="50" rx="3" fill="#3d2a1a"/>
+    <text x="350" y="200" text-anchor="middle" font-family="Crimson Pro, serif" font-size="11" fill="#faf6ed">Note the exponent: Organic (1.05) → Semi (1.12) → Embedded (1.20)</text>
+    <text x="350" y="218" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" fill="#d4c9b5">Higher exponent means effort grows faster with size — embedded projects scale worse</text>
+  </svg>
+  <p class="diagram-caption">Fig. 5.5 — The three COCOMO project modes and their basic estimation equations. Note how the effort exponent increases from organic (1.05) to embedded (1.20), reflecting the increasing overhead of constrained, complex projects.</p>
+</div>
+
+<h4>Basic COCOMO</h4>
+
+<p>Basic COCOMO is the simplest form of the model. It computes effort and development time as a function of the estimated project size (in KLOC) and the project mode (organic, semi-detached, or embedded). The formulae are:</p>
+
+<div class="formula-block">
+<strong>Organic:</strong><br>
+&nbsp;&nbsp;Effort (E) = 2.4 × (KLOC)^1.05 &nbsp;&nbsp;[person-months]<br>
+&nbsp;&nbsp;Development Time (D) = 2.5 × (E)^0.38 &nbsp;&nbsp;[months]<br><br>
+
+<strong>Semi-Detached:</strong><br>
+&nbsp;&nbsp;Effort (E) = 3.0 × (KLOC)^1.12 &nbsp;&nbsp;[person-months]<br>
+&nbsp;&nbsp;Development Time (D) = 2.5 × (E)^0.35 &nbsp;&nbsp;[months]<br><br>
+
+<strong>Embedded:</strong><br>
+&nbsp;&nbsp;Effort (E) = 3.6 × (KLOC)^1.20 &nbsp;&nbsp;[person-months]<br>
+&nbsp;&nbsp;Development Time (D) = 2.5 × (E)^0.32 &nbsp;&nbsp;[months]
+</div>
+
+<p>From the effort and development time, two additional parameters can be derived:</p>
+
+<div class="formula-block">
+<strong>Average Staff Size</strong> = E / D &nbsp;&nbsp;[persons]<br>
+<strong>Productivity</strong> = KLOC / E &nbsp;&nbsp;[KLOC per person-month]
+</div>
+
+<p>Basic COCOMO is useful for quick, early estimates when detailed information about the project is not yet available. However, it has a significant limitation: it does not account for the many factors beyond size that influence project effort, such as the experience of the development team, the complexity of the product, the reliability requirements, the capabilities of the tools used, or the constraints of the development environment. Intermediate and Detailed COCOMO address this limitation.</p>
+
+<h4>Intermediate COCOMO</h4>
+
+<p>Intermediate COCOMO extends Basic COCOMO by introducing a set of <strong>15 cost driver attributes</strong> (also called Effort Adjustment Factors or EAF) that adjust the basic effort estimate to account for the specific characteristics of the project. The effort formula becomes:</p>
+
+<div class="formula-block">
+E<sub>adjusted</sub> = E<sub>basic</sub> × EAF<br><br>
+where EAF = ∏(EM<sub>i</sub>) for i = 1 to 15<br><br>
+EAF = Product of all 15 Effort Multipliers
+</div>
+
+<p>The 15 cost drivers are organised into four categories:</p>
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Cost Driver</th>
+        <th>Full Name</th>
+        <th>Description</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td rowspan="3"><strong>Product</strong></td>
+        <td>RELY</td>
+        <td>Required Software Reliability</td>
+        <td>Severity of the effect of a software failure</td>
+      </tr>
+      <tr>
+        <td>DATA</td>
+        <td>Database Size</td>
+        <td>Ratio of database size to program size</td>
+      </tr>
+      <tr>
+        <td>CPLX</td>
+        <td>Product Complexity</td>
+        <td>Complexity of the software's control operations, computational operations, and device-dependent operations</td>
+      </tr>
+      <tr>
+        <td rowspan="4"><strong>Hardware</strong></td>
+        <td>TIME</td>
+        <td>Execution Time Constraint</td>
+        <td>Percentage of available execution time expected to be used</td>
+      </tr>
+      <tr>
+        <td>STOR</td>
+        <td>Main Storage Constraint</td>
+        <td>Percentage of main memory expected to be used</td>
+      </tr>
+      <tr>
+        <td>VIRT</td>
+        <td>Virtual Machine Volatility</td>
+        <td>Frequency of changes to the underlying virtual machine</td>
+      </tr>
+      <tr>
+        <td>TURN</td>
+        <td>Computer Turnaround Time</td>
+        <td>Response time of the development computer system</td>
+      </tr>
+      <tr>
+        <td rowspan="5"><strong>Personnel</strong></td>
+        <td>ACAP</td>
+        <td>Analyst Capability</td>
+        <td>Experience and ability of the analysis and design team</td>
+      </tr>
+      <tr>
+        <td>AEXP</td>
+        <td>Application Experience</td>
+        <td>Team's experience with the application domain</td>
+      </tr>
+      <tr>
+        <td>PCAP</td>
+        <td>Programmer Capability</td>
+        <td>Experience and ability of the programming team</td>
+      </tr>
+      <tr>
+        <td>VEXP</td>
+        <td>Virtual Machine Experience</td>
+        <td>Team's experience with the underlying platform/OS</td>
+      </tr>
+      <tr>
+        <td>LEXP</td>
+        <td>Programming Language Experience</td>
+        <td>Team's experience with the programming language</td>
+      </tr>
+      <tr>
+        <td rowspan="3"><strong>Project</strong></td>
+        <td>MODP</td>
+        <td>Modern Programming Practices</td>
+        <td>Use of structured programming, code reviews, etc.</td>
+      </tr>
+      <tr>
+        <td>TOOL</td>
+        <td>Use of Software Tools</td>
+        <td>Availability and use of development tools (IDEs, debuggers, etc.)</td>
+      </tr>
+      <tr>
+        <td>SCED</td>
+        <td>Required Development Schedule</td>
+        <td>Compression or expansion of the nominal schedule</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p>Each cost driver is rated on a scale from Very Low to Extra High (or some subset), and each rating has an associated effort multiplier value. The nominal rating has a multiplier of 1.0 (no adjustment). Multipliers greater than 1.0 increase the effort estimate (the factor makes the project harder), and multipliers less than 1.0 decrease the estimate (the factor makes the project easier). For instance, if the analyst team is exceptionally capable (ACAP rated Very High), the effort multiplier might be 0.71, reducing the effort estimate by 29%. Conversely, if the required reliability is very high (RELY rated Very High), the multiplier might be 1.40, increasing the effort by 40%.</p>
+
+<div class="annotation">
+  The key mnemonic for the 15 cost drivers: <strong>"REAL CODERS PLAN VERY LATE, MY SON"</strong> — RELY, DATA, CPLX (Product); TIME, STOR, VIRT, TURN (Hardware); ACAP, AEXP, PCAP, VEXP, LEXP (Personnel); MODP, TOOL, SCED (Project). This is approximate but helpful for quick recall.
+</div>
+
+<h4>Detailed (Complete) COCOMO</h4>
+
+<p>Detailed COCOMO applies the cost driver adjustments not once for the entire project, but separately at each phase of the software lifecycle (requirements, design, coding, testing, integration). This is important because the impact of a cost driver can vary by phase: for instance, the impact of analyst capability (ACAP) is greatest during the requirements and design phases, while the impact of programmer capability (PCAP) is greatest during the coding phase. Detailed COCOMO also accounts for the fact that some cost drivers affect the design phase differently than the coding phase, providing more accurate phase-by-phase estimates. However, Detailed COCOMO requires significantly more information and effort to apply, and in practice, Intermediate COCOMO provides sufficient accuracy for most estimation purposes.</p>
+
+<!-- Numerical Problems -->
+<h3>COCOMO Numerical Problems</h3>
+
+<p>The following three worked examples illustrate the application of Basic COCOMO to real estimation problems. Mastering these calculations is essential for university examinations, where COCOMO numerical problems are extremely common and carry significant marks.</p>
+
+<h4>Problem 1: Full-Screen Editor (Organic Mode)</h4>
+
+<div class="def-box">
+  <span class="def-label">Problem Statement</span>
+  <p>Consider a project to develop a full-screen editor. The major components identified are:</p>
+  <ul>
+    <li>Screen edit: 5 KLOC</li>
+    <li>Command Language Interpreter: 6 KLOC</li>
+    <li>File input &amp; output: 1 KLOC</li>
+    <li>Cursor movement: 4 KLOC</li>
+    <li>Screen movement: 3 KLOC</li>
+  </ul>
+  <p>Use COCOMO to determine the effort, development time, average staff size, and productivity. Assume all cost driver values are unity (1.0) and the project is of <strong>organic</strong> type.</p>
+</div>
+
+<p><strong>Step 1: Calculate total project size.</strong> The total size of the project is the sum of all component sizes: 5 + 6 + 1 + 4 + 3 = <strong>19 KLOC</strong>.</p>
+
+<p><strong>Step 2: Calculate effort using the organic mode formula.</strong> The Basic COCOMO effort formula for organic mode is E = 2.4 × (KLOC)^1.05. Substituting KLOC = 19:</p>
+
+<div class="formula-block">
+E = 2.4 × (19)^1.05<br>
+&nbsp;&nbsp;= 2.4 × 22.01 &nbsp;&nbsp;[since 19^1.05 ≈ 22.01]<br>
+&nbsp;&nbsp;= <strong>52.82 person-months</strong>
+</div>
+
+<p><strong>Step 3: Calculate development time.</strong> The organic mode formula is D = 2.5 × (E)^0.38. Substituting E = 52.82:</p>
+
+<div class="formula-block">
+D = 2.5 × (52.82)^0.38<br>
+&nbsp;&nbsp;= 2.5 × 4.515 &nbsp;&nbsp;[since 52.82^0.38 ≈ 4.515]<br>
+&nbsp;&nbsp;= <strong>11.29 months</strong>
+</div>
+
+<p><strong>Step 4: Calculate average staff size.</strong></p>
+
+<div class="formula-block">
+Average Staff = E / D = 52.82 / 11.29 = <strong>4.68 ≈ 5 persons</strong>
+</div>
+
+<p><strong>Step 5: Calculate productivity.</strong></p>
+
+<div class="formula-block">
+Productivity = KLOC / E = 19 / 52.82 = <strong>0.36 KLOC per person-month</strong>
+</div>
+
+<div class="exam-tip">
+  <div class="tip-label">Exam Strategy — Showing Your Work</div>
+  <p>In examinations, always show each step clearly: (1) state the total KLOC, (2) write the formula used, (3) substitute the values, (4) show intermediate calculations, (5) state the final answer with units. Marks are awarded for the method even if arithmetic errors occur. Always state the COCOMO mode and justify why it was chosen based on the problem description.</p>
+</div>
+
+<h4>Problem 2: 400 KLOC — All Three Modes</h4>
+
+<div class="def-box">
+  <span class="def-label">Problem Statement</span>
+  <p>Suppose a project is estimated to be 400 KLOC. Calculate the effort and development time for each project category: organic, semi-detached, and embedded, using COCOMO.</p>
+</div>
+
+<p><strong>Organic Mode:</strong></p>
+
+<div class="formula-block">
+E = 2.4 × (400)^1.05 = 2.4 × 539.8 = <strong>1,295.5 person-months</strong><br>
+D = 2.5 × (1295.5)^0.38 = 2.5 × 15.23 = <strong>38.1 months</strong><br>
+Staff = 1295.5 / 38.1 = <strong>34.0 persons</strong>
+</div>
+
+<p><strong>Semi-Detached Mode:</strong></p>
+
+<div class="formula-block">
+E = 3.0 × (400)^1.12 = 3.0 × 821.1 = <strong>2,463.3 person-months</strong><br>
+D = 2.5 × (2463.3)^0.35 = 2.5 × 15.38 = <strong>38.4 months</strong><br>
+Staff = 2463.3 / 38.4 = <strong>64.1 persons</strong>
+</div>
+
+<p><strong>Embedded Mode:</strong></p>
+
+<div class="formula-block">
+E = 3.6 × (400)^1.20 = 3.6 × 1325.7 = <strong>4,772.5 person-months</strong><br>
+D = 2.5 × (4772.5)^0.32 = 2.5 × 15.04 = <strong>37.6 months</strong><br>
+Staff = 4772.5 / 37.6 = <strong>126.9 persons</strong>
+</div>
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Parameter</th>
+        <th>Organic</th>
+        <th>Semi-Detached</th>
+        <th>Embedded</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Size (KLOC)</strong></td>
+        <td>400</td>
+        <td>400</td>
+        <td>400</td>
+      </tr>
+      <tr>
+        <td><strong>Effort (PM)</strong></td>
+        <td>1,295.5</td>
+        <td>2,463.3</td>
+        <td>4,772.5</td>
+      </tr>
+      <tr>
+        <td><strong>Dev. Time (months)</strong></td>
+        <td>38.1</td>
+        <td>38.4</td>
+        <td>37.6</td>
+      </tr>
+      <tr>
+        <td><strong>Avg. Staff</strong></td>
+        <td>34</td>
+        <td>64</td>
+        <td>127</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<p>Notice a striking and counter-intuitive result: the development time is roughly similar across all three modes (approximately 38 months), but the effort and staffing requirements differ dramatically. This is because the higher exponent in the embedded mode formula causes effort to increase much faster than time, so the additional effort must be absorbed by adding more people rather than extending the schedule. This reflects a real phenomenon in software engineering — simply adding more developers to a project does not proportionally reduce the schedule, a principle sometimes expressed as Brooks's Law: "Adding manpower to a late software project makes it later."</p>
+
+<h4>Problem 3: Semi-Detached Mode, 900 KLOC</h4>
+
+<div class="def-box">
+  <span class="def-label">Problem Statement</span>
+  <p>Consider a software project using semi-detached mode with 900 KLOC. Estimate the effort required, development time, and number of persons required. Use standard constant values.</p>
+</div>
+
+<div class="formula-block">
+<strong>Effort:</strong><br>
+E = 3.0 × (900)^1.12<br>
+&nbsp;&nbsp;= 3.0 × 2036.4 &nbsp;&nbsp;[since 900^1.12 ≈ 2036.4]<br>
+&nbsp;&nbsp;= <strong>6,109.2 person-months</strong><br><br>
+
+<strong>Development Time:</strong><br>
+D = 2.5 × (6109.2)^0.35<br>
+&nbsp;&nbsp;= 2.5 × 21.14 &nbsp;&nbsp;[since 6109.2^0.35 ≈ 21.14]<br>
+&nbsp;&nbsp;= <strong>52.85 months</strong><br><br>
+
+<strong>Number of Persons:</strong><br>
+Staff = E / D = 6109.2 / 52.85 = <strong>115.6 ≈ 116 persons</strong>
+</div>
+
+<div class="annotation">
+  Notice that for a 900 KLOC semi-detached project, the estimated development time is about 4.4 years and the team size is over 100 people. This illustrates why very large software projects are so challenging to manage — coordination costs grow nonlinearly with team size, and communication overhead consumes an ever-increasing fraction of the total effort.
+</div>
+
+<!-- Resource Allocation -->
+<h3>Resource Allocation Models</h3>
+
+<p>Resource allocation in software project management involves distributing the available resources — human effort, computing hardware, software tools, and budget — across the various activities and phases of the project in a manner that optimises the project's chances of success. The fundamental constraint is that resources are finite, and allocating more resources to one activity necessarily means allocating fewer to another. Resource allocation decisions are therefore inherently about tradeoffs and priorities.</p>
+
+<p>The COCOMO model itself provides a basis for resource allocation through its phase distribution of effort. A typical distribution for a medium-sized project might allocate approximately 8-10% of total effort to requirements analysis, 15-20% to design, 30-40% to coding and unit testing, 15-25% to integration and system testing, and 10-15% to project management and documentation. However, these proportions vary significantly depending on the project type, the development methodology used, and the specific circumstances of the project. Projects using agile methodologies, for instance, tend to have less distinct phase boundaries and more continuous allocation of effort across all activities.</p>
+
+<!-- Risk Management -->
+<h3>Software Risk Analysis and Management</h3>
+
+<p>Risk management is the systematic process of identifying, analysing, prioritising, and mitigating the risks that threaten a software project's ability to achieve its objectives. A <strong>risk</strong> is a potential problem — something that has not yet happened but might happen, and if it does happen, it will have a negative impact on the project's cost, schedule, quality, or scope. Risk management is fundamentally a proactive discipline: it seeks to identify and address problems before they occur, rather than reacting to them after they have already caused damage. Boehm defined risk management concisely as "looking for, prioritising, and dealing with potential disasters before they happen."</p>
+
+<p>The risk management process consists of several key steps. <strong>Risk identification</strong> involves systematically identifying all risks that might affect the project. Common categories of software project risks include: <strong>project risks</strong> (budget overruns, schedule slips, loss of key personnel, scope creep), <strong>technical risks</strong> (technology immaturity, performance problems, integration difficulties, security vulnerabilities), and <strong>business risks</strong> (market changes, competitor actions, regulatory changes, loss of stakeholder support). Risks can be identified through brainstorming sessions, checklists of common risks, analysis of similar past projects, expert judgment, and structured techniques such as SWOT analysis.</p>
+
+<p><strong>Risk analysis</strong> (also called risk assessment) evaluates each identified risk along two dimensions: the <strong>probability</strong> (likelihood) that the risk will occur, and the <strong>impact</strong> (consequence) if it does occur. The risk exposure is typically calculated as:</p>
+
+<div class="formula-block">
+<strong>Risk Exposure</strong> = Probability of Occurrence × Impact (if it occurs)
+</div>
+
+<p>Risks are then prioritised based on their risk exposure, with the highest-exposure risks receiving the most attention and resources. A <strong>risk table</strong> or <strong>risk matrix</strong> is often used to visualise and prioritise risks.</p>
+
+<p><strong>Risk mitigation</strong> (also called risk planning or risk response planning) develops strategies for dealing with each prioritised risk. There are three fundamental strategies: <strong>risk avoidance</strong> involves changing the project plan to eliminate the risk entirely (for example, avoiding an immature technology by choosing a more proven alternative); <strong>risk transfer</strong> involves shifting the risk to a third party (for example, outsourcing a component to a specialist vendor who assumes the risk of delivering it); and <strong>risk acceptance</strong> involves acknowledging the risk and preparing a contingency plan to deal with it if it occurs (for example, maintaining a schedule buffer to absorb potential delays). In practice, most risk mitigation strategies combine elements of all three approaches.</p>
+
+<p><strong>Risk monitoring</strong> involves continuously tracking the identified risks, watching for the emergence of new risks, and evaluating the effectiveness of mitigation strategies throughout the project lifecycle. Risk management is not a one-time activity performed during project planning; it is an ongoing process that must be revisited regularly as the project evolves and new information becomes available.</p>
+
+<div class="diagram-container">
+  <div class="diagram-title">The Risk Management Process</div>
+  <svg viewBox="0 0 700 300" xmlns="http://www.w3.org/2000/svg" style="max-width: 600px;">
+    <defs>
+      <marker id="arrow-t" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" fill="#6b4e37"/>
+      </marker>
+    </defs>
+
+    <!-- Central cycle -->
+    <!-- Risk ID -->
+    <circle cx="150" cy="150" r="50" fill="#b84233" opacity="0.9"/>
+    <text x="150" y="145" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="700" fill="#faf6ed">Risk</text>
+    <text x="150" y="160" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="700" fill="#faf6ed">Identification</text>
+
+    <!-- Arrow 1→2 -->
+    <path d="M 200,135 Q 250,80 310,100" stroke="#6b4e37" stroke-width="2" fill="none" marker-end="url(#arrow-t)"/>
+
+    <!-- Risk Analysis -->
+    <circle cx="350" cy="80" r="50" fill="#2d6b6a" opacity="0.9"/>
+    <text x="350" y="75" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="700" fill="#faf6ed">Risk</text>
+    <text x="350" y="90" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="700" fill="#faf6ed">Analysis</text>
+
+    <!-- Arrow 2→3 -->
+    <path d="M 395,110 Q 440,140 460,180" stroke="#6b4e37" stroke-width="2" fill="none" marker-end="url(#arrow-t)"/>
+
+    <!-- Risk Prioritisation -->
+    <circle cx="480" cy="210" r="50" fill="#c9a84c" opacity="0.9"/>
+    <text x="480" y="205" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="700" fill="#3d2a1a">Risk</text>
+    <text x="480" y="220" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="700" fill="#3d2a1a">Prioritisation</text>
+
+    <!-- Arrow 3→4 -->
+    <path d="M 440,240 Q 380,270 310,250" stroke="#6b4e37" stroke-width="2" fill="none" marker-end="url(#arrow-t)"/>
+
+    <!-- Risk Mitigation -->
+    <circle cx="260" cy="230" r="50" fill="#6b4e37" opacity="0.9"/>
+    <text x="260" y="225" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="700" fill="#faf6ed">Risk</text>
+    <text x="260" y="240" text-anchor="middle" font-family="Playfair Display, serif" font-size="10" font-weight="700" fill="#faf6ed">Mitigation</text>
+
+    <!-- Arrow 4→1 -->
+    <path d="M 215,210 Q 160,200 155,200" stroke="#6b4e37" stroke-width="2" fill="none" marker-end="url(#arrow-t)"/>
+
+    <!-- Center: Monitoring -->
+    <circle cx="310" cy="160" r="30" fill="#3d2a1a"/>
+    <text x="310" y="155" text-anchor="middle" font-family="Playfair Display, serif" font-size="8" font-weight="600" fill="#faf6ed">Risk</text>
+    <text x="310" y="168" text-anchor="middle" font-family="Playfair Display, serif" font-size="8" font-weight="600" fill="#faf6ed">Monitoring</text>
+
+    <!-- Label -->
+    <text x="350" y="295" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#8a7d6b">Continuous, iterative process throughout project lifecycle</text>
+  </svg>
+  <p class="diagram-caption">Fig. 5.6 — The iterative cycle of risk management: identification, analysis, prioritisation, and mitigation, with continuous monitoring at the centre. The process is repeated throughout the project lifecycle as new risks emerge and existing risks change.</p>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- SECTION 5.4                                                    -->
+<!-- ============================================================ -->
+<div class="section-break" id="sec-5-4">
+  <span class="section-number">Section 5.4</span>
+  <h2>Software Quality Assurance</h2>
+  <p class="section-subtitle">Measuring the immeasurable — frameworks for software excellence</p>
+</div>
+
+<h3>Software Quality Assurance (SQA)</h3>
+
+<p>Software Quality Assurance is a set of planned and systematic activities that ensure the software development process and the software products conform to established standards, procedures, and requirements. SQA is not testing, although testing is one of its components. SQA is the overarching framework within which testing, reviews, audits, process monitoring, and other quality activities are planned, executed, and tracked. Its purpose is to provide visibility into the software development process and its products, to ensure that defects are prevented or detected early, and to provide confidence to stakeholders that the software will meet its quality objectives.</p>
+
+<p>The distinction between quality assurance and quality control is important and frequently examined. <strong>Quality Assurance (QA)</strong> is process-oriented — it focuses on preventing defects by ensuring that the processes used to develop the software are adequate and followed correctly. QA asks: "Are we doing the right things, and are we doing things right?" <strong>Quality Control (QC)</strong> is product-oriented — it focuses on detecting defects in the software products themselves through testing, inspection, and review. QC asks: "Does the product meet its specifications?" SQA encompasses both QA and QC but emphasises the process-oriented perspective.</p>
+
+<h4>SQA Plan</h4>
+
+<p>An SQA Plan is a formal document that defines the quality assurance activities, standards, procedures, and responsibilities for a software project. It is typically produced during the project planning phase and is maintained throughout the project lifecycle. The IEEE Standard 730 provides a recommended structure for SQA plans. The key components of an SQA Plan include:</p>
+
+<ul>
+  <li><strong>Purpose and Scope:</strong> Defines the software products, processes, and lifecycle phases covered by the plan, and identifies the organisational units responsible for SQA activities.</li>
+  <li><strong>References:</strong> Lists the standards, guidelines, and procedures that the project must comply with, including organisational standards, industry standards (such as IEEE, ISO), and project-specific standards.</li>
+  <li><strong>Management:</strong> Describes the organisational structure for SQA, the reporting relationships, the SQA authority and responsibilities, and the interface with other project activities.</li>
+  <li><strong>Documentation:</strong> Specifies the documentation standards and the documents that must be produced at each lifecycle phase, including requirements documents, design documents, test plans, test reports, and user manuals.</li>
+  <li><strong>Standards, Practices, and Conventions:</strong> Identifies the specific standards, practices, and conventions that the project will follow for each development activity, including coding standards, design standards, and testing standards.</li>
+  <li><strong>Reviews and Audits:</strong> Defines the types of reviews and audits to be conducted (technical reviews, management reviews, SQA process audits, SQA product audits), their schedule, their participants, and the criteria for evaluating compliance.</li>
+  <li><strong>Testing:</strong> References the project's test plan and defines the SQA activities that verify the adequacy of the testing process, including test coverage analysis, defect tracking, and regression testing.</li>
+  <li><strong>Problem Reporting and Corrective Action:</strong> Defines the procedures for reporting, tracking, and resolving problems and non-conformances, including escalation procedures and corrective action verification.</li>
+  <li><strong>Tools, Techniques, and Methodologies:</strong> Identifies the tools and techniques that will be used to support SQA activities, including defect tracking tools, code review tools, and static analysis tools.</li>
+  <li><strong>Records Collection, Maintenance, and Retention:</strong> Defines the SQA records that will be collected, how they will be maintained and protected, and how long they will be retained.</li>
+  <li><strong>Risk Management:</strong> Identifies the risks to the SQA process itself and defines mitigation strategies.</li>
+</ul>
+
+<div class="diagram-container">
+  <div class="diagram-title">Components of an SQA Plan</div>
+  <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" style="max-width: 620px;">
+    <!-- Central circle -->
+    <circle cx="350" cy="190" r="60" fill="#3d2a1a"/>
+    <text x="350" y="183" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="700" fill="#faf6ed">SQA</text>
+    <text x="350" y="200" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="700" fill="#faf6ed">Plan</text>
+
+    <!-- Component boxes arranged around -->
+    <!-- Top -->
+    <rect x="280" y="15" width="140" height="36" rx="2" fill="#b84233"/>
+    <text x="350" y="38" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#faf6ed">Purpose &amp; Scope</text>
+    <line x1="350" y1="51" x2="350" y2="130" stroke="#d4c9b5" stroke-width="1"/>
+
+    <!-- Top-left -->
+    <rect x="80" y="55" width="140" height="36" rx="2" fill="#2d6b6a"/>
+    <text x="150" y="78" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#faf6ed">References</text>
+    <line x1="220" y1="73" x2="290" y2="160" stroke="#d4c9b5" stroke-width="1"/>
+
+    <!-- Left -->
+    <rect x="50" y="160" width="140" height="36" rx="2" fill="#c9a84c"/>
+    <text x="120" y="183" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#3d2a1a">Management</text>
+    <line x1="190" y1="178" x2="290" y2="185" stroke="#d4c9b5" stroke-width="1"/>
+
+    <!-- Bottom-left -->
+    <rect x="80" y="270" width="140" height="36" rx="2" fill="#6b4e37"/>
+    <text x="150" y="293" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#faf6ed">Documentation</text>
+    <line x1="220" y1="288" x2="295" y2="220" stroke="#d4c9b5" stroke-width="1"/>
+
+    <!-- Bottom -->
+    <rect x="280" y="325" width="140" height="36" rx="2" fill="#b84233"/>
+    <text x="350" y="348" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#faf6ed">Standards &amp; Practices</text>
+    <line x1="350" y1="325" x2="350" y2="250" stroke="#d4c9b5" stroke-width="1"/>
+
+    <!-- Bottom-right -->
+    <rect x="480" y="270" width="140" height="36" rx="2" fill="#2d6b6a"/>
+    <text x="550" y="293" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#faf6ed">Reviews &amp; Audits</text>
+    <line x1="480" y1="288" x2="405" y2="220" stroke="#d4c9b5" stroke-width="1"/>
+
+    <!-- Right -->
+    <rect x="510" y="160" width="140" height="36" rx="2" fill="#c9a84c"/>
+    <text x="580" y="183" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#3d2a1a">Testing</text>
+    <line x1="510" y1="178" x2="410" y2="185" stroke="#d4c9b5" stroke-width="1"/>
+
+    <!-- Top-right -->
+    <rect x="480" y="55" width="155" height="36" rx="2" fill="#6b4e37"/>
+    <text x="557" y="78" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#faf6ed">Problem Reporting</text>
+    <line x1="480" y1="73" x2="410" y2="160" stroke="#d4c9b5" stroke-width="1"/>
+
+    <!-- Far right -->
+    <rect x="555" y="115" width="130" height="36" rx="2" fill="#b84233"/>
+    <text x="620" y="138" text-anchor="middle" font-family="Crimson Pro, serif" font-size="10" font-weight="600" fill="#faf6ed">Risk Management</text>
+    <line x1="555" y1="133" x2="410" y2="175" stroke="#d4c9b5" stroke-width="1"/>
+  </svg>
+  <p class="diagram-caption">Fig. 5.7 — The key components of an SQA Plan as defined by IEEE 730. Each component addresses a specific aspect of the quality assurance framework, and together they provide comprehensive coverage of the software quality process.</p>
+</div>
+
+<!-- ISO 9000 -->
+<h3>ISO 9000 Certification</h3>
+
+<p>ISO 9000 is a family of international standards for quality management systems, developed and maintained by the International Organization for Standardization (ISO) in Geneva, Switzerland. The ISO 9000 family was first published in 1987 and has been revised several times, with the most recent major revision being ISO 9001:2015. While ISO 9000 was originally developed for manufacturing industries, it has been widely adopted by software organisations because its principles of process-based quality management are applicable to any organisation that produces products or delivers services.</p>
+
+<p>The ISO 9000 family consists of several standards. <strong>ISO 9000:2015</strong> defines the fundamental concepts, principles, and vocabulary of quality management systems. <strong>ISO 9001:2015</strong> specifies the requirements for a quality management system that an organisation must fulfil to demonstrate its ability to consistently provide products and services that meet customer and regulatory requirements, and to enhance customer satisfaction. This is the standard against which organisations are audited and certified. <strong>ISO 9004:2018</strong> provides guidelines for improving the performance of a quality management system beyond the minimum requirements of ISO 9001.</p>
+
+<p>ISO 9001:2015 is based on seven quality management principles: (1) <strong>Customer focus</strong> — understanding and meeting customer requirements; (2) <strong>Leadership</strong> — establishing unity of purpose and direction; (3) <strong>Engagement of people</strong> — involving competent, empowered, and engaged people at all levels; (4) <strong>Process approach</strong> — managing activities as interrelated processes; (5) <strong>Improvement</strong> — continuously improving performance; (6) <strong>Evidence-based decision making</strong> — basing decisions on data and analysis; and (7) <strong>Relationship management</strong> — managing relationships with interested parties for sustained success.</p>
+
+<p>For software organisations, ISO 9001 certification requires establishing and documenting quality management procedures, ensuring that these procedures are followed consistently, verifying that the software products meet their specifications, and maintaining records that demonstrate compliance. Certification is performed by accredited third-party auditors (registrar organisations) and is valid for three years, with annual surveillance audits.</p>
+
+<h5>Shortcomings of ISO 9000 for Software</h5>
+
+<p>While ISO 9000 provides a valuable framework for quality management, it has several shortcomings when applied specifically to software development. ISO 9001 is a generic standard applicable to any industry, and it does not address the specific practices, techniques, and challenges of software development. It focuses on documentation and process conformance but does not prescribe specific software engineering practices. It can be satisfied by an organisation that has excellent documentation but mediocre software engineering practices. It does not address software-specific concerns such as code quality, architectural integrity, technical debt, or the effectiveness of testing. Furthermore, ISO 9001 certification is a point-in-time assessment: it demonstrates that the organisation had adequate processes at the time of the audit, but does not guarantee that these processes are followed consistently between audits or that they produce high-quality software. Despite these limitations, ISO 9000 certification is widely valued in the software industry, particularly in India, where it serves as a baseline quality credential that is often required by clients in outsourcing contracts.</p>
+
+<!-- SEI-CMM -->
+<h3>SEI-CMM (Capability Maturity Model)</h3>
+
+<p>The <strong>Software Engineering Institute — Capability Maturity Model (SEI-CMM)</strong> was developed by the Software Engineering Institute (SEI) at Carnegie Mellon University in Pittsburgh, Pennsylvania, beginning in the mid-1980s. It was funded by the US Department of Defense, which was concerned about the quality and reliability of software produced by its contractors and needed a framework for assessing the maturity of contractors' software development processes. The CMM was published in 1991 and quickly became the most influential process improvement framework in the software industry, particularly for large-scale, contract-driven software development.</p>
+
+<p>The fundamental premise of the CMM is that the quality of a software product is directly determined by the quality of the process used to develop it. A chaotic, ad hoc process will produce unpredictable, inconsistent results, while a mature, well-defined, continuously improving process will produce high-quality results reliably and repeatably. The CMM provides a five-level framework for assessing the maturity of an organisation's software development process and for guiding process improvement efforts.</p>
+
+<div class="diagram-container">
+  <div class="diagram-title">The Five Maturity Levels of SEI-CMM</div>
+  <svg viewBox="0 0 700 440" xmlns="http://www.w3.org/2000/svg" style="max-width: 620px;">
+    <!-- Staircase structure -->
+    <!-- Level 1: Initial -->
+    <rect x="50" y="360" width="130" height="60" rx="2" fill="#b84233"/>
+    <text x="115" y="384" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" font-weight="500" fill="#faf6ed">Level 1</text>
+    <text x="115" y="402" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="700" fill="#faf6ed">Initial</text>
+
+    <!-- Level 2: Repeatable -->
+    <rect x="190" y="290" width="130" height="60" rx="2" fill="#c9a84c"/>
+    <text x="255" y="314" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" font-weight="500" fill="#3d2a1a">Level 2</text>
+    <text x="255" y="332" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="700" fill="#3d2a1a">Repeatable</text>
+
+    <!-- Level 3: Defined -->
+    <rect x="330" y="220" width="130" height="60" rx="2" fill="#2d6b6a"/>
+    <text x="395" y="244" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" font-weight="500" fill="#faf6ed">Level 3</text>
+    <text x="395" y="262" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="700" fill="#faf6ed">Defined</text>
+
+    <!-- Level 4: Managed -->
+    <rect x="470" y="150" width="130" height="60" rx="2" fill="#6b4e37"/>
+    <text x="535" y="174" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" font-weight="500" fill="#faf6ed">Level 4</text>
+    <text x="535" y="192" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="700" fill="#faf6ed">Managed</text>
+
+    <!-- Level 5: Optimising -->
+    <rect x="530" y="60" width="140" height="60" rx="2" fill="#3d2a1a"/>
+    <text x="600" y="84" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" font-weight="500" fill="#faf6ed">Level 5</text>
+    <text x="600" y="102" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="700" fill="#faf6ed">Optimising</text>
+
+    <!-- Connecting stair lines -->
+    <line x1="180" y1="390" x2="190" y2="350" stroke="#d4c9b5" stroke-width="1" stroke-dasharray="4,3"/>
+    <line x1="180" y1="390" x2="190" y2="350" stroke="#d4c9b5" stroke-width="0"/>
+    <line x1="320" y1="320" x2="330" y2="280" stroke="#d4c9b5" stroke-width="1" stroke-dasharray="4,3"/>
+    <line x1="460" y1="250" x2="470" y2="210" stroke="#d4c9b5" stroke-width="1" stroke-dasharray="4,3"/>
+    <line x1="600" y1="180" x2="600" y2="120" stroke="#d4c9b5" stroke-width="1" stroke-dasharray="4,3"/>
+
+    <!-- Arrow on the right showing maturity direction -->
+    <line x1="670" y1="380" x2="670" y2="80" stroke="#b84233" stroke-width="2" marker-end="url(#arrow-red)"/>
+    <text x="680" y="240" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#b84233" transform="rotate(-90, 680, 240)" letter-spacing="0.15em">MATURITY →</text>
+
+    <!-- KPA labels on the right -->
+    <text x="195" y="415" font-family="Crimson Pro, serif" font-size="9" fill="#8a7d6b" font-style="italic">Chaos, heroic effort</text>
+    <text x="335" y="345" font-family="Crimson Pro, serif" font-size="9" fill="#8a7d6b" font-style="italic">Project management basics</text>
+    <text x="475" y="275" font-family="Crimson Pro, serif" font-size="9" fill="#8a7d6b" font-style="italic">Organisational standards</text>
+    <text x="545" y="205" font-family="Crimson Pro, serif" font-size="9" fill="#8a7d6b" font-style="italic">Quantitative control</text>
+    <text x="545" y="135" font-family="Crimson Pro, serif" font-size="9" fill="#8a7d6b" font-style="italic">Continuous improvement</text>
+  </svg>
+  <p class="diagram-caption">Fig. 5.8 — The five maturity levels of the SEI-CMM, presented as a staircase. Each level represents a progressively more mature and capable software development process. Organisations advance through the levels by systematically addressing the Key Process Areas (KPAs) at each level.</p>
+</div>
+
+<h4>Level 1: Initial</h4>
+
+<p>At the Initial level, the software development process is ad hoc, chaotic, and essentially undefined. There are no established processes, no standards, and no systematic approach to project management. Success depends entirely on the individual capabilities and heroic efforts of the team members. Projects are frequently over budget, behind schedule, and produce software of inconsistent quality. The organisation has no ability to repeat past successes because it does not understand why those successes occurred. Most software organisations start at Level 1. There are <strong>no Key Process Areas (KPAs)</strong> at this level — the concept of KPAs begins at Level 2.</p>
+
+<h4>Level 2: Repeatable (Managed)</h4>
+
+<p>At the Repeatable level, the organisation has established basic project management processes that enable it to repeat successful practices from past projects on new projects with similar applications. The focus is on managing projects effectively through disciplined processes for planning, tracking, and controlling. The KPAs at Level 2 are:</p>
+
+<ul>
+  <li><strong>Requirements Management (RM):</strong> Managing the software requirements across the project lifecycle, ensuring that requirements are agreed upon, controlled, and traceable.</li>
+  <li><strong>Software Project Planning (SPP):</strong> Developing reasonable estimates and plans for managing the software project, including effort, schedule, resources, and risk.</li>
+  <li><strong>Software Project Tracking and Oversight (SPTO):</strong> Providing adequate visibility into actual progress so that management can take effective actions when the project's performance deviates significantly from the plan.</li>
+  <li><strong>Software Subcontract Management (SSM):</strong> Managing the software subcontractor effectively, including selecting qualified subcontractors and tracking their performance.</li>
+  <li><strong>Software Quality Assurance (SQA):</strong> Providing management with appropriate visibility into the process being used and the products being built.</li>
+  <li><strong>Software Configuration Management (SCM):</strong> Establishing and maintaining the integrity of the products of the software project throughout the project lifecycle.</li>
+</ul>
+
+<h4>Level 3: Defined</h4>
+
+<p>At the Defined level, the organisation has a standard software process that is documented, used, and understood across the organisation. Projects tailor the standard process to create their own project-specific process. The focus shifts from project-level management to organisation-level process definition and standardisation. The KPAs at Level 3 are:</p>
+
+<ul>
+  <li><strong>Organisational Process Focus (OPF):</strong> Establishing organisational responsibility for software process activities that improve the organisation's overall software process capability.</li>
+  <li><strong>Organisational Process Definition (OPD):</strong> Developing and maintaining a usable set of software process assets that improve process performance across projects.</li>
+  <li><strong>Training Programme (TP):</strong> Developing the skills and knowledge of individuals so they can perform their roles effectively and efficiently.</li>
+  <li><strong>Integrated Software Management (ISM):</strong> Integrating the software engineering and management activities into a coherent, defined software process tailored from the organisation's standard process.</li>
+  <li><strong>Software Product Engineering (SPE):</strong> Consistently performing a well-defined engineering process that integrates all software engineering activities to produce correct, consistent software products effectively and efficiently.</li>
+  <li><strong>Intergroup Coordination (IC):</strong> Establishing a means for the software engineering group to participate with other engineering groups to better satisfy customer needs.</li>
+  <li><strong>Peer Reviews (PR):</strong> Removing defects from the software work products early and efficiently through peer reviews (inspections, walkthroughs).</li>
+</ul>
+
+<h4>Level 4: Managed (Quantitatively Managed)</h4>
+
+<p>At the Managed level, the organisation sets quantitative quality goals for both the software products and the software processes. The organisation uses statistical and other quantitative techniques to control the processes and identify when the processes are performing outside acceptable limits, enabling corrective action to be taken. The KPAs at Level 4 are:</p>
+
+<ul>
+  <li><strong>Quantitative Process Management (QPM):</strong> Quantitatively controlling the software project's process performance by measuring and analysing the process variation.</li>
+  <li><strong>Software Quality Management (SQM):</strong> Developing a quantitative understanding of the quality of the project's software products and achieving specific quality goals.</li>
+</ul>
+
+<h4>Level 5: Optimising</h4>
+
+<p>At the Optimising level, the organisation continuously improves its processes based on a quantitative understanding of the common causes of variation within the processes. The focus is on identifying and deploying process improvements and innovations. The KPAs at Level 5 are:</p>
+
+<ul>
+  <li><strong>Defect Prevention (DP):</strong> Identifying the causes of defects and preventing them from recurring by systematically analysing defect trends and taking corrective action.</li>
+  <li><strong>Technology Change Management (TCM):</strong> Identifying beneficial new technologies (tools, methods, processes) and transferring them into the organisation in an orderly manner.</li>
+  <li><strong>Process Change Management (PCM):</strong> Continuously improving the software processes used in the organisation with the goal of improving software quality, increasing productivity, and decreasing the cycle time for product development.</li>
+</ul>
+
+<div class="exam-tip">
+  <div class="tip-label">Exam Memory Aid — CMM Levels and KPAs</div>
+  <p>A popular mnemonic for the five levels: <strong>"I Refined DMO"</strong> — Initial, Repeatable, Defined, Managed, Optimising. For KPAs, remember that each level builds on the previous one: Level 2 focuses on <strong>project-level</strong> management (6 KPAs), Level 3 focuses on <strong>organisation-level</strong> definition (7 KPAs), Level 4 focuses on <strong>quantitative measurement</strong> (2 KPAs), and Level 5 focuses on <strong>continuous improvement</strong> (3 KPAs). Total KPAs: 6 + 7 + 2 + 3 = 18.</p>
+</div>
+
+<div class="memory-anchor">
+  <span class="ma-label">Analogy for CMM Levels</span>
+  <p>Think of CMM levels as stages of learning to cook. <strong>Level 1 (Initial):</strong> You throw ingredients together and hope for the best — sometimes it's great, sometimes it's a disaster, and you can't predict which. <strong>Level 2 (Repeatable):</strong> You follow recipes and can reliably produce the dishes you've made before. <strong>Level 3 (Defined):</strong> You have a cookbook for your entire kitchen — standard recipes, techniques, and quality standards that all cooks follow, adapted to the specific meal being prepared. <strong>Level 4 (Managed):</strong> You measure everything — cooking times, temperatures, ingredient quantities — and use statistics to control quality and predict outcomes. <strong>Level 5 (Optimising):</strong> You continuously experiment with new techniques, analyse why dishes succeed or fail, and systematically improve your recipes and processes.</p>
+</div>
+
+<!-- Comparison: ISO 9000 vs SEI-CMM -->
+<h3>ISO 9000 vs SEI-CMM: A Comparison</h3>
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>Aspect</th>
+        <th>ISO 9000</th>
+        <th>SEI-CMM</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Origin</strong></td>
+        <td>International Organization for Standardization (ISO), Geneva</td>
+        <td>Software Engineering Institute (SEI), Carnegie Mellon University</td>
+      </tr>
+      <tr>
+        <td><strong>Scope</strong></td>
+        <td>Generic — applicable to any industry</td>
+        <td>Specific — designed for software development</td>
+      </tr>
+      <tr>
+        <td><strong>Focus</strong></td>
+        <td>Quality management system requirements; "do what you say, say what you do"</td>
+        <td>Process maturity; systematic process improvement through defined levels</td>
+      </tr>
+      <tr>
+        <td><strong>Structure</strong></td>
+        <td>Single set of requirements (clauses in ISO 9001)</td>
+        <td>Five maturity levels with 18 Key Process Areas</td>
+      </tr>
+      <tr>
+        <td><strong>Approach</strong></td>
+        <td>Binary (certified or not); point-in-time assessment</td>
+        <td>Graduated (five levels); continuous improvement framework</td>
+      </tr>
+      <tr>
+        <td><strong>Assessment</strong></td>
+        <td>Third-party certification audit by accredited registrar</td>
+        <td>Internal assessment (CBA-IPI) or external assessment</td>
+      </tr>
+      <tr>
+        <td><strong>Prescriptiveness</strong></td>
+        <td>Tells you WHAT to do but not HOW to do it</td>
+        <td>Provides a roadmap for HOW to improve processes</td>
+      </tr>
+      <tr>
+        <td><strong>Strengths</strong></td>
+        <td>Internationally recognised; applicable across industries; strong customer confidence</td>
+        <td>Software-specific; provides clear improvement roadmap; focuses on capability building</td>
+      </tr>
+      <tr>
+        <td><strong>Weaknesses</strong></td>
+        <td>Not software-specific; documentation-heavy; point-in-time; can be "passed" without genuine quality improvement</td>
+        <td>US-centric initially; complex; expensive; not directly marketable to clients (no "certificate")</td>
+      </tr>
+      <tr>
+        <td><strong>Improvement Focus</strong></td>
+        <td>Maintaining conformance to documented procedures</td>
+        <td>Continuously improving process capability through maturity levels</td>
+      </tr>
+      <tr>
+        <td><strong>Relationship</strong></td>
+        <td colspan="2" style="text-align:center; font-style:italic;">Organisations at CMM Level 2 or 3 can generally satisfy most ISO 9001 requirements, and ISO 9001-certified organisations are typically at approximately CMM Level 2 or 3.</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="annotation">
+  A useful relationship to remember: ISO 9001 certification roughly corresponds to CMM Level 2 to Level 3. An organisation that achieves CMM Level 3 can typically satisfy ISO 9001 requirements with relatively little additional effort, because CMM Level 3's organisational process standards encompass most of what ISO 9001 requires in terms of documented procedures and consistent process execution.
+</div>
+
+<div class="viva-box">
+  <span class="viva-label">Likely Viva Questions — SQA</span>
+  <ul>
+    <li><strong>Q: What is the difference between QA and QC?</strong><br>A: QA is process-oriented (preventing defects); QC is product-oriented (detecting defects).</li>
+    <li><strong>Q: At which CMM level does quantitative measurement begin?</strong><br>A: Level 4 (Managed), where statistical techniques are used to control processes.</li>
+    <li><strong>Q: How many KPAs are there in total across all CMM levels?</strong><br>A: 18 (6 at Level 2, 7 at Level 3, 2 at Level 4, 3 at Level 5).</li>
+    <li><strong>Q: Can an ISO 9000-certified organisation be at CMM Level 1?</strong><br>A: In theory, it is unlikely but possible if the organisation's documented procedures are not followed in practice, since ISO 9000 certification is a point-in-time assessment.</li>
+    <li><strong>Q: What replaced CMM?</strong><br>A: CMMI (Capability Maturity Model Integration), which integrates software, systems, and other disciplines into a unified model.</li>
+  </ul>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- REVISION SECTION                                               -->
+<!-- ============================================================ -->
+<div class="section-break" id="sec-rev">
+  <span class="section-number">Quick Revision</span>
+  <h2>Exam Night<br>Recap Sheet</h2>
+  <p class="section-subtitle">Everything you need in one place, the night before the exam</p>
+</div>
+
+<h3>Formula Card — COCOMO</h3>
+
+<div class="formula-block">
+<strong>ORGANIC:</strong>&nbsp;&nbsp;&nbsp;E = 2.4 × (KLOC)^1.05 &nbsp;&nbsp;|&nbsp;&nbsp; D = 2.5 × (E)^0.38<br>
+<strong>SEMI-DETACHED:</strong>&nbsp;&nbsp;&nbsp;E = 3.0 × (KLOC)^1.12 &nbsp;&nbsp;|&nbsp;&nbsp; D = 2.5 × (E)^0.35<br>
+<strong>EMBEDDED:</strong>&nbsp;&nbsp;&nbsp;E = 3.6 × (KLOC)^1.20 &nbsp;&nbsp;|&nbsp;&nbsp; D = 2.5 × (E)^0.32<br><br>
+<strong>Derived:</strong>&nbsp;&nbsp;Staff = E/D &nbsp;&nbsp;|&nbsp;&nbsp; Productivity = KLOC/E<br>
+<strong>Intermediate:</strong>&nbsp;&nbsp;E<sub>adj</sub> = E<sub>basic</sub> × EAF &nbsp;&nbsp;where EAF = product of 15 cost driver multipliers
+</div>
+
+<h3>10 Key Definitions to Memorise</h3>
+
+<div class="rev-card">
+  <div class="rev-num">1</div>
+  <div class="rev-body">
+    <h5>Software Maintenance</h5>
+    <p>The process of modifying a software system after delivery to correct faults, improve performance, adapt to a changed environment, or prevent future problems. Consumes 60-80% of total lifecycle cost.</p>
+  </div>
+</div>
+
+<div class="rev-card">
+  <div class="rev-num">2</div>
+  <div class="rev-body">
+    <h5>Software Re-Engineering</h5>
+    <p>Examining and modifying an existing system to reconstitute it in a new form with improved quality and maintainability, without changing its essential functionality.</p>
+  </div>
+</div>
+
+<div class="rev-card">
+  <div class="rev-num">3</div>
+  <div class="rev-body">
+    <h5>Reverse Engineering</h5>
+    <p>Analysing an existing system to identify its components and relationships, creating representations at higher levels of abstraction (code → design → understanding).</p>
+  </div>
+</div>
+
+<div class="rev-card">
+  <div class="rev-num">4</div>
+  <div class="rev-body">
+    <h5>Software Configuration Management</h5>
+    <p>A set of activities for identifying, organising, controlling, and tracking changes to software artifacts throughout the project lifecycle.</p>
+  </div>
+</div>
+
+<div class="rev-card">
+  <div class="rev-num">5</div>
+  <div class="rev-body">
+    <h5>Change Control Board (CCB)</h5>
+    <p>The formal body that evaluates, approves, or rejects proposed changes to configuration items through the change control process.</p>
+  </div>
+</div>
+
+<div class="rev-card">
+  <div class="rev-num">6</div>
+  <div class="rev-body">
+    <h5>COCOMO</h5>
+    <p>Constructive Cost Model by Barry Boehm (1981). Estimates effort, schedule, and cost from project size (KLOC) and project mode (organic/semi-detached/embedded).</p>
+  </div>
+</div>
+
+<div class="rev-card">
+  <div class="rev-num">7</div>
+  <div class="rev-body">
+    <h5>EAF (Effort Adjustment Factor)</h5>
+    <p>Product of 15 cost driver multipliers in Intermediate COCOMO, used to adjust the basic effort estimate for project-specific conditions.</p>
+  </div>
+</div>
+
+<div class="rev-card">
+  <div class="rev-num">8</div>
+  <div class="rev-body">
+    <h5>SQA Plan</h5>
+    <p>Formal document defining QA activities, standards, procedures, and responsibilities for a project. Based on IEEE 730 standard.</p>
+  </div>
+</div>
+
+<div class="rev-card">
+  <div class="rev-num">9</div>
+  <div class="rev-body">
+    <h5>ISO 9001</h5>
+    <p>International standard specifying requirements for a quality management system. Binary certification (pass/fail). Generic, applicable to any industry.</p>
+  </div>
+</div>
+
+<div class="rev-card">
+  <div class="rev-num">10</div>
+  <div class="rev-body">
+    <h5>SEI-CMM</h5>
+    <p>Five-level maturity model for software processes: Initial → Repeatable → Defined → Managed → Optimising. 18 Key Process Areas total.</p>
+  </div>
+</div>
+
+<h3>Most Likely Exam Questions (Prioritised)</h3>
+
+<div class="exam-tip">
+  <div class="tip-label">High-Probability Questions</div>
+  <ul>
+    <li>Explain COCOMO model with all three types. (Almost always appears)</li>
+    <li>COCOMO numerical problem with given KLOC. (Very common)</li>
+    <li>Explain all categories of maintenance with differences. (Frequently asked)</li>
+    <li>Explain SEI-CMM levels and KPAs in detail. (Very common, especially KPAs)</li>
+    <li>Compare ISO 9000 and SEI-CMM. (Classic comparison question)</li>
+    <li>What is SCM? Explain change control and version control. (Common)</li>
+    <li>Explain the risk management process. (Increasingly common)</li>
+    <li>Write short note on software re-engineering / reverse engineering. (Short-answer staple)</li>
+    <li>Explain the role of CASE tools. (Occasionally asked)</li>
+    <li>Describe SQA plan components. (Moderate probability)</li>
+  </ul>
+</div>
+
+<h3>How to Structure a 10-Mark Answer</h3>
+
+<div class="exam-tip">
+  <div class="tip-label">Answer Architecture</div>
+  <p>A 10-mark answer in an Indian university exam should typically be <strong>500-800 words</strong> with a clear, structured format:</p>
+  <ul>
+    <li><strong>Opening paragraph (2-3 sentences):</strong> Define the concept and state its significance.</li>
+    <li><strong>Body (4-6 paragraphs):</strong> Explain each component/subtopic with its own paragraph. Include definitions, mechanisms, examples, and diagrams where relevant.</li>
+    <li><strong>Diagram:</strong> Always include a clearly labelled diagram if the question involves architecture, process, or structure.</li>
+    <li><strong>Comparison table:</strong> If applicable, include a table comparing related concepts.</li>
+    <li><strong>Advantages/Disadvantages:</strong> Include a brief list if relevant to the topic.</li>
+    <li><strong>Closing paragraph:</strong> Summarise the key points and state the practical significance.</li>
+  </ul>
+  <p><strong>What professors expect:</strong> (1) Correct definitions with proper terminology, (2) well-structured and logically organised content, (3) relevant diagrams with proper labels, (4) examples and applications, (5) comparative analysis where appropriate, (6) comprehensive coverage of the topic without obvious gaps.</p>
+</div>
+
+<h3>Diagram Quick-Draw Guide</h3>
+
+<div class="exam-tip">
+  <div class="tip-label">Essential Diagrams for the Exam</div>
+  <p>Practice drawing these diagrams quickly and accurately before the exam:</p>
+  <ul>
+    <li><strong>Re-Engineering Process Flow:</strong> Inventory → Document → Reverse Eng. → Code Restructuring → Data Restructuring → Forward Eng. → Re-engineered System. Draw as a vertical or horizontal flowchart with arrow connectors.</li>
+    <li><strong>Change Control Process:</strong> Change Request → CCB Review → Decision (Yes/No) → Implement → Verify → Update Baseline → Close. Draw as a flowchart with a decision diamond.</li>
+    <li><strong>COCOMO Diagram:</strong> Three columns (Organic, Semi-Detached, Embedded) with their formulas underneath. Simple and effective.</li>
+    <li><strong>Risk Management Cycle:</strong> Four boxes (Identify → Analyse → Prioritise → Mitigate) in a cycle with "Monitoring" in the centre.</li>
+    <li><strong>SEI-CMM Staircase:</strong> Five ascending steps, each labelled with the level name and key KPAs. Drawn as a staircase going from bottom-left to top-right.</li>
+    <li><strong>SQA Plan Components:</strong> Central circle labelled "SQA Plan" with radiating branches to each component (Purpose, Standards, Reviews, Testing, etc.).</li>
+  </ul>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- PYQ ANSWER BANK                                                -->
+<!-- ============================================================ -->
+<div class="section-break" id="sec-pyq">
+  <span class="section-number">Appendix</span>
+  <h2>PYQ Answer Bank</h2>
+  <p class="section-subtitle">Model answers for every question in the syllabus</p>
+</div>
+
+<!-- 5.1 PYQs -->
+<div class="pyq-section">
+  <div class="pyq-header">5.1 Software Maintenance and Re-Engineering</div>
+
+  <div class="pyq-item">
+    <div class="pyq-q">Explain the concept of software maintenance and its importance in the SDLC. Explain why changes are inevitable in complex systems. Name any two approaches used in real life projects to cope with change.</div>
+    <div class="pyq-a">
+      <p>Software maintenance is the totality of activities required to provide cost-effective support to a software system after it has been deployed. It encompasses all modifications made to the software product after delivery to correct faults, improve performance or other attributes, or adapt the product to a changed environment. Maintenance is critically important in the SDLC because software, unlike manufactured products, must co-evolve with its operational environment: the hardware platform changes, the operating system is upgraded, business requirements shift due to market conditions, government regulations are modified, and users discover new needs through daily use. Empirical data consistently shows that 60-80% of the total lifecycle cost of a large software system is consumed by maintenance activities, making it the single most expensive phase of the software lifecycle.</p>
+      <p>Changes are inevitable in complex systems because of Lehman's Laws of Software Evolution, particularly the Law of Continuing Change, which states that any program used in a real-world environment must necessarily change or become progressively less useful. The external environment — technology, business, regulation, user expectations — never stands still, and the software must adapt to remain viable. Furthermore, the Law of Increasing Complexity observes that as changes accumulate, the system's internal complexity grows, making subsequent changes more difficult and more likely to introduce new defects. Two approaches used in real-world projects to cope with change are: (1) Software Configuration Management (SCM), which provides structured processes for identifying, controlling, and tracking changes to software artifacts through version control, change control, and status accounting; and (2) Agile Development Methodologies (such as Scrum and XP), which embrace change by delivering software in short iterations, maintaining continuous communication with stakeholders, and using practices like refactoring to keep the codebase clean and adaptable.</p>
+    </div>
+  </div>
+
+  <div class="pyq-item">
+    <div class="pyq-q">Discuss the different categories of maintenance: preventive, corrective, perfective, and adaptive. Differentiate between them.</div>
+    <div class="pyq-a">
+      <p>Software maintenance is categorised into four types based on the motivation for the change. <strong>Corrective maintenance</strong> addresses faults, bugs, and defects discovered in the software after deployment. These may be coding errors, design flaws, or requirements misunderstandings that were not caught during testing. Corrective maintenance is reactive and accounts for approximately 20% of total maintenance effort. <strong>Adaptive maintenance</strong> modifies the software to function in a changed external environment — a new operating system, new hardware, new regulations, new database platform. The software itself may be correct, but the world around it has changed. This accounts for about 25% of effort. <strong>Perfective maintenance</strong> is the largest category (~50%), involving enhancements to functionality, performance improvements, and usability upgrades based on user feedback and evolving business needs. <strong>Preventive maintenance</strong> (~5%) proactively improves the software's internal structure — refactoring code, updating documentation, removing technical debt — to make future maintenance easier without changing external behaviour.</p>
+      <p>The key differentiator is the source of the change: corrective changes fix what was wrong; adaptive changes respond to environmental change; perfective changes improve what works; and preventive changes protect against future deterioration. Corrective and adaptive are reactive; perfective and preventive are proactive. Corrective and adaptive preserve existing functionality (fixing it or porting it); perfective adds or improves functionality; preventive preserves functionality while improving internal structure.</p>
+    </div>
+  </div>
+
+  <div class="pyq-item">
+    <div class="pyq-q">What is the significance of software re-engineering and reverse engineering in maintenance? Write a short note on Software Re-engineering.</div>
+    <div class="pyq-a">
+      <p>Software re-engineering and reverse engineering are critical techniques for extending the useful life of legacy software systems and reducing maintenance costs. <strong>Reverse engineering</strong> is the process of analysing an existing system to extract its design, architecture, and business rules from source code — essentially working backward from implementation to specification. It is necessary because many legacy systems have outlived their documentation and original developers, and the only reliable source of knowledge about the system's behaviour is the code itself. Reverse engineering produces higher-level representations (design diagrams, data models, business rule descriptions) that enable developers to understand the system well enough to modify it safely.</p>
+      <p><strong>Software re-engineering</strong> is the broader process of examining and modifying an existing system to reconstitute it in a new form with improved quality, maintainability, and performance, without changing its essential functionality. The re-engineering process typically includes inventory analysis (identifying which systems to re-engineer), document restructuring (improving documentation), reverse engineering (recovering design from code), code restructuring (refactoring for improved structure), data restructuring (improving database design), and forward engineering (rebuilding with modern practices and technologies). The economic rationale is compelling: replacing a legacy system from scratch costs three to five times more than re-engineering it, with substantially higher risk of failure. Re-engineering preserves the embedded business knowledge while improving technical quality, making it the pragmatic choice for many organisations. In the Indian IT industry, re-engineering projects are particularly common for modernising COBOL-based mainframe systems to modern platforms.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 5.2 PYQs -->
+<div class="pyq-section">
+  <div class="pyq-header">5.2 Software Project Management and SCM</div>
+
+  <div class="pyq-item">
+    <div class="pyq-q">What is the role of Software Project Management in software development? List the activities of SPM. Which Agile method supports SPM?</div>
+    <div class="pyq-a">
+      <p>Software Project Management (SPM) plays the central organising role in software development by planning, organising, staffing, directing, and controlling all project activities to deliver the software product within the constraints of time, cost, quality, and scope. Without effective project management, even technically excellent teams will produce software late, over budget, or with the wrong features. The key SPM activities include: (1) Project planning — defining scope, estimating effort and schedule, identifying resources; (2) Staffing and organising — assembling teams, defining roles; (3) Directing — motivating, guiding, and making technical decisions; (4) Monitoring and control — tracking progress, measuring deviations, taking corrective action; (5) Risk management — identifying, analysing, and mitigating risks; (6) Project closure — delivering the product, documenting lessons learned.</p>
+      <p>The Agile method that most directly supports SPM is <strong>Scrum</strong>. Scrum provides a lightweight iterative framework that organises work into 2-4 week sprints, each producing a potentially shippable product increment. Three roles are defined: the Product Owner (prioritises requirements), the Scrum Master (facilitates process, removes impediments), and the Development Team (self-organises to complete work). Key ceremonies include Sprint Planning (defining what to build), Daily Standup (synchronising work), Sprint Review (demonstrating results to stakeholders), and Sprint Retrospective (reflecting on and improving the process). Scrum's emphasis on iterative delivery, continuous feedback, and adaptive planning makes it well-suited to managing software projects where requirements are uncertain or evolving.</p>
+    </div>
+  </div>
+
+  <div class="pyq-item">
+    <div class="pyq-q">What do you mean by Software Configuration Management? Describe various SCM activities in detail.</div>
+    <div class="pyq-a">
+      <p>Software Configuration Management (SCM) is a set of activities, principles, and practices for identifying, organising, controlling, and tracking changes to the various artifacts produced during a software project. It addresses the fundamental problem of maintaining coherence in a complex, collaborative, evolving software project. The four core SCM activities are:</p>
+      <p><strong>(1) Configuration Identification:</strong> This activity defines which artifacts (source code, documents, test cases, configuration files, manuals) are configuration items (CIs) and assigns each a unique identifier, version number, and baseline. A baseline is a formally reviewed and agreed-upon specification or product that can only be changed through formal change control procedures.</p>
+      <p><strong>(2) Configuration Control:</strong> This is the formal process for managing changes to baselined CIs. It involves the change control process: a change request is submitted, evaluated by the Change Control Board (CCB), and either approved, deferred, or rejected. If approved, the change is implemented, tested, verified, and the baseline is updated.</p>
+      <p><strong>(3) Configuration Status Accounting:</strong> This activity records and reports the status of all CIs and the history of all changes made to them. It maintains a complete audit trail that enables any version of any artifact to be reconstructed and any change to be traced back to its originating change request.</p>
+      <p><strong>(4) Configuration Auditing:</strong> This verifies that CIs conform to their specifications, that changes have been properly implemented and documented, and that the software product is complete and consistent. Configuration audits can be functional (verifying the product meets requirements) or physical (verifying all CIs are present and properly identified).</p>
+    </div>
+  </div>
+
+  <div class="pyq-item">
+    <div class="pyq-q">Discuss the role of CASE tools in software project management.</div>
+    <div class="pyq-a">
+      <p>CASE (Computer-Aided Software Engineering) tools are software applications that support, automate, and enhance various activities in the software development lifecycle. Their role in project management is multifaceted. Upper CASE tools (such as Enterprise Architect, Rational Rose) support requirements analysis and design by enabling visual modelling through UML diagrams, data flow diagrams, and entity-relationship diagrams, improving communication between stakeholders. Lower CASE tools (IDEs, testing frameworks, debuggers) support coding and testing by automating code generation, test execution, and defect detection. Project management CASE tools (Microsoft Project, Jira, Trello) directly support SPM by enabling project planning, task scheduling, resource allocation, progress tracking, and team collaboration. SCM tools (Git, SVN) support version control and change management. Documentation tools (Doxygen, Confluence) automate the generation and maintenance of project documentation.</p>
+      <p>CASE tools improve productivity by automating tedious and error-prone tasks, improve quality through built-in validation and consistency checking, improve communication through standardised notations and shared repositories, and improve project management through integrated planning and tracking. In the Indian IT industry, CASE tools are indispensable — virtually every project uses Git for version control, Jira for issue tracking, Jenkins for continuous integration, and SonarQube for code quality analysis.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 5.3 PYQs -->
+<div class="pyq-section">
+  <div class="pyq-header">5.3 Estimation Models and Risk Management</div>
+
+  <div class="pyq-item">
+    <div class="pyq-q">What is the purpose of the COCOMO model? Discuss basic, intermediate, and detailed COCOMO.</div>
+    <div class="pyq-a">
+      <p>The purpose of the COCOMO (Constructive Cost Model) is to provide a structured, empirically-grounded method for estimating the effort, development time, cost, and staffing requirements of a software project based on its estimated size and a set of project characteristics. Developed by Barry Boehm in 1981, COCOMO classifies projects into three modes (organic, semi-detached, embedded) and provides three levels of estimation detail.</p>
+      <p><strong>Basic COCOMO</strong> computes effort and development time solely from the project size (KLOC) using mode-specific formulae: E = a(KLOC)^b and D = c(E)^d, where a, b, c, d are constants that vary by mode. It provides quick, early estimates but does not account for cost drivers beyond size.</p>
+      <p><strong>Intermediate COCOMO</strong> extends Basic COCOMO by introducing 15 cost driver attributes (Effort Adjustment Factors) across four categories — Product (RELY, DATA, CPLX), Hardware (TIME, STOR, VIRT, TURN), Personnel (ACAP, AEXP, PCAP, VEXP, LEXP), and Project (MODP, TOOL, SCED). The adjusted effort is E_adjusted = E_basic × EAF, where EAF is the product of all 15 multipliers. This provides more accurate estimates by accounting for project-specific conditions.</p>
+      <p><strong>Detailed COCOMO</strong> applies cost driver adjustments separately at each lifecycle phase (requirements, design, coding, testing), recognising that the impact of cost drivers varies by phase. For example, analyst capability (ACAP) has its greatest impact during requirements and design, while programmer capability (PCAP) most affects coding. Detailed COCOMO provides the most accurate estimates but requires significantly more information to apply.</p>
+    </div>
+  </div>
+
+  <div class="pyq-item">
+    <div class="pyq-q">Explain the importance of Risk management and how it is carried out.</div>
+    <div class="pyq-a">
+      <p>Risk management is critically important in software development because software projects operate under conditions of significant uncertainty — requirements may be incomplete, technology may be immature, team members may leave, budgets may be cut, and schedules may be unrealistic. Without systematic risk management, these uncertainties can and do materialise as project failures: cost overruns, schedule delays, quality problems, and even project cancellation. Risk management provides a structured approach to identifying, analysing, prioritising, and mitigating these threats before they cause damage.</p>
+      <p>The risk management process consists of four key steps: (1) <strong>Risk Identification</strong> — systematically identifying all potential risks through brainstorming, checklists, expert judgment, and analysis of similar past projects. Risks are categorised as project risks (budget, schedule, staffing), technical risks (technology, performance, integration), and business risks (market, competition, regulation). (2) <strong>Risk Analysis</strong> — evaluating each risk in terms of its probability of occurrence and its impact if it occurs. Risk exposure is calculated as Probability × Impact, and risks are ranked by their exposure values. (3) <strong>Risk Prioritisation</strong> — focusing attention and resources on the highest-exposure risks using a risk matrix or risk table. (4) <strong>Risk Mitigation</strong> — developing strategies for each prioritised risk: avoidance (eliminate the risk by changing the plan), transfer (shift the risk to a third party), or acceptance (prepare a contingency plan). Risk monitoring is performed continuously throughout the project to track existing risks, identify new ones, and evaluate the effectiveness of mitigation strategies.</p>
+    </div>
+  </div>
+</div>
+
+<!-- 5.4 PYQs -->
+<div class="pyq-section">
+  <div class="pyq-header">5.4 Software Quality Assurance</div>
+
+  <div class="pyq-item">
+    <div class="pyq-q">What is SEI CMM? Explain its significance and elaborate on the KPAs of each level.</div>
+    <div class="pyq-a">
+      <p>The SEI-CMM (Software Engineering Institute — Capability Maturity Model) is a five-level framework for assessing and improving the maturity of an organisation's software development process, developed at Carnegie Mellon University in the early 1990s. Its fundamental premise is that software quality directly depends on process quality: a chaotic, ad hoc process produces unpredictable results, while a mature, well-defined process produces reliable, high-quality results consistently.</p>
+      <p>The five levels and their KPAs are: <strong>Level 1 (Initial):</strong> Ad hoc, chaotic processes. No KPAs. Success depends on individual heroics. <strong>Level 2 (Repeatable):</strong> Basic project management established. 6 KPAs: Requirements Management, Software Project Planning, Software Project Tracking &amp; Oversight, Software Subcontract Management, SQA, SCM. <strong>Level 3 (Defined):</strong> Organisation-wide standard processes. 7 KPAs: Organisational Process Focus, Organisational Process Definition, Training Programme, Integrated Software Management, Software Product Engineering, Intergroup Coordination, Peer Reviews. <strong>Level 4 (Managed):</strong> Quantitative process control. 2 KPAs: Quantitative Process Management, Software Quality Management. <strong>Level 5 (Optimising):</strong> Continuous improvement. 3 KPAs: Defect Prevention, Technology Change Management, Process Change Management.</p>
+      <p>The significance of CMM lies in its practical impact: it provides organisations with a clear roadmap for process improvement, enables objective assessment of current capabilities, and has been shown to correlate with improved software quality, reduced defect rates, and increased productivity. In India, achieving CMM Level 5 became a competitive differentiator for IT services companies like Infosys, TCS, and Wipro in the global outsourcing market.</p>
+    </div>
+  </div>
+
+  <div class="pyq-item">
+    <div class="pyq-q">Compare and contrast ISO 9000 and SEI CMM models.</div>
+    <div class="pyq-a">
+      <p>ISO 9000 and SEI-CMM are two of the most important quality frameworks in the software industry, but they differ significantly in origin, scope, structure, and approach. <strong>Origin:</strong> ISO 9000 was developed by the International Organization for Standardization for all industries; SEI-CMM was developed by Carnegie Mellon University specifically for software. <strong>Scope:</strong> ISO 9000 is generic (applicable to manufacturing, services, software); SEI-CMM is software-specific. <strong>Structure:</strong> ISO 9001 defines a single set of quality management system requirements (binary compliance); SEI-CMM defines five maturity levels with 18 KPAs (graduated improvement). <strong>Approach:</strong> ISO 9000 asks "do you have documented processes and do you follow them?"; SEI-CMM asks "how mature and capable are your processes, and how can they be improved?" <strong>Assessment:</strong> ISO 9000 uses third-party certification audits; SEI-CMM uses internal or external process assessments. <strong>Persistence:</strong> ISO 9000 certification is a point-in-time assessment renewed every three years; CMM improvement is a continuous journey. <strong>Weaknesses:</strong> ISO 9000 can be satisfied by having good documentation without good engineering practices; SEI-CMM is complex, expensive, and does not provide a marketable certificate. <strong>Relationship:</strong> ISO 9001 certification roughly corresponds to CMM Level 2-3; CMM Level 3+ organisations can typically satisfy ISO 9001 requirements.</p>
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- Scroll to top button -->
+<button class="scroll-top" id="scrollTop" title="Back to top">↑</button>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>Unit 5 · Software Engineering · TCS-602 / TCS-611</p>
+  <p style="margin-top: 0.5rem; font-size: 0.58rem;">Prepared for Indian University Examination Preparation · Comprehensive Study Document</p>
+</footer>
+
+<!-- ======================== JAVASCRIPT ======================== -->
+<script>
+// Scroll to top button
+const scrollBtn = document.getElementById('scrollTop');
+window.addEventListener('scroll', () => {
+  if (window.scrollY > 600) {
+    scrollBtn.classList.add('visible');
+  } else {
+    scrollBtn.classList.remove('visible');
+  }
+});
+scrollBtn.addEventListener('click', () => {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+
+// Intersection Observer for animation
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.animationPlayState = 'running';
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.animate-in').forEach(el => {
+  el.style.animationPlayState = 'paused';
+  observer.observe(el);
+});
+
+// Smooth scrolling for TOC links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 4 — Software Testing · Complete University Study Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f5f0e6;--bg-alt:#ece5d5;--surface:#faf7f0;--surface-alt:#efe9da;
+  --accent:#c4622d;--accent-light:#e8a76d;--teal:#4a7c6f;--teal-light:#6fa396;
+  --rose:#b85c5c;--gold:#c4a64d;--gold-light:#dfc97a;
+  --text:#2c2c2c;--text-sec:#5a5347;--text-muted:#8a8279;
+  --border:#d4c9b5;--border-light:#e8e0d0;
+  --shadow:rgba(44,44,44,.07);
+  --font-display:'Playfair Display',Georgia,serif;
+  --font-body:'Source Serif 4','Georgia',serif;
+  --font-mono:'DM Mono','Courier New',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:17px}
+body{
+  font-family:var(--font-body);color:var(--text);
+  background:var(--bg);line-height:1.72;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity:.35;
+}
+::selection{background:var(--accent);color:var(--surface)}
+h1,h2,h3,h4,h5{font-family:var(--font-display);font-weight:600;line-height:1.25;color:var(--text)}
+p{margin-bottom:1.1em;text-align:justify}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:.2s}
+a:hover{border-bottom-color:var(--accent)}
+code,pre{font-family:var(--font-mono);font-size:.88em}
+pre{
+  background:var(--surface-alt);border:1px solid var(--border);
+  border-radius:6px;padding:1em 1.2em;overflow-x:auto;margin:1em 0;
+  line-height:1.55;
+}
+code{background:var(--surface-alt);padding:.12em .35em;border-radius:3px}
+pre code{background:none;padding:0}
+
+/* ===== HERO ===== */
+.hero{
+  text-align:center;padding:5rem 2rem 4rem;
+  background:linear-gradient(180deg,var(--surface) 0%,var(--bg) 100%);
+  border-bottom:3px double var(--border);
+  position:relative;
+}
+.hero::before{
+  content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:80%;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent);
+}
+.hero-badge{
+  display:inline-block;font-family:var(--font-mono);font-size:.72rem;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--text-muted);
+  border:1px solid var(--border);padding:.35em 1.2em;border-radius:2px;
+  margin-bottom:1.8rem;
+}
+.hero h1{
+  font-size:clamp(2.2rem,5vw,3.6rem);font-weight:700;
+  margin-bottom:.5em;letter-spacing:-.01em;
+}
+.hero h1 span{color:var(--accent)}
+.hero-sub{
+  font-size:1.15rem;color:var(--text-sec);max-width:620px;margin:0 auto 2rem;
+  font-style:italic;font-weight:300;
+}
+.hero-rule{
+  width:80px;height:2px;background:var(--accent);border:none;margin:0 auto 1.5rem;
+}
+.hero-meta{
+  font-family:var(--font-mono);font-size:.75rem;color:var(--text-muted);letter-spacing:.08em;
+}
+
+/* ===== TOC ===== */
+.toc-wrap{
+  max-width:780px;margin:0 auto;padding:3rem 2rem 2rem;
+}
+.toc-title{
+  font-size:.8rem;font-family:var(--font-mono);letter-spacing:.15em;
+  text-transform:uppercase;color:var(--text-muted);margin-bottom:1.5rem;
+  border-bottom:1px solid var(--border-light);padding-bottom:.5rem;
+}
+.toc-list{list-style:none;counter-reset:toc}
+.toc-list li{
+  counter-increment:toc;padding:.55em 0;
+  border-bottom:1px solid var(--border-light);
+  display:flex;align-items:baseline;gap:.6rem;
+}
+.toc-list li::before{
+  content:counter(toc,decimal-leading-zero);
+  font-family:var(--font-display);font-weight:600;color:var(--accent);
+  font-size:1.1rem;min-width:1.8rem;
+}
+.toc-list a{font-size:1rem;color:var(--text-sec);flex:1}
+.toc-list a:hover{color:var(--accent)}
+
+/* ===== MAIN CONTENT ===== */
+.content-wrap{max-width:820px;margin:0 auto;padding:1rem 2rem 4rem}
+
+/* ===== SECTION HEADERS ===== */
+.section{
+  padding-top:4rem;margin-bottom:3rem;
+  border-top:2px solid var(--border-light);
+}
+.section:first-child{border-top:none}
+.section-num{
+  font-family:var(--font-display);font-size:3.2rem;font-weight:700;
+  color:var(--accent);opacity:.25;display:block;margin-bottom:-.3rem;
+}
+.section-title{font-size:1.8rem;margin-bottom:.6rem;letter-spacing:-.01em}
+.section-intro{
+  font-size:1.05rem;color:var(--text-sec);font-style:italic;
+  max-width:680px;margin-bottom:2rem;font-weight:300;
+}
+
+/* ===== SUBSECTIONS ===== */
+.subsection{margin:2.5rem 0 1.5rem}
+.subsection h3{
+  font-size:1.25rem;color:var(--teal);margin-bottom:.4rem;
+  padding-left:.8rem;border-left:3px solid var(--teal);
+}
+.subsection h4{
+  font-size:1.05rem;color:var(--text);margin:1.5rem 0 .5rem;
+  font-style:italic;
+}
+
+/* ===== COMPONENT BOXES ===== */
+.box{
+  background:var(--surface);border:1px solid var(--border-light);
+  border-radius:8px;padding:1.5rem 1.8rem;margin:1.5rem 0;
+  box-shadow:0 2px 12px var(--shadow);
+}
+.box-exam{
+  border-left:4px solid var(--accent);
+  background:linear-gradient(135deg,#fdf6ee,var(--surface));
+}
+.box-exam .box-label{
+  font-family:var(--font-mono);font-size:.7rem;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:.6rem;display:block;
+}
+.box-memory{
+  border-left:4px solid var(--gold);
+  background:linear-gradient(135deg,#fdf9ee,var(--surface));
+}
+.box-memory .box-label{
+  font-family:var(--font-mono);font-size:.7rem;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--gold);margin-bottom:.6rem;display:block;
+}
+.box-warning{
+  border-left:4px solid var(--rose);
+  background:linear-gradient(135deg,#fdf2f2,var(--surface));
+}
+.box-warning .box-label{
+  font-family:var(--font-mono);font-size:.7rem;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--rose);margin-bottom:.6rem;display:block;
+}
+.box-teal{
+  border-left:4px solid var(--teal);
+  background:linear-gradient(135deg,#f2f9f7,var(--surface));
+}
+.box-teal .box-label{
+  font-family:var(--font-mono);font-size:.7rem;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--teal);margin-bottom:.6rem;display:block;
+}
+
+/* ===== PULL QUOTES ===== */
+.pull-quote{
+  font-family:var(--font-display);font-size:1.35rem;font-style:italic;
+  color:var(--text-sec);text-align:center;max-width:600px;
+  margin:2.5rem auto;padding:1.5rem 2rem;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  position:relative;line-height:1.5;
+}
+.pull-quote::before{
+  content:'\201C';position:absolute;top:-.15em;left:50%;
+  transform:translateX(-50%);font-size:4rem;color:var(--accent);opacity:.2;
+}
+
+/* ===== TABLES ===== */
+.table-wrap{overflow-x:auto;margin:1.5rem 0}
+table{
+  width:100%;border-collapse:collapse;font-size:.92rem;
+  background:var(--surface);border-radius:8px;overflow:hidden;
+  box-shadow:0 2px 12px var(--shadow);
+}
+thead{background:var(--accent);color:var(--surface)}
+th{
+  font-family:var(--font-display);font-weight:600;padding:.75rem 1rem;
+  text-align:left;font-size:.85rem;letter-spacing:.03em;
+}
+td{padding:.7rem 1rem;border-bottom:1px solid var(--border-light);vertical-align:top}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:var(--surface-alt)}
+
+/* ===== SVG DIAGRAMS ===== */
+.diagram-wrap{
+  margin:2rem 0;background:var(--surface);
+  border:1px solid var(--border-light);border-radius:8px;
+  padding:1.5rem;text-align:center;
+  box-shadow:0 2px 12px var(--shadow);
+}
+.diagram-wrap svg{max-width:100%;height:auto}
+.diagram-caption{
+  font-family:var(--font-mono);font-size:.75rem;color:var(--text-muted);
+  margin-top:.8rem;letter-spacing:.05em;
+}
+
+/* ===== DETAILS/SUMMARY ===== */
+details{
+  margin:1.2rem 0;border:1px solid var(--border-light);
+  border-radius:6px;background:var(--surface);overflow:hidden;
+}
+summary{
+  padding:.8rem 1.2rem;cursor:pointer;font-family:var(--font-display);
+  font-size:1rem;font-weight:600;color:var(--text-sec);
+  background:var(--surface-alt);list-style:none;
+  display:flex;align-items:center;gap:.6rem;
+  transition:background .2s;
+}
+summary:hover{background:var(--bg-alt)}
+summary::before{content:'▸';color:var(--accent);transition:transform .2s;font-size:.9rem}
+details[open] summary::before{transform:rotate(90deg)}
+summary::-webkit-details-marker{display:none}
+.details-body{padding:1rem 1.2rem;line-height:1.7}
+
+/* ===== COMPARISON BLOCK ===== */
+.comparison{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.comp-col{padding:1.2rem;border-radius:6px;border:1px solid var(--border-light);background:var(--surface)}
+.comp-col h4{
+  font-size:.95rem;color:var(--accent);margin-bottom:.5rem;
+  font-family:var(--font-mono);letter-spacing:.05em;
+}
+@media(max-width:600px){.comparison{grid-template-columns:1fr}}
+
+/* ===== ADVANTAGES/DISADVANTAGES ===== */
+.adv-dis{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}
+.adv-dis ul{list-style:none;padding:0}
+.adv-dis li{padding:.3rem 0 .3rem 1.2rem;position:relative;font-size:.95rem}
+.adv-dis li::before{position:absolute;left:0;top:.45rem;font-size:.85rem}
+.adv-list li::before{content:'✓';color:var(--teal)}
+.dis-list li::before{content:'✗';color:var(--rose)}
+@media(max-width:600px){.adv-dis{grid-template-columns:1fr}}
+
+/* ===== TEST CASE TABLE ===== */
+.test-table{font-size:.85rem}
+.test-table th{background:var(--teal);font-size:.78rem;text-transform:uppercase;letter-spacing:.06em}
+.test-table td{padding:.5rem .7rem}
+
+/* ===== REVISION CARDS ===== */
+.revision-grid{
+  display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:1rem;margin:1.5rem 0;
+}
+.rev-card{
+  background:var(--surface);border:1px solid var(--border-light);
+  border-radius:8px;padding:1.2rem 1.4rem;
+  box-shadow:0 2px 8px var(--shadow);
+  border-top:3px solid var(--accent);
+}
+.rev-card h4{
+  font-size:.95rem;color:var(--accent);margin-bottom:.5rem;
+}
+.rev-card p,.rev-card ul{font-size:.88rem;line-height:1.55}
+
+/* ===== MNEMONIC ===== */
+.mnemonic{
+  font-family:var(--font-display);font-size:1.15rem;font-weight:600;
+  color:var(--gold);text-align:center;padding:1rem;
+  background:linear-gradient(135deg,#fdf8ee,#faf5e6);
+  border:2px dashed var(--gold-light);border-radius:8px;margin:1.2rem 0;
+}
+
+/* ===== FOOTER ===== */
+.site-footer{
+  text-align:center;padding:3rem 2rem;
+  border-top:2px double var(--border);
+  font-family:var(--font-mono);font-size:.75rem;color:var(--text-muted);
+  letter-spacing:.06em;
+}
+
+/* ===== ANIMATIONS ===== */
+.fade-up{opacity:0;transform:translateY(18px);animation:fadeUp .7s ease forwards}
+@keyframes fadeUp{to{opacity:1;transform:translateY(0)}}
+.section:nth-child(2){animation-delay:.05s}
+.section:nth-child(3){animation-delay:.1s}
+.section:nth-child(4){animation-delay:.15s}
+
+/* ===== PRINT ===== */
+@media print{
+  body::before{display:none}
+  .hero{padding:2rem 1rem}
+  .section{break-inside:avoid}
+  details{break-inside:avoid}
+  details[open]{break-inside:avoid}
+  .diagram-wrap{break-inside:avoid}
+  .box{break-inside:avoid}
+}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:700px){
+  html{font-size:15px}
+  .content-wrap{padding:1rem 1.2rem 3rem}
+  .hero{padding:3rem 1.5rem}
+  .section{padding-top:2.5rem}
+  .section-num{font-size:2.4rem}
+  .section-title{font-size:1.45rem}
+  .comparison,.adv-dis{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════ HERO ═══════════════════════ -->
+<header class="hero fade-up">
+  <div class="hero-badge">Software Engineering · Unit 4</div>
+  <h1>The Art &amp; Science of <span>Software Testing</span></h1>
+  <p class="hero-sub">A handcrafted study guide that transforms examination preparation into genuine understanding — covering every concept, every diagram, and every question pattern from Indian university papers.</p>
+  <hr class="hero-rule">
+  <p class="hero-meta">Structured for 2-mark · 5-mark · 10-mark · 15-mark · Viva &amp; Diagram Questions</p>
+</header>
+
+<!-- ═══════════════════════ TOC ═══════════════════════ -->
+<nav class="toc-wrap fade-up">
+  <div class="toc-title">Table of Contents</div>
+  <ol class="toc-list">
+    <li><a href="#s1">Testing Fundamentals — What, Why, and How</a></li>
+    <li><a href="#s2">Verification vs. Validation and the V-Model</a></li>
+    <li><a href="#s3">Levels of Testing — Unit through Acceptance</a></li>
+    <li><a href="#s4">Functional Testing, Performance Testing &amp; Regression Testing</a></li>
+    <li><a href="#s5">Integration Testing Strategies — Top-Down, Bottom-Up &amp; Beyond</a></li>
+    <li><a href="#s6">Structural Testing — White Box Techniques</a></li>
+    <li><a href="#s7">Functional Testing Techniques — Black Box Methods</a></li>
+    <li><a href="#s8">Alpha Testing, Beta Testing &amp; the Release Cycle</a></li>
+    <li><a href="#s9">Static Testing Strategies — Reviews, Walkthroughs &amp; Inspections</a></li>
+    <li><a href="#s10">Test Data Preparation &amp; Test Case Design</a></li>
+    <li><a href="#revision">Quick Revision &amp; Exam Night Recap</a></li>
+  </ol>
+</nav>
+
+<!-- ═══════════════════════ CONTENT ═══════════════════════ -->
+<div class="content-wrap">
+
+<!-- ───────────────────── SECTION 1 ───────────────────── -->
+<article class="section fade-up" id="s1">
+  <span class="section-num">01</span>
+  <h2 class="section-title">Testing Fundamentals — What, Why, and How</h2>
+  <p class="section-intro">Before we dissect strategies and coverage metrics, we need to understand what testing actually is — and, perhaps more importantly, what it is not.</p>
+
+  <div class="subsection">
+    <h3>What Is Software Testing?</h3>
+    <p>Consider an analogy from everyday life. When a manufacturer produces a batch of medicine, no reasonable person would ship it directly to pharmacies without first running quality checks — checking chemical composition, verifying dosage accuracy, confirming that the packaging is sealed. Software testing serves an analogous purpose: it is the disciplined process of evaluating a software artefact to determine whether it behaves as expected under a defined set of conditions, and to uncover defects that would otherwise reach the end user. At its most intuitive level, testing means running the software with carefully chosen inputs and comparing the actual outputs against the expected outputs; wherever a discrepancy appears, a defect (or "bug") has been found.</p>
+    <p>However, the formal definition goes deeper. The IEEE Standard 610.12-1990 defines software testing as "the process of operating a system or component under specified conditions, observing or recording the results, and making an evaluation of some aspect of the system or component." Notice that this definition emphasizes <em>specified conditions</em> — testing is not random poking at a program; it is a systematic, planned activity driven by requirements, design documents, and risk analysis. Glen Myers, in his foundational 1979 text, offered three complementary goals: testing is the process of executing a program with the intent of finding errors; a good test case is one that has a high probability of detecting an undiscovered error; and a successful test is one that discovers a previously unknown defect. This inversion of intuition — where "success" means finding problems rather than confirming correctness — is one of the most important conceptual shifts students must internalize.</p>
+    <p>It is equally important to understand what testing <em>cannot</em> prove. Testing can demonstrate the presence of bugs, but it can never prove their absence. This observation, attributed to Edsger Dijkstra, is not merely a philosophical quip; it has profound practical consequences. No finite set of test cases can exhaustively cover all possible inputs and states of a non-trivial program. This inherent limitation is why testing must be complemented by other quality assurance techniques — formal verification, code reviews, static analysis — and why the selection of test cases is itself a creative engineering activity that demands insight into the program's logic and its operational environment.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Objectives of Software Testing</h3>
+    <p>The objectives of testing extend far beyond the simple act of "finding bugs." While defect detection is certainly a primary goal, a mature testing process pursues several complementary objectives simultaneously, each contributing to the overall reliability and quality of the delivered product. Understanding these objectives helps a student appreciate why testing consumes, on average, 40 to 50 percent of total development effort in professional software projects — a figure that often surprises those who view testing as an afterthought or a formality to be compressed when deadlines loom.</p>
+    <p>The first and most obvious objective is <strong>defect detection</strong>: to discover as many faults as possible before the software reaches the end user. Every defect found during testing is a defect that does not cause data corruption, financial loss, safety hazards, or user frustration in production. The second objective is <strong>quality assessment</strong>: testing provides quantitative and qualitative data about the software's reliability, performance, security, and usability, allowing project managers to make informed release decisions. The third objective is <strong>requirement verification</strong>: by designing test cases that trace back to requirements, testing confirms that the software does what the specification promised it would do. The fourth objective is <strong>building confidence</strong>: a rigorously tested system earns the trust of stakeholders, customers, and regulatory bodies. The fifth objective, often under-appreciated, is <strong>prevention</strong>: the discipline of writing test cases early in the lifecycle forces developers and analysts to think more carefully about requirements and design, thereby preventing entire categories of defects from being introduced in the first place.</p>
+  </div>
+
+  <div class="box box-exam">
+    <span class="box-label">Exam Tip — Testing Objectives</span>
+    <p style="margin-bottom:0">When a question asks "What are the objectives of testing?" in a 5-mark or 10-mark answer, always enumerate at least five objectives (defect detection, quality assessment, requirement verification, confidence building, prevention) and explain each in two to three sentences. Conclude by noting that testing is both a constructive and destructive activity — constructive because it builds confidence, destructive because it attempts to break the software.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Testing vs. Debugging</h3>
+    <p>Students frequently conflate testing with debugging, but these are fundamentally different activities performed by different people at different stages of the defect lifecycle. Testing is the process of <em>finding</em> failures — it exposes symptoms. When a test case produces an unexpected result, the tester records it as a defect report (or bug report) and moves on. Debugging, by contrast, is the process of <em>diagnosing the root cause</em> of that failure and correcting the code. The developer takes the defect report, reproduces the failure, uses techniques like breakpoints and logging to trace the execution path, identifies the erroneous line of code, and applies a fix. Testing can be planned, scripted, and automated; debugging is inherently exploratory and creative, relying on the developer's understanding of the codebase and the defect's underlying mechanism.</p>
+  </div>
+
+  <div class="box box-memory">
+    <span class="box-label">Memory Anchor</span>
+    <p style="margin-bottom:0"><strong>Testing</strong> = "Is there a bug?" (question). <strong>Debugging</strong> = "Where is the bug and how do I fix it?" (answer). Testing is performed by testers; debugging is performed by developers. Testing creates bug reports; debugging consumes them.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Seven Fundamental Principles of Testing</h3>
+    <p>The ISTQB (International Software Testing Qualifications Board) foundation syllabus articulates seven principles that have become canonical in the testing literature, and Indian university examinations frequently ask students to enumerate and explain them. <strong>Principle 1 — Testing shows the presence of defects, not their absence.</strong> No matter how thoroughly you test, you cannot guarantee the software is defect-free; you can only increase confidence. <strong>Principle 2 — Exhaustive testing is impossible.</strong> Testing every possible input combination is infeasible for any non-trivial program, so risk-based prioritization and intelligent test case selection become essential. <strong>Principle 3 — Early testing saves time and money.</strong> A defect found during requirements analysis costs a fraction of what the same defect would cost if discovered in production; this is the economic rationale for shifting testing activities to the earliest feasible phase. <strong>Principle 4 — Defects cluster together.</strong> Empirical studies consistently show that a small number of modules tend to contain the majority of defects (the Pareto principle applies), so testers should focus effort on high-risk, historically problematic areas. <strong>Principle 5 — The pesticide paradox.</strong> Running the same tests repeatedly will eventually stop finding new bugs, just as repeatedly spraying the same pesticide causes insects to develop resistance; test suites must be regularly reviewed and updated. <strong>Principle 6 — Testing is context-dependent.</strong> The approach appropriate for a safety-critical medical device differs dramatically from that for a social media web application; context determines depth, rigor, and technique. <strong>Principle 7 — Absence-of-errors fallacy.</strong> Finding and fixing many defects does not help if the system built is one that does not meet the user's needs; a thoroughly tested system that fulfils the wrong requirements is still a failure.</p>
+  </div>
+</article>
+
+<!-- ───────────────────── SECTION 2 ───────────────────── -->
+<article class="section fade-up" id="s2">
+  <span class="section-num">02</span>
+  <h2 class="section-title">Verification vs. Validation and the V-Model</h2>
+  <p class="section-intro">Two words that sound synonymous but carry a world of difference — understanding this distinction is essential for both examinations and professional practice.</p>
+
+  <div class="subsection">
+    <h3>Definitions and the Critical Distinction</h3>
+    <p>Barry Boehm's famous formulation captures the essence of this distinction with memorable clarity: <strong>Verification</strong> asks "Are we building the product right?" while <strong>Validation</strong> asks "Are we building the right product?" Verification is the process of evaluating work-products of a development phase to determine whether they satisfy the conditions imposed at the start of that phase — in other words, does the output of each phase conform to its input specification? Validation, by contrast, is the process of evaluating software during or at the end of the development process to determine whether it satisfies specified requirements — does the final product actually do what the customer wanted?</p>
+    <p>Verification tends to be a process-oriented activity: it involves reviews, inspections, walkthroughs, and static analysis techniques that check documents, designs, and code against standards and specifications without necessarily executing the program. Validation tends to be a product-oriented activity: it involves actually running the software (dynamic testing) and observing its behavior against expected outcomes. Verification catches defects introduced during translation between phases (e.g., a design that misinterprets a requirement), while validation catches defects in the final product's fitness for purpose (e.g., a requirement that was correctly implemented but misunderstood the user's actual need).</p>
+    <p>In Indian university examinations, this question appears with remarkable regularity, often as a 2-mark or 5-mark question phrased as "Differentiate between verification and validation." A strong answer includes the definitions, the Boehm quote, a comparison table, and at least one concrete example illustrating each concept. The V-Model of software development, which we examine next, provides the perfect structural framework for visualizing how verification and validation activities interleave throughout the lifecycle.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Aspect</th><th>Verification</th><th>Validation</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Core Question</strong></td><td>Are we building the product right?</td><td>Are we building the right product?</td></tr>
+        <tr><td><strong>Nature</strong></td><td>Process-oriented</td><td>Product-oriented</td></tr>
+        <tr><td><strong>Approach</strong></td><td>Static (reviews, inspections, walkthroughs)</td><td>Dynamic (execution, testing)</td></tr>
+        <tr><td><strong>When</strong></td><td>Throughout development phases</td><td>During and after coding</td></tr>
+        <tr><td><strong>Catches</strong></td><td>Specification conformance defects</td><td>Requirement fitness defects</td></tr>
+        <tr><td><strong>Example</strong></td><td>Design review checking that architecture follows SRS</td><td>Acceptance test confirming product meets user needs</td></tr>
+        <tr><td><strong>Performed by</strong></td><td>QA team, reviewers, inspectors</td><td>Testers, end users</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>The V-Model of Software Development</h3>
+    <p>The V-Model (Verification and Validation Model) is one of the most important conceptual diagrams in software engineering, and it is virtually guaranteed to appear in some form on every Indian university examination for this subject. The model extends the traditional Waterfall lifecycle by explicitly linking each development phase on the left side of the "V" to a corresponding testing phase on the right side, with the coding phase occupying the bottom vertex. The left arm of the V represents the decomposition of requirements into progressively more detailed design artifacts (verification activities), while the right arm represents the progressive integration and testing of those artifacts against the original requirements (validation activities).</p>
+    <p>The four principal correspondences are as follows. <strong>Requirements Analysis</strong> (top-left) corresponds to <strong>Acceptance Testing</strong> (top-right): acceptance tests are designed from the requirements specification to verify that the delivered product fulfils the user's actual needs. <strong>System Design</strong> (second-left) corresponds to <strong>System Testing</strong> (second-right): system tests verify that the complete, integrated system behaves according to the system design specification, covering functional and non-functional requirements. <strong>Architectural Design</strong> (third-left) corresponds to <strong>Integration Testing</strong> (third-right): integration tests verify that the interfaces between modules work correctly, which is precisely what the architectural design defines. <strong>Detailed Module Design</strong> (fourth-left) corresponds to <strong>Unit Testing</strong> (fourth-right): unit tests verify that each individual module or function behaves according to its detailed design specification. At the vertex sits <strong>Coding</strong>, where the actual source code is written based on the detailed design.</p>
+    <p>The V-Model's elegance lies in its insistence that test planning should begin as soon as the corresponding development phase starts — not after coding is complete. When the requirements are being written, the acceptance test team should already be drafting acceptance criteria. When the architecture is being designed, integration test scenarios should be taking shape. This parallel planning dramatically reduces the total testing effort and catches defects at the phase where they are cheapest to fix.</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 840 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="V-Model of Software Development and Testing">
+      <defs>
+        <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#c4622d"/></marker>
+        <marker id="arr-teal" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#4a7c6f"/></marker>
+      </defs>
+
+      <!-- Left column: Development Phases -->
+      <rect x="30" y="30" width="250" height="46" rx="6" fill="#faf7f0" stroke="#c4622d" stroke-width="2"/>
+      <text x="155" y="59" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="14" fill="#2c2c2c" font-weight="600">Requirements Analysis</text>
+
+      <rect x="30" y="125" width="250" height="46" rx="6" fill="#faf7f0" stroke="#c4622d" stroke-width="2"/>
+      <text x="155" y="154" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="14" fill="#2c2c2c" font-weight="600">System Design</text>
+
+      <rect x="30" y="220" width="250" height="46" rx="6" fill="#faf7f0" stroke="#c4622d" stroke-width="2"/>
+      <text x="155" y="249" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="14" fill="#2c2c2c" font-weight="600">Architectural Design</text>
+
+      <rect x="30" y="315" width="250" height="46" rx="6" fill="#faf7f0" stroke="#c4622d" stroke-width="2"/>
+      <text x="155" y="344" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="14" fill="#2c2c2c" font-weight="600">Detailed Module Design</text>
+
+      <!-- Right column: Testing Phases -->
+      <rect x="560" y="30" width="250" height="46" rx="6" fill="#faf7f0" stroke="#4a7c6f" stroke-width="2"/>
+      <text x="685" y="59" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="14" fill="#2c2c2c" font-weight="600">Acceptance Testing</text>
+
+      <rect x="560" y="125" width="250" height="46" rx="6" fill="#faf7f0" stroke="#4a7c6f" stroke-width="2"/>
+      <text x="685" y="154" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="14" fill="#2c2c2c" font-weight="600">System Testing</text>
+
+      <rect x="560" y="220" width="250" height="46" rx="6" fill="#faf7f0" stroke="#4a7c6f" stroke-width="2"/>
+      <text x="685" y="249" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="14" fill="#2c2c2c" font-weight="600">Integration Testing</text>
+
+      <rect x="560" y="315" width="250" height="46" rx="6" fill="#faf7f0" stroke="#4a7c6f" stroke-width="2"/>
+      <text x="685" y="344" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="14" fill="#2c2c2c" font-weight="600">Unit Testing</text>
+
+      <!-- Coding box at bottom vertex -->
+      <rect x="320" y="440" width="200" height="46" rx="6" fill="#c4622d" stroke="#a04e1f" stroke-width="2"/>
+      <text x="420" y="469" text-anchor="middle" font-family="'Source Serif 4',serif" font-size="15" fill="#fff" font-weight="700">Coding / Implementation</text>
+
+      <!-- Left V-lines (development descent) -->
+      <line x1="155" y1="76" x2="155" y2="125" stroke="#c4622d" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="155" y1="171" x2="155" y2="220" stroke="#c4622d" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="155" y1="266" x2="155" y2="315" stroke="#c4622d" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="155" y1="361" x2="320" y2="452" stroke="#c4622d" stroke-width="1.5" marker-end="url(#arr)"/>
+
+      <!-- Right V-lines (testing ascent) -->
+      <line x1="520" y1="452" x2="685" y2="361" stroke="#4a7c6f" stroke-width="1.5" marker-end="url(#arr-teal)"/>
+      <line x1="685" y1="315" x2="685" y2="266" stroke="#4a7c6f" stroke-width="1.5" marker-end="url(#arr-teal)"/>
+      <line x1="685" y1="220" x2="685" y2="171" stroke="#4a7c6f" stroke-width="1.5" marker-end="url(#arr-teal)"/>
+      <line x1="685" y1="125" x2="685" y2="76" stroke="#4a7c6f" stroke-width="1.5" marker-end="url(#arr-teal)"/>
+
+      <!-- Correspondence lines (dashed) -->
+      <line x1="280" y1="53" x2="560" y2="53" stroke="#c4a64d" stroke-width="1.2" stroke-dasharray="6,4"/>
+      <line x1="280" y1="148" x2="560" y2="148" stroke="#c4a64d" stroke-width="1.2" stroke-dasharray="6,4"/>
+      <line x1="280" y1="243" x2="560" y2="243" stroke="#c4a64d" stroke-width="1.2" stroke-dasharray="6,4"/>
+      <line x1="280" y1="338" x2="560" y2="338" stroke="#c4a64d" stroke-width="1.2" stroke-dasharray="6,4"/>
+
+      <!-- Column labels -->
+      <text x="155" y="510" text-anchor="middle" font-family="'DM Mono',monospace" font-size="11" fill="#c4622d" letter-spacing="2" text-transform="uppercase">VERIFICATION</text>
+      <text x="685" y="510" text-anchor="middle" font-family="'DM Mono',monospace" font-size="11" fill="#4a7c6f" letter-spacing="2">VALIDATION</text>
+    </svg>
+    <p class="diagram-caption">Fig. 1 — The V-Model: each development phase on the left maps to a testing phase on the right (dashed correspondence lines). The coding phase sits at the bottom vertex.</p>
+  </div>
+
+  <div class="box box-exam">
+    <span class="box-label">How to Draw This in an Exam (2 minutes)</span>
+    <p style="margin-bottom:0">Draw a large "V" shape. Label the left arm descending: Requirements → System Design → Architecture → Module Design. Label the bottom vertex: Coding. Label the right arm ascending: Unit Testing → Integration Testing → System Testing → Acceptance Testing. Draw four horizontal dashed lines connecting each left-phase to its corresponding right-phase. Add arrows on both arms showing the flow direction. Mark "Verification" on the left and "Validation" on the right. This diagram alone earns 3–5 marks in most university answer sheets.</p>
+  </div>
+
+  <details>
+    <summary>Frequently Asked Exam Questions — Verification &amp; Validation</summary>
+    <div class="details-body">
+      <p><strong>Q1:</strong> Differentiate between Software Verification and Validation. (5 marks)<br>
+      <strong>Approach:</strong> Definitions → Boehm quote → Comparison table (6–7 rows) → V-Model diagram → Concrete example → Conclusion.</p>
+      <p><strong>Q2:</strong> Explain the V-Model of software development with a neat diagram. (10 marks)<br>
+      <strong>Approach:</strong> Introduction → Draw diagram → Explain each left-phase and its corresponding right-phase in detail (4 paragraphs) → Advantages → Limitations → Conclusion.</p>
+      <p><strong>Q3:</strong> Is testing alone sufficient for quality assurance? (5 marks)<br>
+      <strong>Approach:</strong> Discuss limitations of testing (Dijkstra's quote) → Complement with verification techniques → Mention static analysis, reviews, formal methods → Conclude that testing is necessary but not sufficient.</p>
+    </div>
+  </details>
+</article>
+
+<!-- ───────────────────── SECTION 3 ───────────────────── -->
+<article class="section fade-up" id="s3">
+  <span class="section-num">03</span>
+  <h2 class="section-title">Levels of Testing — From Unit to Acceptance</h2>
+  <p class="section-intro">Software is not tested as a single monolithic blob. Instead, testing proceeds through distinct levels, each with a specific scope, specific objectives, and specific responsibilities — and the order in which these levels are executed matters profoundly.</p>
+
+  <div class="subsection">
+    <h3>The Testing Pyramid</h3>
+    <p>The concept of the testing pyramid provides a valuable mental model for understanding the relationship between different testing levels. At the base of the pyramid lies <strong>Unit Testing</strong>, which is the most granular, fastest, most numerous, and cheapest form of testing. Moving upward, <strong>Integration Testing</strong> verifies that units work together correctly. <strong>System Testing</strong> validates the complete integrated system against its specification. At the apex, <strong>Acceptance Testing</strong> confirms that the system meets the customer's real-world needs. The pyramid shape is deliberate: it reflects the principle that there should be many unit tests (forming the broad base), fewer integration tests, still fewer system tests, and a small number of acceptance tests at the top. This distribution ensures maximum defect detection at the lowest cost per defect found, since bugs caught at the unit level are vastly cheaper to diagnose and fix than bugs discovered during acceptance testing.</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 620 420" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Testing Pyramid showing four levels">
+      <!-- Layer 4 (bottom, widest): Unit Testing -->
+      <polygon points="60,380 560,380 500,290 120,290" fill="#4a7c6f" fill-opacity="0.15" stroke="#4a7c6f" stroke-width="2"/>
+      <text x="310" y="348" text-anchor="middle" font-family="'Playfair Display',serif" font-size="17" fill="#4a7c6f" font-weight="600">Unit Testing</text>
+      <text x="310" y="370" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#8a8279">Many tests · Fast · Cheap · Automated</text>
+
+      <!-- Layer 3: Integration Testing -->
+      <polygon points="120,290 500,290 440,210 180,210" fill="#c4622d" fill-opacity="0.12" stroke="#c4622d" stroke-width="2"/>
+      <text x="310" y="260" text-anchor="middle" font-family="'Playfair Display',serif" font-size="16" fill="#c4622d" font-weight="600">Integration Testing</text>
+
+      <!-- Layer 2: System Testing -->
+      <polygon points="180,210 440,210 390,130 230,130" fill="#b85c5c" fill-opacity="0.12" stroke="#b85c5c" stroke-width="2"/>
+      <text x="310" y="178" text-anchor="middle" font-family="'Playfair Display',serif" font-size="16" fill="#b85c5c" font-weight="600">System Testing</text>
+
+      <!-- Layer 1 (top, narrowest): Acceptance Testing -->
+      <polygon points="230,130 390,130 360,60 260,60" fill="#c4a64d" fill-opacity="0.18" stroke="#c4a64d" stroke-width="2"/>
+      <text x="310" y="100" text-anchor="middle" font-family="'Playfair Display',serif" font-size="15" fill="#c4a64d" font-weight="600">Acceptance Testing</text>
+
+      <!-- Labels on sides -->
+      <text x="40" y="240" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8a8279" transform="rotate(-90,40,240)">COST PER DEFECT ↗</text>
+      <text x="580" y="240" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8a8279" transform="rotate(90,580,240)">NUMBER OF TESTS ↗</text>
+    </svg>
+    <p class="diagram-caption">Fig. 2 — The Testing Pyramid: broader base (unit tests) narrows toward the apex (acceptance tests). Cost per defect rises as you ascend; number of tests decreases.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Unit Testing</h3>
+    <p>Unit testing is the practice of testing individual modules, functions, or methods in isolation from the rest of the system. Each "unit" is the smallest testable piece of software — typically a single function or method in a procedural or object-oriented program. The developer who writes the code is usually responsible for writing the unit tests as well, and modern development practices like Test-Driven Development (TDD) even require that unit tests be written <em>before</em> the code they validate. The goal of unit testing is to verify that each unit behaves correctly according to its detailed design specification when given well-defined inputs, including normal inputs, boundary inputs, and error inputs.</p>
+    <p>Unit tests are characterized by their speed (they execute in milliseconds), their specificity (each test targets one behavior of one unit), and their automation (they can be run thousands of times without human intervention). When a unit test fails, the developer immediately knows which module contains the defect and which specific behavior is broken, making diagnosis straightforward. Frameworks such as JUnit (Java), NUnit (.NET), pytest (Python), and Google Test (C++) have made unit testing the foundation of modern software quality practices. In the context of Indian university examinations, students should be prepared to define unit testing, explain its objectives, list its advantages (early defect detection, simplified debugging, documentation of expected behavior, facilitation of refactoring), and discuss its limitations (it cannot catch integration defects, interface mismatches, or system-level issues).</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Integration Testing</h3>
+    <p>While unit testing verifies individual modules in isolation, integration testing verifies that these modules, when combined, communicate correctly through their interfaces. The central concern of integration testing is <strong>inter-module interaction</strong>: data passing between modules, control flow across module boundaries, and the correct handling of shared resources such as databases, files, and global variables. Defects at the integration level often arise from mismatched assumptions — Module A sends data in one format while Module B expects another, or Module C calls Module D with arguments in the wrong order. These interface defects are invisible to unit testing (which tests each module in isolation) and can only be detected when modules are assembled together.</p>
+    <p>Integration testing strategies (Top-Down, Bottom-Up, Big Bang, Sandwich) are discussed in detail in Section 5 of this guide. For now, the student should understand that integration testing occupies the middle tier of the testing pyramid, that it is typically performed after unit testing and before system testing, and that the choice of integration strategy significantly affects the order in which modules are assembled and the extent to which stubs and drivers are required.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>System Testing</h3>
+    <p>System testing is the process of testing the complete, fully integrated software product against its system-level specification. Whereas integration testing focuses on interfaces between modules, system testing treats the entire system as a black box and evaluates its behavior against the requirements specification document (or system design document). System testing encompasses both <strong>functional testing</strong> (does the system do what it is supposed to do?) and <strong>non-functional testing</strong> (does the system perform adequately, scale appropriately, remain secure, and provide a satisfactory user experience?).</p>
+    <p>Common types of system testing include functional testing (verifying each requirement), performance testing (measuring response time, throughput, and resource utilization under load), stress testing (evaluating behavior under extreme conditions), security testing (probing for vulnerabilities), usability testing (assessing the user interface), and compatibility testing (verifying behavior across different platforms, browsers, and configurations). System testing is typically performed by an independent testing team that was not involved in the development, ensuring objectivity and reducing the risk of shared blind spots between developers and testers.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Acceptance Testing</h3>
+    <p>Acceptance testing is the final level of testing before the software is released to production. Its primary purpose is to determine whether the software is acceptable for delivery to the customer — whether it meets the business requirements, performs satisfactorily in the customer's operational environment, and fulfils the contractual obligations between the developer and the client. Acceptance testing is often performed by (or in collaboration with) the end users or customer representatives, and it typically follows one of two models: <strong>Alpha testing</strong> (conducted at the developer's site by the customer) or <strong>beta testing</strong> (conducted at the customer's site by actual end users). These are discussed in detail in Section 8.</p>
+    <p>Acceptance testing directly corresponds to the requirements analysis phase in the V-Model, making it the validation activity that verifies the highest-level abstraction of the software's intended behavior. If acceptance testing reveals significant defects, the implication is not merely a coding error but a potential misunderstanding of the requirements themselves — the most expensive category of defect to remedy.</p>
+  </div>
+
+  <div class="box box-exam">
+    <span class="box-label">Commonly Confused: "Is it sufficient to test only at the end?"</span>
+    <p style="margin-bottom:0">This question appears frequently in Indian university papers. The answer is emphatically <strong>no</strong>. Testing only at the end (after coding is complete) means that defects introduced during requirements analysis, system design, and architectural design have propagated through every subsequent phase and become deeply embedded in the code. The cost of fixing a defect increases exponentially with the time between its introduction and its detection — this is the famous "cost of change curve." The V-Model addresses this by starting test planning alongside development. Additionally, the principle of early testing (Principle 3) states that testing activities should begin as early as possible in the lifecycle, even during requirements analysis, through techniques like requirements reviews and static analysis.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Level</th><th>Scope</th><th>Performed By</th><th>Focus</th><th>Defects Found</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Unit</strong></td><td>Individual module/function</td><td>Developers</td><td>Internal logic</td><td>Logic errors, boundary errors</td></tr>
+        <tr><td><strong>Integration</strong></td><td>Interfaces between modules</td><td>Developers / Testers</td><td>Data flow, control flow across boundaries</td><td>Interface mismatches, missing calls</td></tr>
+        <tr><td><strong>System</strong></td><td>Complete integrated system</td><td>Independent test team</td><td>Functional &amp; non-functional requirements</td><td>Specification deviations, performance issues</td></tr>
+        <tr><td><strong>Acceptance</strong></td><td>Business requirements &amp; user needs</td><td>Customers / End users</td><td>Real-world usability &amp; fitness</td><td>Missing features, workflow problems</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>Testing Integrated with the SDLC</h3>
+    <p>A mature software development organization does not treat testing as a phase that begins after coding is complete. Instead, testing activities are woven into every phase of the lifecycle. During requirements analysis, testers review requirements for testability, ambiguity, and completeness. During design, testers begin designing test cases and test architectures. During coding, developers perform unit testing. After coding, integration and system testing proceed. After system testing, acceptance testing is performed. Even after deployment, regression testing is conducted whenever the software is modified. This continuous integration of testing with development is the central lesson of the V-Model and the foundation of modern quality assurance practice.</p>
+  </div>
+
+  <details>
+    <summary>Viva Questions — Levels of Testing</summary>
+    <div class="details-body">
+      <p><strong>Q:</strong> Why can't we skip unit testing and go directly to system testing?<br>
+      <strong>A:</strong> Because unit testing catches defects at the most granular level where they are cheapest to fix. Skipping it means that simple logic errors propagate upward, making integration and system testing chaotic — a single unit-level bug can cause cascading failures that are extremely difficult to diagnose at the system level.</p>
+      <p><strong>Q:</strong> Who performs acceptance testing and why?<br>
+      <strong>A:</strong> The customer or end users, because they are the ultimate judges of whether the software meets their business needs. Developers and testers may satisfy every requirement on paper yet miss the practical context in which the software will be used.</p>
+    </div>
+  </details>
+</article>
+
+<!-- ───────────────────── SECTION 4 ───────────────────── -->
+<article class="section fade-up" id="s4">
+  <span class="section-num">04</span>
+  <h2 class="section-title">Functional Testing, Performance Testing &amp; Regression Testing</h2>
+  <p class="section-intro">Three pillars of dynamic testing that address different quality dimensions — does it work, does it work fast enough, and does it still work after changes?</p>
+
+  <div class="subsection">
+    <h3>Testing for Functionality</h3>
+    <p>Functional testing evaluates whether the software system behaves according to its functional requirements — in other words, whether each feature produces the correct output for a given input, as specified in the requirements document. This form of testing treats the system as a black box: the tester does not need to know anything about the internal code structure, data structures, or algorithms. Instead, the tester designs test cases based purely on the functional specification, the input domain, and the expected outputs. For example, if a requirement states that "the system shall calculate a 10% discount for orders exceeding ₹10,000," functional testing would involve submitting orders of various amounts and verifying that the discount is correctly applied (or correctly withheld) in each case.</p>
+    <p>Functional testing is closely related to, but not identical with, <strong>black box testing</strong> (discussed in Section 7). The difference is primarily one of perspective: functional testing refers to the <em>purpose</em> (verifying functionality), while black box testing refers to the <em>technique</em> (designing tests without knowledge of internal structure). In practice, functional tests are almost always designed using black box techniques like equivalence class partitioning and boundary value analysis, which we examine in detail later.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Testing for Performance</h3>
+    <p>Performance testing evaluates how the software system behaves under a particular workload — how quickly it responds, how many concurrent users it can serve, how much memory and CPU it consumes, and whether it degrades gracefully under stress. Functional correctness alone is insufficient; a banking application that calculates interest correctly but takes forty-five seconds to display an account balance is effectively unusable. Performance testing encompasses several specialized sub-types, each targeting a different quality attribute. <strong>Load testing</strong> measures system behavior under expected user loads. <strong>Stress testing</strong> pushes the system beyond its expected limits to identify the breaking point. <strong>Endurance testing</strong> (or soak testing) runs the system under a sustained moderate load for an extended period to detect memory leaks and resource exhaustion. <strong>Spike testing</strong> subjects the system to sudden, dramatic increases in load to evaluate its response to traffic surges. <strong>Scalability testing</strong> measures the system's ability to handle increasing loads by adding resources (horizontal or vertical scaling).</p>
+    <p>Performance testing requires specialized tools — Apache JMeter, Gatling, LoadRunner, and Locust are among the most popular — and produces quantitative metrics such as response time (average, median, 95th percentile), throughput (requests per second), error rate, and resource utilization (CPU, memory, disk I/O, network bandwidth). In Indian university examinations, performance testing questions typically expect a definition, a list of sub-types, a brief explanation of each, and at least one real-world example.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Regression Testing</h3>
+    <p>Regression testing is one of the most practically important testing activities in the software lifecycle, and it appears frequently on Indian university examinations, usually as a dedicated short note or as part of a larger question on testing types. The fundamental idea is straightforward: whenever software is modified — whether to fix a bug, add a new feature, or optimize performance — there is a risk that the modification has inadvertently broken existing functionality that was previously working correctly. Regression testing is the practice of re-executing previously passed test cases after a modification to verify that the existing behavior has not been adversely affected.</p>
+    <p>The name "regression" comes from the statistical concept of regression toward the mean, but in software engineering it refers to the phenomenon of software "regressing" — reverting to a less functional or less correct state after a change. This is not a rare occurrence; empirical studies show that bug fixes introduce new bugs in approximately 15–25% of cases, and even minor code changes can have unexpected side effects due to the complex web of dependencies within a software system.</p>
+    <p>Regression testing is performed at all levels — unit, integration, and system — but is most commonly associated with the system testing level. The primary challenge of regression testing is the <strong>test suite growth problem</strong>: as the software evolves, the regression test suite grows continuously, eventually becoming so large that running it completely is impractical. Techniques for managing this include <strong>test suite minimization</strong> (removing redundant test cases), <strong>test case prioritization</strong> (running the most important tests first), and <strong>test selection</strong> (running only those tests affected by the recent change). Automated testing tools play a critical role in making regression testing feasible, since manual re-execution of hundreds or thousands of test cases after every change is prohibitively expensive and error-prone.</p>
+  </div>
+
+  <div class="box box-memory">
+    <span class="box-label">Memory Anchor — Regression Testing</span>
+    <p style="margin-bottom:0">Think of regression testing as the "trust but verify" approach to software maintenance. You trust that the developer's change was correct, but you verify that everything else still works. The golden rule: <strong>every change demands a regression cycle</strong>. Without regression testing, software quality degrades with each modification — a process sometimes called "software entropy."</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Aspect</th><th>Functional Testing</th><th>Performance Testing</th><th>Regression Testing</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Question</strong></td><td>Does it work correctly?</td><td>Does it work fast enough?</td><td>Does it still work after changes?</td></tr>
+        <tr><td><strong>Focus</strong></td><td>Correctness of outputs</td><td>Speed, scalability, stability</td><td>Preservation of existing behavior</td></tr>
+        <tr><td><strong>When</strong></td><td>After coding / during system testing</td><td>After functional testing passes</td><td>After any modification</td></tr>
+        <tr><td><strong>Techniques</strong></td><td>ECP, BVA, decision tables</td><td>Load, stress, spike, soak tests</td><td>Re-run existing test suite</td></tr>
+        <tr><td><strong>Tools</strong></td><td>Selenium, TestNG, JUnit</td><td>JMeter, Gatling, LoadRunner</td><td>Same as original + CI/CD tools</td></tr>
+        <tr><td><strong>Automation</strong></td><td>Highly automatable</td><td>Requires specialized tools</td><td>Essentially requires automation</td></tr>
+      </tbody>
+    </table>
+  </div>
+</article>
+
+<!-- ───────────────────── SECTION 5 ───────────────────── -->
+<article class="section fade-up" id="s5">
+  <span class="section-num">05</span>
+  <h2 class="section-title">Integration Testing Strategies</h2>
+  <p class="section-intro">How you assemble and test modules matters as much as how you test them individually — and the strategy you choose determines whether you need stubs, drivers, or both.</p>
+
+  <div class="subsection">
+    <h3>The Integration Problem</h3>
+    <p>Even when every individual module passes its unit tests with flying colors, the assembled system may fail spectacularly. This happens because unit tests validate each module in isolation, using test harnesses that simulate the module's environment — but the simulated environment may not accurately represent the real environment in which the module will operate. When two modules are connected for the first time, a host of new failure modes become possible: a function may return data in a format the caller does not expect; a parameter may be passed by reference when the callee expects a copy; a global variable may be modified by one module while another reads it concurrently; a file path may differ between development and production environments. Integration testing exists to surface these interface defects before they propagate into system-level failures that are far more difficult to diagnose.</p>
+    <p>The question of <em>how</em> to integrate and test modules — in what order, using what scaffolding, and with what level of formality — is the domain of <strong>integration strategy</strong>. Three classical strategies dominate the textbook literature: Big Bang, Top-Down, and Bottom-Up. A fourth strategy, the Sandwich (or Hybrid) approach, combines elements of Top-Down and Bottom-Up. Each strategy offers different trade-offs in terms of defect localization, scaffolding effort, and the ability to test critical modules early.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Big Bang Integration Testing</h3>
+    <p>The Big Bang approach is the simplest integration strategy: all modules are combined at once and tested as a complete system. No intermediate integration steps occur; the modules are assembled into the full system and then tested. This approach requires no stubs or drivers (since all modules are present), and it is appropriate only for very small systems with few modules and well-understood interfaces. The critical disadvantage of Big Bang testing is its diagnostic difficulty: when a test fails, the defect could be in any module or any interface between any pair of modules, and there is no incremental information to narrow the search. In a system with <em>n</em> modules, the number of potential interfaces is <em>n(n-1)/2</em>, and isolating a defect among all these interfaces simultaneously is a formidable task. For any system of non-trivial complexity, Big Bang testing is therefore strongly discouraged.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Top-Down Integration Testing</h3>
+    <p>In top-down integration testing, modules are integrated and tested starting from the top of the module hierarchy (the main control module or "root") and progressing downward toward the leaves. The fundamental idea is to test the control flow of the system from the highest level of abstraction downward, verifying that the overall logic and sequencing of operations is correct before diving into the details of individual computational modules.</p>
+    <p>The process begins by testing the top-level module in isolation. Since the modules it calls do not yet exist in the integration, <strong>stubs</strong> are used to simulate their behavior. A stub is a minimal replacement module that accepts the same inputs as the real module and returns canned (pre-defined) outputs. Once the top module is verified, one of its subordinate modules is selected for integration — either in a depth-first or breadth-first order — and the stub for that module is replaced with the real implementation. The newly integrated combination is then tested, with stubs still standing in for any modules that the newly added module itself calls. This process continues, replacing one stub at a time with the real module, until every module in the system has been integrated and tested.</p>
+    <p>The principal advantage of top-down testing is that it produces a working skeleton of the system early in the integration process, which is valuable for demonstrations and early feedback. It also ensures that the most critical control logic (at the top of the hierarchy) is tested most thoroughly. The main disadvantage is that the lower-level computational modules — which often contain the most complex logic — are tested last, and the stubs required to simulate them can be difficult to write correctly, especially if the lower modules have complex input-output relationships. Additionally, thorough testing of the upper modules may require many different stub responses, increasing the scaffolding effort.</p>
+  </div>
+
+<div class="diagram-wrap" style="background-color: #fafafa; padding: 20px; border-radius: 8px; font-family: system-ui, -apple-system, sans-serif;">
+    <svg viewBox="0 0 720 540" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="svg-title svg-desc">
+        <title id="svg-title">Top-Down Integration Testing</title>
+        <desc id="svg-desc">A hierarchical diagram showing Module A integrated and tested with stubs for Modules B and C, while leaf modules D, E, and F remain unintegrated.</desc>
+
+        <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#64748b"/>
+            </marker>
+        </defs>
+
+        <g id="edges" stroke="#cbd5e1" stroke-width="2.5" marker-end="url(#arrowhead)">
+            <line x1="360" y1="80" x2="200" y2="145"/>
+            <line x1="360" y1="80" x2="520" y2="145"/>
+            <line x1="200" y1="206" x2="100" y2="285"/>
+            <line x1="200" y1="206" x2="300" y2="285"/>
+            <line x1="520" y1="206" x2="520" y2="285"/>
+        </g>
+
+        <g id="nodes">
+            <rect x="300" y="30" width="120" height="50" rx="6" fill="#0f766e" stroke="#0d9488" stroke-width="2"/>
+            <text x="360" y="60" text-anchor="middle" font-size="18" fill="#ffffff" font-weight="700">A</text>
+
+            <rect x="140" y="150" width="120" height="56" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="6,4"/>
+            <text x="200" y="174" text-anchor="middle" font-family="monospace" font-size="16" fill="#b91c1c" font-weight="600">B</text>
+            <text x="200" y="194" text-anchor="middle" font-family="monospace" font-size="12" fill="#ef4444">(stub)</text>
+
+            <rect x="460" y="150" width="120" height="56" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="6,4"/>
+            <text x="520" y="174" text-anchor="middle" font-family="monospace" font-size="16" fill="#b91c1c" font-weight="600">C</text>
+            <text x="520" y="194" text-anchor="middle" font-family="monospace" font-size="12" fill="#ef4444">(stub)</text>
+
+            <rect x="40" y="290" width="120" height="50" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+            <text x="100" y="320" text-anchor="middle" font-size="16" fill="#64748b" font-weight="500">D</text>
+
+            <rect x="240" y="290" width="120" height="50" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+            <text x="300" y="320" text-anchor="middle" font-size="16" fill="#64748b" font-weight="500">E</text>
+
+            <rect x="460" y="290" width="120" height="50" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+            <text x="520" y="320" text-anchor="middle" font-size="16" fill="#64748b" font-weight="500">F</text>
+        </g>
+
+        <g id="annotations">
+            <rect x="110" y="380" width="500" height="60" rx="8" fill="#fff7ed" stroke="#f97316" stroke-width="1.5"/>
+            <text x="360" y="406" text-anchor="middle" font-family="monospace" font-size="14" fill="#c2410c" font-weight="700">PHASE 1: Test A with stubs for B and C</text>
+            <text x="360" y="426" text-anchor="middle" font-size="12" fill="#78350f">Stubs simulate the responses of B and C</text>
+        </g>
+
+        <g id="legend" transform="translate(0, 480)">
+            <rect x="120" y="0" width="18" height="14" rx="3" fill="#0f766e"/>
+            <text x="148" y="12" font-size="13" fill="#334155" font-weight="500">Integrated module</text>
+
+            <rect x="300" y="0" width="18" height="14" rx="3" fill="#fef2f2" stroke="#ef4444" stroke-width="2" stroke-dasharray="4,3"/>
+            <text x="328" y="12" font-size="13" fill="#334155" font-weight="500">Stub (temporary)</text>
+
+            <rect x="470" y="0" width="18" height="14" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+            <text x="498" y="12" font-size="13" fill="#334155" font-weight="500">Not yet integrated</text>
+        </g>
+    </svg>
+
+    <p class="diagram-caption" style="text-align: center; margin-top: 10px; font-size: 14px; color: #475569; line-height: 1.5; max-width: 600px; margin-left: auto; margin-right: auto;">
+        <strong>Fig. 3 — Top-Down Integration:</strong> Module A is tested first using stubs that simulate the behavior of its children B and C. Leaf modules D, E, F are integrated last.
+    </p>
+</div>
+  <div class="subsection">
+    <h3>Bottom-Up Integration Testing</h3>
+    <p>Bottom-up integration testing takes the opposite approach: modules at the lowest level of the hierarchy (the leaf modules) are tested first, and integration proceeds upward toward the main control module. Since leaf modules do not call any other modules (or call only library functions), they can be tested in isolation without stubs. However, they need to be <em>invoked</em> by something — and since their actual callers have not yet been integrated, <strong>test drivers</strong> are used. A test driver is a temporary module that calls the module being tested, passing it inputs and capturing its outputs for verification.</p>
+    <p>The process begins by testing each leaf module using its own driver. Once a set of leaf modules is verified, the module that calls them (their parent in the hierarchy) is integrated and tested, using the real leaf modules instead of stubs. If this parent module itself calls modules that have not yet been integrated, a driver is used for the parent. This continues upward until the top-level module is integrated and the complete system is tested. The principal advantage of bottom-up testing is that computational modules — which often contain the most complex and error-prone logic — are tested first and most thoroughly. Furthermore, drivers are generally simpler to write than stubs, since a driver merely needs to invoke the module and check its output, whereas a stub must simulate complex internal behavior. The main disadvantage is that the overall system structure does not come together until late in the integration process, making it difficult to produce a working prototype for early demonstrations or to verify the high-level control logic until the very end.</p>
+  </div>
+
+<div class="diagram-wrap" style="background-color: #fafafa; padding: 20px; border-radius: 8px; font-family: system-ui, -apple-system, sans-serif;">
+    <svg viewBox="0 0 720 560" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="svg-title svg-desc">
+        <title id="svg-title">Bottom-Up Integration Testing</title>
+        <desc id="svg-desc">A hierarchical diagram showing leaf modules D, E, and F integrated and tested first using test drivers, while parent modules A, B, and C remain unintegrated.</desc>
+
+        <defs>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#94a3b8"/>
+            </marker>
+        </defs>
+
+        <g id="edges" stroke="#cbd5e1" stroke-width="2.5" marker-end="url(#arrowhead)">
+            <line x1="360" y1="90" x2="200" y2="153"/>
+            <line x1="360" y1="90" x2="520" y2="153"/>
+            <line x1="200" y1="210" x2="100" y2="313"/>
+            <line x1="200" y1="210" x2="300" y2="313"/>
+            <line x1="520" y1="210" x2="520" y2="313"/>
+        </g>
+
+        <g id="nodes">
+            <rect x="300" y="40" width="120" height="50" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+            <text x="360" y="71" text-anchor="middle" font-size="18" fill="#64748b" font-weight="600">A</text>
+
+            <rect x="140" y="160" width="120" height="50" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+            <text x="200" y="191" text-anchor="middle" font-size="18" fill="#64748b" font-weight="600">B</text>
+
+            <rect x="460" y="160" width="120" height="50" rx="6" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2"/>
+            <text x="520" y="191" text-anchor="middle" font-size="18" fill="#64748b" font-weight="600">C</text>
+
+            <rect x="40" y="320" width="120" height="50" rx="6" fill="#0f766e" stroke="#0d9488" stroke-width="2"/>
+            <text x="100" y="351" text-anchor="middle" font-size="18" fill="#ffffff" font-weight="700">D</text>
+
+            <rect x="240" y="320" width="120" height="50" rx="6" fill="#0f766e" stroke="#0d9488" stroke-width="2"/>
+            <text x="300" y="351" text-anchor="middle" font-size="18" fill="#ffffff" font-weight="700">E</text>
+
+            <rect x="460" y="320" width="120" height="50" rx="6" fill="#0f766e" stroke="#0d9488" stroke-width="2"/>
+            <text x="520" y="351" text-anchor="middle" font-size="18" fill="#ffffff" font-weight="700">F</text>
+        </g>
+
+        <g id="drivers">
+            <rect x="40" y="245" width="120" height="36" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+            <text x="100" y="267" text-anchor="middle" font-family="monospace" font-size="13" fill="#b45309" font-weight="600">Driver for D</text>
+
+            <rect x="240" y="245" width="120" height="36" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+            <text x="300" y="267" text-anchor="middle" font-family="monospace" font-size="13" fill="#b45309" font-weight="600">Driver for E</text>
+
+            <rect x="460" y="245" width="120" height="36" rx="6" fill="#fffbeb" stroke="#d97706" stroke-width="2" stroke-dasharray="6,4"/>
+            <text x="520" y="267" text-anchor="middle" font-family="monospace" font-size="13" fill="#b45309" font-weight="600">Driver for F</text>
+        </g>
+
+        <g id="annotations">
+            <rect x="110" y="410" width="500" height="60" rx="8" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5"/>
+            <text x="360" y="436" text-anchor="middle" font-family="monospace" font-size="14" fill="#c2410c" font-weight="700">PHASE 1: Test D, E, F with test drivers</text>
+            <text x="360" y="456" text-anchor="middle" font-size="12" fill="#78350f">Drivers invoke each leaf module and verify its output</text>
+        </g>
+
+        <g id="legend" transform="translate(0, 510)">
+            <rect x="90" y="0" width="18" height="14" rx="3" fill="#0f766e"/>
+            <text x="118" y="12" font-size="13" fill="#334155" font-weight="500">Integrated module</text>
+
+            <rect x="280" y="0" width="18" height="14" rx="3" fill="#fffbeb" stroke="#d97706" stroke-width="2" stroke-dasharray="4,3"/>
+            <text x="308" y="12" font-size="13" fill="#334155" font-weight="500">Test driver (temporary)</text>
+
+            <rect x="480" y="0" width="18" height="14" rx="3" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.5"/>
+            <text x="508" y="12" font-size="13" fill="#334155" font-weight="500">Not yet integrated</text>
+        </g>
+    </svg>
+
+    <p class="diagram-caption" style="text-align: center; margin-top: 10px; font-size: 14px; color: #475569; line-height: 1.5; max-width: 650px; margin-left: auto; margin-right: auto;">
+        <strong>Fig. 4 — Bottom-Up Integration:</strong> Leaf modules D, E, F are tested first using test drivers. Integration proceeds upward toward the root module A.
+    </p>
+</div>
+  <div class="subsection">
+    <h3>Test Stubs and Test Drivers</h3>
+    <p>Test stubs and test drivers are temporary scaffolding modules used during integration testing to simulate parts of the system that have not yet been integrated. Understanding the difference between them is essential for examinations.</p>
+    <p>A <strong>test stub</strong> is a dummy module that replaces a <em>called</em> module (a subordinate or child module) during top-down integration. When the module under test calls a function that has not yet been integrated, the stub intercepts the call and returns a pre-defined response. Stubs simulate the behavior of lower-level modules. They are typically used in top-down integration, where the upper modules are tested before the lower modules are available. A stub might be as simple as a function that returns a constant value, or it might contain limited logic to return different canned responses depending on the input.</p>
+    <p>A <strong>test driver</strong> is a dummy module that replaces a <em>calling</em> module (a superior or parent module) during bottom-up integration. When the module under test needs to be invoked but its actual caller has not yet been integrated, the driver takes on the role of the caller: it invokes the module with test inputs, captures the outputs, and compares them against expected results. Drivers simulate the behavior of higher-level modules. They are typically used in bottom-up integration, where the lower modules are tested before the upper modules are available.</p>
+  </div>
+
+  <div class="box box-memory">
+    <span class="box-label">Memory Anchor — Stubs vs. Drivers</span>
+    <p style="margin-bottom:0"><strong>Stubs</strong> replace what the module <em>calls</em> (subordinates) → used in <strong>top-down</strong> testing → think "stub out the lower floors of a building while testing the penthouse." <strong>Drivers</strong> replace what <em>calls</em> the module (superiors) → used in <strong>bottom-up</strong> testing → think "drive the engine from below while the upper floors are still under construction."</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Aspect</th><th>Top-Down</th><th>Bottom-Up</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Direction</strong></td><td>Root → Leaves</td><td>Leaves → Root</td></tr>
+        <tr><td><strong>Starts with</strong></td><td>Main control module</td><td>Leaf / utility modules</td></tr>
+        <tr><td><strong>Scaffolding needed</strong></td><td>Stubs (replace called modules)</td><td>Drivers (replace callers)</td></tr>
+        <tr><td><strong>Early visibility</strong></td><td>High-level control flow visible early</td><td>Low-level computational logic visible early</td></tr>
+        <tr><td><strong>Late visibility</strong></td><td>Detailed computation tested late</td><td>System architecture verified late</td></tr>
+        <tr><td><strong>Stub/Driver complexity</strong></td><td>Stubs can be complex</td><td>Drivers are typically simpler</td></tr>
+        <tr><td><strong>Prototype availability</strong></td><td>Working skeleton available early</td><td>No working system until end</td></tr>
+        <tr><td><strong>Critical logic testing</strong></td><td>Control logic tested first</td><td>Computational logic tested first</td></tr>
+        <tr><td><strong>Best for</strong></td><td>Systems where high-level logic is critical</td><td>Systems with complex utility/computation modules</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box box-exam">
+    <span class="box-label">Exam Writing Guide — "Compare Top-Down and Bottom-Up" (10 marks)</span>
+    <p style="margin-bottom:0">Structure your answer as: (1) Introduction defining integration testing and why the strategy matters (~50 words). (2) Top-Down explanation with diagram showing stubs (~150 words). (3) Bottom-Up explanation with diagram showing drivers (~150 words). (4) Definitions of test stubs and test drivers (~80 words). (5) Comparison table (~8–10 rows). (6) When to use each strategy (~60 words). (7) Brief mention of Big Bang and Sandwich approaches (~40 words). This structure comfortably exceeds 500 words and demonstrates comprehensive understanding.</p>
+  </div>
+</article>
+
+<!-- ───────────────────── SECTION 6 ───────────────────── -->
+<article class="section fade-up" id="s6">
+  <span class="section-num">06</span>
+  <h2 class="section-title">Structural Testing — White Box Techniques</h2>
+  <p class="section-intro">When the tester opens the box and peers at the code itself, a world of precise, mathematically grounded testing techniques becomes available — each one demanding a different kind of internal coverage.</p>
+
+  <div class="subsection">
+    <h3>What Is White Box Testing?</h3>
+    <p>White box testing (also called structural testing, glass box testing, or clear box testing) is a testing technique in which the tester has complete knowledge of the internal structure, design, and implementation of the software. Unlike black box testing, which derives test cases from the specification alone, white box testing uses knowledge of the code — its control flow paths, data flow paths, conditions, and loops — to design test cases that exercise specific internal behaviors. The metaphor of a "white" or "glass" box signifies that the tester can see inside the software, observing the gears and circuits that produce the external behavior.</p>
+    <p>The primary objective of white box testing is to ensure that the testing process exercises the code thoroughly — that every statement is executed, every branch is taken, every condition is evaluated in both its true and false forms, and every independent path through the code is traversed at least once. This is fundamentally different from black box testing, where the tester has no knowledge of (and no concern for) which internal paths are exercised. White box testing answers the question: "Have we tested the <em>code</em> sufficiently?" while black box testing answers: "Have we tested the <em>requirements</em> sufficiently?"</p>
+    <p>White box testing techniques include statement coverage, branch (decision) coverage, condition coverage, path coverage, data flow testing, and basis path testing. Each technique defines a different <em>coverage criterion</em> — a measurable standard for determining when sufficient testing has been performed. The most foundational of these is cyclomatic complexity, which we examine in detail below.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Statement Coverage</h3>
+    <p>Statement coverage is the simplest and weakest white box coverage criterion. It requires that every executable statement in the program be executed at least once by the test suite. Mathematically, statement coverage is expressed as: <code>Statement Coverage = (Number of statements executed / Total number of executable statements) × 100%</code>. Achieving 100% statement coverage means that no line of code has been left untested — every statement has been exercised at least once. However, statement coverage has significant limitations: it is possible to achieve 100% statement coverage while missing critical defects because not all branches or conditions have been tested. A simple example illustrates this: consider an <code>if</code> statement where the condition is always true in all test cases — the <code>else</code> branch is never executed, yet statement coverage within the <code>if</code> block may be 100%.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Branch (Decision) Coverage</h3>
+    <p>Branch coverage (also called decision coverage) is a stronger criterion that requires every branch (every edge in the control flow graph) to be traversed at least once. For every decision point (if-else, switch-case, while loop, for loop), both the true and false outcomes must be exercised. Branch coverage is strictly stronger than statement coverage: achieving 100% branch coverage guarantees 100% statement coverage (because every branch leads to executable statements), but the converse is not true. Branch coverage is expressed as: <code>Branch Coverage = (Number of branches executed / Total number of branches) × 100%</code>. While more thorough than statement coverage, branch coverage still has limitations: it does not account for compound conditions (conditions involving multiple sub-conditions joined by AND/OR), which is where condition coverage becomes relevant.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Condition Coverage and Path Coverage</h3>
+    <p><strong>Condition coverage</strong> requires that each individual sub-condition within a compound decision is evaluated to both true and false at least once. For example, if a decision is <code>if (A AND B)</code>, condition coverage requires test cases where A is true, A is false, B is true, and B is false — four individual evaluations. Condition coverage is strictly stronger than branch coverage for compound conditions.</p>
+    <p><strong>Path coverage</strong> is the strongest practical criterion: it requires that every independent path through the control flow graph be exercised at least once. An "independent path" is any path through the program that introduces at least one new edge not traversed by any previously identified path. The number of independent paths is given by the <strong>cyclomatic complexity</strong> of the program (discussed below). Path coverage is often impractical for programs with loops (since a loop with a variable iteration count creates an infinite number of possible paths), but for loop-free programs or for a fixed number of loop iterations, it provides the most thorough coverage achievable.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Cyclomatic Complexity and Basis Path Testing</h3>
+    <p>Cyclomatic complexity, introduced by Thomas McCabe in 1976, is a quantitative measure of the structural complexity of a program, defined as the number of independent paths through the program's control flow graph. It provides a lower bound on the number of test cases required to achieve complete branch coverage, and it serves as the foundation for <strong>basis path testing</strong> — a white box testing technique that derives a minimal set of test cases that exercise every independent path through the code.</p>
+    <p>The cyclomatic complexity <code>V(G)</code> of a control flow graph <code>G</code> can be calculated using any of three equivalent formulas:</p>
+    <p style="text-align:center;font-family:var(--font-mono);font-size:.95rem;margin:1em 0"><code>V(G) = E − N + 2P</code></p>
+    <p>where <code>E</code> is the number of edges, <code>N</code> is the number of nodes, and <code>P</code> is the number of connected components (usually 1 for a single program). Alternatively: <code>V(G) = Number of decision nodes + 1</code>, where a decision node is any node with two or more outgoing edges (i.e., any if, while, for, case, or &&/|| condition). A third equivalent formula is: <code>V(G) = Number of regions in the flow graph + 1</code>.</p>
+    <p>Higher cyclomatic complexity indicates more independent paths, more test cases needed, and greater risk of defects. As a general guideline, modules with V(G) ≤ 10 are considered simple and low-risk; modules with 10 &lt; V(G) ≤ 20 are moderately complex; modules with V(G) &gt; 20 are highly complex and should be considered for refactoring.</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 520 620" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Control Flow Graph for a simple if-else program">
+      <defs>
+        <marker id="arr4" markerWidth="9" markerHeight="6" refX="8" refY="3" orient="auto"><polygon points="0 0,9 3,0 6" fill="#8a8279"/></marker>
+      </defs>
+
+      <!-- Program code on the left -->
+      <rect x="10" y="10" width="200" height="185" rx="6" fill="#2c2c2c"/>
+      <text x="20" y="35" font-family="'DM Mono',monospace" font-size="10" fill="#c4a64d">1: if (a &gt; 0) {</text>
+      <text x="20" y="52" font-family="'DM Mono',monospace" font-size="10" fill="#c4a64d">2:   if (b &gt; 0) {</text>
+      <text x="20" y="69" font-family="'DM Mono',monospace" font-size="10" fill="#c4a64d">3:     x = a + b;</text>
+      <text x="20" y="86" font-family="'DM Mono',monospace" font-size="10" fill="#c4a64d">4:   } else {</text>
+      <text x="20" y="103" font-family="'DM Mono',monospace" font-size="10" fill="#c4a64d">5:     x = a - b;</text>
+      <text x="20" y="120" font-family="'DM Mono',monospace" font-size="10" fill="#c4a64d">6:   }</text>
+      <text x="20" y="137" font-family="'DM Mono',monospace" font-size="10" fill="#c4a64d">7: } else {</text>
+      <text x="20" y="154" font-family="'DM Mono',monospace" font-size="10" fill="#c4a64d">8:   x = 0;</text>
+      <text x="20" y="171" font-family="'DM Mono',monospace" font-size="10" fill="#c4a64d">9: }</text>
+      <text x="20" y="188" font-family="'DM Mono',monospace" font-size="10" fill="#c4a64d">10: print(x);</text>
+
+      <!-- CFG Nodes -->
+      <!-- Node 1: Start/if(a>0) -->
+      <circle cx="380" cy="40" r="22" fill="#faf7f0" stroke="#c4622d" stroke-width="2"/>
+      <text x="380" y="37" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#2c2c2c">n1</text>
+      <text x="380" y="49" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#8a8279">a&gt;0?</text>
+
+      <!-- Node 2: if(b>0) -->
+      <circle cx="300" cy="135" r="22" fill="#faf7f0" stroke="#c4622d" stroke-width="2"/>
+      <text x="300" y="132" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#2c2c2c">n2</text>
+      <text x="300" y="144" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#8a8279">b&gt;0?</text>
+
+      <!-- Node 3: x=a+b -->
+      <rect x="210" y="205" width="80" height="30" rx="4" fill="#4a7c6f" fill-opacity="0.15" stroke="#4a7c6f" stroke-width="1.5"/>
+      <text x="250" y="225" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#4a7c6f">n3: a+b</text>
+
+      <!-- Node 4: x=a-b -->
+      <rect x="340" y="205" width="80" height="30" rx="4" fill="#4a7c6f" fill-opacity="0.15" stroke="#4a7c6f" stroke-width="1.5"/>
+      <text x="380" y="225" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#4a7c6f">n4: a-b</text>
+
+      <!-- Node 5: x=0 -->
+      <rect x="420" y="115" width="70" height="30" rx="4" fill="#b85c5c" fill-opacity="0.15" stroke="#b85c5c" stroke-width="1.5"/>
+      <text x="455" y="135" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#b85c5c">n5: x=0</text>
+
+      <!-- Node 6: print(x) / End -->
+      <circle cx="380" cy="320" r="22" fill="#faf7f0" stroke="#c4a64d" stroke-width="2"/>
+      <text x="380" y="317" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#2c2c2c">n6</text>
+      <text x="380" y="329" text-anchor="middle" font-family="'DM Mono',monospace" font-size="7" fill="#8a8279">print</text>
+
+      <!-- Edges -->
+      <line x1="380" y1="62" x2="310" y2="115" stroke="#8a8279" stroke-width="1.5" marker-end="url(#arr4)"/>
+      <text x="330" y="82" font-family="'DM Mono',monospace" font-size="8" fill="#4a7c6f">T</text>
+
+      <line x1="398" y1="58" x2="440" y2="115" stroke="#8a8279" stroke-width="1.5" marker-end="url(#arr4)"/>
+      <text x="430" y="82" font-family="'DM Mono',monospace" font-size="8" fill="#b85c5c">F</text>
+
+      <line x1="290" y1="157" x2="255" y2="205" stroke="#8a8279" stroke-width="1.5" marker-end="url(#arr4)"/>
+      <text x="258" y="180" font-family="'DM Mono',monospace" font-size="8" fill="#4a7c6f">T</text>
+
+      <line x1="318" y1="155" x2="375" y2="205" stroke="#8a8279" stroke-width="1.5" marker-end="url(#arr4)"/>
+      <text x="360" y="178" font-family="'DM Mono',monospace" font-size="8" fill="#b85c5c">F</text>
+
+      <line x1="250" y1="235" x2="370" y2="298" stroke="#8a8279" stroke-width="1.5" marker-end="url(#arr4)"/>
+      <line x1="380" y1="235" x2="380" y2="298" stroke="#8a8279" stroke-width="1.5" marker-end="url(#arr4)"/>
+      <line x1="455" y1="145" x2="395" y2="298" stroke="#8a8279" stroke-width="1.5" marker-end="url(#arr4)"/>
+
+      <!-- Calculation box -->
+      <rect x="240" y="380" width="280" height="120" rx="6" fill="#fdf6ee" stroke="#c4622d" stroke-width="1"/>
+      <text x="250" y="400" font-family="'DM Mono',monospace" font-size="10" fill="#c4622d" font-weight="500">Cyclomatic Complexity Calculation:</text>
+      <text x="250" y="420" font-family="'DM Mono',monospace" font-size="10" fill="#2c2c2c">V(G) = E − N + 2P</text>
+      <text x="250" y="438" font-family="'DM Mono',monospace" font-size="10" fill="#2c2c2c">E = 7 edges, N = 6 nodes, P = 1</text>
+      <text x="250" y="456" font-family="'DM Mono',monospace" font-size="10" fill="#2c2c2c">V(G) = 7 − 6 + 2(1) = 3</text>
+      <text x="250" y="478" font-family="'DM Mono',monospace" font-size="10" fill="#8a8279">= Decision nodes + 1 = 2 + 1 = 3</text>
+      <text x="250" y="493" font-family="'Source Serif 4',serif" font-size="10" fill="#8a8279">→ Need minimum 3 test cases for full branch coverage</text>
+
+      <!-- Independent paths -->
+      <text x="10" y="530" font-family="'DM Mono',monospace" font-size="10" fill="#c4622d" font-weight="500">Independent Paths (3 paths):</text>
+      <text x="10" y="548" font-family="'DM Mono',monospace" font-size="10" fill="#2c2c2c">Path 1: n1(T) → n2(T) → n3 → n6</text>
+      <text x="10" y="565" font-family="'DM Mono',monospace" font-size="10" fill="#2c2c2c">Path 2: n1(T) → n2(F) → n4 → n6</text>
+      <text x="10" y="582" font-family="'DM Mono',monospace" font-size="10" fill="#2c2c2c">Path 3: n1(F) → n5 → n6</text>
+    </svg>
+    <p class="diagram-caption">Fig. 5 — Control Flow Graph (CFG) for a simple if-else program. V(G) = 3, meaning 3 independent paths and a minimum of 3 test cases for complete branch coverage.</p>
+  </div>
+
+  <div class="box box-exam">
+    <span class="box-label">How to Draw a CFG in an Exam</span>
+    <p style="margin-bottom:0">Draw each decision point (if, while, for) as a circle/diamond and each processing statement as a rectangle. Connect them with arrows showing control flow. Label decision edges as T (true) or F (false). Count: nodes (N), edges (E), decision nodes (D). Apply V(G) = E − N + 2 = D + 1. List independent paths by systematically varying each decision. This is a reliable 10-mark answer structure.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Coverage Type</th><th>What It Measures</th><th>Strength</th><th>Limitation</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Statement</strong></td><td>Every executable line executed</td><td>Weakest</td><td>Misses untested branches</td></tr>
+        <tr><td><strong>Branch/Decision</strong></td><td>Every branch taken</td><td>Stronger</td><td>Misses compound conditions</td></tr>
+        <tr><td><strong>Condition</strong></td><td>Each sub-condition T and F</td><td>Stronger still</td><td>May miss path combinations</td></tr>
+        <tr><td><strong>Path</strong></td><td>Every independent path</td><td>Strongest</td><td>Impractical with unbounded loops</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="adv-dis">
+    <div class="comp-col">
+      <h4>Advantages of White Box Testing</h4>
+      <ul class="adv-list">
+        <li>Thorough code-level coverage</li>
+        <li>Identifies hidden errors (dead code, unreachable statements)</li>
+        <li>Optimizes code by finding inefficiencies</li>
+        <li>Provides measurable coverage metrics</li>
+        <li>Facilitates debugging (pinpoints exact locations)</li>
+      </ul>
+    </div>
+    <div class="comp-col">
+      <h4>Disadvantages of White Box Testing</h4>
+      <ul class="adv-dis">
+        <li>Expensive and time-consuming</li>
+        <li>Requires detailed knowledge of code</li>
+        <li>Misses missing functionality (only tests what exists)</li>
+        <li>Does not verify requirements</li>
+        <li>Maintenance-heavy as code changes</li>
+      </ul>
+    </div>
+  </div>
+</article>
+
+<!-- ───────────────────── SECTION 7 ───────────────────── -->
+<article class="section fade-up" id="s7">
+  <span class="section-num">07</span>
+  <h2 class="section-title">Functional Testing Techniques — Black Box Methods</h2>
+  <p class="section-intro">The tester's eyes are closed to the code and open only to the specification — and from that specification alone, a surprisingly powerful set of test design techniques emerges.</p>
+
+  <div class="subsection">
+    <h3>What Is Black Box Testing?</h3>
+    <p>Black box testing (also called functional testing, behavioral testing, or specification-based testing) is a testing technique in which the tester derives test cases solely from the software's specification — the requirements document, use cases, user stories, or interface descriptions — without any knowledge of the internal code structure, algorithms, or data structures. The software is treated as an opaque box: inputs go in, outputs come out, and the tester's job is to verify that the outputs are correct for each input, without caring how the outputs are produced internally. This perspective closely mirrors the user's experience: a user does not know or care how the software works internally; they care only that it produces the right result.</p>
+    <p>Black box testing techniques are particularly effective at finding defects related to incorrect or missing functionality, interface errors, data structure errors, behavior or performance errors, and initialization and termination errors. They are the primary techniques used during system testing and acceptance testing, where the tester's perspective is that of the end user. The three most important black box testing techniques — Equivalence Class Partitioning (ECP), Boundary Value Analysis (BVA), and Decision Table Testing — are examined in detail below, with worked examples drawn from actual Indian university examination questions.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Equivalence Class Partitioning (ECP)</h3>
+    <p>Equivalence Class Partitioning is a black box test case design technique that divides the input domain of a program into classes (groups) of data that are expected to be treated identically by the program. The fundamental assumption is that if a test case from a particular class reveals a defect, then all other test cases from the same class are likely to reveal the same defect (and conversely, if one test case from a class passes, then all others in that class are likely to pass as well). This allows the tester to select one representative test case from each class, dramatically reducing the total number of test cases while maintaining thorough coverage of the input domain.</p>
+    <p>To apply ECP, the tester examines each input variable and identifies valid and invalid equivalence classes. A <strong>valid equivalence class</strong> contains values that the program should accept and process correctly. An <strong>invalid equivalence class</strong> contains values that the program should reject (with an appropriate error message). The tester then selects one representative value from each class. The goal is to ensure that every equivalence class is covered by at least one test case, providing systematic coverage of the input space.</p>
+
+    <h4>Worked Example: Quadratic Equation Program</h4>
+    <p>This is a classic Indian university examination question. A program determines the nature of the roots of a quadratic equation ax² + bx + c = 0, where a, b, c are positive integers in the range [0, 100]. The output may be: (i) not a quadratic equation (if a = 0), (ii) real roots (if b² − 4ac > 0), (iii) imaginary roots (if b² − 4ac < 0), or (iv) equal roots (if b² − 4ac = 0). We design equivalence classes for each input variable and for the overall program behavior.</p>
+
+    <p><strong>Equivalence classes for input variable 'a':</strong></p>
+    <p>EC1 (valid): 1 ≤ a ≤ 100 — valid quadratic coefficient (the equation is genuinely quadratic). EC2 (invalid): a = 0 — not a quadratic equation (degrades to linear). EC3 (invalid): a < 0 — negative value outside specified range (though the problem states positive integers, a robust program should handle this). EC4 (invalid): a > 100 — value exceeding the specified range.</p>
+
+    <p><strong>Equivalence classes for input variable 'b':</strong></p>
+    <p>EC5 (valid): 0 ≤ b ≤ 100 — valid coefficient.</p>
+
+    <p><strong>Equivalence classes for input variable 'c':</strong></p>
+    <p>EC6 (valid): 0 ≤ c ≤ 100 — valid coefficient.</p>
+
+    <p><strong>Equivalence classes based on discriminant (b² − 4ac):</strong></p>
+    <p>EC7 (real roots): b² − 4ac > 0, e.g., a=1, b=5, c=1 → discriminant = 25 − 4 = 21 > 0. EC8 (equal roots): b² − 4ac = 0, e.g., a=1, b=2, c=1 → discriminant = 4 − 4 = 0. EC9 (imaginary roots): b² − 4ac < 0, e.g., a=1, b=1, c=1 → discriminant = 1 − 4 = −3 < 0. EC10 (not quadratic): a = 0, e.g., a=0, b=5, c=3.</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Equivalence Class Partitioning diagram for quadratic equation">
+      <!-- Input domain box -->
+      <rect x="50" y="30" width="600" height="170" rx="8" fill="#faf7f0" stroke="#d4c9b5" stroke-width="2"/>
+      <text x="350" y="20" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#8a8279" letter-spacing="1">INPUT DOMAIN: a, b, c ∈ [0, 100]</text>
+
+      <!-- EC1: a ∈ [1,100] (valid, large) -->
+      <rect x="70" y="50" width="300" height="60" rx="4" fill="#4a7c6f" fill-opacity="0.1" stroke="#4a7c6f" stroke-width="1.5"/>
+      <text x="220" y="75" text-anchor="middle" font-family="'Playfair Display',serif" font-size="13" fill="#4a7c6f" font-weight="600">EC1: 1 ≤ a ≤ 100</text>
+      <text x="220" y="95" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8a8279">Valid Quadratic Coefficient</text>
+
+      <!-- EC2: a = 0 (invalid) -->
+      <rect x="390" y="50" width="120" height="60" rx="4" fill="#b85c5c" fill-opacity="0.1" stroke="#b85c5c" stroke-width="1.5"/>
+      <text x="450" y="75" text-anchor="middle" font-family="'Playfair Display',serif" font-size="13" fill="#b85c5c" font-weight="600">EC2: a = 0</text>
+      <text x="450" y="95" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8a8279">Not Quadratic</text>
+
+      <!-- EC3: Discriminant > 0 -->
+      <rect x="70" y="125" width="180" height="55" rx="4" fill="#c4a64d" fill-opacity="0.1" stroke="#c4a64d" stroke-width="1.5"/>
+      <text x="160" y="148" text-anchor="middle" font-family="'Playfair Display',serif" font-size="12" fill="#c4a64d" font-weight="600">Real Roots</text>
+      <text x="160" y="167" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8a8279">b²−4ac &gt; 0</text>
+
+      <!-- EC4: Discriminant = 0 -->
+      <rect x="260" y="125" width="170" height="55" rx="4" fill="#4a7c6f" fill-opacity="0.1" stroke="#4a7c6f" stroke-width="1.5"/>
+      <text x="345" y="148" text-anchor="middle" font-family="'Playfair Display',serif" font-size="12" fill="#4a7c6f" font-weight="600">Equal Roots</text>
+      <text x="345" y="167" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8a8279">b²−4ac = 0</text>
+
+      <!-- EC5: Discriminant < 0 -->
+      <rect x="440" y="125" width="180" height="55" rx="4" fill="#c4622d" fill-opacity="0.1" stroke="#c4622d" stroke-width="1.5"/>
+      <text x="530" y="148" text-anchor="middle" font-family="'Playfair Display',serif" font-size="12" fill="#c4622d" font-weight="600">Imaginary Roots</text>
+      <text x="530" y="167" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#8a8279">b²−4ac &lt; 0</text>
+
+      <!-- Test case table -->
+      <text x="50" y="230" font-family="'DM Mono',monospace" font-size="10" fill="#c4622d" font-weight="500">TEST CASES DERIVED FROM EQUIVALENCE CLASSES:</text>
+      <text x="50" y="255" font-family="'DM Mono',monospace" font-size="10" fill="#2c2c2c">TC1: a=1,  b=5, c=1  → Discriminant=21  → Real Roots       (EC1, real)</text>
+      <text x="50" y="275" font-family="'DM Mono',monospace" font-size="10" fill="#2c2c2c">TC2: a=1,  b=2, c=1  → Discriminant=0   → Equal Roots       (EC1, equal)</text>
+      <text x="50" y="295" font-family="'DM Mono',monospace" font-size="10" fill="#2c2c2c">TC3: a=1,  b=1, c=1  → Discriminant=−3  → Imaginary Roots   (EC1, imaginary)</text>
+      <text x="50" y="315" font-family="'DM Mono',monospace" font-size="10" fill="#2c2c2c">TC4: a=0,  b=5, c=3  → Not a quadratic equation               (EC2)</text>
+      <text x="50" y="340" font-family="'Source Serif 4',serif" font-size="10" fill="#8a8279">Note: One representative value selected from each equivalence class.</text>
+    </svg>
+    <p class="diagram-caption">Fig. 6 — Equivalence Class Partitioning for the quadratic equation problem. Each shaded region represents an equivalence class; one test case is selected per class.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Boundary Value Analysis (BVA)</h3>
+    <p>Boundary Value Analysis is a complementary black box technique that focuses specifically on the boundaries (edges) of equivalence classes rather than their interiors. The rationale is empirical and well-established: defects cluster at boundaries. A developer who writes <code>if (age >= 18)</code> instead of <code>if (age > 17)</code> has introduced a one-off boundary error that affects exactly the value 18. Such boundary errors are among the most common defects in software, and BVA targets them directly by selecting test values at, just below, and just above each boundary.</p>
+    <p>For a variable with a defined range [min, max], BVA typically generates test cases at five points: <strong>min − 1</strong> (just below the lower boundary — should be invalid), <strong>min</strong> (the lower boundary itself — should be valid), <strong>min + 1</strong> (just above the lower boundary — should be valid), <strong>max − 1</strong> (just below the upper boundary — should be valid), <strong>max</strong> (the upper boundary — should be valid), and <strong>max + 1</strong> (just above the upper boundary — should be invalid). For a variable with a valid range of [0, 100], this yields test values: −1, 0, 1, 99, 100, 101. Each of these values is selected to probe the boundary conditions that the program must handle correctly.</p>
+    <p>BVA is often applied alongside ECP: ECP ensures broad coverage of the input domain, while BVA ensures that boundary conditions are specifically tested. Together, they provide a robust test case design strategy. In the quadratic equation example, BVA for the input variable 'a' would test values a = −1 (invalid), a = 0 (boundary — not quadratic), a = 1 (boundary — valid quadratic), a = 99 (near upper boundary), a = 100 (upper boundary), and a = 101 (invalid, exceeds range). Similarly for 'b' and 'c'.</p>
+  </div>
+
+  <div class="diagram-wrap">
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Boundary Value Analysis number line">
+      <!-- Number line -->
+      <line x1="50" y1="100" x2="650" y2="100" stroke="#d4c9b5" stroke-width="2"/>
+
+      <!-- Range highlight -->
+      <rect x="150" y="85" width="400" height="30" rx="4" fill="#4a7c6f" fill-opacity="0.1" stroke="none"/>
+      <text x="350" y="76" text-anchor="middle" font-family="'DM Mono',monospace" font-size="10" fill="#4a7c6f">Valid Range: [0, 100]</text>
+
+      <!-- Tick marks and labels -->
+      <!-- -1 -->
+      <line x1="120" y1="93" x2="120" y2="107" stroke="#b85c5c" stroke-width="2"/>
+      <text x="120" y="125" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#b85c5c" font-weight="600">−1</text>
+      <text x="120" y="145" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#b85c5c">invalid</text>
+
+      <!-- 0 (boundary) -->
+      <line x1="180" y1="83" x2="180" y2="117" stroke="#c4622d" stroke-width="3"/>
+      <circle cx="180" cy="100" r="6" fill="#c4622d"/>
+      <text x="180" y="125" text-anchor="middle" font-family="'DM Mono',monospace" font-size="13" fill="#c4622d" font-weight="700">0</text>
+      <text x="180" y="65" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#c4622d">boundary</text>
+
+      <!-- 1 -->
+      <line x1="240" y1="93" x2="240" y2="107" stroke="#4a7c6f" stroke-width="2"/>
+      <text x="240" y="125" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#4a7c6f">1</text>
+
+      <!-- 99 -->
+      <line x1="510" y1="93" x2="510" y2="107" stroke="#4a7c6f" stroke-width="2"/>
+      <text x="510" y="125" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#4a7c6f">99</text>
+
+      <!-- 100 (boundary) -->
+      <line x1="570" y1="83" x2="570" y2="117" stroke="#c4622d" stroke-width="3"/>
+      <circle cx="570" cy="100" r="6" fill="#c4622d"/>
+      <text x="570" y="125" text-anchor="middle" font-family="'DM Mono',monospace" font-size="13" fill="#c4622d" font-weight="700">100</text>
+      <text x="570" y="65" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#c4622d">boundary</text>
+
+      <!-- 101 -->
+      <line x1="620" y1="93" x2="620" y2="107" stroke="#b85c5c" stroke-width="2"/>
+      <text x="620" y="125" text-anchor="middle" font-family="'DM Mono',monospace" font-size="12" fill="#b85c5c">101</text>
+      <text x="620" y="145" text-anchor="middle" font-family="'DM Mono',monospace" font-size="9" fill="#b85c5c">invalid</text>
+
+      <!-- Legend -->
+      <circle cx="200" cy="178" r="5" fill="#c4622d"/>
+      <text x="210" y="182" font-family="'DM Mono',monospace" font-size="10" fill="#5a5347">Boundary values (most critical)</text>
+      <line x1="400" y1="175" x2="400" y2="181" stroke="#4a7c6f" stroke-width="2"/>
+      <text x="410" y="182" font-family="'DM Mono',monospace" font-size="10" fill="#5a5347">Interior values</text>
+    </svg>
+    <p class="diagram-caption">Fig. 7 — Boundary Value Analysis for range [0, 100]. Boundary values 0 and 100 (circled) are the most critical test points, along with adjacent values −1, 1, 99, 101.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Worked Example: Login Page Test Cases</h3>
+    <p>This is a frequently asked Indian university examination question: "Design test cases for a login page consisting of two fields — user ID and password." A thorough answer demonstrates the application of both ECP and BVA, and it should include a test case table with test case IDs, input descriptions, expected outputs, and the technique used.</p>
+    <p><strong>Requirements assumptions:</strong> User ID must be alphanumeric, 4–20 characters. Password must be at least 8 characters, containing at least one uppercase letter, one lowercase letter, and one digit. The system validates both fields and displays appropriate error messages or grants access.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table class="test-table">
+      <thead><tr><th>TC#</th><th>User ID</th><th>Password</th><th>Expected Output</th><th>Technique</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>"john42" (valid)</td><td>"Pass1word" (valid)</td><td>Login successful</td><td>ECP (valid+valid)</td></tr>
+        <tr><td>2</td><td>"" (empty)</td><td>"Pass1word"</td><td>"User ID required"</td><td>ECP (invalid UID)</td></tr>
+        <tr><td>3</td><td>"john42"</td><td>"" (empty)</td><td>"Password required"</td><td>ECP (invalid PW)</td></tr>
+        <tr><td>4</td><td>"ab" (too short: 2 chars)</td><td>"Pass1word"</td><td>"User ID too short"</td><td>BVA (below min)</td></tr>
+        <tr><td>5</td><td>"abcd" (exactly 4 chars)</td><td>"Pass1word"</td><td>Login successful</td><td>BVA (at min)</td></tr>
+        <tr><td>6</td><td>"abcde" (5 chars)</td><td>"Pass1word"</td><td>Login successful</td><td>BVA (min+1)</td></tr>
+        <tr><td>7</td><td>(19-char ID)</td><td>"Pass1word"</td><td>Login successful</td><td>BVA (max-1)</td></tr>
+        <tr><td>8</td><td>(20-char ID)</td><td>"Pass1word"</td><td>Login successful</td><td>BVA (at max)</td></tr>
+        <tr><td>9</td><td>(21-char ID)</td><td>"Pass1word"</td><td>"User ID too long"</td><td>BVA (above max)</td></tr>
+        <tr><td>10</td><td>"john!@#"</td><td>"Pass1word"</td><td>"Invalid characters"</td><td>ECP (invalid chars)</td></tr>
+        <tr><td>11</td><td>"john42"</td><td>"short1A"</td><td>"Password too short"</td><td>BVA (below min PW)</td></tr>
+        <tr><td>12</td><td>"john42"</td><td>"alllowercase1"</td><td>"Missing uppercase"</td><td>ECP (no upper)</td></tr>
+        <tr><td>13</td><td>"john42"</td><td>"ALLUPPERCASE1"</td><td>"Missing lowercase"</td><td>ECP (no lower)</td></tr>
+        <tr><td>14</td><td>"john42"</td><td>"NoDigitHere"</td><td>"Missing digit"</td><td>ECP (no digit)</td></tr>
+        <tr><td>15</td><td>"john42"</td><td>"Wrong1pass"</td><td>"Invalid credentials"</td><td>ECP (wrong PW)</td></tr>
+        <tr><td>16</td><td>"' OR 1=1 --"</td><td>"anything"</td><td>"Invalid input" / blocked</td><td>Security (SQL injection)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>Comparison: ECP vs. BVA</h3>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Aspect</th><th>Equivalence Class Partitioning</th><th>Boundary Value Analysis</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Focus</strong></td><td>Interior of input domain classes</td><td>Boundaries of input domain classes</td></tr>
+        <tr><td><strong>Assumption</strong></td><td>All values in a class behave similarly</td><td>Defects cluster at boundaries</td></tr>
+        <tr><td><strong>Test values</strong></td><td>One representative per class</td><td>Boundary ± 1 values</td></tr>
+        <tr><td><strong>Number of tests</strong></td><td>Equal to number of classes</td><td>Equal to number of boundaries × 3–5</td></tr>
+        <tr><td><strong>Catches</strong></td><td>Wrong classification logic</td><td>Off-by-one errors, boundary errors</td></tr>
+        <tr><td><strong>Best used</strong></td><td>First, for broad coverage</td><td>After ECP, for targeted boundary testing</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Aspect</th><th>White Box Testing</th><th>Black Box Testing</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Knowledge</strong></td><td>Full internal code knowledge</td><td>No internal code knowledge</td></tr>
+        <tr><td><strong>Based on</strong></td><td>Code structure, control flow</td><td>Requirements, specifications</td></tr>
+        <tr><td><strong>Techniques</strong></td><td>Statement, branch, path coverage</td><td>ECP, BVA, decision tables</td></tr>
+        <tr><td><strong>Finds</strong></td><td>Code-level defects, dead code</td><td>Missing functionality, spec deviations</td></tr>
+        <tr><td><strong>Performed by</strong></td><td>Developers / white box testers</td><td>Testers / QA team</td></tr>
+        <tr><td><strong>When</strong></td><td>Unit and integration testing</td><td>System and acceptance testing</td></tr>
+        <tr><td><strong>Exhaustiveness</strong></td><td>Can be exhaustive for code paths</td><td>Cannot be exhaustive for inputs</td></tr>
+        <tr><td><strong>Advantage</strong></td><td>Thorough internal coverage</td><td>User perspective, finds spec bugs</td></tr>
+        <tr><td><strong>Limitation</strong></td><td>Misses missing features</td><td>May miss code-level issues</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <details>
+    <summary>Viva Questions — Black Box &amp; White Box Testing</summary>
+    <div class="details-body">
+      <p><strong>Q:</strong> Can we rely on only one type of testing (white or black)?<br>
+      <strong>A:</strong> No. White box testing ensures the code is internally correct but may miss missing features. Black box testing ensures the specification is met but may miss dead code or internal inefficiencies. Both are complementary and should be used together for comprehensive quality assurance.</p>
+      <p><strong>Q:</strong> Why is BVA considered more effective than ECP?<br>
+      <strong>A:</strong> BVA is not strictly "more effective" — it is complementary. ECP provides broad domain coverage, while BVA targets the specific locations (boundaries) where defects are statistically most likely. Together they provide better coverage than either alone.</p>
+    </div>
+  </details>
+</article>
+
+<!-- ───────────────────── SECTION 8 ───────────────────── -->
+<article class="section fade-up" id="s8">
+  <span class="section-num">08</span>
+  <h2 class="section-title">Alpha Testing, Beta Testing &amp; the Release Cycle</h2>
+  <p class="section-intro">The final gateways before software reaches the world — one tested in-house by real users, the other tested in the wild by the public.</p>
+
+  <div class="subsection">
+    <h3>Alpha Testing</h3>
+    <p>Alpha testing is a type of acceptance testing conducted at the developer's site by the customer or by a team of end users under the supervision of the development team. The term "alpha" derives from the first letter of the Greek alphabet, signifying the first phase of external testing — testing that occurs before the software is released to the broader public. Alpha testing is typically performed in a controlled environment: the developer provides the hardware, the software, and the testing environment, while the customer provides the domain knowledge and the perspective of the actual end user.</p>
+    <p>The purpose of alpha testing is to identify defects that escaped earlier testing levels — defects that arise from misunderstandings of the requirements, from usability issues that were not anticipated during design, or from unexpected interactions between features in a real-world usage scenario. Alpha testing combines elements of both black box testing (the customer tests the software from the user's perspective) and white box testing (the development team may use debugging tools and internal logs to assist in diagnosing discovered defects). It is typically followed by a period of defect fixing, after which the software enters beta testing.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Beta Testing</h3>
+    <p>Beta testing is a type of acceptance testing conducted at the customer's site (or in the customer's actual operational environment) by real end users, without the direct supervision of the development team. The software is released to a limited group of external users — the "beta testers" — who use it in their normal working conditions and report any defects, usability issues, or suggestions for improvement back to the development team. Beta testing is the last phase of testing before the software is released to the general public.</p>
+    <p>The primary purpose of beta testing is to validate the software in a real-world environment that the development team cannot fully replicate internally. Customer sites have different hardware configurations, different operating system versions, different network conditions, different data volumes, and different usage patterns than the developer's lab. Beta testing exposes the software to this diversity, revealing defects that are environment-specific or usage-specific. Additionally, beta testing provides invaluable user feedback — not just about defects, but about usability, workflow, feature requests, and overall satisfaction — that can inform the final release decision and the roadmap for future versions.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Aspect</th><th>Alpha Testing</th><th>Beta Testing</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Location</strong></td><td>Developer's site</td><td>Customer's site</td></tr>
+        <tr><td><strong>Performed by</strong></td><td>Customer / users (with dev team present)</td><td>Real end users (without dev team)</td></tr>
+        <tr><td><strong>Environment</strong></td><td>Controlled (developer's lab)</td><td>Real-world (customer's infrastructure)</td></tr>
+        <tr><td><strong>When</strong></td><td>Before beta testing</td><td>After alpha testing, before general release</td></tr>
+        <tr><td><strong>Defect types</strong></td><td>Functional defects, usability issues</td><td>Environment-specific, usage-pattern defects</td></tr>
+        <tr><td><strong>Feedback</strong></td><td>Immediate, face-to-face</td><td>Collected via surveys, bug reports</td></tr>
+        <tr><td><strong>Supervision</strong></td><td>Development team present</td><td>Independent (no dev team involvement)</td></tr>
+        <tr><td><strong>Number of users</strong></td><td>Small, selected group</td><td>Larger, diverse group</td></tr>
+        <tr><td><strong>Risk</strong></td><td>Lower (controlled setting)</td><td>Higher (uncontrolled, real-world)</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="box box-exam">
+    <span class="box-label">Exam Writing Guide — "Alpha and Beta Testing" (10 marks)</span>
+    <p style="margin-bottom:0">Structure: (1) Define alpha testing with context (~80 words). (2) Define beta testing with context (~80 words). (3) Comparison table (~9 rows). (4) Explain the role of user feedback during both stages (~100 words): alpha feedback is used to fix critical defects and refine features before the wider release; beta feedback captures real-world issues, environment-specific bugs, and usability insights that inform the final release decision. (5) Give a real-world example (e.g., Gmail was in beta for years; Android releases have developer previews as alpha and public beta programs). (6) Significance in release cycle (~80 words).</p>
+  </div>
+
+  <div class="box box-teal">
+    <span class="box-label">Real-World Context</span>
+    <p style="margin-bottom:0">Major software products routinely use both phases. Google releases Android developer previews (alpha) to developers, followed by public beta programs before the stable release. Apple's iOS beta program invites millions of users to test pre-release versions. Microsoft Windows Insider program is essentially a large-scale beta test. Open-source projects like Ubuntu release alpha and beta versions months before the official LTS release, collecting bug reports from thousands of community testers worldwide.</p>
+  </div>
+</article>
+
+<!-- ───────────────────── SECTION 9 ───────────────────── -->
+<article class="section fade-up" id="s9">
+  <span class="section-num">09</span>
+  <h2 class="section-title">Static Testing Strategies</h2>
+  <p class="section-intro">Not all testing requires executing the program — some of the most cost-effective defect detection happens by simply reading the code.</p>
+
+  <div class="subsection">
+    <h3>What Is Static Testing?</h3>
+    <p>Static testing refers to any quality assurance activity that evaluates software artefacts — requirements documents, design specifications, source code, test plans, user manuals — <em>without executing the program</em>. This distinguishes static testing from dynamic testing (which we have discussed extensively in the preceding sections), where the software is actually run with test inputs and the outputs are observed. Static testing is fundamentally a human (or tool-assisted) review process: it relies on human reasoning, pattern recognition, and domain expertise to identify defects, ambiguities, inconsistencies, and violations of standards in the documentation and code.</p>
+    <p>The economic argument for static testing is compelling. Research consistently shows that static testing techniques — particularly formal inspections — can detect 50–70% of defects at a fraction of the cost of dynamic testing. A defect found in a requirements document through a review costs perhaps an hour of human effort to correct; the same defect, if left undetected and embedded in the code, might cost days or weeks to diagnose and fix during system testing or (worst case) after deployment. Static testing is the embodiment of the "early testing" principle: the earlier a defect is found, the cheaper it is to fix.</p>
+    <p>Static testing strategies include formal technical reviews (peer reviews), walkthroughs, code inspections, compliance checking against design and coding standards, and automated static analysis tools. We examine each of these below.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Formal Technical Reviews (FTR) / Peer Reviews</h3>
+    <p>A Formal Technical Review (FTR) is a review technique in which a group of peers — typically three to five software engineers — examines a work product (a design document, a code module, a test plan) to identify defects, verify conformance to standards, and evaluate the quality of the work product. FTRs are the most structured and rigorous form of static testing, and they have been shown to be among the most effective defect detection techniques in the software engineer's toolkit.</p>
+    <p>An FTR typically follows a well-defined process. <strong>Preparation:</strong> The producer of the work product distributes the materials to the reviewers in advance, along with review checklists and the applicable standards. Reviewers study the materials independently before the review meeting. <strong>Review meeting:</strong> The group convenes (in person or virtually) and systematically walks through the work product. Each reviewer raises issues they have identified during preparation. The focus is on finding defects, not on solving them — solutions are deferred. A moderator keeps the meeting on track, and a recorder documents every issue raised. <strong>Decision:</strong> At the end of the meeting, the group makes one of three decisions: (a) accept the work product as-is (no significant defects found), (b) accept with minor modifications (trivial defects that the producer can correct without another review), or (c) reject and re-review after corrections (significant defects that require another FTR after they are fixed). <strong>Follow-up:</strong> The producer addresses the documented issues, and the moderator verifies that all issues have been resolved.</p>
+    <p>The key roles in an FTR are: the <strong>producer</strong> (author of the work product), the <strong>reviewer(s)</strong> (peers who evaluate the work product), the <strong>moderator</strong> (facilitates the meeting, ensures focus and fairness), and the <strong>recorder</strong> (documents all defects and decisions). The meeting should be time-boxed (typically 60–90 minutes) to maintain focus and productivity.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Walkthrough</h3>
+    <p>A walkthrough is a review technique in which the author (producer) of a work product leads a group of reviewers through the document or code, explaining the logic, design decisions, and intended behavior step by step. Unlike a formal inspection, a walkthrough is less formal and less structured: there is no mandatory preparation phase, no formal moderator, and the author plays the central role by guiding the discussion. The reviewers listen, ask questions, raise concerns, and identify potential defects through the interactive discussion.</p>
+    <p>The walkthrough process is simpler than an FTR: the author schedules a meeting, presents the work product, and walks the reviewers through it section by section. Reviewers may follow along with their own copies of the document or code, noting issues as they arise. The pace is controlled by the author, who explains the rationale behind each design decision or code construct. Reviewers probe with questions like "What happens if this input is null?" or "Have you considered the case where the file doesn't exist?" These questions often surface defects that the author had not considered.</p>
+    <p>Walkthroughs are particularly effective for knowledge transfer — they help team members understand each other's work — and for early-stage reviews where the work product is still evolving and a formal inspection might be premature. However, walkthroughs are less effective than inspections at finding defects because they rely heavily on the author's ability to explain the work product clearly and on the reviewers' ability to identify issues in real-time during the presentation.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Code Inspection</h3>
+    <p>A code inspection is the most rigorous and formal of the static testing techniques. It was pioneered by Michael Fagan at IBM in the 1970s and remains one of the most effective defect detection methods ever devised. An inspection differs from a walkthrough in several critical ways: it follows a formal, documented process; the reviewers (not the author) lead the examination; the author is typically silent during the inspection (listening but not explaining); predefined checklists and standards are used to guide the review; defect data is collected and analyzed for process improvement; and a formal follow-up process ensures that every identified defect is resolved before the work product is accepted.</p>
+    <p>The Fagan inspection process has six steps: <strong>Planning</strong> (the moderator selects reviewers, distributes materials, and schedules the meeting), <strong>Overview</strong> (the author provides background context if needed, though some inspections skip this step), <strong>Preparation</strong> (each reviewer independently examines the work product using checklists), <strong>Inspection meeting</strong> (reviewers present their findings; the author remains silent; the moderator ensures focus; the recorder documents every defect), <strong>Rework</strong> (the author corrects all documented defects), and <strong>Follow-up</strong> (the moderator verifies that all defects have been corrected and that no new defects have been introduced by the corrections).</p>
+    <p>Fagan's original data showed that inspections could detect up to 82% of defects before any testing was performed, dramatically reducing the overall cost of quality. The key insight of inspections is that defect detection and defect correction are separated: the inspection meeting finds defects, and the author fixes them afterwards. This separation prevents the meeting from devolving into a design discussion and keeps the focus on finding as many defects as possible within the time allotted.</p>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Aspect</th><th>Walkthrough</th><th>Code Inspection</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Formality</strong></td><td>Informal / semi-formal</td><td>Highly formal (Fagan process)</td></tr>
+        <tr><td><strong>Lead</strong></td><td>Author leads the session</td><td>Reviewers lead; author is silent</td></tr>
+        <tr><td><strong>Preparation</strong></td><td>Optional / minimal</td><td>Mandatory (reviewers study beforehand)</td></tr>
+        <tr><td><strong>Checklists</strong></td><td>Not typically used</td><td>Formal checklists are mandatory</td></tr>
+        <tr><td><strong>Roles</strong></td><td>Author + reviewers</td><td>Moderator, author, reviewers, recorder</td></tr>
+        <tr><td><strong>Focus</strong></td><td>Understanding + defect detection</td><td>Pure defect detection</td></tr>
+        <tr><td><strong>Data collection</strong></td><td>Minimal</td><td>Defect metrics collected and analyzed</td></tr>
+        <tr><td><strong>Follow-up</strong></td><td>Informal</td><td>Formal verification of corrections</td></tr>
+        <tr><td><strong>Effectiveness</strong></td><td>Moderate (good for knowledge transfer)</td><td>Very high (up to 82% defect detection)</td></tr>
+        <tr><td><strong>Best for</strong></td><td>Early drafts, knowledge sharing</td><td>Critical code, high-reliability systems</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="subsection">
+    <h3>Compliance with Design and Coding Standards</h3>
+    <p>Beyond defect detection, static testing also encompasses verifying that work products conform to established organizational standards. Design standards specify how architectures should be documented, how interfaces should be defined, how data should be structured, and how design patterns should be applied. Coding standards specify naming conventions, indentation rules, commenting practices, file organization, error-handling patterns, and language-specific best practices. Compliance checking ensures consistency across the codebase, which improves readability, maintainability, and the ease with which new team members can understand and modify the code.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Automated Testing and Static Analysis Tools</h3>
+    <p>Modern software development increasingly relies on automated tools to supplement human reviews. <strong>Static analysis tools</strong> (such as SonarQube, FindBugs/SpotBugs, ESLint, Pylint, and Coverity) automatically scan source code for common defect patterns, security vulnerabilities, style violations, and code smells — all without executing the program. These tools can detect issues like null pointer dereferences, buffer overflows, unused variables, unreachable code, and violations of coding standards with a speed and consistency that surpasses human reviewers.</p>
+    <p><strong>Automated testing</strong> refers to the use of software tools to execute tests, compare actual outcomes with expected outcomes, and report results — without manual intervention. While automated testing is technically a dynamic testing activity (it involves executing the software), it is worth discussing here because automated test frameworks are essential to making regression testing, performance testing, and continuous integration feasible. Tools such as Selenium (web UI testing), JUnit/TestNG (unit testing), Appium (mobile testing), and Jenkins/GitLab CI (continuous integration pipelines) form the backbone of modern automated testing infrastructure. The combination of automated static analysis (finding defects without execution) and automated dynamic testing (finding defects through execution) provides the most comprehensive and efficient testing strategy available.</p>
+  </div>
+
+  <div class="box box-exam">
+    <span class="box-label">Commonly Confused — Walkthrough vs. Inspection (5 marks)</span>
+    <p style="margin-bottom:0">Always emphasize: (1) Walkthroughs are led by the <strong>author</strong>; inspections are led by the <strong>reviewers</strong>. (2) In inspections, the author is <strong>silent</strong>. (3) Inspections use <strong>formal checklists</strong>; walkthroughs do not. (4) Inspections collect <strong>defect metrics</strong>; walkthroughs do not. (5) Inspections have a <strong>formal follow-up</strong> process. (6) Inspections are significantly <strong>more effective</strong> at defect detection. These six differences form a reliable comparison for examination answers.</p>
+  </div>
+</article>
+
+<!-- ───────────────────── SECTION 10 ───────────────────── -->
+<article class="section fade-up" id="s10">
+  <span class="section-num">10</span>
+  <h2 class="section-title">Test Data Preparation &amp; Test Case Design</h2>
+  <p class="section-intro">The bridge between testing theory and testing practice — a test case is only as good as the data it exercises.</p>
+
+  <div class="subsection">
+    <h3>What Is a Test Case?</h3>
+    <p>A test case is a documented set of conditions, inputs, execution procedures, and expected results that is designed to verify a specific aspect of the software's behavior. A well-designed test case contains the following components: a <strong>test case identifier</strong> (a unique ID such as TC-001), a <strong>test objective</strong> (what the test verifies), <strong>preconditions</strong> (the state the system must be in before the test runs), <strong>test inputs</strong> (the specific data values to be entered), <strong>execution steps</strong> (the sequence of actions to perform), <strong>expected results</strong> (the outputs or system behavior that should be observed), and <strong>post-conditions</strong> (the expected state of the system after the test completes). The test data — the specific values chosen for the inputs — is the engine that drives the test case, and its selection is a creative engineering activity that directly determines the test's effectiveness.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Test Data Selection Strategies</h3>
+    <p>Test data should be selected to exercise the software thoroughly across a variety of conditions. The primary strategies include: (1) <strong>Normal data</strong> — valid, typical inputs that the program is expected to handle in everyday operation. These verify that the program works correctly under normal conditions. (2) <strong>Boundary data</strong> — inputs at or near the boundaries of valid ranges, selected using BVA. These probe the program's handling of edge cases where off-by-one errors are common. (3) <strong>Invalid data</strong> — inputs that violate the program's input specifications (out-of-range values, wrong data types, malformed inputs). These verify that the program handles errors gracefully. (4) <strong>Extreme data</strong> — valid but extreme inputs (very large numbers, very long strings, empty inputs, special characters). These probe the program's robustness and performance under unusual conditions. (5) <strong>Stress data</strong> — inputs designed to push the system to its resource limits (maximum concurrent users, largest possible file sizes). These verify performance and stability under stress.</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Test Suite Organization</h3>
+    <p>A test suite is a collection of test cases organized into a logical structure that facilitates efficient execution and management. Test suites are typically organized by testing level (unit test suite, integration test suite, system test suite), by functional area (login module tests, payment module tests, reporting module tests), or by priority (critical path tests, regression tests, smoke tests). A well-organized test suite allows testers to quickly select and execute the appropriate subset of tests for a given situation — for example, running only the smoke tests (a small set of critical-path tests) after a minor change, or running the full regression suite after a major release.</p>
+  </div>
+
+  <div class="box box-memory">
+    <span class="box-label">Test Suite Hierarchy</span>
+    <p style="margin-bottom:0"><strong>Test Plan</strong> → <strong>Test Suite</strong> (group of related test cases) → <strong>Test Case</strong> (individual test with inputs, steps, expected results) → <strong>Test Data</strong> (specific input values). Think of it like a filing cabinet: the test plan is the cabinet, test suites are the drawers, test cases are the folders, and test data are the individual documents inside each folder.</p>
+  </div>
+</article>
+
+<!-- ═══════════════════════ REVISION SECTION ═══════════════════════ -->
+<article class="section fade-up" id="revision">
+  <span class="section-num">✦</span>
+  <h2 class="section-title">Quick Revision &amp; Exam Night Recap</h2>
+  <p class="section-intro">For the night before the exam — everything you need, organized for rapid recall and confident answer-writing.</p>
+
+  <div class="revision-grid">
+    <div class="rev-card">
+      <h4>Verification vs. Validation</h4>
+      <p><strong>V:</strong> "Are we building the product <em>right</em>?" (process-oriented, static)<br>
+      <strong>V:</strong> "Are we building the <em>right</em> product?" (product-oriented, dynamic)<br>
+      Draw the V-Model. Always.</p>
+    </div>
+    <div class="rev-card" style="border-top-color:var(--teal)">
+      <h4>Levels of Testing</h4>
+      <p>Unit → Integration → System → Acceptance<br>
+      Pyramid: more unit tests, fewer acceptance tests<br>
+      Cost per defect rises as you ascend.</p>
+    </div>
+    <div class="rev-card" style="border-top-color:var(--rose)">
+      <h4>Stubs vs. Drivers</h4>
+      <p><strong>Stubs</strong> = replace CALLED modules → Top-Down<br>
+      <strong>Drivers</strong> = replace CALLING modules → Bottom-Up<br>
+      Mnemonic: "S down, D up"</p>
+    </div>
+    <div class="rev-card" style="border-top-color:var(--gold)">
+      <h4>Cyclomatic Complexity</h4>
+      <p>V(G) = E − N + 2P = D + 1<br>
+      Where E=edges, N=nodes, P=components, D=decision nodes<br>
+      Minimum test cases = V(G)</p>
+    </div>
+    <div class="rev-card" style="border-top-color:var(--teal)">
+      <h4>ECP &amp; BVA</h4>
+      <p><strong>ECP:</strong> Divide input domain into classes, pick one value per class<br>
+      <strong>BVA:</strong> Test at boundaries: min, min+1, max-1, max, and just outside</p>
+    </div>
+    <div class="rev-card" style="border-top-color:var(--accent)">
+      <h4>Alpha vs. Beta</h4>
+      <p><strong>Alpha:</strong> Developer's site, customer present, controlled<br>
+      <strong>Beta:</strong> Customer's site, real users, uncontrolled<br>
+      Alpha → fix → Beta → release</p>
+    </div>
+    <div class="rev-card" style="border-top-color:var(--rose)">
+      <h4>Walkthrough vs. Inspection</h4>
+      <p>Walkthrough: author leads, informal<br>
+      Inspection: reviewers lead, author silent, formal checklists, defect metrics collected, Fagan process</p>
+    </div>
+    <div class="rev-card" style="border-top-color:var(--gold)">
+      <h4>Regression Testing</h4>
+      <p>Re-run existing tests after changes<br>
+      Every change demands a regression cycle<br>
+      Requires automation to be practical</p>
+    </div>
+  </div>
+
+  <div class="mnemonic">
+    Stubs go <strong>D</strong>own (Top-Down) · Drivers go <strong>U</strong>p (Bottom-Up)<br>
+    V(G) = <strong>E</strong>dges − <strong>N</strong>odes + 2 = <strong>D</strong>ecisions + 1
+  </div>
+
+  <div class="subsection">
+    <h3>Most Likely Exam Questions (PYQ Pattern Analysis)</h3>
+  </div>
+
+  <div class="box box-exam">
+    <span class="box-label">15-Mark Questions — Be Ready for These</span>
+    <p><strong>1.</strong> Explain the V-Model of software development with a diagram. Discuss all levels of testing and their correspondence with development phases. (Include: diagram, 4 correspondences, advantages, limitations)</p>
+    <p><strong>2.</strong> Differentiate between white box and black box testing in detail. Explain statement coverage, branch coverage, and cyclomatic complexity with examples. Discuss ECP and BVA. (Include: definitions, CFG diagram, complexity calculation, ECP/BVA examples)</p>
+    <p><strong>3.</strong> Compare and contrast top-down and bottom-up integration testing. Explain the roles of test drivers and test stubs. (Include: both diagrams, process descriptions, comparison table, stubs vs drivers definitions)</p>
+    <p style="margin-bottom:0"><strong>4.</strong> What are alpha and beta testing? Explain their purpose and significance in the software release cycle. How does user feedback during these stages contribute to product improvement? (Include: definitions, comparison table, real-world examples, feedback analysis)</p>
+  </div>
+
+  <div class="box box-warning">
+    <span class="box-label">10-Mark Questions — High Frequency</span>
+    <p><strong>1.</strong> Explain Equivalence Class Partitioning and Boundary Value Analysis with the quadratic equation example.</p>
+    <p><strong>2.</strong> Differentiate between walkthrough and code inspection. Explain the Fagan inspection process.</p>
+    <p><strong>3.</strong> Explain regression testing. Why is it important? How is it integrated with the software lifecycle?</p>
+    <p style="margin-bottom:0"><strong>4.</strong> What is cyclomatic complexity? Explain with a neat diagram and calculate V(G) for a given program.</p>
+  </div>
+
+  <div class="box box-teal">
+    <span class="box-label">5-Mark Questions — Quick Fire</span>
+    <p><strong>1.</strong> Differentiate between verification and validation.</p>
+    <p><strong>2.</strong> What are test drivers and test stubs?</p>
+    <p><strong>3.</strong> What is performance testing? List its types.</p>
+    <p><strong>4.</strong> Define static testing. List its techniques.</p>
+    <p><strong>5.</strong> Differentiate between alpha and beta testing.</p>
+    <p style="margin-bottom:0"><strong>6.</strong> What are the objectives of software testing?</p>
+  </div>
+
+  <div class="subsection">
+    <h3>Diagrams to Memorize for Exams</h3>
+    <ul style="list-style:none;padding:0">
+      <li style="padding:.4rem 0"><strong>1. V-Model</strong> — Draw in under 2 minutes. Left arm: Req → SysDesign → Arch → ModuleDesign. Bottom: Coding. Right arm: UnitTest → IntegTest → SysTest → AcceptTest. Dashed correspondence lines.</li>
+      <li style="padding:.4rem 0"><strong>2. Testing Pyramid</strong> — Four layers. Bottom (widest): Unit. Middle: Integration, System. Top (narrowest): Acceptance.</li>
+      <li style="padding:.4rem 0"><strong>3. Top-Down Integration Tree</strong> — Module tree with stubs (dashed boxes) at lower levels. A at top, B,C in middle, D,E,F at bottom.</li>
+      <li style="padding:.4rem 0"><strong>4. Bottom-Up Integration Tree</strong> — Module tree with drivers (dashed boxes above leaves). Same tree, drivers above D, E, F.</li>
+      <li style="padding:.4rem 0"><strong>5. Control Flow Graph</strong> — Nodes (circles for decisions, rectangles for processes), edges with T/F labels. Calculate V(G) = E − N + 2.</li>
+      <li style="padding:.4rem 0"><strong>6. ECP Input Domain Diagram</strong> — Input space partitioned into equivalence classes with representative test values marked.</li>
+    </ul>
+  </div>
+
+  <div class="subsection">
+    <h3>How to Structure a 10-Mark Answer on White Box Testing</h3>
+  </div>
+
+  <div class="box box-exam">
+    <span class="box-label">Answer Template (Target: 600–800 words)</span>
+    <p><strong>¶1 — Introduction:</strong> Define white box testing (also called structural/glass box testing). Explain that the tester has full knowledge of internal code. Contrast briefly with black box testing. (~50 words)</p>
+    <p><strong>¶2 — Statement Coverage:</strong> Define. Formula. Example: for a simple if-else, show that executing just the if-branch achieves 50% statement coverage. (~80 words)</p>
+    <p><strong>¶3 — Branch Coverage:</strong> Define. Formula. Show that both true and false branches must be executed. Example. (~80 words)</p>
+    <p><strong>¶4 — Cyclomatic Complexity:</strong> Define (McCabe, 1976). Give all three formulas. Draw a CFG for a sample program. Calculate V(G). List independent paths. (~150 words)</p>
+    <p><strong>¶5 — Path Coverage:</strong> Define briefly. Note that V(G) gives the minimum number of independent paths. (~50 words)</p>
+    <p><strong>¶6 — Diagram:</strong> Draw the CFG. Label all nodes and edges. Show T/F on decision edges. (~50 words in annotations)</p>
+    <p><strong>¶7 — Advantages &amp; Disadvantages:</strong> List 5 of each in a structured format. (~100 words)</p>
+    <p><strong>¶8 — Conclusion:</strong> White box testing complements black box testing. Neither alone is sufficient. Together they provide comprehensive coverage. (~40 words)</p>
+    <p style="margin-bottom:0">Total: ~600+ words. Add the diagram and this becomes a strong 10-mark answer.</p>
+  </div>
+
+  <div class="box box-memory">
+    <span class="box-label">What Professors Usually Expect</span>
+    <p style="margin-bottom:0">(1) <strong>Definitions</strong> in the textbook's own words — memorize IEEE and ISTQB definitions. (2) <strong>Diagrams</strong> drawn neatly and labeled completely — V-Model, CFG, module trees. (3) <strong>Comparison tables</strong> for any "differentiate between" question — 6–10 rows minimum. (4) <strong>Examples</strong> — always include at least one worked example (quadratic equation, login page, simple code for CFG). (5) <strong>Advantages and disadvantages</strong> — 4–5 points each. (6) <strong>Real-world context</strong> — a mention of tools (Selenium, JMeter, JUnit) or industry practices earns bonus marks. (7) <strong>Structured formatting</strong> — use numbered points, clear headings, and consistent terminology throughout.</p>
+  </div>
+</article>
+
+</div><!-- end content-wrap -->
+
+<!-- ═══════════════════════ FOOTER ═══════════════════════ -->
+<footer class="site-footer">
+  <p>Unit 4 · Software Testing · Complete Study Guide</p>
+  <p>Designed for Indian University Examinations · 2-Mark to 15-Mark Coverage</p>
+  <p style="margin-top:.8rem;font-style:italic;color:var(--text-muted)">"Testing shows the presence of bugs, never their absence." — Edsger W. Dijkstra</p>
+</footer>
+
+<!-- ═══════════════════════ JAVASCRIPT ═══════════════════════ -->
+<script>
+// Smooth scroll for TOC links
+document.querySelectorAll('.toc-list a').forEach(function(link){
+  link.addEventListener('click',function(e){
+    e.preventDefault();
+    var target=document.querySelector(this.getAttribute('href'));
+    if(target){
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  });
+});
+
+// Intersection Observer for fade-up animations
+var observer=new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(entry.isIntersecting){
+      entry.target.style.animationDelay='0s';
+      entry.target.classList.add('fade-up');
+      observer.unobserve(entry.target);
+    }
+  });
+},{threshold:0.08});
+
+document.querySelectorAll('.section').forEach(function(section){
+  observer.observe(section);
+});
+
+// Open all details for print
+window.addEventListener('beforeprint',function(){
+  document.querySelectorAll('details').forEach(function(d){d.open=true;});
+});
+</script>
+</body>
+</html>

@@ -2141,4 +2141,128 @@ code, pre, .mono { font-family: 'Source Code Pro', monospace; }
 
 <button class="collapsible-trigger" onclick="toggleCollapsible(this)">
   <span>Most Likely Exam Questions (10-15 Marks)</span>
-  <span class="arrow">&#966
+  <span class="arrow">&#9660;</span>
+</button>
+<div class="collapsible-content">
+  <div class="collapsible-content-inner">
+    
+    <div class="answer-structure">
+      <h4>Q: Explain Cyclic Redundancy Check (CRC) with a numerical example. (10 Marks)</h4>
+      <ol>
+        <li><strong>Introduction (2 marks):</strong> Define CRC. Mention it is the most powerful error detection technique based on polynomial division over GF(2) (XOR arithmetic). State its widespread use in Ethernet and WiFi.</li>
+        <li><strong>Generator Polynomial & Agreements (1 mark):</strong> Explain how sender and receiver agree on a generator polynomial G(x) of degree r. Convert G(x) to its binary divisor form.</li>
+        <li><strong>Sender-Side Computation (3 marks):</strong> Explain the algorithm step-by-step: Append r zeros to data D -> Divide by G using XOR -> Get remainder R -> Transmit D + R. Emphasize that XOR means no borrows/carries.</li>
+        <li><strong>Numerical Example (3 marks):</strong> Take a PYQ (e.g., Data = 1101011011, G = 10011). Show the full long-division XOR table. Clearly state the transmitted frame.</li>
+        <li><strong>Receiver-Side Verification (1 mark):</strong> Explain that the receiver divides the received codeword by G. If remainder = 0, no error; if non-zero, error detected.</li>
+      </ol>
+    </div>
+
+    <div class="answer-structure">
+      <h4>Q: Compare Pure ALOHA and Slotted ALOHA. Prove S = G*e^(-G) for Slotted ALOHA. (10 Marks)</h4>
+      <ol>
+        <li><strong>Introduction to Random Access (2 marks):</strong> Define the multiple access problem. Explain that random access allows collisions and uses retransmission.</li>
+        <li><strong>Pure ALOHA (2 marks):</strong> Explain the simple "transmit whenever" logic. Define the vulnerable period as 2T. State max throughput S = G*e^(-2G) = 18.4%.</li>
+        <li><strong>Slotted ALOHA (2 marks):</strong> Explain time slotting. Define vulnerable period as T. State max throughput S = G*e^(-G) = 36.8%.</li>
+        <li><strong>Comparison Table (2 marks):</strong> Draw a 4-row table comparing: Time requirement, Vulnerable period, Max efficiency, and Synchronization needs.</li>
+        <li><strong>Derivation (2 marks):</strong> State Poisson distribution assumption. Frame is successful if zero other frames arrive in the same slot. P(0) = e^(-G). Throughput S = frames sent * P(success) = G * e^(-G). Differentiate dS/dG = 0 to show max at G=1.</li>
+      </ol>
+    </div>
+
+    <div class="answer-structure">
+      <h4>Q: Explain the Ethernet Frame Structure. Why is the minimum payload 46 bytes? (10 Marks)</h4>
+      <ol>
+        <li><strong>Ethernet Introduction (1 mark):</strong> IEEE 802.3, dominant wired LAN technology.</li>
+        <li><strong>Frame Fields Diagram (5 marks):</strong> Draw the frame structure (Preamble, SFD, Dest MAC, Src MAC, Type, Data, CRC). Explain each field's size and purpose. <em>Crucial: Mention Preamble is 7 bytes of 10101010 for clock sync, SFD is 1 byte 10101011.</em></li>
+        <li><strong>Maximum Payload (1 mark):</strong> Limited to 1500 bytes to ensure fair channel access and prevent buffer overflows/monopolization.</li>
+        <li><strong>Minimum Payload Rationale (3 marks):</strong> This is the exam trap. Explain CSMA/CD requirement: Sender must still be transmitting when the signal returns from the farthest point (2 * propagation delay). For 10Mbps Ethernet with max cable length, 2*Tp = 51.2 microseconds. In this time, 512 bits (64 bytes) can be sent. Since header+trailer = 18 bytes, minimum data must be 64 - 18 = 46 bytes. If data is smaller, padding is added.</li>
+      </ol>
+    </div>
+
+    <div class="answer-structure">
+      <h4>Q: Explain ARP. How does a Switch build its MAC table? (10 Marks)</h4>
+      <ol>
+        <li><strong>ARP Introduction (2 marks):</strong> Why do we need it? (IP addresses are logical, but NICs only understand MAC). Define ARP as mapping IP -> MAC.</li>
+        <li><strong>ARP Mechanism (3 marks):</strong> Step 1: Check cache. Step 2: Broadcast ARP Request (Dest MAC = FF:FF:FF:FF:FF:FF). Step 3: Target replies with unicast ARP Reply. Step 4: Cache updated.</li>
+        <li><strong>ARP Packet Format (2 marks):</strong> Briefly sketch the fields (HW type, Proto type, Sender MAC/IP, Target MAC/IP). Mention it is encapsulated directly in Ethernet frame (Type = 0x0806), not inside an IP packet.</li>
+        <li><strong>Switch Self-Learning (3 marks):</strong> Explain that the switch observes the Source MAC of *every* incoming frame. It maps Source MAC -> Incoming Port and adds a timestamp. If destination MAC is known, forward to specific port; if unknown, flood; if on same port, filter/drop. Explain table aging/timeout.</li>
+      </ol>
+    </div>
+
+  </div>
+</div>
+
+</section>
+
+</div><!-- end .container -->
+</main>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     FOOTER
+     ══════════════════════════════════════════════════════════════════ -->
+<footer class="doc-footer">
+  <div class="container">
+    <p style="font-family:'Playfair Display',serif; font-size:1.2rem; color:var(--fg-secondary); margin-bottom:0.5rem;">End of Unit 2 Master Document</p>
+    <p>Every numerical solved. Every diagram drawn. Every concept explored.</p>
+    <p style="margin-top:1rem; font-family:'Source Code Pro',monospace; font-size:0.7rem; color:var(--border);">Crafted with obsessive attention to detail.</p>
+  </div>
+</footer>
+
+<!-- ══════════════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ══════════════════════════════════════════════════════════════════ -->
+<script>
+// Collapsible Sections
+function toggleCollapsible(trigger) {
+  const content = trigger.nextElementSibling;
+  if (content.style.maxHeight && content.style.maxHeight !== "0px") {
+    content.style.maxHeight = "0px";
+    trigger.classList.remove("active");
+  } else {
+    content.style.maxHeight = content.scrollHeight + "px";
+    trigger.classList.add("active");
+  }
+}
+
+// Progress Bar
+window.addEventListener('scroll', () => {
+  const progressBar = document.getElementById('progressBar');
+  const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+  const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrollPercent = (scrollTop / scrollHeight) * 100;
+  progressBar.style.width = scrollPercent + '%';
+});
+
+// Back to Top Button
+window.addEventListener('scroll', () => {
+  const backTop = document.getElementById('backTop');
+  if (document.body.scrollTop > 500 || document.documentElement.scrollTop > 500) {
+    backTop.classList.add('visible');
+  } else {
+    backTop.classList.remove('visible');
+  }
+});
+
+// Active Nav Link on Scroll
+const sections = document.querySelectorAll('.section-block');
+const navLinks = document.querySelectorAll('.topic-nav a');
+
+window.addEventListener('scroll', () => {
+  let current = "";
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    if (pageYOffset >= sectionTop - 100) {
+      current = section.getAttribute('id');
+    }
+  });
+
+  navLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+});
+</script>
+
+</body>
+</html>

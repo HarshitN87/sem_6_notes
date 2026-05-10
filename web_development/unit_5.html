@@ -1,0 +1,1956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 5 — MERN Stack, CMS &amp; Web Application Deployment</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400;500&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f5f0e8;
+  --bg-deep: #ebe4d6;
+  --surface: #faf7f2;
+  --surface-alt: #f0ead9;
+  --accent: #c45a3c;
+  --accent-light: #e8a090;
+  --accent-2: #3d6b6e;
+  --accent-2-light: #7ab0b3;
+  --accent-3: #c9a84c;
+  --accent-3-light: #e6d59e;
+  --teal: #2a7a6e;
+  --green: #5a8a5e;
+  --green-light: #b8d4ba;
+  --text: #2c1810;
+  --text-muted: #6b5e52;
+  --text-light: #9a8e82;
+  --border: #d4cbb8;
+  --border-light: #e8e2d4;
+  --shadow: rgba(44, 24, 16, 0.08);
+  --shadow-deep: rgba(44, 24, 16, 0.15);
+  --radius: 6px;
+  --radius-lg: 12px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 17px; }
+
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* ===== TYPOGRAPHY ===== */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--text);
+}
+
+h1 { font-size: 2.8rem; letter-spacing: -0.02em; }
+h2 { font-size: 2rem; margin-bottom: 0.6em; }
+h3 { font-size: 1.5rem; margin-bottom: 0.5em; }
+h4 { font-size: 1.2rem; margin-bottom: 0.4em; font-family: 'Cormorant Garamond', serif; font-weight: 600; }
+
+p { margin-bottom: 1.2em; }
+
+a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-light); transition: all 0.2s; }
+a:hover { color: var(--accent-2); border-color: var(--accent-2); }
+
+code, .mono {
+  font-family: 'DM Mono', 'Courier New', monospace;
+  font-size: 0.88em;
+  background: var(--surface-alt);
+  padding: 0.15em 0.4em;
+  border-radius: 3px;
+  color: var(--accent);
+}
+
+pre {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.82rem;
+  background: #2c1810;
+  color: #f0ead9;
+  padding: 1.5em 1.8em;
+  border-radius: var(--radius);
+  overflow-x: auto;
+  margin: 1.5em 0;
+  line-height: 1.65;
+  border-left: 4px solid var(--accent-3);
+  white-space: pre;
+  tab-size: 2;
+}
+pre .kw { color: #e8a090; }
+pre .str { color: #b8d4ba; }
+pre .cm { color: #9a8e82; font-style: italic; }
+pre .fn { color: #e6d59e; }
+pre .num { color: #7ab0b3; }
+
+.pullquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.4rem;
+  font-style: italic;
+  color: var(--accent-2);
+  border-left: 3px solid var(--accent-2);
+  padding: 0.8em 0 0.8em 1.5em;
+  margin: 2em 0;
+  line-height: 1.5;
+}
+
+/* ===== LAYOUT ===== */
+.page-wrapper {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* ===== HERO HEADER ===== */
+.hero {
+  text-align: center;
+  padding: 5rem 2rem 4rem;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 3rem;
+  position: relative;
+}
+.hero::after {
+  content: '— Unit V —';
+  display: block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-top: 1.2rem;
+}
+.hero h1 {
+  font-size: 3.2rem;
+  margin-bottom: 0.5em;
+  background: linear-gradient(135deg, var(--text) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero .subtitle {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.35rem;
+  color: var(--text-muted);
+  font-style: italic;
+  max-width: 700px;
+  margin: 0 auto;
+}
+.hero .edition {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-light);
+  margin-top: 1.5rem;
+  display: inline-block;
+  border: 1px solid var(--border);
+  padding: 0.4em 1.2em;
+  border-radius: 2px;
+}
+
+/* ===== TABLE OF CONTENTS ===== */
+.toc {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 3rem;
+  margin-bottom: 3.5rem;
+  position: relative;
+}
+.toc::before {
+  content: 'CONTENTS';
+  position: absolute;
+  top: -0.7em;
+  left: 2rem;
+  background: var(--bg);
+  padding: 0 0.8em;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.35em;
+  color: var(--text-light);
+  text-transform: uppercase;
+}
+.toc ol { counter-reset: toc; list-style: none; }
+.toc > ol > li { counter-increment: toc; margin-bottom: 0.6em; }
+.toc > ol > li::before {
+  content: counter(toc, decimal-leading-zero);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+  margin-right: 0.8em;
+}
+.toc a {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  border-bottom: none;
+  color: var(--text);
+}
+.toc a:hover { color: var(--accent); }
+.toc ol ol { margin-left: 2.4em; margin-top: 0.3em; }
+.toc ol ol li { font-size: 0.92rem; color: var(--text-muted); margin-bottom: 0.25em; }
+.toc ol ol li::before { content: '—'; margin-right: 0.5em; color: var(--border); }
+
+/* ===== SECTION STYLING ===== */
+.section {
+  margin-bottom: 4rem;
+  position: relative;
+}
+.section-header {
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--accent);
+}
+.section-number {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.subsection { margin-bottom: 2.5rem; }
+.subsection h3 {
+  color: var(--accent-2);
+  border-left: 3px solid var(--accent-2);
+  padding-left: 0.8em;
+  margin-bottom: 1em;
+}
+
+/* ===== CARDS & BOXES ===== */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 2rem 2.2rem;
+  margin: 1.5em 0;
+  box-shadow: 0 2px 12px var(--shadow);
+}
+
+.exam-tip {
+  background: linear-gradient(135deg, #fdf6ec 0%, #faf0de 100%);
+  border: 1px solid var(--accent-3);
+  border-left: 4px solid var(--accent-3);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.8rem;
+  margin: 1.8em 0;
+  position: relative;
+}
+.exam-tip::before {
+  content: 'EXAM TIP';
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: var(--accent-3);
+  position: absolute;
+  top: -0.6em;
+  left: 1rem;
+  background: #fdf6ec;
+  padding: 0 0.5em;
+}
+
+.confusion-box {
+  background: linear-gradient(135deg, #f0eeea 0%, #eae6e0 100%);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.8rem;
+  margin: 1.8em 0;
+}
+.confusion-box::before {
+  content: 'COMMON CONFUSION';
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.8em;
+}
+
+.memory-anchor {
+  background: linear-gradient(135deg, #edf5f5 0%, #e4efef 100%);
+  border: 1px solid var(--accent-2-light);
+  border-left: 4px solid var(--accent-2);
+  border-radius: var(--radius);
+  padding: 1.5rem 1.8rem;
+  margin: 1.8em 0;
+}
+.memory-anchor::before {
+  content: 'MEMORY ANCHOR';
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: var(--accent-2);
+  display: block;
+  margin-bottom: 0.8em;
+}
+
+.viva-box {
+  background: linear-gradient(135deg, #f5edf5 0%, #efe4ef 100%);
+  border: 1px solid #c4a0c4;
+  border-left: 4px solid #9a6a9a;
+  border-radius: var(--radius);
+  padding: 1.5rem 1.8rem;
+  margin: 1.8em 0;
+}
+.viva-box::before {
+  content: 'VIVA VOCE';
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.25em;
+  color: #9a6a9a;
+  display: block;
+  margin-bottom: 0.8em;
+}
+
+/* ===== TABLES ===== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  font-size: 0.92rem;
+}
+thead {
+  background: var(--text);
+  color: var(--bg);
+}
+th {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.9em 1.2em;
+  text-align: left;
+  font-weight: 500;
+}
+td {
+  padding: 0.85em 1.2em;
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: top;
+}
+tbody tr:nth-child(even) { background: var(--surface-alt); }
+tbody tr:hover { background: var(--surface); }
+
+/* ===== FIGURES & DIAGRAMS ===== */
+.figure {
+  margin: 2.5em 0;
+  text-align: center;
+}
+.figure svg {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+}
+figcaption {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  margin-top: 0.8em;
+  text-align: center;
+}
+
+/* ===== DETAILS / COLLAPSIBLE ===== */
+details {
+  margin: 1.5em 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+}
+details[open] { box-shadow: 0 2px 8px var(--shadow); }
+summary {
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 1em 1.5em;
+  cursor: pointer;
+  color: var(--accent-2);
+  list-style: none;
+  position: relative;
+  padding-left: 2.5em;
+}
+summary::before {
+  content: '▸';
+  position: absolute;
+  left: 1em;
+  top: 1em;
+  transition: transform 0.2s;
+  color: var(--accent);
+}
+details[open] summary::before { transform: rotate(90deg); }
+summary::-webkit-details-marker { display: none; }
+details .details-body { padding: 0 1.5em 1.5em; }
+
+/* ===== SIDENOTE ===== */
+.sidenote {
+  float: right;
+  width: 42%;
+  margin: 0.5em 0 1em 2em;
+  padding: 1.2em 1.5em;
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  line-height: 1.55;
+}
+.sidenote::before {
+  content: 'NOTE';
+  font-family: 'DM Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.3em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 0.5em;
+}
+
+/* ===== REVISION CARDS ===== */
+.revision-card {
+  background: var(--surface);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-lg);
+  padding: 2rem 2.5rem;
+  margin: 2em 0;
+  position: relative;
+  page-break-inside: avoid;
+}
+.revision-card::before {
+  content: 'REVISION';
+  position: absolute;
+  top: -0.7em;
+  left: 1.5rem;
+  background: var(--bg);
+  padding: 0 0.6em;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.3em;
+  color: var(--accent);
+}
+.revision-card ul { padding-left: 1.2em; }
+.revision-card li { margin-bottom: 0.4em; font-size: 0.95rem; }
+
+/* ===== QUESTIONS LIST ===== */
+.questions-list {
+  counter-reset: q;
+  list-style: none;
+  padding: 0;
+}
+.questions-list li {
+  counter-increment: q;
+  padding: 0.6em 0 0.6em 2.5em;
+  position: relative;
+  border-bottom: 1px dashed var(--border-light);
+  font-size: 0.95rem;
+}
+.questions-list li::before {
+  content: 'Q' counter(q) '.';
+  position: absolute;
+  left: 0;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--accent);
+  font-weight: 500;
+}
+
+/* ===== MARKERS ===== */
+.mark-badge {
+  display: inline-block;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  padding: 0.2em 0.6em;
+  border-radius: 2px;
+  margin-left: 0.5em;
+  vertical-align: middle;
+}
+.mark-2 { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+.mark-5 { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+.mark-10 { background: #fce4ec; color: #c62828; border: 1px solid #ef9a9a; }
+.mark-15 { background: #f3e5f5; color: #6a1b9a; border: 1px solid #ce93d8; }
+
+/* ===== FOOTER ===== */
+.page-footer {
+  text-align: center;
+  padding: 3rem 2rem;
+  margin-top: 4rem;
+  border-top: 2px solid var(--border);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-light);
+  letter-spacing: 0.1em;
+}
+
+/* ===== PRINT ===== */
+@media print {
+  body::before { display: none; }
+  .hero { padding: 2rem; }
+  .card, .exam-tip, .confusion-box, .memory-anchor, details { break-inside: avoid; }
+  details[open] { break-inside: avoid; }
+  a { border-bottom: none; color: var(--text); }
+  pre { border-left-width: 2px; }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  html { font-size: 15px; }
+  .hero h1 { font-size: 2.2rem; }
+  .sidenote { float: none; width: 100%; margin: 1em 0; }
+  .toc { padding: 1.5rem; }
+  .page-wrapper { padding: 0 1rem; }
+  pre { padding: 1em; font-size: 0.78rem; }
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.section { animation: fadeUp 0.5s ease both; }
+.section:nth-child(2) { animation-delay: 0.05s; }
+.section:nth-child(3) { animation-delay: 0.1s; }
+
+/* ===== CLEARFIX ===== */
+.clearfix::after { content: ''; display: table; clear: both; }
+</style>
+</head>
+<body>
+
+<div class="page-wrapper">
+
+<!-- ============================================================ -->
+<!-- HERO HEADER -->
+<!-- ============================================================ -->
+<header class="hero">
+  <h1>MERN Stack, CMS &amp;<br>Web Application Deployment</h1>
+  <p class="subtitle">A comprehensive study companion for MongoDB, Express, React, Node.js, Content Management Systems, and the complete web publishing lifecycle — crafted for Indian university examinations.</p>
+  <span class="edition">Exhaustive Exam Edition &middot; May 2025</span>
+</header>
+
+<!-- ============================================================ -->
+<!-- TABLE OF CONTENTS -->
+<!-- ============================================================ -->
+<nav class="toc" aria-label="Table of Contents">
+<ol>
+  <li><a href="#sec-deploy">Web Application Deployment &amp; Publishing</a></li>
+  <li><a href="#sec-cms">Content Management Systems (CMS)</a></li>
+  <li><a href="#sec-mern-overview">The MERN Stack — Architectural Overview</a></li>
+  <li><a href="#sec-mongodb">MongoDB — Overview, Environment, Data Modelling, Operations</a></li>
+  <li><a href="#sec-express">Express.js — Installation, Environment, Routing</a></li>
+  <li><a href="#sec-react">React — Introduction, JSX, Components, States, Lifecycle, Forms</a></li>
+  <li><a href="#sec-node">Node.js — Installation, Simple Server, HTML &amp; JSON Response</a></li>
+  <li><a href="#sec-comparisons">Comparison Tables &amp; Analytical Distinctions</a></li>
+  <li><a href="#sec-exam">Exam Preparation — Revision Sheets, Likely Questions &amp; Answer Guides</a></li>
+</ol>
+</nav>
+
+<!-- ============================================================ -->
+<!-- SECTION 1: WEB APPLICATION DEPLOYMENT -->
+<!-- ============================================================ -->
+<section class="section" id="sec-deploy">
+<div class="section-header">
+  <span class="section-number">§ 01</span>
+  <h2>Web Application Deployment &amp; Publishing</h2>
+</div>
+
+<div class="subsection">
+<h3>What Is Web Application Deployment?</h3>
+
+<p>Web application deployment refers to the entire process of making a locally developed web application accessible to end users over the Internet or an internal network. When a developer writes code on a personal computer — creating HTML files, JavaScript logic, server-side scripts, database queries, and stylesheets — all of that work exists only in a local environment. Deployment is the bridge between that private development world and the public-facing reality where millions of users can interact with the application through browsers. Without deployment, even the most brilliantly coded application remains an invisible artifact on a single machine, unreachable by anyone other than its creator.</p>
+
+<p>The deployment process involves several interconnected stages: preparing the codebase for production (which includes minifying files, bundling assets, removing debug statements, and optimizing database queries), selecting an appropriate hosting environment (shared hosting, virtual private servers, cloud platforms, or containerized infrastructure), configuring the server to handle incoming HTTP requests, setting up domain names and DNS records, installing and renewing SSL certificates for secure HTTPS connections, establishing continuous integration and continuous deployment (CI/CD) pipelines for automated releases, and finally monitoring the live application for errors, performance issues, and security vulnerabilities. Each of these stages demands careful attention, because a failure in any single area — a misconfigured DNS record, an expired SSL certificate, a missing environment variable — can render the entire application inaccessible or insecure.</p>
+
+<p>In an Indian university context, understanding deployment is not merely about knowing what a hosting provider does. Examiners expect students to articulate the <em>stages</em> of deployment systematically, explain the <em>tools</em> involved at each stage, discuss the <em>difference between development and production environments</em>, and demonstrate awareness of concepts like version control, build processes, and server configuration. A student who can explain why a React application must be "built" before deployment — transforming JSX and component files into optimized static HTML, CSS, and JavaScript bundles — demonstrates a far deeper understanding than one who merely says "you upload files to a server."</p>
+
+</div>
+
+<div class="subsection">
+<h3>Stages of Publishing a Website</h3>
+
+<p>The journey from an idea to a live website traverses a well-defined sequence of stages. Understanding these stages allows a student to answer questions about the web development lifecycle comprehensively and also provides the practical knowledge needed for real-world projects. Let us walk through each stage with the deliberateness it deserves.</p>
+
+<div class="figure">
+<svg viewBox="0 0 880 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Five stages of website publishing">
+  <!-- Stage boxes -->
+  <rect x="10" y="60" width="140" height="160" rx="8" fill="#faf7f2" stroke="#c45a3c" stroke-width="2"/>
+  <text x="80" y="95" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#c45a3c">1</text>
+  <text x="80" y="120" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="600" fill="#2c1810">Planning</text>
+  <text x="80" y="140" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">&amp; Design</text>
+  <text x="80" y="165" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">Wireframes</text>
+  <text x="80" y="180" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">UX Research</text>
+  <text x="80" y="195" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">Sitemap</text>
+
+  <!-- Arrow -->
+  <line x1="155" y1="140" x2="185" y2="140" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrowGold)"/>
+
+  <rect x="190" y="60" width="140" height="160" rx="8" fill="#faf7f2" stroke="#3d6b6e" stroke-width="2"/>
+  <text x="260" y="95" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#3d6b6e">2</text>
+  <text x="260" y="120" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="600" fill="#2c1810">Content</text>
+  <text x="260" y="140" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">Creation</text>
+  <text x="260" y="165" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">Copywriting</text>
+  <text x="260" y="180" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">Media Assets</text>
+  <text x="260" y="195" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">SEO Strategy</text>
+
+  <line x1="335" y1="140" x2="365" y2="140" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrowGold)"/>
+
+  <rect x="370" y="60" width="140" height="160" rx="8" fill="#faf7f2" stroke="#c45a3c" stroke-width="2"/>
+  <text x="440" y="95" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#c45a3c">3</text>
+  <text x="440" y="120" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="600" fill="#2c1810">Development</text>
+  <text x="440" y="140" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">&amp; Coding</text>
+  <text x="440" y="165" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">HTML/CSS/JS</text>
+  <text x="440" y="180" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">Backend Logic</text>
+  <text x="440" y="195" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">Database Setup</text>
+
+  <line x1="515" y1="140" x2="545" y2="140" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrowGold)"/>
+
+  <rect x="550" y="60" width="140" height="160" rx="8" fill="#faf7f2" stroke="#3d6b6e" stroke-width="2"/>
+  <text x="620" y="95" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#3d6b6e">4</text>
+  <text x="620" y="120" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="600" fill="#2c1810">Testing</text>
+  <text x="620" y="140" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">&amp; Review</text>
+  <text x="620" y="165" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">Cross-Browser</text>
+  <text x="620" y="180" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">Responsiveness</text>
+  <text x="620" y="195" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">Performance</text>
+
+  <line x1="695" y1="140" x2="725" y2="140" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrowGold)"/>
+
+  <rect x="730" y="60" width="140" height="160" rx="8" fill="#faf7f2" stroke="#c45a3c" stroke-width="2"/>
+  <text x="800" y="95" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#c45a3c">5</text>
+  <text x="800" y="120" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="600" fill="#2c1810">Deployment</text>
+  <text x="800" y="140" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">&amp; Launch</text>
+  <text x="800" y="165" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">Domain Setup</text>
+  <text x="800" y="180" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">SSL/HTTPS</text>
+  <text x="800" y="195" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">Go Live</text>
+
+  <!-- Bottom label -->
+  <rect x="10" y="255" width="860" height="45" rx="6" fill="#2c1810"/>
+  <text x="440" y="282" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" letter-spacing="3" fill="#f5f0e8">THE COMPLETE WEBSITE PUBLISHING LIFECYCLE</text>
+
+  <defs>
+    <marker id="arrowGold" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+    </marker>
+  </defs>
+</svg>
+<figcaption>Fig. 1 — The five sequential stages of publishing a website, from initial planning to final deployment.</figcaption>
+</div>
+
+<p><strong>Stage 1: Planning and Design.</strong> Every successful website begins not with code but with thought. In the planning stage, the team identifies the website's purpose, target audience, core features, and content strategy. Wireframes — skeletal, low-fidelity sketches of each page's layout — are created to establish where navigation menus, headers, content blocks, images, and call-to-action buttons will reside. A sitemap is drafted, which is essentially a hierarchical diagram showing the relationship between all pages on the site. User experience (UX) research may involve surveys, competitor analysis, and persona development. The planning stage also includes choosing the technology stack (for example, whether to use the MERN stack or a CMS like WordPress), selecting a hosting provider, purchasing a domain name, and estimating the project timeline. Tools commonly used at this stage include Figma, Adobe XD, Balsamiq for wireframing, and project management tools like Trello or Jira.</p>
+
+<p><strong>Stage 2: Content Creation.</strong> Content is the substance that gives a website its value, and experienced developers understand that content creation should happen in parallel with (or even before) the design stage rather than as an afterthought. This stage involves writing copy for every page, creating or sourcing images and videos, designing logos and brand assets, writing meta descriptions and title tags for search engine optimization (SEO), and organizing content into a logical information architecture. A common mistake among students is to assume that content magically appears once the website structure is built; in professional workflows, content drives design decisions, not the other way around. A content management system (CMS) can be particularly valuable at this stage because it allows non-technical team members to create, edit, and organize content without touching code.</p>
+
+<p><strong>Stage 3: Development and Coding.</strong> This is the stage where the website takes its digital form. Front-end developers convert wireframes and design mockups into HTML, CSS, and JavaScript, ensuring that every element is properly structured, styled, and interactive. Back-end developers build server-side logic, configure databases, create APIs, and implement authentication systems. In a MERN stack project, this stage would involve setting up a MongoDB database, building Express.js API routes, creating React components for the user interface, and running the Node.js server. Version control systems like Git are used throughout to track changes, manage collaboration, and maintain a history of every modification. The development stage often involves multiple iterations: building a minimum viable product, testing it internally, and refining features based on feedback.</p>
+
+<p><strong>Stage 4: Testing and Review.</strong> Before a website can go live, it must be rigorously tested across multiple dimensions. Cross-browser testing ensures that the site renders correctly in Chrome, Firefox, Safari, and Edge. Responsiveness testing verifies that the layout adapts gracefully to desktop screens, tablets, and mobile phones. Performance testing measures page load times, server response times, and the size of transferred assets. Functional testing checks that all links work, all forms submit correctly, and all interactive features behave as expected. Security testing looks for vulnerabilities like SQL injection, cross-site scripting (XSS), and insecure data transmission. Tools such as Google Lighthouse, BrowserStack, Selenium, and Postman (for API testing) are commonly employed at this stage. In a university exam, mentioning specific testing tools and types of testing demonstrates practical awareness that examiners reward.</p>
+
+<p><strong>Stage 5: Deployment and Launch.</strong> The final stage involves uploading the website to a live server, configuring the domain name to point to the server's IP address through DNS records, installing an SSL certificate to enable HTTPS encryption, setting up automated backups, and configuring monitoring tools to track uptime and errors. For static websites, deployment might involve simply uploading files via FTP to a shared hosting provider. For dynamic applications built with the MERN stack, deployment is more involved: the Node.js server must be kept running (using process managers like PM2), the MongoDB database may be hosted on a cloud service like MongoDB Atlas, environment variables must be securely configured, and a reverse proxy (like Nginx) may be set up to handle incoming traffic. Modern deployment workflows often use CI/CD pipelines — automated systems that build, test, and deploy the application whenever developers push new code to a repository.</p>
+
+</div>
+
+<div class="subsection">
+<h3>Tools and Techniques at Each Stage</h3>
+
+<table>
+<thead>
+<tr><th>Stage</th><th>Tools</th><th>Key Techniques</th></tr>
+</thead>
+<tbody>
+<tr><td>Planning &amp; Design</td><td>Figma, Adobe XD, Balsamiq, Trello, Miro</td><td>Wireframing, sitemap creation, persona development, technology selection</td></tr>
+<tr><td>Content Creation</td><td>WordPress, Google Docs, Canva, Grammarly, SEMrush</td><td>Copywriting, SEO keyword research, media optimization, content hierarchy</td></tr>
+<tr><td>Development</td><td>VS Code, Git, npm, Webpack, Postman</td><td>Responsive design, API development, version control, modular coding</td></tr>
+<tr><td>Testing</td><td>Selenium, Lighthouse, BrowserStack, Jest, Mocha</td><td>Unit testing, cross-browser testing, performance auditing, security scanning</td></tr>
+<tr><td>Deployment</td><td>Heroku, Netlify, AWS, Nginx, PM2, Docker</td><td>DNS configuration, SSL setup, CI/CD pipelines, containerization, monitoring</td></tr>
+</tbody>
+</table>
+</div>
+
+<div class="exam-tip">
+<p><strong>Expected Answer Structure (10 marks):</strong> When asked to "List the stages of publishing a website and discuss tools and techniques involved in each stage," begin by defining what web publishing means in one sentence, then devote roughly 1.5–2 marks to each of the five stages. For each stage, name the stage, explain its purpose in 2–3 sentences, list 2–3 relevant tools, and describe the key techniques. Conclude with a sentence about how these stages form an iterative cycle rather than a strictly linear process. This structure naturally produces a comprehensive answer of 400–600 words.</p>
+</div>
+
+<div class="subsection">
+<h3>Responsive Design and Sitemaps</h3>
+
+<p>A sitemap serves two distinct purposes in web development, and a student should be prepared to explain both. The first is the <em>visual sitemap</em> — a hierarchical diagram created during the planning phase that maps out every page on the website and shows how they relate to each other through parent-child relationships. A visual sitemap might show the homepage at the top, with branches leading to "About Us," "Products," "Blog," and "Contact," and further branches from "Products" leading to individual product category pages. This artifact helps the development team understand the site's information architecture, plan navigation menus, and ensure that no important page is accidentally omitted. The second type is the <em>XML sitemap</em> — a machine-readable file (typically named <code>sitemap.xml</code>) that lists every URL on the website along with metadata like the last modification date and update frequency. Search engines like Google use XML sitemaps to discover and index pages efficiently. A student should mention both types and explain their respective purposes.</p>
+
+<p>Making a website "look good on all resolutions" is the central promise of responsive web design, a paradigm that has become non-negotiable in the modern web. The core technique involves using CSS media queries to apply different styles based on the viewport width. A developer might define breakpoints at 480 pixels (mobile), 768 pixels (tablet), and 1024 pixels (desktop), adjusting layout structures, font sizes, image dimensions, and navigation patterns at each breakpoint. Flexible grid systems — whether hand-coded with CSS Flexbox and Grid or implemented through frameworks like Bootstrap — ensure that columns rearrange themselves intelligently on smaller screens. The <code>viewport meta tag</code> (<code>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</code>) must be included in the HTML to instruct mobile browsers to render the page at the device's actual width rather than scaling down a desktop layout. Responsive images, achieved through the <code>srcset</code> attribute or CSS <code>max-width: 100%</code>, prevent images from overflowing their containers. In exam answers, mentioning the viewport meta tag, media queries, flexible grids, and responsive images demonstrates thorough understanding of the topic.</p>
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 2: CONTENT MANAGEMENT SYSTEMS -->
+<!-- ============================================================ -->
+<section class="section" id="sec-cms">
+<div class="section-header">
+  <span class="section-number">§ 02</span>
+  <h2>Content Management Systems (CMS)</h2>
+</div>
+
+<div class="subsection">
+<h3>Understanding the CMS Paradigm</h3>
+
+<p>A Content Management System, at its most fundamental level, is a software application that provides a structured, typically graphical interface through which users can create, manage, organize, and publish digital content — most commonly website content — without needing to write code or possess deep technical expertise. To understand why CMS platforms emerged and why they have become so dominant, consider the alternative: before CMS tools existed, every change to a website required editing raw HTML files, manually uploading them to a server via FTP, and hoping that nothing broke in the process. Adding a new blog post meant duplicating an existing HTML file, modifying its content, updating the navigation menu on every other page to include the new link, and re-uploading the entire affected set of files. This process was tedious, error-prone, and completely impractical for organizations where the people who <em>create</em> content (marketers, journalists, administrators) are not the same people who <em>write code</em>.</p>
+
+<p>A CMS solves this separation problem elegantly. It decouples content from presentation: the content is stored in a database, and the presentation is governed by templates and themes. When a user writes a blog post through the CMS's admin panel, the post's text, images, and metadata are saved into the database. When a visitor requests that blog post's URL, the CMS retrieves the content from the database, wraps it within the appropriate template (which defines the header, footer, sidebar, and overall layout), and sends the resulting HTML page to the visitor's browser. This architecture means that changing the entire visual design of the website — swapping from one theme to another — does not affect the underlying content. Conversely, adding or editing content does not require modifying the design templates. This separation of concerns is one of the most elegant principles in software engineering, and a CMS implements it in a way that non-technical users can exploit effortlessly.</p>
+
+<div class="figure">
+<svg viewBox="0 0 780 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CMS Architecture diagram">
+  <!-- Admin Panel -->
+  <rect x="30" y="30" width="200" height="100" rx="8" fill="#faf7f2" stroke="#c45a3c" stroke-width="2"/>
+  <text x="130" y="65" text-anchor="middle" font-family="Playfair Display, serif" font-size="14" font-weight="600" fill="#c45a3c">Admin Panel</text>
+  <text x="130" y="85" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">Create, Edit, Manage</text>
+  <text x="130" y="100" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">Content &amp; Media</text>
+
+  <!-- Arrow from Admin to CMS Engine -->
+  <line x1="235" y1="80" x2="300" y2="80" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrGold)"/>
+
+  <!-- CMS Engine -->
+  <rect x="310" y="20" width="180" height="120" rx="8" fill="#2c1810" stroke="#2c1810" stroke-width="2"/>
+  <text x="400" y="55" text-anchor="middle" font-family="Playfair Display, serif" font-size="14" font-weight="600" fill="#f5f0e8">CMS Engine</text>
+  <text x="400" y="78" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#c9a84c">Templates</text>
+  <text x="400" y="95" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#c9a84c">Plugins / Modules</text>
+  <text x="400" y="112" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#c9a84c">URL Routing</text>
+
+  <!-- Arrow from CMS to Database -->
+  <line x1="400" y1="145" x2="400" y2="190" stroke="#3d6b6e" stroke-width="2" marker-end="url(#arrTeal)"/>
+
+  <!-- Database -->
+  <rect x="310" y="200" width="180" height="80" rx="8" fill="#edf5f5" stroke="#3d6b6e" stroke-width="2"/>
+  <text x="400" y="235" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#3d6b6e">Database</text>
+  <text x="400" y="255" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">Posts, Pages, Users</text>
+  <text x="400" y="270" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">Settings, Media Files</text>
+
+  <!-- Arrow from CMS to Visitor -->
+  <line x1="495" y1="80" x2="570" y2="80" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrGold)"/>
+
+  <!-- Visitor Browser -->
+  <rect x="575" y="30" width="180" height="100" rx="8" fill="#faf7f2" stroke="#c45a3c" stroke-width="2"/>
+  <text x="665" y="65" text-anchor="middle" font-family="Playfair Display, serif" font-size="14" font-weight="600" fill="#c45a3c">Visitor Browser</text>
+  <text x="665" y="85" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">Dynamic HTML Pages</text>
+  <text x="665" y="100" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">Rendered Templates</text>
+
+  <!-- Annotation arrows -->
+  <text x="265" y="65" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">HTTP</text>
+  <text x="530" y="65" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#9a8e82">HTTP</text>
+
+  <!-- Bottom summary -->
+  <rect x="30" y="320" width="720" height="40" rx="6" fill="#f0ead9" stroke="#d4cbb8" stroke-width="1"/>
+  <text x="390" y="345" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="12" font-style="italic" fill="#6b5e52">Content is stored in the database. Templates define presentation. The CMS engine merges them dynamically for each visitor.</text>
+
+  <defs>
+    <marker id="arrGold" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrTeal" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#3d6b6e" stroke-width="1.5"/>
+    </marker>
+  </defs>
+</svg>
+<figcaption>Fig. 2 — The architecture of a Content Management System, showing how admin input, the CMS engine, templates, and the database collaborate to serve dynamic pages to visitors.</figcaption>
+</div>
+
+</div>
+
+<div class="subsection">
+<h3>Advantages of Using a CMS</h3>
+
+<p>The popularity of CMS platforms — WordPress alone powers over 40% of all websites on the Internet — is not accidental but a consequence of several compelling advantages that these systems offer. The most immediate advantage is <strong>ease of use</strong>: a CMS provides a visual, often drag-and-drop interface that allows non-technical users to create and manage content without writing HTML, CSS, or any programming language. A marketing professional can publish a blog post, a teacher can update course materials, and a small business owner can add a new product to their online store — all through intuitive admin dashboards. This democratization of web publishing is arguably the CMS's greatest contribution to the Internet.</p>
+
+<p><strong>Rapid development and deployment</strong> is another significant advantage. Building a website from scratch using raw code might take weeks or months, but a CMS-based website can be set up in hours. Pre-built themes provide professional designs without requiring a designer, and plugins extend functionality — contact forms, e-commerce capabilities, SEO tools, social media integration, security features — without custom coding. This speed advantage is particularly valuable for small businesses and organizations with limited budgets and tight timelines. <strong>Collaboration and workflow management</strong> come built into most CMS platforms through role-based access control: administrators can define what each user is permitted to do (write posts, edit pages, manage plugins, approve content), enabling teams of varying technical skill levels to work together effectively. <strong>Built-in SEO features</strong>, <strong>automatic updates</strong>, <strong>extensibility through plugins and themes</strong>, <strong>large community support</strong>, and <strong>content versioning</strong> (the ability to track and revert changes) round out the primary advantages that make CMS platforms indispensable in modern web development.</p>
+</div>
+
+<div class="subsection">
+<h3>Disadvantages of Using a CMS</h3>
+
+<p>Despite their many strengths, CMS platforms carry genuine limitations that an informed student should articulate in exam answers. <strong>Performance overhead</strong> is a persistent concern: because a CMS dynamically generates pages by querying a database and merging results with templates on every single page request, it is inherently slower than serving pre-built static HTML files. High-traffic websites on CMS platforms often require aggressive caching strategies (page caching, object caching, CDN integration) to compensate for this overhead. <strong>Security vulnerabilities</strong> represent perhaps the most serious disadvantage; the enormous popularity of platforms like WordPress makes them attractive targets for hackers, and vulnerabilities in third-party plugins or outdated core installations can be exploited to inject malicious code, steal data, or deface websites. Maintaining a CMS requires regular updates to the core software, all installed themes, and every plugin — a maintenance burden that many website owners neglect.</p>
+
+<p><strong>Limited customization beyond the CMS's paradigm</strong> can frustrate developers who need highly specific functionality. While plugins cover common requirements, building truly unique features sometimes requires diving into the CMS's codebase, writing custom plugins, or working around architectural constraints that the CMS imposes. <strong>Database dependency</strong> means that every page load requires a database query, creating a bottleneck under heavy traffic and making the site vulnerable to database failures. <strong>Bloat</strong> is another practical concern: a WordPress installation with dozens of plugins generates significant amounts of unnecessary CSS, JavaScript, and database queries, degrading performance. Finally, <strong>learning curve for advanced customization</strong> — while basic CMS usage is straightforward, mastering theme development, plugin creation, performance optimization, and security hardening requires substantial expertise that goes well beyond what the average content editor possesses.</p>
+
+<div class="confusion-box">
+<p><strong>Common Confusion:</strong> Students sometimes conflate "CMS" with "website builder." A CMS (like WordPress, Joomla, or Drupal) is a software application installed on a server that manages content through a database and templates, offering extensive customization through code. A website builder (like Wix or Squarespace) is a hosted, typically proprietary platform that provides drag-and-drop interfaces with limited code access. While both allow non-technical users to create websites, they differ fundamentally in terms of flexibility, ownership, portability, and control.</p>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Popular CMS Platforms</h3>
+
+<p>The CMS landscape is diverse, but certain platforms have achieved particular prominence. <strong>WordPress</strong> dominates the market, powering an estimated 43% of all websites worldwide. Originally created as a blogging platform in 2003 by Matt Mullenweg and Mike Little, WordPress has evolved into a full-featured CMS capable of supporting blogs, corporate websites, e-commerce stores (through the WooCommerce plugin), forums, membership sites, and virtually any other type of web application. Its ecosystem includes over 60,000 plugins and thousands of free and premium themes. WordPress is open-source, written in PHP, and uses MySQL or MariaDB as its database backend. <strong>Joomla</strong> is the second most popular open-source CMS, known for its flexibility and built-in support for multilingual content, making it popular for community portals and international websites. <strong>Drupal</strong> is considered the most technically powerful of the three major open-source CMS platforms, favored by governments, universities, and large enterprises for its robust taxonomy system, fine-grained access control, and strong security track record — though it has a significantly steeper learning curve than WordPress. <strong>Magento</strong> (now Adobe Commerce) specializes in e-commerce, while <strong>Ghost</strong> focuses on minimalist publishing and blogging.</p>
+
+<div class="exam-tip">
+<p><strong>How to Structure a CMS Answer (5 marks):</strong> Define a CMS in one clear sentence. Explain the separation of content and presentation in 2–3 sentences. List three advantages with brief explanations (ease of use, rapid development, collaboration). List three disadvantages (performance, security, customization limits). Name two popular CMS platforms with one distinguishing feature each. This approach produces a well-organized 250–350 word answer that earns full marks.</p>
+</div>
+</div>
+
+<div class="subsection">
+<h3>WordPress in Detail</h3>
+
+<p>WordPress deserves special attention in university examinations because of its market dominance and because it often appears as a dedicated question. WordPress differs from other CMS platforms in several meaningful ways. Its <strong>theme system</strong> separates visual design from content completely: a theme consists of PHP template files, CSS stylesheets, JavaScript files, and sometimes custom functions that define how content is rendered. Switching themes transforms the entire website's appearance without affecting a single piece of content stored in the database. Its <strong>plugin architecture</strong> allows developers to extend WordPress's functionality through hooks — specific points in the core code where custom functions can be injected. There are two types of hooks: <em>actions</em> (which execute custom code at specific events, like when a post is published) and <em>filters</em> (which modify data before it is displayed or saved). This hook system is what gives WordPress its extraordinary extensibility while maintaining the stability of the core software.</p>
+
+<p>WordPress's <strong>admin dashboard</strong> provides a graphical interface for every aspect of site management: creating and editing posts and pages (using either the classic editor or the Gutenberg block-based editor), managing media uploads, moderating comments, managing users with different roles (Administrator, Editor, Author, Contributor, Subscriber), installing and configuring themes and plugins, and adjusting site-wide settings. The Gutenberg editor, introduced in WordPress 5.0, represents a significant architectural shift: instead of a single content area with a toolbar, content is composed of discrete "blocks" — paragraphs, headings, images, galleries, lists, quotes, custom HTML, and more — each of which can be individually configured, reordered, and styled. This block-based approach brings WordPress closer to the page-builder paradigm while remaining within the core CMS architecture.</p>
+
+<p>In comparison to other CMS platforms, WordPress distinguishes itself through its <strong>ease of entry</strong> (significantly simpler than Drupal), its <strong>massive ecosystem</strong> of plugins and themes (far larger than Joomla's), its <strong>community support</strong> (thousands of tutorials, forums, and WordCamp events worldwide), and its <strong>flexibility</strong> (capable of being a blog, an e-commerce store, a forum, or a learning management system). However, this same flexibility introduces complexity: a WordPress site with thirty plugins may have conflicting JavaScript, redundant database queries, and inconsistent styling, leading to the performance and maintenance issues discussed above. Drupal, by contrast, maintains a more controlled module ecosystem and enforces stricter coding standards, which is why large enterprises with dedicated development teams often prefer it despite its steeper learning curve.</p>
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 3: MERN STACK OVERVIEW -->
+<!-- ============================================================ -->
+<section class="section" id="sec-mern-overview">
+<div class="section-header">
+  <span class="section-number">§ 03</span>
+  <h2>The MERN Stack — Architectural Overview</h2>
+</div>
+
+<div class="subsection">
+<h3>What Is the MERN Stack?</h3>
+
+<p>The MERN stack is a collection of four JavaScript-based technologies — <strong>M</strong>ongoDB, <strong>E</strong>xpress.js, <strong>R</strong>eact, and <strong>N</strong>ode.js — that together provide a complete, end-to-end framework for building modern web applications. The defining characteristic of the MERN stack, and the reason for its immense popularity, is that JavaScript is the sole programming language used across every layer of the application: the client-side user interface (React), the server-side application logic and routing (Express.js running on Node.js), and even the database queries (MongoDB uses a JSON-like query language). This uniformity means that a single developer, or a small team of developers, can build an entire full-stack web application without switching between different programming languages, syntax conventions, or mental models. The cognitive overhead of context-switching between, say, PHP for the server, SQL for the database, and JavaScript for the client is eliminated entirely.</p>
+
+<p>The acronym MERN is a variation of the earlier MEAN stack, where Angular replaced React as the front-end framework, and the MERN variant has gained particular traction because of React's component-based architecture, its virtual DOM for performance optimization, and its enormous ecosystem of libraries and tools. The MERN stack is not a formal product or a single installable package; it is an architectural pattern — a convention for combining four independent, open-source technologies into a coherent full-stack development environment.</p>
+
+<div class="figure">
+<svg viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MERN Stack Architecture">
+  <!-- Title -->
+  <text x="350" y="30" text-anchor="middle" font-family="Playfair Display, serif" font-size="16" font-weight="600" fill="#2c1810">MERN Stack Architecture</text>
+
+  <!-- React (Client) -->
+  <rect x="200" y="55" width="300" height="90" rx="10" fill="#edf5f5" stroke="#3d6b6e" stroke-width="2.5"/>
+  <text x="350" y="85" text-anchor="middle" font-family="Playfair Display, serif" font-size="18" font-weight="700" fill="#3d6b6e">REACT</text>
+  <text x="350" y="108" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" fill="#6b5e52">Client-Side UI &middot; Components &middot; Virtual DOM</text>
+  <text x="350" y="126" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#9a8e82">Runs in Browser &middot; JSX &middot; State Management</text>
+
+  <!-- Arrow down -->
+  <line x1="350" y1="150" x2="350" y2="175" stroke="#c9a84c" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="370" y="168" font-family="DM Mono, monospace" font-size="8" fill="#c9a84c">HTTP / API Calls</text>
+
+  <!-- Express + Node (Server) -->
+  <rect x="120" y="185" width="460" height="100" rx="10" fill="#2c1810" stroke="#2c1810" stroke-width="2"/>
+  <rect x="130" y="190" width="215" height="88" rx="8" fill="#faf7f2" stroke="#c45a3c" stroke-width="1.5"/>
+  <text x="237" y="218" text-anchor="middle" font-family="Playfair Display, serif" font-size="16" font-weight="700" fill="#c45a3c">EXPRESS.js</text>
+  <text x="237" y="240" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">Routing &amp; Middleware</text>
+  <text x="237" y="258" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#9a8e82">REST API Layer</text>
+
+  <text x="355" y="240" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#c9a84c">+</text>
+
+  <rect x="365" y="190" width="215" height="88" rx="8" fill="#faf7f2" stroke="#c45a3c" stroke-width="1.5"/>
+  <text x="472" y="218" text-anchor="middle" font-family="Playfair Display, serif" font-size="16" font-weight="700" fill="#c45a3c">NODE.js</text>
+  <text x="472" y="240" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">Runtime Environment</text>
+  <text x="472" y="258" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#9a8e82">V8 Engine &middot; Event Loop</text>
+
+  <!-- Arrow down -->
+  <line x1="350" y1="290" x2="350" y2="320" stroke="#c9a84c" stroke-width="2" stroke-dasharray="6,3"/>
+  <text x="385" y="310" font-family="DM Mono, monospace" font-size="8" fill="#c9a84c">Mongoose ODM / Driver</text>
+
+  <!-- MongoDB (Database) -->
+  <rect x="200" y="330" width="300" height="85" rx="10" fill="#f0ead9" stroke="#5a8a5e" stroke-width="2.5"/>
+  <text x="350" y="362" text-anchor="middle" font-family="Playfair Display, serif" font-size="18" font-weight="700" fill="#5a8a5e">MONGODB</text>
+  <text x="350" y="385" text-anchor="middle" font-family="Source Serif 4, serif" font-size="11" fill="#6b5e52">NoSQL Document Database &middot; BSON / JSON</text>
+  <text x="350" y="400" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#9a8e82">Collections &amp; Documents</text>
+
+  <!-- Legend -->
+  <rect x="120" y="445" width="460" height="38" rx="6" fill="#faf7f2" stroke="#d4cbb8" stroke-width="1"/>
+  <text x="350" y="468" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="12" font-style="italic" fill="#6b5e52">All four layers communicate using JavaScript — one language to rule them all.</text>
+</svg>
+<figcaption>Fig. 3 — The MERN stack architecture showing React on the client, Express and Node.js on the server, and MongoDB as the database layer.</figcaption>
+</div>
+
+</div>
+
+<div class="subsection">
+<h3>Why the MERN Stack Works</h3>
+
+<p>The MERN stack's effectiveness stems from several architectural decisions that align well with how modern web applications are built. The use of <strong>JSON (JavaScript Object Notation)</strong> as the data interchange format across all layers is perhaps the most significant: when a React component sends data to an Express API endpoint, it sends JSON. When the Express route handler processes that data and stores it in MongoDB, it stores JSON-like BSON (Binary JSON) documents. When the database returns results, those results travel back through Express as JSON and arrive at React as JSON objects that can be directly rendered as components. There is no need for data transformation, serialization, or parsing between incompatible formats — data flows naturally through the system in a single format. This JSON-everywhere architecture dramatically reduces the friction of building data-driven applications.</p>
+
+<p><strong>Non-blocking I/O</strong> is another foundational advantage. Node.js, the runtime on which Express runs, uses an event-driven, non-blocking I/O model that allows it to handle thousands of concurrent connections without creating a separate thread for each one. This makes MERN applications particularly well-suited for real-time features (chat applications, live notifications, collaborative editing) and high-traffic scenarios where the server must handle many simultaneous requests efficiently. React's <strong>component-based architecture</strong> encourages the creation of reusable, self-contained UI building blocks, making complex user interfaces more manageable and maintainable. MongoDB's <strong>flexible document model</strong> allows developers to store complex, nested data structures without defining rigid schemas in advance — a property that accelerates prototyping and accommodates evolving application requirements.</p>
+
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 4: MONGODB -->
+<!-- ============================================================ -->
+<section class="section" id="sec-mongodb">
+<div class="section-header">
+  <span class="section-number">§ 04</span>
+  <h2>MongoDB — Overview, Environment, Data Modelling, Operations</h2>
+</div>
+
+<div class="subsection">
+<h3>MongoDB Overview</h3>
+
+<p>MongoDB is a document-oriented NoSQL database that stores data in flexible, JSON-like documents rather than in the rigid rows and columns of a traditional relational database management system (RDBMS). The name "MongoDB" derives from the word "humongous," reflecting its design goal of handling massive volumes of data with horizontal scalability. Developed by 10gen (now MongoDB, Inc.) and first released in 2009, MongoDB has become one of the most widely used databases in the world, particularly in the context of modern web application development where flexibility, speed, and developer productivity are paramount.</p>
+
+<p>To understand why MongoDB was created and why it has been so widely adopted, one must appreciate the limitations that traditional relational databases face when dealing with certain types of data and workloads. Relational databases like MySQL and PostgreSQL require data to conform to a predefined schema — a table has fixed columns, each with a specified data type, and every row must adhere to that structure. This rigidity is advantageous for applications where data integrity and complex relationships between entities are critical (banking systems, inventory management, accounting software), but it becomes cumbersome for applications that deal with semi-structured or rapidly evolving data. Consider a social media platform where each user's profile might have different fields: one user might have a "website" field, another might have a "favorite_quote" field, and a third might have nested arrays of "education" entries, each with its own sub-fields. Representing this in a relational database requires either creating many sparse columns (most of which are NULL for most rows), splitting the data across multiple normalized tables (requiring complex JOIN operations), or storing the extra data as serialized text (losing the ability to query it efficiently). MongoDB handles this scenario naturally: each user document can have completely different fields, nested objects, and arrays, and MongoDB can query any of those fields directly.</p>
+
+<div class="figure">
+<svg viewBox="0 0 680 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="MongoDB hierarchical structure">
+  <!-- Database -->
+  <rect x="240" y="10" width="200" height="50" rx="6" fill="#5a8a5e" stroke="#3d6b40" stroke-width="2"/>
+  <text x="340" y="40" text-anchor="middle" font-family="Playfair Display, serif" font-size="14" font-weight="600" fill="#fff">Database: collegeDB</text>
+
+  <!-- Lines to collections -->
+  <line x1="290" y1="60" x2="140" y2="100" stroke="#9a8e82" stroke-width="1.5"/>
+  <line x1="340" y1="60" x2="340" y2="100" stroke="#9a8e82" stroke-width="1.5"/>
+  <line x1="390" y1="60" x2="540" y2="100" stroke="#9a8e82" stroke-width="1.5"/>
+
+  <!-- Collections -->
+  <rect x="50" y="100" width="160" height="40" rx="5" fill="#faf7f2" stroke="#c45a3c" stroke-width="1.5"/>
+  <text x="130" y="125" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#c45a3c">students</text>
+
+  <rect x="260" y="100" width="160" height="40" rx="5" fill="#faf7f2" stroke="#c45a3c" stroke-width="1.5"/>
+  <text x="340" y="125" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#c45a3c">courses</text>
+
+  <rect x="470" y="100" width="160" height="40" rx="5" fill="#faf7f2" stroke="#c45a3c" stroke-width="1.5"/>
+  <text x="550" y="125" text-anchor="middle" font-family="DM Mono, monospace" font-size="11" fill="#c45a3c">faculty</text>
+
+  <!-- Line to document -->
+  <line x1="130" y1="140" x2="130" y2="175" stroke="#9a8e82" stroke-width="1.5"/>
+
+  <!-- Document -->
+  <rect x="30" y="175" width="200" height="155" rx="6" fill="#2c1810" stroke="#2c1810" stroke-width="1"/>
+  <text x="45" y="200" font-family="DM Mono, monospace" font-size="9" fill="#c9a84c">{</text>
+  <text x="55" y="216" font-family="DM Mono, monospace" font-size="9" fill="#e8a090">"_id": </text>
+  <text x="105" y="216" font-family="DM Mono, monospace" font-size="9" fill="#7ab0b3">ObjectId("...")</text>
+  <text x="55" y="232" font-family="DM Mono, monospace" font-size="9" fill="#e8a090">"name": </text>
+  <text x="115" y="232" font-family="DM Mono, monospace" font-size="9" fill="#b8d4ba">"Aarav"</text>
+  <text x="55" y="248" font-family="DM Mono, monospace" font-size="9" fill="#e8a090">"roll_no": </text>
+  <text x="130" y="248" font-family="DM Mono, monospace" font-size="9" fill="#7ab0b3">101</text>
+  <text x="55" y="264" font-family="DM Mono, monospace" font-size="9" fill="#e8a090">"dept": </text>
+  <text x="105" y="264" font-family="DM Mono, monospace" font-size="9" fill="#b8d4ba">"CSE"</text>
+  <text x="55" y="280" font-family="DM Mono, monospace" font-size="9" fill="#e8a090">"marks": </text>
+  <text x="115" y="280" font-family="DM Mono, monospace" font-size="9" fill="#7ab0b3">[85, 90, 78]</text>
+  <text x="55" y="296" font-family="DM Mono, monospace" font-size="9" fill="#e8a090">"address": {</text>
+  <text x="65" y="312" font-family="DM Mono, monospace" font-size="9" fill="#e6d59e">  "city": "Delhi"</text>
+  <text x="55" y="326" font-family="DM Mono, monospace" font-size="9" fill="#e8a090">}</text>
+  <text x="45" y="326" font-family="DM Mono, monospace" font-size="9" fill="#c9a84c">}</text>
+
+  <!-- Annotation -->
+  <rect x="280" y="190" width="370" height="120" rx="6" fill="#f0ead9" stroke="#d4cbb8" stroke-width="1"/>
+  <text x="295" y="215" font-family="Playfair Display, serif" font-size="11" font-weight="600" fill="#2c1810">Key Observations:</text>
+  <text x="295" y="238" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">• Flexible schema — fields can vary per document</text>
+  <text x="295" y="258" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">• Nested objects (address) and arrays (marks)</text>
+  <text x="295" y="278" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">• Each document has a unique _id field</text>
+  <text x="295" y="298" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">• Data stored as BSON (Binary JSON)</text>
+</svg>
+<figcaption>Fig. 4 — MongoDB's hierarchical structure: databases contain collections, and collections contain documents with flexible, JSON-like schemas.</figcaption>
+</div>
+
+</div>
+
+<div class="subsection">
+<h3>MongoDB Terminology</h3>
+
+<p>A student must be fluent in MongoDB's vocabulary to answer exam questions confidently and to avoid confusing MongoDB concepts with their relational database equivalents. A <strong>database</strong> in MongoDB is a container for collections, just as a database in MySQL is a container for tables. A single MongoDB server instance can host multiple databases. A <strong>collection</strong> is a grouping of MongoDB documents — the equivalent of a table in a relational database, but without a enforced schema. Documents within the same collection can have completely different structures, though in practice, applications typically store documents of similar structure together for logical consistency. A <strong>document</strong> is a set of key-value pairs — the basic unit of data in MongoDB, equivalent to a row in a relational table. Documents are stored in BSON (Binary JSON) format, which is a binary-encoded serialization of JSON-like documents that supports additional data types (like ObjectId, Date, and Binary data) beyond what standard JSON offers.</p>
+
+<p>Every document in MongoDB automatically receives an <strong>_id</strong> field that serves as its primary key. If the application does not provide a value for _id when inserting a document, MongoDB generates a unique ObjectId — a 12-byte identifier composed of a timestamp, a machine identifier, a process identifier, and a counter. This guarantees uniqueness across distributed systems without requiring a centralized sequence generator. Understanding the _id field is important for exam questions about MongoDB's data model and for practical questions about how documents are uniquely identified and queried.</p>
+</div>
+
+<div class="subsection">
+<h3>MongoDB Environment Setup</h3>
+
+<p>Setting up a MongoDB development environment involves two primary components: the MongoDB server (the database process itself) and a client tool for interacting with it. The MongoDB server can be installed locally on a development machine by downloading the Community Server from mongodb.com, or it can be accessed through MongoDB Atlas — a fully managed cloud database service that provides free-tier clusters suitable for development and learning. For a student preparing for exams, understanding both approaches is valuable: local installation demonstrates awareness of server configuration, while cloud-based Atlas usage demonstrates awareness of modern deployment practices.</p>
+
+<p>Once the server is running (either locally on port 27017 or via Atlas), developers interact with it through several possible clients. The <strong>mongosh</strong> (MongoDB Shell) is a command-line interface that allows direct database operations. <strong>MongoDB Compass</strong> is a graphical desktop application that provides a visual interface for exploring databases, collections, and documents. Within a Node.js application, the <strong>mongoose</strong> library (an Object Data Modelling library, or ODM) provides a structured, schema-based approach to modelling application data and performing database operations. The native <strong>mongodb</strong> Node.js driver provides lower-level access for developers who prefer direct control over database interactions. In a MERN stack application, Mongoose is by far the most common choice because its schema definitions, validation, and middleware hooks integrate naturally with Express.js route handlers.</p>
+</div>
+
+<div class="subsection">
+<h3>Data Modelling in MongoDB</h3>
+
+<p>Data modelling in MongoDB differs fundamentally from the relational approach because MongoDB does not enforce relationships between collections through foreign keys and JOINs. Instead, developers choose between two strategies for representing related data: <strong>embedding</strong> and <strong>referencing</strong>. Embedding means storing related data as nested objects or arrays within a single document. For example, a student document might embed an array of course objects directly within the document, eliminating the need for a separate "enrollments" collection. Referencing means storing only the ObjectId (or another identifier) of a related document, requiring a separate query to retrieve the full related data. A student document might reference their department by storing the department's ObjectId, then use a separate query (or Mongoose's <code>populate()</code> method) to fetch the department details when needed.</p>
+
+<p>The choice between embedding and referencing depends on the access patterns and cardinality of the relationships. <strong>Embedding</strong> is preferred when the related data is always accessed together with the parent document, when the related data is relatively small and bounded (a student's marks array will not grow to millions of entries), and when atomic updates to both the parent and child data are important (MongoDB can update a single document atomically but cannot guarantee atomicity across multiple documents without multi-document transactions). <strong>Referencing</strong> is preferred when the related data is large or unbounded, when it is accessed independently of the parent, when it is shared across multiple parent documents, or when avoiding data duplication is critical for consistency. A well-crafted exam answer on MongoDB data modelling should mention both strategies, explain when each is appropriate, and provide a concrete example — this is the kind of depth that earns full marks on a 10-mark question.</p>
+
+<div class="memory-anchor">
+<p><strong>Analogy:</strong> Think of embedding like storing your friend's phone number directly in a notebook entry about that friend — it's right there when you need it, but if the number changes, you have to find and update that specific entry. Referencing is like writing "see page 42" — the data lives elsewhere, can be updated in one place, but requires an extra step to look up. MongoDB lets you choose whichever approach fits your application's needs.</p>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Database Operations (CRUD)</h3>
+
+<p>The four fundamental operations in any database — <strong>Create</strong>, <strong>Read</strong>, <strong>Update</strong>, and <strong>Delete</strong> — are collectively known as CRUD operations. In MongoDB, these operations can be performed through the MongoDB Shell, through MongoDB Compass, through the native Node.js driver, or (most commonly in MERN applications) through Mongoose. Understanding both the shell syntax and the Mongoose syntax prepares a student for exam questions at various levels of specificity.</p>
+
+<h4>Create Operations</h4>
+
+<p>Inserting documents into a MongoDB collection is accomplished with the <code>insertOne()</code> method for a single document or <code>insertMany()</code> for multiple documents. In the MongoDB Shell, the syntax is straightforward:</p>
+
+<pre><span class="cm">// Insert a single document</span>
+db.students.<span class="fn">insertOne</span>({
+  <span class="str">"name"</span>: <span class="str">"Priya Sharma"</span>,
+  <span class="str">"roll_no"</span>: <span class="num">101</span>,
+  <span class="str">"department"</span>: <span class="str">"Computer Science"</span>,
+  <span class="str">"marks"</span>: [<span class="num">85</span>, <span class="num">92</span>, <span class="num">78</span>],
+  <span class="str">"active"</span>: <span class="kw">true</span>
+})
+
+<span class="cm">// Insert multiple documents</span>
+db.students.<span class="fn">insertMany</span>([
+  { <span class="str">"name"</span>: <span class="str">"Rahul"</span>, <span class="str">"roll_no"</span>: <span class="num">102</span> },
+  { <span class="str">"name"</span>: <span class="str">"Ananya"</span>, <span class="str">"roll_no"</span>: <span class="num">103</span> }
+])</pre>
+
+<h4>Read Operations</h4>
+
+<p>Retrieving documents from a MongoDB collection uses the <code>find()</code> method, which accepts a query document that specifies filter criteria. The <code>find()</code> method returns a cursor — an iterable object that yields matching documents one at a time, which is memory-efficient for large result sets. The <code>findOne()</code> method returns only the first matching document as a single object rather than a cursor.</p>
+
+<pre><span class="cm">// Find all documents in the collection</span>
+db.students.<span class="fn">find</span>()
+
+<span class="cm">// Find documents matching a criteria</span>
+db.students.<span class="fn">find</span>({ <span class="str">"department"</span>: <span class="str">"Computer Science"</span> })
+
+<span class="cm">// Find with comparison operators</span>
+db.students.<span class="fn">find</span>({ <span class="str">"roll_no"</span>: { <span class="str">$gt</span>: <span class="num">100</span> } })
+
+<span class="cm">// Find with projection (select specific fields)</span>
+db.students.<span class="fn">find</span>(
+  { <span class="str">"department"</span>: <span class="str">"CSE"</span> },
+  { <span class="str">"name"</span>: <span class="num">1</span>, <span class="str">"roll_no"</span>: <span class="num">1</span>, <span class="str">"_id"</span>: <span class="num">0</span> }
+)</pre>
+
+<p>MongoDB provides a rich set of comparison operators (<code>$gt</code>, <code>$lt</code>, <code>$gte</code>, <code>$lte</code>, <code>$eq</code>, <code>$ne</code>, <code>$in</code>, <code>$nin</code>), logical operators (<code>$and</code>, <code>$or</code>, <code>$not</code>, <code>$nor</code>), and element operators (<code>$exists</code>, <code>$type</code>) that enable sophisticated queries. Understanding these operators is essential for exam questions that ask students to "write MongoDB queries" for specific data retrieval scenarios.</p>
+
+<h4>Update Operations</h4>
+
+<p>Updating documents uses the <code>updateOne()</code>, <code>updateMany()</code>, or <code>replaceOne()</code> methods. The update operation requires a filter (to identify which documents to modify) and an update document (to specify the modifications). MongoDB provides several update operators: <code>$set</code> modifies the value of a field, <code>$unset</code> removes a field, <code>$inc</code> increments a numeric field by a specified value, <code>$push</code> appends an element to an array, and <code>$pull</code> removes elements from an array that match a criteria.</p>
+
+<pre><span class="cm">// Update a single document</span>
+db.students.<span class="fn">updateOne</span>(
+  { <span class="str">"roll_no"</span>: <span class="num">101</span> },
+  { <span class="str">$set</span>: { <span class="str">"department"</span>: <span class="str">"IT"</span> } }
+)
+
+<span class="cm">// Increment a value</span>
+db.students.<span class="fn">updateOne</span>(
+  { <span class="str">"name"</span>: <span class="str">"Priya"</span> },
+  { <span class="str">$inc</span>: { <span class="str">"roll_no"</span>: <span class="num">10</span> } }
+)
+
+<span class="cm">// Push element to array</span>
+db.students.<span class="fn">updateOne</span>(
+  { <span class="str">"roll_no"</span>: <span class="num">101</span> },
+  { <span class="str">$push</span>: { <span class="str">"marks"</span>: <span class="num">95</span> } }
+)</pre>
+
+<h4>Delete Operations</h4>
+
+<pre><span class="cm">// Delete a single document</span>
+db.students.<span class="fn">deleteOne</span>({ <span class="str">"roll_no"</span>: <span class="num">101</span> })
+
+<span class="cm">// Delete all matching documents</span>
+db.students.<span class="fn">deleteMany</span>({ <span class="str">"department"</span>: <span class="str">"CSE"</span> })</pre>
+
+<div class="exam-tip">
+<p><strong>Writing MongoDB Queries in Exams:</strong> When an exam question asks you to write MongoDB queries, always specify the method name (<code>find</code>, <code>insertOne</code>, <code>updateOne</code>, <code>deleteMany</code>), provide the correct syntax with filter and update documents, and annotate each query with a brief comment explaining what it does. If the question asks for comparison operators, demonstrate at least three different operators (<code>$gt</code>, <code>$in</code>, <code>$set</code>) to show breadth of knowledge.</p>
+</div>
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 5: EXPRESS.JS -->
+<!-- ============================================================ -->
+<section class="section" id="sec-express">
+<div class="section-header">
+  <span class="section-number">§ 05</span>
+  <h2>Express.js — Installation, Environment, Routing</h2>
+</div>
+
+<div class="subsection">
+<h3>What Is Express.js?</h3>
+
+<p>Express.js is a minimal, flexible, and unopinionated web application framework for Node.js that provides a robust set of features for building web servers, RESTful APIs, and server-side applications. To understand Express's role in the MERN stack, it helps to understand what Node.js provides out of the box and what it lacks. Node.js includes a built-in <code>http</code> module that can create a basic web server capable of receiving HTTP requests and sending responses. However, using the raw <code>http</code> module for anything beyond the simplest server is cumbersome: developers must manually parse URLs, extract query parameters, read request bodies from streams, set response headers, handle different HTTP methods through conditional logic, and organize code for dozens of routes without any structural convention. Express.js wraps the <code>http</code> module with an elegant abstraction layer that provides intuitive routing, middleware support, request and response helpers, template engine integration, and error handling — all while remaining lightweight enough that developers retain full control over the application's architecture.</p>
+
+<p>Express is often described as "unopinionated" because it does not impose a specific project structure, database choice, or authentication mechanism. Unlike more prescriptive frameworks (like Django for Python or Ruby on Rails), Express gives developers the freedom to organize their application however they see fit, choosing their own patterns for file structure, middleware ordering, and architectural decisions. This flexibility is both Express's greatest strength and its most common criticism: experienced developers appreciate the freedom, while beginners may find the lack of conventions disorienting. In the context of the MERN stack, Express serves as the intermediary layer between React (which runs in the browser and sends HTTP requests) and MongoDB (which stores and retrieves data). Express receives requests from React, processes them (applying business logic, authentication, validation), interacts with MongoDB through Mongoose, and sends JSON responses back to the React front-end.</p>
+</div>
+
+<div class="subsection">
+<h3>Installing Express.js</h3>
+
+<p>Express.js is installed as a Node.js package using the npm (Node Package Manager) command-line tool, which comes bundled with every Node.js installation. The installation process begins with initializing a new Node.js project, which creates a <code>package.json</code> file that tracks the project's metadata and dependencies.</p>
+
+<pre><span class="cm"># Step 1: Create a project directory</span>
+mkdir my-mern-app
+cd my-mern-app
+
+<span class="cm"># Step 2: Initialize a Node.js project</span>
+npm init -y
+
+<span class="cm"># Step 3: Install Express.js</span>
+npm install express
+
+<span class="cm"># Step 4: Install additional common packages</span>
+npm install mongoose cors dotenv</pre>
+
+<p>The <code>npm init -y</code> command generates a <code>package.json</code> file with default values. The <code>-y</code> flag accepts all defaults without prompting the developer for input. The <code>npm install express</code> command downloads Express and its dependencies into a <code>node_modules</code> directory and adds it to the <code>dependencies</code> section of <code>package.json</code>. The additional packages — <strong>mongoose</strong> for MongoDB interaction, <strong>cors</strong> for handling Cross-Origin Resource Sharing (which is necessary when the React front-end runs on a different port or domain than the Express server), and <strong>dotenv</strong> for loading environment variables from a <code>.env</code> file — are commonly installed alongside Express in MERN stack projects.</p>
+</div>
+
+<div class="subsection">
+<h3>Express Environment — Creating a Basic Server</h3>
+
+<p>The minimal Express application consists of importing the Express module, creating an application instance, defining at least one route, and starting the server to listen on a specified port. This foundational code pattern is something every student should be able to write from memory for an exam:</p>
+
+<pre><span class="cm">// server.js — A basic Express server</span>
+<span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> app = <span class="fn">express</span>();
+<span class="kw">const</span> PORT = <span class="num">3000</span>;
+
+<span class="cm">// Middleware to parse JSON request bodies</span>
+app.<span class="fn">use</span>(express.<span class="fn">json</span>());
+
+<span class="cm">// A simple GET route</span>
+app.<span class="fn">get</span>(<span class="str">'/'</span>, (req, res) => {
+  res.<span class="fn">send</span>(<span class="str">'Hello, MERN World!'</span>);
+});
+
+<span class="cm">// Start the server</span>
+app.<span class="fn">listen</span>(PORT, () => {
+  console.<span class="fn">log</span>(<span class="str">`Server running on port </span>${PORT}<span class="str">`</span>);
+});</pre>
+
+<p>This code illustrates several important concepts. The <code>require('express')</code> statement imports the Express module and returns a function. Calling that function with <code>express()</code> creates an application instance — the central object to which routes, middleware, and configuration are attached. The <code>app.use(express.json())</code> line registers a built-in middleware that automatically parses incoming request bodies with a <code>Content-Type: application/json</code> header, making the parsed data available as <code>req.body</code> in subsequent route handlers. Without this middleware, <code>req.body</code> would be <code>undefined</code> for POST and PUT requests that send JSON data — a common source of confusion among students. The <code>app.get('/', ...)</code> call defines a route handler for HTTP GET requests to the root URL (<code>/</code>), and the <code>res.send()</code> method sends a text response. Finally, <code>app.listen(PORT, callback)</code> starts the HTTP server and binds it to the specified port.</p>
+</div>
+
+<div class="subsection">
+<h3>Routing in Express.js</h3>
+
+<p>Routing is the mechanism by which an Express application determines how it responds to client requests at specific URLs (called endpoints or paths) using specific HTTP methods. A route in Express consists of three elements: the <strong>HTTP method</strong> (GET, POST, PUT, DELETE, PATCH), the <strong>path</strong> (the URL pattern, such as <code>/api/students</code> or <code>/api/students/:id</code>), and the <strong>handler function</strong> (a callback that receives the request and response objects and defines what to do when that route is matched). Express processes routes in the order they are defined: when a request arrives, Express compares the request's method and URL against each registered route sequentially and executes the first matching handler.</p>
+
+<p>Express supports several routing patterns that students should understand. <strong>Basic routing</strong> defines specific paths for each HTTP method. <strong>Route parameters</strong> are dynamic segments of the URL prefixed with a colon (<code>:</code>), allowing the same route handler to process requests for different resources. For example, <code>/api/students/:id</code> matches both <code>/api/students/101</code> and <code>/api/students/202</code>, with the actual value available as <code>req.params.id</code>. <strong>Query parameters</strong> are key-value pairs appended to the URL after a question mark (e.g., <code>/api/students?dept=CSE&amp;year=3</code>), accessible via <code>req.query</code>. <strong>Router-level routing</strong> uses <code>express.Router()</code> to create modular, mountable route handlers that keep the application organized as it grows.</p>
+
+<pre><span class="cm">// Basic routes</span>
+app.<span class="fn">get</span>(<span class="str">'/api/students'</span>, (req, res) => {
+  <span class="cm">// Return all students</span>
+  res.<span class="fn">json</span>({ message: <span class="str">'Get all students'</span> });
+});
+
+app.<span class="fn">post</span>(<span class="str">'/api/students'</span>, (req, res) => {
+  <span class="cm">// Create a new student from req.body</span>
+  res.<span class="fn">json</span>({ message: <span class="str">'Student created'</span> });
+});
+
+<span class="cm">// Route with parameter</span>
+app.<span class="fn">get</span>(<span class="str">'/api/students/:id'</span>, (req, res) => {
+  res.<span class="fn">json</span>({ studentId: req.params.id });
+});
+
+<span class="cm">// Using Express Router for modular routing</span>
+<span class="kw">const</span> router = express.<span class="fn">Router</span>();
+router.<span class="fn">get</span>(<span class="str">'/'</span>, (req, res) => { <span class="cm">/* ... */</span> });
+router.<span class="fn">get</span>(<span class="str">'/:id'</span>, (req, res) => { <span class="cm">/* ... */</span> });
+app.<span class="fn">use</span>(<span class="str">'/api/students'</span>, router);</pre>
+
+<div class="figure">
+<svg viewBox="0 0 780 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Express Middleware Pipeline">
+  <text x="390" y="25" text-anchor="middle" font-family="Playfair Display, serif" font-size="14" font-weight="600" fill="#2c1810">Express Request Processing Pipeline</text>
+
+  <!-- Request -->
+  <rect x="10" y="70" width="90" height="60" rx="6" fill="#c45a3c" stroke="#a04430" stroke-width="1.5"/>
+  <text x="55" y="100" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#fff">Request</text>
+  <text x="55" y="115" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#f0ead9">HTTP</text>
+
+  <!-- Arrow -->
+  <line x1="105" y1="100" x2="135" y2="100" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrG)"/>
+
+  <!-- Middleware 1 -->
+  <rect x="140" y="70" width="120" height="60" rx="6" fill="#faf7f2" stroke="#3d6b6e" stroke-width="1.5"/>
+  <text x="200" y="95" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#3d6b6e">express.json()</text>
+  <text x="200" y="115" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">Parse Body</text>
+
+  <line x1="265" y1="100" x2="295" y2="100" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrG)"/>
+
+  <!-- Middleware 2 -->
+  <rect x="300" y="70" width="120" height="60" rx="6" fill="#faf7f2" stroke="#3d6b6e" stroke-width="1.5"/>
+  <text x="360" y="95" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#3d6b6e">cors()</text>
+  <text x="360" y="115" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">CORS Headers</text>
+
+  <line x1="425" y1="100" x2="455" y2="100" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrG)"/>
+
+  <!-- Auth Middleware -->
+  <rect x="460" y="70" width="120" height="60" rx="6" fill="#faf7f2" stroke="#3d6b6e" stroke-width="1.5"/>
+  <text x="520" y="95" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#3d6b6e">authMiddleware</text>
+  <text x="520" y="115" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">Verify Token</text>
+
+  <line x1="585" y1="100" x2="615" y2="100" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrG)"/>
+
+  <!-- Route Handler -->
+  <rect x="620" y="70" width="150" height="60" rx="6" fill="#5a8a5e" stroke="#3d6b40" stroke-width="1.5"/>
+  <text x="695" y="95" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#fff">Route Handler</text>
+  <text x="695" y="115" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#e8f5e9">app.get('/api/...')</text>
+
+  <!-- next() labels -->
+  <text x="200" y="155" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#c9a84c">next()</text>
+  <text x="360" y="155" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#c9a84c">next()</text>
+  <text x="520" y="155" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#c9a84c">next()</text>
+
+  <!-- Response arrow back -->
+  <line x1="695" y1="135" x2="695" y2="190" stroke="#c45a3c" stroke-width="1.5" stroke-dasharray="4,3"/>
+  <path d="M695,190 Q395,210 55,190" fill="none" stroke="#c45a3c" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrR)"/>
+
+  <rect x="10" y="175" width="90" height="40" rx="6" fill="#c45a3c" stroke="#a04430" stroke-width="1.5"/>
+  <text x="55" y="200" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#fff">Response</text>
+
+  <!-- Description -->
+  <text x="390" y="250" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="12" font-style="italic" fill="#6b5e52">Each middleware processes the request and calls next() to pass control forward. The route handler generates the response.</text>
+
+  <defs>
+    <marker id="arrG" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrR" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#c45a3c" stroke-width="1.5"/>
+    </marker>
+  </defs>
+</svg>
+<figcaption>Fig. 5 — The Express.js middleware pipeline, showing how requests pass through successive middleware functions before reaching the route handler, and how responses travel back.</figcaption>
+</div>
+
+<div class="confusion-box">
+<p><strong>Common Confusion:</strong> Students often confuse Express routing with React routing. Express routing happens <em>on the server</em> — when the server receives an HTTP request at a specific URL, Express determines which handler function executes. React Router happens <em>in the browser</em> — when the user navigates between "pages" in a single-page application, React Router intercepts the navigation and renders the appropriate component without making a full page request to the server. They operate at completely different layers of the application. Express routes handle API endpoints and data operations; React routes handle the user interface and client-side navigation.</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 6: REACT -->
+<!-- ============================================================ -->
+<section class="section" id="sec-react">
+<div class="section-header">
+  <span class="section-number">§ 06</span>
+  <h2>React — Introduction, JSX, Components, States, Lifecycle, Forms</h2>
+</div>
+
+<div class="subsection">
+<h3>What Is React and Why Does It Exist?</h3>
+
+<p>React is a declarative, component-based JavaScript library for building user interfaces, created by Jordan Walke at Facebook (now Meta) and open-sourced in 2013. To understand why React was created and why it has become the dominant front-end library in modern web development, one must appreciate the problem it solves. Before libraries like React, building interactive web interfaces with vanilla JavaScript involved manually selecting DOM elements, attaching event listeners, and imperatively updating the DOM whenever application data changed. For a simple "like" button, a developer might write code that finds the button element, adds a click listener, retrieves the current like count, increments it, finds the span element displaying the count, and sets its text content to the new value. This approach works for trivial interfaces but becomes catastrophically complex when the interface has dozens of interdependent elements, each of which can be affected by multiple user actions. The developer must keep the DOM in perfect synchronization with the application's state at all times — a task that grows exponentially difficult as the application scales.</p>
+
+<p>React's fundamental insight is that developers should not manipulate the DOM directly. Instead, developers should describe <em>what the UI should look like</em> for any given application state, and React should handle the actual DOM manipulation required to make that description a reality. This is the meaning of "declarative" — you declare the desired outcome rather than specifying the steps to achieve it. When the application state changes (a user clicks a button, data arrives from the server, a form is submitted), React re-renders the affected components, compares the new output with the previous output using its Virtual DOM mechanism, and applies only the minimal set of DOM changes necessary. This paradigm shift — from imperatively manipulating the DOM to declaratively rendering the UI based on state — is React's central contribution to front-end development and the reason it has been adopted by millions of developers worldwide.</p>
+
+</div>
+
+<div class="subsection">
+<h3>Core Principles of React</h3>
+
+<p><strong>1. Component-Based Architecture.</strong> React applications are built from components — self-contained, reusable pieces of UI that encapsulate their own structure, styling, and behavior. A component might represent a button, a navigation bar, a form, a comment, or an entire page. Components can contain other components, forming a tree hierarchy that mirrors the visual hierarchy of the interface. This modularity makes complex interfaces manageable: instead of dealing with one enormous HTML structure, developers work with many small, focused components, each of which can be developed, tested, and maintained independently.</p>
+
+<p><strong>2. Declarative Syntax.</strong> Rather than writing step-by-step instructions for updating the DOM, React developers write components that describe what the UI should look like for a given state. If the state is <code>{ count: 5 }</code>, the component renders "5". If the state changes to <code>{ count: 6 }</code>, React automatically updates only the text that displays the count. The developer never touches <code>document.getElementById</code> or <code>element.textContent</code>.</p>
+
+<p><strong>3. Unidirectional Data Flow.</strong> In React, data flows downward from parent components to child components through <em>props</em> (properties). A parent component passes data to its children, and children render that data. If a child needs to communicate upward (to inform the parent that a button was clicked or a value changed), it does so by calling a function that the parent passed down as a prop. This one-way data flow makes applications predictable: to understand why a component looks a certain way, you only need to trace the data flowing into it from above.</p>
+
+<p><strong>4. JSX — JavaScript XML.</strong> React introduces JSX, a syntax extension that allows developers to write HTML-like code within JavaScript. JSX makes component templates readable and intuitive, combining the expressiveness of JavaScript logic with the familiarity of HTML markup.</p>
+
+<p><strong>5. Virtual DOM.</strong> React maintains a lightweight in-memory representation of the actual DOM called the Virtual DOM. When state changes, React creates a new Virtual DOM tree, compares it with the previous one (a process called "diffing"), and calculates the minimal set of real DOM updates needed (a process called "reconciliation"). This batching and minimizing of DOM operations is significantly faster than manual, direct DOM manipulation for complex interfaces.</p>
+
+</div>
+
+<div class="subsection">
+<h3>JSX — JavaScript XML</h3>
+
+<p>JSX is a syntax extension for JavaScript that looks similar to HTML but is neither HTML nor a template language. When a React application is built (using tools like Babel), every JSX expression is transformed into regular JavaScript function calls — specifically, calls to <code>React.createElement()</code>. This means that JSX is syntactic sugar: it does not add new functionality to JavaScript but makes it far more pleasant to write component templates. The expression <code>&lt;h1 className="title"&gt;Hello&lt;/h1&gt;</code> is compiled into <code>React.createElement('h1', { className: 'title' }, 'Hello')</code>. Understanding this compilation step is important because it explains several JSX rules that initially confuse students.</p>
+
+<p>First, because JSX compiles to JavaScript, <strong>class</strong> must be written as <strong>className</strong> (since <code>class</code> is a reserved word in JavaScript) and <strong>for</strong> must be written as <strong>htmlFor</strong> (for the same reason). Second, JSX expressions must have a single root element — you cannot return two sibling elements from a component without wrapping them in a parent element or a React Fragment (<code>&lt;&gt;...&lt;/&gt;</code>). This is because the <code>React.createElement()</code> function can only return a single element. Third, JavaScript expressions can be embedded within JSX using curly braces <code>{ }</code>. This allows dynamic content: <code>&lt;h1&gt;{user.name}&lt;/h1&gt;</code> renders the value of <code>user.name</code>, and <code>&lt;ul&gt;{items.map(item =&gt; &lt;li&gt;{item}&lt;/li&gt;)}&lt;/ul&gt;</code> dynamically renders a list of items. Fourth, all tags must be explicitly closed — even self-closing tags like <code>&lt;img&gt;</code> and <code>&lt;input&gt;</code> must be written as <code>&lt;img /&gt;</code> and <code>&lt;input /&gt;</code>.</p>
+
+<pre><span class="cm">// A React component using JSX</span>
+<span class="kw">function</span> <span class="fn">Greeting</span>(props) {
+  <span class="kw">return</span> (
+    &lt;<span class="fn">div</span> className=<span class="str">"greeting-card"</span>&gt;
+      &lt;<span class="fn">h1</span>&gt;Hello, {props.name}!&lt;/<span class="fn">h1</span>&gt;
+      &lt;<span class="fn">p</span>&gt;Welcome to the MERN stack.&lt;/<span class="fn">p</span>&gt;
+    &lt;/<span class="fn">div</span>&gt;
+  );
+}
+
+<span class="cm">// JSX compiled output (what Babel produces):</span>
+<span class="kw">function</span> <span class="fn">Greeting</span>(props) {
+  <span class="kw">return</span> React.<span class="fn">createElement</span>(
+    <span class="str">'div'</span>,
+    { className: <span class="str">'greeting-card'</span> },
+    React.<span class="fn">createElement</span>(<span class="str">'h1'</span>, <span class="kw">null</span>, <span class="str">'Hello, '</span>, props.name, <span class="str">'!'</span>),
+    React.<span class="fn">createElement</span>(<span class="str">'p'</span>, <span class="kw">null</span>, <span class="str">'Welcome to the MERN stack.'</span>)
+  );
+}</pre>
+
+<div class="exam-tip">
+<p><strong>JSX Exam Question (5 marks):</strong> Define JSX as a syntax extension that allows writing HTML-like code in JavaScript. Explain that JSX compiles to React.createElement() calls via Babel. Mention the rules: className instead of class, htmlFor instead of for, single root element, expressions in curly braces, and explicit closing tags. Provide a short code example. This covers all the points examiners expect.</p>
+</div>
+</div>
+
+<div class="subsection">
+<h3>Components — Class vs. Functional</h3>
+
+<p>React provides two fundamentally different ways to define components, and the distinction between them is one of the most frequently examined topics in university papers. <strong>Class components</strong> are ES6 classes that extend <code>React.Component</code> and must include a <code>render()</code> method that returns JSX. They manage state through <code>this.state</code> and update it using <code>this.setState()</code>. They access lifecycle methods (like <code>componentDidMount</code>, <code>componentDidUpdate</code>, and <code>componentWillUnmount</code>) as class methods. <strong>Functional components</strong> are JavaScript functions that accept props as an argument and return JSX. Originally, functional components were "stateless" — they could not manage state or use lifecycle methods. However, the introduction of React Hooks in version 16.8 (February 2019) changed this fundamentally: the <code>useState</code> hook gives functional components state management capabilities, and the <code>useEffect</code> hook provides lifecycle-equivalent functionality.</p>
+
+<pre><span class="cm">// Class Component</span>
+<span class="kw">class</span> <span class="fn">Counter</span> <span class="kw">extends</span> React.Component {
+  <span class="fn">constructor</span>(props) {
+    <span class="kw">super</span>(props);
+    <span class="kw">this</span>.state = { count: <span class="num">0</span> };
+  }
+  <span class="fn">increment</span>() {
+    <span class="kw">this</span>.<span class="fn">setState</span>({ count: <span class="kw">this</span>.state.count + <span class="num">1</span> });
+  }
+  <span class="fn">render</span>() {
+    <span class="kw">return</span> (
+      &lt;<span class="fn">div</span>&gt;
+        &lt;<span class="fn">p</span>&gt;Count: {<span class="kw">this</span>.state.count}&lt;/<span class="fn">p</span>&gt;
+        &lt;<span class="fn">button</span> onClick={() =&gt; <span class="kw">this</span>.<span class="fn">increment</span>()}&gt;+1&lt;/<span class="fn">button</span>&gt;
+      &lt;/<span class="fn">div</span>&gt;
+    );
+  }
+}
+
+<span class="cm">// Functional Component (with Hook)</span>
+<span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="kw">const</span> [count, setCount] = <span class="fn">useState</span>(<span class="num">0</span>);
+  <span class="kw">return</span> (
+    &lt;<span class="fn">div</span>&gt;
+      &lt;<span class="fn">p</span>&gt;Count: {count}&lt;/<span class="fn">p</span>&gt;
+      &lt;<span class="fn">button</span> onClick={() =&gt; <span class="fn">setCount</span>(count + <span class="num">1</span>)}&gt;+1&lt;/<span class="fn">button</span>&gt;
+    &lt;/<span class="fn">div</span>&gt;
+  );
+}</pre>
+
+<table>
+<thead>
+<tr><th>Feature</th><th>Class Component</th><th>Functional Component</th></tr>
+</thead>
+<tbody>
+<tr><td>Definition</td><td>ES6 class extending React.Component</td><td>Plain JavaScript function</td></tr>
+<tr><td>State</td><td>this.state with this.setState()</td><td>useState() hook</td></tr>
+<tr><td>Lifecycle</td><td>componentDidMount, componentDidUpdate, etc.</td><td>useEffect() hook</td></tr>
+<tr><td>Syntax</td><td>Requires render() method</td><td>Returns JSX directly</td></tr>
+<tr><td>"this" keyword</td><td>Uses (and often confuses) this</td><td>No this keyword needed</td></tr>
+<tr><td>Code volume</td><td>More boilerplate</td><td>More concise</td></tr>
+<tr><td>Performance</td><td>Slightly more overhead</td><td>Generally lighter</td></tr>
+<tr><td>Modern usage</td><td>Legacy codebases</td><td>Industry standard (post-2019)</td></tr>
+</tbody>
+</table>
+
+<div class="memory-anchor">
+<p><strong>Memory Trick:</strong> Think of class components as a formal dinner — you need to set the table properly (constructor, super, this.state, render), while functional components are like a casual meal — you just need a plate (the function) and food (the JSX). Hooks are the kitchen tools (useState, useEffect) that let the casual meal be just as elaborate.</p>
+</div>
+</div>
+
+<div class="subsection">
+<h3>State and Props</h3>
+
+<p>Understanding state and props is absolutely fundamental to React, and any exam question about React will almost certainly involve one or both concepts. <strong>Props</strong> (short for "properties") are read-only data passed from a parent component to a child component. They are analogous to function arguments: just as a function receives parameters and uses them in its computation, a component receives props and uses them to determine what to render. Props flow in one direction — downward from parent to child — and a child component cannot modify the props it receives. If a parent passes <code>name="Aarav"</code> as a prop, the child component receives <code>props.name</code> with the value "Aarav" and can display it, but it cannot change that value.</p>
+
+<p><strong>State</strong>, by contrast, is mutable data that belongs to a component and can change over time in response to user actions, network responses, or other events. When state changes, React re-renders the component (and its children) to reflect the new state. In a class component, state is initialized in the constructor as <code>this.state = { count: 0 }</code> and modified exclusively through <code>this.setState({ count: 1 })</code> — never by directly assigning to <code>this.state</code>. In a functional component, state is declared with the <code>useState</code> hook: <code>const [count, setCount] = useState(0)</code>, and modified by calling <code>setCount(newValue)</code>. The interplay between props and state defines React's data architecture: a parent component manages the state and passes relevant portions of it as props to its children. When a child needs to change the state (because a user clicked a button, for example), it calls a function that the parent passed down as a prop, and the parent updates its state, triggering a re-render that propagates new props to the children.</p>
+</div>
+
+<div class="subsection">
+<h3>React Component Lifecycle</h3>
+
+<p>Every React component, whether class-based or functional, goes through a predictable sequence of phases during its existence: <strong>Mounting</strong> (when the component is being created and inserted into the DOM for the first time), <strong>Updating</strong> (when the component is being re-rendered due to changes in props or state), and <strong>Unmounting</strong> (when the component is being removed from the DOM). In class components, each phase is associated with specific lifecycle methods that developers can override to execute code at precise moments. Understanding this lifecycle is essential because it governs when data fetching, event subscription, DOM manipulation, and cleanup should occur.</p>
+
+<div class="figure">
+<svg viewBox="0 0 820 520" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="React Component Lifecycle">
+  <!-- Title -->
+  <text x="410" y="25" text-anchor="middle" font-family="Playfair Display, serif" font-size="15" font-weight="600" fill="#2c1810">React Class Component Lifecycle</text>
+
+  <!-- Mounting Phase -->
+  <rect x="20" y="50" width="240" height="300" rx="8" fill="#edf5f5" stroke="#3d6b6e" stroke-width="2"/>
+  <text x="140" y="80" text-anchor="middle" font-family="Playfair Display, serif" font-size="14" font-weight="600" fill="#3d6b6e">Mounting</text>
+
+  <rect x="40" y="95" width="200" height="40" rx="5" fill="#faf7f2" stroke="#3d6b6e" stroke-width="1"/>
+  <text x="140" y="120" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#2c1810">constructor()</text>
+
+  <line x1="140" y1="135" x2="140" y2="150" stroke="#9a8e82" stroke-width="1.5" marker-end="url(#arrD)"/>
+
+  <rect x="40" y="155" width="200" height="40" rx="5" fill="#faf7f2" stroke="#3d6b6e" stroke-width="1"/>
+  <text x="140" y="180" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#2c1810">render()</text>
+
+  <line x1="140" y1="195" x2="140" y2="210" stroke="#9a8e82" stroke-width="1.5" marker-end="url(#arrD)"/>
+
+  <rect x="40" y="215" width="200" height="40" rx="5" fill="#faf7f2" stroke="#3d6b6e" stroke-width="1"/>
+  <text x="140" y="236" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#2c1810">componentDidMount()</text>
+
+  <text x="140" y="280" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">Fetch data, set up</text>
+  <text x="140" y="295" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">subscriptions here</text>
+
+  <!-- Updating Phase -->
+  <rect x="290" y="50" width="240" height="300" rx="8" fill="#fdf6ec" stroke="#c9a84c" stroke-width="2"/>
+  <text x="410" y="80" text-anchor="middle" font-family="Playfair Display, serif" font-size="14" font-weight="600" fill="#8a6a20">Updating</text>
+
+  <rect x="310" y="95" width="200" height="40" rx="5" fill="#faf7f2" stroke="#c9a84c" stroke-width="1"/>
+  <text x="410" y="120" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#2c1810">new Props / setState</text>
+
+  <line x1="410" y1="135" x2="410" y2="150" stroke="#9a8e82" stroke-width="1.5" marker-end="url(#arrD)"/>
+
+  <rect x="310" y="155" width="200" height="40" rx="5" fill="#faf7f2" stroke="#c9a84c" stroke-width="1"/>
+  <text x="410" y="175" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#2c1810">shouldComponentUpdate</text>
+  <text x="410" y="188" text-anchor="middle" font-family="Source Serif 4, serif" font-size="8" fill="#9a8e82">(returns true/false)</text>
+
+  <line x1="410" y1="195" x2="410" y2="210" stroke="#9a8e82" stroke-width="1.5" marker-end="url(#arrD)"/>
+
+  <rect x="310" y="215" width="200" height="40" rx="5" fill="#faf7f2" stroke="#c9a84c" stroke-width="1"/>
+  <text x="410" y="240" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#2c1810">render()</text>
+
+  <line x1="410" y1="255" x2="410" y2="270" stroke="#9a8e82" stroke-width="1.5" marker-end="url(#arrD)"/>
+
+  <rect x="310" y="275" width="200" height="40" rx="5" fill="#faf7f2" stroke="#c9a84c" stroke-width="1"/>
+  <text x="410" y="295" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#2c1810">componentDidUpdate()</text>
+
+  <!-- Unmounting Phase -->
+  <rect x="560" y="50" width="240" height="300" rx="8" fill="#fce4ec" stroke="#c45a3c" stroke-width="2"/>
+  <text x="680" y="80" text-anchor="middle" font-family="Playfair Display, serif" font-size="14" font-weight="600" fill="#c45a3c">Unmounting</text>
+
+  <rect x="580" y="95" width="200" height="40" rx="5" fill="#faf7f2" stroke="#c45a3c" stroke-width="1"/>
+  <text x="680" y="120" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#2c1810">componentWillUnmount()</text>
+
+  <text x="680" y="165" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">Clean up:</text>
+  <text x="680" y="185" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">Remove event listeners</text>
+  <text x="680" y="200" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">Cancel timers</text>
+  <text x="680" y="215" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">Abort network requests</text>
+  <text x="680" y="230" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">Invalidate subscriptions</text>
+
+  <!-- Equivalent Hooks annotation -->
+  <rect x="20" y="380" width="780" height="120" rx="8" fill="#faf7f2" stroke="#d4cbb8" stroke-width="1"/>
+  <text x="410" y="410" text-anchor="middle" font-family="Playfair Display, serif" font-size="13" font-weight="600" fill="#2c1810">Functional Component Equivalents (Hooks)</text>
+  <text x="200" y="440" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#3d6b6e">useEffect(() => {}, [])</text>
+  <text x="200" y="458" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">= componentDidMount</text>
+  <text x="410" y="440" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#8a6a20">useEffect(() => {}, [dep])</text>
+  <text x="410" y="458" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">= componentDidUpdate</text>
+  <text x="620" y="440" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#c45a3c">return () => { cleanup }</text>
+  <text x="620" y="458" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#6b5e52">= componentWillUnmount</text>
+  <text x="410" y="486" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="11" font-style="italic" fill="#9a8e82">A single useEffect() hook replaces multiple lifecycle methods, depending on its dependency array.</text>
+
+  <defs>
+    <marker id="arrD" markerWidth="8" markerHeight="6" refX="4" refY="6" orient="auto">
+      <path d="M0,0 L4,6 L8,0" fill="none" stroke="#9a8e82" stroke-width="1.5"/>
+    </marker>
+  </defs>
+</svg>
+<figcaption>Fig. 6 — The React class component lifecycle showing three phases (Mounting, Updating, Unmounting) with their respective methods, and the useEffect hook equivalents for functional components.</figcaption>
+</div>
+
+<p><strong>Mounting Phase:</strong> When a class component is instantiated for the first time, the <code>constructor()</code> is called first — this is where state is initialized and event handlers are bound. Next, <code>render()</code> is called, which returns the JSX that describes the component's UI. After React has rendered the component and its children into the actual DOM, <code>componentDidMount()</code> executes. This is the recommended place for data fetching (making API calls to retrieve data from the server), setting up subscriptions (like WebSocket connections), and performing any operations that require the DOM to exist. The reason data fetching belongs in componentDidMount rather than the constructor is subtle but important: the constructor runs before the component is rendered, so any asynchronous operations started there might attempt to update state before the component is fully mounted.</p>
+
+<p><strong>Updating Phase:</strong> A component enters the updating phase whenever its props change (because the parent re-rendered and passed new props) or its state changes (because the component called <code>setState</code>). The <code>shouldComponentUpdate(nextProps, nextState)</code> method is called first, allowing the component to return <code>false</code> and skip the re-render if the new props and state do not require a visual change — this is a performance optimization. If the component should update, <code>render()</code> is called again with the new state and props, React updates the DOM, and then <code>componentDidUpdate(prevProps, prevState)</code> executes. This is where developers can perform operations that depend on the updated DOM, such as making network requests based on changed props or adjusting scroll positions.</p>
+
+<p><strong>Unmounting Phase:</strong> When a component is about to be removed from the DOM, <code>componentWillUnmount()</code> executes. This method is the designated location for cleanup: removing event listeners that were added in componentDidMount, clearing timers (setTimeout, setInterval), cancelling pending network requests, and unsubscribing from external data sources. Failing to perform cleanup in componentWillUnmount is a common source of memory leaks and "setState on unmounted component" warnings in React applications.</p>
+
+</div>
+
+<div class="subsection">
+<h3>Building Forms in React</h3>
+
+<p>Forms in React are handled differently from traditional HTML forms because React emphasizes controlled components — form elements whose values are controlled by React state rather than by the DOM itself. In a traditional HTML form, the input element maintains its own internal state (the text the user has typed). In a controlled React component, the input's value is derived from React state, and every keystroke triggers a state update through an <code>onChange</code> handler. This means React state is always the "single source of truth" for the form's data, enabling features like instant validation, conditional rendering based on input values, and programmatic submission.</p>
+
+<pre><span class="kw">import</span> React, { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">StudentForm</span>() {
+  <span class="kw">const</span> [formData, setFormData] = <span class="fn">useState</span>({
+    name: <span class="str">''</span>,
+    email: <span class="str">''</span>
+  });
+
+  <span class="kw">const</span> <span class="fn">handleChange</span> = (e) => {
+    <span class="fn">setFormData</span>({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  <span class="kw">const</span> <span class="fn">handleSubmit</span> = (e) => {
+    e.<span class="fn">preventDefault</span>();
+    console.<span class="fn">log</span>(<span class="str">'Form submitted:'</span>, formData);
+  };
+
+  <span class="kw">return</span> (
+    &lt;<span class="fn">form</span> onSubmit={handleSubmit}&gt;
+      &lt;<span class="fn">label</span>&gt;Name:&lt;/<span class="fn">label</span>&gt;
+      &lt;<span class="fn">input</span>
+        type=<span class="str">"text"</span>
+        name=<span class="str">"name"</span>
+        value={formData.name}
+        onChange={handleChange}
+      /&gt;
+
+      &lt;<span class="fn">label</span>&gt;Email:&lt;/<span class="fn">label</span>&gt;
+      &lt;<span class="fn">input</span>
+        type=<span class="str">"email"</span>
+        name=<span class="str">"email"</span>
+        value={formData.email}
+        onChange={handleChange}
+      /&gt;
+
+      &lt;<span class="fn">button</span> type=<span class="str">"submit"</span>&gt;Submit&lt;/<span class="fn">button</span>&gt;
+    &lt;/<span class="fn">form</span>&gt;
+  );
+}</pre>
+
+<p>This code demonstrates several important patterns that exam questions frequently test. The <code>useState</code> hook initializes <code>formData</code> as an object with <code>name</code> and <code>email</code> properties. The <code>handleChange</code> function uses the ES6 spread operator (<code>...formData</code>) to preserve all existing form fields while updating only the one that changed (identified by <code>e.target.name</code>). The <code>handleSubmit</code> function calls <code>e.preventDefault()</code> to prevent the browser's default form submission behavior (which would reload the page), and then logs the form data. Each input element has its <code>value</code> attribute bound to the corresponding state property, making it a controlled component — React controls what appears in the input at all times.</p>
+
+<div class="exam-tip">
+<p><strong>React Form Exam Question (5–10 marks):</strong> When asked to write a React component that renders a form, demonstrate a controlled component approach with useState, show both onChange and onSubmit handlers, include e.preventDefault() to prevent page reload, use the spread operator for immutable state updates, and add brief inline comments explaining each part. This level of detail earns full marks for both code correctness and conceptual understanding.</p>
+</div>
+</div>
+
+<div class="subsection">
+<h3>The Virtual DOM</h3>
+
+<p>The Virtual DOM is React's most distinctive technical innovation and one of the most commonly examined concepts in university papers. To understand it, consider the alternative: every time application state changes, React could directly manipulate the real DOM — finding the affected elements, removing old content, and inserting new content. The problem is that DOM operations are expensive. The browser's DOM is a complex, heavyweight data structure: every DOM element carries dozens of properties (layout information, event handlers, style cascades), and modifying an element can trigger a cascade of browser activities — recalculating styles, reflowing the layout, and repainting pixels. These operations are computationally expensive and can cause visible lag, especially in complex interfaces with hundreds of elements.</p>
+
+<p>React's solution is elegant: instead of immediately updating the real DOM when state changes, React creates a lightweight JavaScript object that represents the desired state of the DOM — this is the Virtual DOM. It is "virtual" because it exists only in JavaScript memory as a plain object tree, without any of the heavyweight properties that real DOM nodes carry. Creating and comparing these lightweight objects is fast. When a component's state changes, React creates a new Virtual DOM tree (representing what the UI should look like after the state change) and compares it with the previous Virtual DOM tree. This comparison process, called <strong>diffing</strong>, identifies exactly which parts of the UI have changed. React then calculates the minimal set of real DOM operations needed to bring the actual DOM in sync with the new Virtual DOM — perhaps only three text updates and one class name change, even though the component tree contains hundreds of elements. These operations are batched and applied in a single transaction, minimizing the number of expensive layout recalculations and repaints the browser must perform.</p>
+
+<div class="figure">
+<svg viewBox="0 0 780 260" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Virtual DOM diffing process">
+  <!-- Step 1: State Change -->
+  <rect x="10" y="40" width="130" height="80" rx="6" fill="#c45a3c" stroke="#a04430" stroke-width="1.5"/>
+  <text x="75" y="72" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#fff">State</text>
+  <text x="75" y="90" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#fff">Changes</text>
+  <text x="75" y="108" text-anchor="middle" font-family="Source Serif 4, serif" font-size="8" fill="#f0ead9">setState()</text>
+
+  <line x1="145" y1="80" x2="175" y2="80" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrH)"/>
+
+  <!-- Step 2: New Virtual DOM -->
+  <rect x="180" y="40" width="130" height="80" rx="6" fill="#3d6b6e" stroke="#2a5558" stroke-width="1.5"/>
+  <text x="245" y="68" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#fff">New</text>
+  <text x="245" y="85" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#fff">Virtual DOM</text>
+  <text x="245" y="108" text-anchor="middle" font-family="Source Serif 4, serif" font-size="8" fill="#b8d4ba">Lightweight tree</text>
+
+  <line x1="315" y1="80" x2="345" y2="80" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrH)"/>
+
+  <!-- Step 3: Diff -->
+  <rect x="350" y="40" width="130" height="80" rx="6" fill="#c9a84c" stroke="#a08430" stroke-width="1.5"/>
+  <text x="415" y="68" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#2c1810">Diff</text>
+  <text x="415" y="88" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#2c1810">Compare old</text>
+  <text x="415" y="105" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#2c1810">vs new tree</text>
+
+  <line x1="485" y1="80" x2="515" y2="80" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrH)"/>
+
+  <!-- Step 4: Reconciliation -->
+  <rect x="520" y="40" width="130" height="80" rx="6" fill="#5a8a5e" stroke="#3d6b40" stroke-width="1.5"/>
+  <text x="585" y="68" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#fff">Reconcile</text>
+  <text x="585" y="88" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#e8f5e9">Calculate min</text>
+  <text x="585" y="105" text-anchor="middle" font-family="Source Serif 4, serif" font-size="9" fill="#e8f5e9">DOM operations</text>
+
+  <line x1="655" y1="80" x2="685" y2="80" stroke="#c9a84c" stroke-width="2" marker-end="url(#arrH)"/>
+
+  <!-- Step 5: Real DOM Update -->
+  <rect x="690" y="40" width="80" height="80" rx="6" fill="#2c1810" stroke="#2c1810" stroke-width="1.5"/>
+  <text x="730" y="72" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#f5f0e8">Real</text>
+  <text x="730" y="90" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#f5f0e8">DOM</text>
+  <text x="730" y="108" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#c9a84c">Updated</text>
+
+  <!-- Summary -->
+  <rect x="10" y="160" width="760" height="80" rx="6" fill="#faf7f2" stroke="#d4cbb8" stroke-width="1"/>
+  <text x="390" y="188" text-anchor="middle" font-family="Playfair Display, serif" font-size="12" font-weight="600" fill="#2c1810">Why This Is Faster Than Direct DOM Manipulation</text>
+  <text x="390" y="210" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">Virtual DOM objects are plain JavaScript objects — cheap to create and compare.</text>
+  <text x="390" y="228" text-anchor="middle" font-family="Source Serif 4, serif" font-size="10" fill="#6b5e52">Only the minimal set of real DOM changes is applied, avoiding unnecessary layout recalculations.</text>
+
+  <defs>
+    <marker id="arrH" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+    </marker>
+  </defs>
+</svg>
+<figcaption>Fig. 7 — The Virtual DOM process: state change triggers a new Virtual DOM tree, which is diffed against the old one, reconciled to find minimal changes, and applied to the real DOM.</figcaption>
+</div>
+
+</div>
+
+<div class="subsection">
+<h3>Axios vs. Fetch</h3>
+
+<p>When a React application needs to communicate with a back-end API (built with Express.js in the MERN stack), it must make HTTP requests. Two approaches dominate: the browser's built-in <code>fetch()</code> API and the third-party <code>axios</code> library. Understanding their differences is a frequent exam topic.</p>
+
+<p>The <code>fetch()</code> API is a native browser function — it requires no installation and is available in all modern browsers. It uses Promises and has a clean syntax: <code>fetch('/api/students').then(res => res.json()).then(data => console.log(data))</code>. However, fetch has several practical limitations that catch developers off guard. It does not automatically reject on HTTP error status codes — a request that returns a 404 or 500 status will still resolve successfully, requiring manual checking of <code>response.ok</code>. It does not automatically transform JSON responses — developers must explicitly call <code>response.json()</code>. It does not include request timeout functionality out of the box, and it requires more boilerplate for common tasks like setting headers and handling errors.</p>
+
+<p><strong>Axios</strong> is a popular third-party HTTP client library that wraps the XMLHttpRequest (or Node.js http module on the server side) and provides a more feature-rich interface. Axios automatically transforms JSON request and response data, automatically rejects Promises on HTTP errors (4xx and 5xx status codes), provides built-in request timeout support, offers request and response interceptors (allowing developers to globally add authentication headers or handle errors), and works consistently in both browser and Node.js environments. The syntax is slightly more concise: <code>axios.get('/api/students').then(res => console.log(res.data))</code>.</p>
+
+<table>
+<thead>
+<tr><th>Feature</th><th>fetch()</th><th>axios</th></tr>
+</thead>
+<tbody>
+<tr><td>Installation</td><td>Built-in (no install needed)</td><td>Third-party (npm install axios)</td></tr>
+<tr><td>JSON handling</td><td>Manual (.json() required)</td><td>Automatic</td></tr>
+<tr><td>Error handling</td><td>Does not reject on 4xx/5xx</td><td>Rejects on 4xx/5xx</td></tr>
+<tr><td>Timeout</td><td>Requires AbortController</td><td>Built-in timeout option</td></tr>
+<tr><td>Interceptors</td><td>Not supported</td><td>Supported</td></tr>
+<tr><td>Node.js support</td><td>Not native (needs polyfill)</td><td>Works in both environments</td></tr>
+<tr><td>Bundle size</td><td>0 KB (built-in)</td><td>~13 KB (minified)</td></tr>
+</tbody>
+</table>
+
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 7: NODE.JS -->
+<!-- ============================================================ -->
+<section class="section" id="sec-node">
+<div class="section-header">
+  <span class="section-number">§ 07</span>
+  <h2>Node.js — Installation, Simple Server, HTML &amp; JSON Response</h2>
+</div>
+
+<div class="subsection">
+<h3>Understanding Node.js</h3>
+
+<p>Node.js is a server-side JavaScript runtime environment built on Chrome's V8 JavaScript engine that allows developers to execute JavaScript code outside the browser — on servers, desktops, and embedded devices. Before Node.js was created by Ryan Dahl in 2009, JavaScript was almost exclusively a client-side language: it ran in browsers to make web pages interactive, but it could not be used for server-side programming, file system operations, database interactions, or any of the tasks typically performed by languages like Java, Python, or PHP. Node.js changed this entirely by extracting the V8 engine (the high-performance JavaScript engine that powers Google Chrome) and embedding it within a C++ program that provides access to operating system features — file systems, network interfaces, process management — through JavaScript APIs. Suddenly, JavaScript became a full-stack language, and the same developer who wrote browser-based user interfaces could also write server-side APIs, command-line tools, and real-time applications.</p>
+
+<p>Node.js's most distinctive architectural characteristic is its <strong>event-driven, non-blocking I/O model</strong>. Traditional server technologies (like Apache with PHP) create a new thread for each incoming request. When a request requires reading a file or querying a database, the thread blocks (waits idle) until the I/O operation completes, then resumes processing. This model works adequately for moderate traffic but becomes inefficient at scale: each blocked thread consumes memory and operating system resources, limiting the server's capacity to handle concurrent connections. Node.js takes a fundamentally different approach: it uses a single thread and an event loop. When an I/O operation is needed, Node.js delegates it to the operating system (or a thread pool for certain operations) and continues processing other requests without waiting. When the I/O operation completes, a callback function is placed in the event queue and executed by the event loop. This non-blocking model allows a single Node.js process to handle thousands of concurrent connections efficiently, making it particularly well-suited for I/O-heavy applications like web servers, real-time chat applications, and streaming services.</p>
+
+<div class="figure">
+<svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Node.js Event Loop">
+  <!-- Central Event Loop -->
+  <circle cx="350" cy="160" r="80" fill="none" stroke="#c45a3c" stroke-width="2.5" stroke-dasharray="8,4"/>
+  <text x="350" y="155" text-anchor="middle" font-family="Playfair Display, serif" font-size="16" font-weight="700" fill="#c45a3c">Event</text>
+  <text x="350" y="175" text-anchor="middle" font-family="Playfair Display, serif" font-size="16" font-weight="700" fill="#c45a3c">Loop</text>
+
+  <!-- V8 Engine -->
+  <rect x="295" y="260" width="110" height="45" rx="6" fill="#2c1810" stroke="#2c1810" stroke-width="1"/>
+  <text x="350" y="287" text-anchor="middle" font-family="DM Mono, monospace" font-size="10" fill="#c9a84c">V8 Engine</text>
+
+  <line x1="350" y1="245" x2="350" y2="255" stroke="#9a8e82" stroke-width="1.5" marker-end="url(#arrV)"/>
+
+  <!-- Input arrows -->
+  <rect x="30" y="50" width="120" height="50" rx="6" fill="#3d6b6e" stroke="#2a5558" stroke-width="1.5"/>
+  <text x="90" y="72" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#fff">HTTP Request</text>
+  <text x="90" y="88" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#b8d4ba">:3000</text>
+  <line x1="155" y1="75" x2="275" y2="140" stroke="#3d6b6e" stroke-width="1.5" marker-end="url(#arrV2)"/>
+
+  <rect x="30" y="130" width="120" height="50" rx="6" fill="#3d6b6e" stroke="#2a5558" stroke-width="1.5"/>
+  <text x="90" y="152" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#fff">File Read</text>
+  <text x="90" y="168" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#b8d4ba">fs.readFile()</text>
+  <line x1="155" y1="155" x2="275" y2="158" stroke="#3d6b6e" stroke-width="1.5" marker-end="url(#arrV2)"/>
+
+  <rect x="30" y="210" width="120" height="50" rx="6" fill="#3d6b6e" stroke="#2a5558" stroke-width="1.5"/>
+  <text x="90" y="232" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#fff">DB Query</text>
+  <text x="90" y="248" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#b8d4ba">MongoDB.find()</text>
+  <line x1="155" y1="235" x2="275" y2="180" stroke="#3d6b6e" stroke-width="1.5" marker-end="url(#arrV2)"/>
+
+  <!-- Output arrows -->
+  <rect x="550" y="50" width="120" height="50" rx="6" fill="#5a8a5e" stroke="#3d6b40" stroke-width="1.5"/>
+  <text x="610" y="72" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#fff">Response</text>
+  <text x="610" y="88" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#e8f5e9">res.send()</text>
+  <line x1="425" y1="140" x2="545" y2="75" stroke="#5a8a5e" stroke-width="1.5" marker-end="url(#arrV3)"/>
+
+  <rect x="550" y="130" width="120" height="50" rx="6" fill="#5a8a5e" stroke="#3d6b40" stroke-width="1.5"/>
+  <text x="610" y="152" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#fff">Callback</text>
+  <text x="610" y="168" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#e8f5e9">Data ready</text>
+  <line x1="425" y1="158" x2="545" y2="155" stroke="#5a8a5e" stroke-width="1.5" marker-end="url(#arrV3)"/>
+
+  <rect x="550" y="210" width="120" height="50" rx="6" fill="#5a8a5e" stroke="#3d6b40" stroke-width="1.5"/>
+  <text x="610" y="232" text-anchor="middle" font-family="DM Mono, monospace" font-size="9" fill="#fff">Promise</text>
+  <text x="610" y="248" text-anchor="middle" font-family="DM Mono, monospace" font-size="8" fill="#e8f5e9">Resolved</text>
+  <line x1="425" y1="180" x2="545" y2="235" stroke="#5a8a5e" stroke-width="1.5" marker-end="url(#arrV3)"/>
+
+  <!-- Title -->
+  <text x="350" y="25" text-anchor="middle" font-family="Playfair Display, serif" font-size="14" font-weight="600" fill="#2c1810">Node.js Event-Driven Architecture</text>
+
+  <defs>
+    <marker id="arrV" markerWidth="8" markerHeight="6" refX="4" refY="6" orient="auto">
+      <path d="M0,0 L4,6 L8,0" fill="none" stroke="#9a8e82" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrV2" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#3d6b6e" stroke-width="1.5"/>
+    </marker>
+    <marker id="arrV3" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L8,3 L0,6" fill="none" stroke="#5a8a5e" stroke-width="1.5"/>
+    </marker>
+  </defs>
+</svg>
+<figcaption>Fig. 8 — The Node.js event loop architecture: asynchronous operations (HTTP requests, file reads, database queries) are delegated to the system, and callbacks are processed when results are available — all on a single thread.</figcaption>
+</div>
+
+</div>
+
+<div class="subsection">
+<h3>Installing Node.js</h3>
+
+<p>Node.js is installed by downloading the official installer from nodejs.org, which includes both the Node.js runtime and npm (Node Package Manager). The LTS (Long Term Support) version is recommended for production applications because it receives stability updates and security patches for an extended period, while the Current version includes the latest features but may have breaking changes. After installation, the commands <code>node --version</code> and <code>npm --version</code> verify that both tools are correctly installed and accessible from the command line. Node.js can also be installed via version managers like <strong>nvm</strong> (Node Version Manager), which allows developers to install and switch between multiple Node.js versions on the same machine — useful when different projects require different versions.</p>
+</div>
+
+<div class="subsection">
+<h3>Creating a Simple Server</h3>
+
+<p>Creating a basic HTTP server with Node.js requires only a few lines of code using the built-in <code>http</code> module, and this example appears frequently in university examinations:</p>
+
+<pre><span class="kw">const</span> http = <span class="fn">require</span>(<span class="str">'http'</span>);
+
+<span class="kw">const</span> server = http.<span class="fn">createServer</span>((req, res) => {
+  res.<span class="fn">writeHead</span>(<span class="num">200</span>, { <span class="str">'Content-Type'</span>: <span class="str">'text/plain'</span> });
+  res.<span class="fn">end</span>(<span class="str">'Hello from Node.js server!'</span>);
+});
+
+server.<span class="fn">listen</span>(<span class="num">3000</span>, () => {
+  console.<span class="fn">log</span>(<span class="str">'Server running at http://localhost:3000/'</span>);
+});</pre>
+
+<p>This code demonstrates the essential pattern: import the <code>http</code> module, create a server with a callback function that receives the request (<code>req</code>) and response (<code>res</code>) objects, set the response status code and headers with <code>writeHead</code>, send the response body with <code>end</code>, and bind the server to a port with <code>listen</code>. The callback function executes every time an HTTP request arrives at the server, regardless of the URL or HTTP method.</p>
+
+<p>When using Express.js (which is far more common in MERN applications), the same server setup is simplified dramatically because Express abstracts the raw http module:</p>
+
+<pre><span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> app = <span class="fn">express</span>();
+
+app.<span class="fn">listen</span>(<span class="num">3000</span>, () => {
+  console.<span class="fn">log</span>(<span class="str">'Express server on port 3000'</span>);
+});</pre>
+</div>
+
+<div class="subsection">
+<h3>Serving HTML and JSON Responses</h3>
+
+<p>A server's utility lies in its ability to send different types of responses depending on what the client requests. In a MERN stack application, the Express server primarily serves JSON responses (for API endpoints consumed by the React front-end), but understanding how to serve HTML is also important for exam questions and for applications that include server-rendered pages.</p>
+
+<h4>Serving an HTML Response</h4>
+
+<pre><span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> app = <span class="fn">express</span>();
+
+app.<span class="fn">get</span>(<span class="str">'/'</span>, (req, res) => {
+  res.<span class="fn">send</span>(<span class="str">`
+    &lt;!DOCTYPE html&gt;
+    &lt;html&gt;
+    &lt;head&gt;&lt;title&gt;MERN App&lt;/title&gt;&lt;/head&gt;
+    &lt;body&gt;
+      &lt;h1&gt;Welcome to the MERN Stack&lt;/h1&gt;
+      &lt;p&gt;This HTML was sent by Express.&lt;/p&gt;
+    &lt;/body&gt;
+    &lt;/html&gt;
+  `</span>);
+});
+
+app.<span class="fn">listen</span>(<span class="num">3000</span>);</pre>
+
+<p>The <code>res.send()</code> method in Express automatically sets the <code>Content-Type</code> header based on the type of argument passed. When passed a string that looks like HTML, Express typically sets the content type to <code>text/html</code>. For more explicit control, developers can use <code>res.type('html')</code> before calling <code>res.send()</code>, or use <code>res.sendFile()</code> to serve an HTML file from the filesystem.</p>
+
+<h4>Serving a JSON Response</h4>
+
+<pre><span class="kw">const</span> express = <span class="fn">require</span>(<span class="str">'express'</span>);
+<span class="kw">const</span> app = <span class="fn">express</span>();
+
+app.<span class="fn">get</span>(<span class="str">'/api/students'</span>, (req, res) => {
+  <span class="kw">const</span> students = [
+    { id: <span class="num">1</span>, name: <span class="str">'Aarav'</span>, dept: <span class="str">'CSE'</span> },
+    { id: <span class="num">2</span>, name: <span class="str">'Priya'</span>, dept: <span class="str">'IT'</span> },
+    { id: <span class="num">3</span>, name: <span class="str">'Rohan'</span>, dept: <span class="str">'ECE'</span> }
+  ];
+  res.<span class="fn">json</span>(students);
+});
+
+app.<span class="fn">get</span>(<span class="str">'/api/students/:id'</span>, (req, res) => {
+  res.<span class="fn">json</span>({
+    message: <span class="str">`Student with ID: </span>${req.params.id}<span class="str">`</span>,
+    requestedAt: <span class="kw">new</span> <span class="fn">Date</span>().<span class="fn">toISOString</span>()
+  });
+});
+
+app.<span class="fn">listen</span>(<span class="num">3000</span>);</pre>
+
+<p>The <code>res.json()</code> method serializes the provided JavaScript object (or array) to a JSON string using <code>JSON.stringify()</code>, sets the <code>Content-Type</code> header to <code>application/json</code>, and sends the response. This is the method used in virtually every MERN stack API endpoint because the React front-end expects to receive JSON data that it can parse and render as components. The distinction between <code>res.send()</code> (which can send strings, buffers, or objects) and <code>res.json()</code> (which exclusively sends JSON) is a common exam question, and students should be able to explain when each is appropriate.</p>
+
+<div class="exam-tip">
+<p><strong>Node.js Server Exam Question (5 marks):</strong> When asked to "write a simple Node.js server" or "explain how to create a server using Node.js," include: (1) importing the http or express module, (2) creating a server instance, (3) defining a request handler function with req and res parameters, (4) setting the response status and content type, (5) sending the response body, and (6) calling listen() with a port number. Mention the difference between serving HTML (res.send with HTML string) and JSON (res.json with object). This comprehensive approach covers both the code and the conceptual explanation.</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 8: COMPARISON TABLES -->
+<!-- ============================================================ -->
+<section class="section" id="sec-comparisons">
+<div class="section-header">
+  <span class="section-number">§ 08</span>
+  <h2>Comparison Tables &amp; Analytical Distinctions</h2>
+</div>
+
+<div class="subsection">
+<h3>MongoDB vs. MySQL</h3>
+
+<p>This comparison is one of the most frequently asked questions in university examinations, appearing in previous year papers with marks ranging from 5 to 10. A comprehensive answer requires discussing differences across multiple dimensions: data model, schema, query language, scalability, performance, and use cases.</p>
+
+<table>
+<thead>
+<tr><th>Parameter</th><th>MongoDB</th><th>MySQL</th></tr>
+</thead>
+<tbody>
+<tr><td><strong>Data Model</strong></td><td>Document-oriented (JSON/BSON documents)</td><td>Relational (rows and columns in tables)</td></tr>
+<tr><td><strong>Schema</strong></td><td>Flexible / schema-less; documents in the same collection can have different fields</td><td>Fixed schema; all rows must conform to table structure defined at creation</td></tr>
+<tr><td><strong>Query Language</strong></td><td>MongoDB Query Language (MQL) — JSON-like syntax</td><td>Structured Query Language (SQL) — declarative, text-based</td></tr>
+<tr><td><strong>Data Storage</strong></td><td>Collections → Documents (BSON format); supports nested objects and arrays natively</td><td>Tables → Rows → Columns; normalized data across related tables with foreign keys</td></tr>
+<tr><td><strong>Relationships</strong></td><td>Embedding (nested documents) or referencing (ObjectId links); no native JOIN</td><td>Foreign keys with JOIN operations; strong referential integrity enforcement</td></tr>
+<tr><td><strong>Scalability</strong></td><td>Horizontal scaling (sharding across multiple servers); designed for distributed systems</td><td>Primarily vertical scaling (more powerful single server); horizontal scaling is complex</td></tr>
+<tr><td><strong>Performance</strong></td><td>Excellent for read-heavy, unstructured data; fast writes for embedded documents</td><td>Excellent for structured, relational queries; complex JOINs can be optimized with indexes</td></tr>
+<tr><td><strong>ACID Compliance</strong></td><td>Supports ACID transactions (since v4.0) but historically eventual consistency</td><td>Full ACID compliance by default (InnoDB engine)</td></tr>
+<tr><td><strong>Best Suited For</strong></td><td>Content management, real-time analytics, IoT, social media, rapid prototyping</td><td>E-commerce, banking, accounting, ERP systems, applications requiring strict data integrity</td></tr>
+<tr><td><strong>Example Query</strong></td><td>db.users.find({age: {$gt: 21}})</td><td>SELECT * FROM users WHERE age > 21;</td></tr>
+</tbody>
+</table>
+
+<div class="exam-tip">
+<p><strong>Comparison Answer Structure (10 marks):</strong> Begin with a one-sentence introduction stating that MongoDB and MySQL represent two fundamentally different database paradigms. Then discuss differences across 6–8 parameters in a table or paragraph format, giving 2–3 sentences for each parameter. Conclude with a paragraph explaining that the choice between them depends on the application's requirements — neither is universally superior. Include a real-world example of each (MongoDB for a social media app, MySQL for a banking system).</p>
+</div>
+</div>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- SECTION 9: EXAM PREPARATION -->
+<!-- ============================================================ -->
+<section class="section" id="sec-exam">
+<div class="section-header">
+  <span class="section-number">§ 09</span>
+  <h2>Exam Preparation — Revision, Questions &amp; Answer Guides</h2>
+</div>
+
+<div class="subsection revision-card">
+<h3 style="color: var(--accent); margin-bottom: 0.8em;">Ultra-Condensed Revision Sheet</h3>
+<ul>
+  <li><strong>CMS:</strong> Software for creating/managing digital content without coding. Separates content (database) from presentation (templates). Advantages: ease of use, rapid development, collaboration, extensibility. Disadvantages: performance overhead, security risks, plugin bloat, limited deep customization.</li>
+  <li><strong>WordPress:</strong> Most popular CMS (43%+ of web). PHP + MySQL. Theme system, plugin architecture with hooks (actions/filters), Gutenberg block editor, role-based access.</li>
+  <li><strong>Website Publishing Stages:</strong> Planning → Content Creation → Development → Testing → Deployment. Tools: Figma, VS Code, Git, Selenium, AWS/Heroku.</li>
+  <li><strong>Sitemap:</strong> Visual (hierarchical page diagram for planning) and XML (machine-readable file for search engines).</li>
+  <li><strong>Responsive Design:</strong> viewport meta tag + CSS media queries + flexible grids (Flexbox/Grid) + responsive images (srcset, max-width:100%).</li>
+  <li><strong>MERN Stack:</strong> MongoDB (database), Express.js (server framework), React (UI library), Node.js (runtime). JavaScript everywhere. JSON data flow end-to-end.</li>
+  <li><strong>MongoDB:</strong> NoSQL document database. Databases → Collections → Documents (BSON). Flexible schema. _id as primary key. CRUD: insertOne/Many, find/findOne, updateOne/Many ($set, $inc, $push), deleteOne/Many.</li>
+  <li><strong>Embedding vs. Referencing:</strong> Embedding = nested documents (fast reads, atomic updates). Referencing = ObjectId links (normalized, shared data).</li>
+  <li><strong>Express.js:</strong> Node.js web framework. Routing (GET/POST/PUT/DELETE), middleware pipeline (express.json(), cors(), custom auth), route parameters (:id), express.Router().</li>
+  <li><strong>React:</strong> Declarative, component-based UI library. JSX = JS + HTML syntax. Props (read-only, parent→child) vs. State (mutable, component-owned). Virtual DOM for performance.</li>
+  <li><strong>Class vs Functional Components:</strong> Class = ES6 class + render() + lifecycle methods. Functional = function + Hooks (useState, useEffect). Functional is modern standard.</li>
+  <li><strong>Lifecycle:</strong> Mounting (constructor → render → componentDidMount), Updating (setState → shouldComponentUpdate → render → componentDidUpdate), Unmounting (componentWillUnmount).</li>
+  <li><strong>Forms:</strong> Controlled components — input value from state, onChange updates state, onSubmit with preventDefault().</li>
+  <li><strong>Node.js:</strong> V8 engine outside browser. Event-driven, non-blocking I/O. http.createServer for raw server, Express for structured apps. res.send() for HTML, res.json() for JSON.</li>
+  <li><strong>Axios vs Fetch:</strong> Axios = auto JSON, rejects on errors, interceptors, timeout. Fetch = built-in, manual JSON, doesn't reject on 4xx/5xx.</li>
+  <li><strong>MongoDB vs MySQL:</strong> Document vs Relational. Flexible vs Fixed schema. Horizontal vs Vertical scaling. MQL vs SQL.</li>
+</ul>
+</div>
+
+<details>
+<summary>Most Likely Exam Questions (PYQ Pattern)</summary>
+<div class="details-body">
+<ol class="questions-list">
+  <li>What is a CMS? What are its advantages and disadvantages? List any two popular CMS. <span class="mark-badge mark-5">5 marks</span></li>
+  <li>What is WordPress, and how does it differ from other CMS platforms? <span class="mark-badge mark-5">5 marks</span></li>
+  <li>What is a sitemap and its use? How to make a website responsive across resolutions? <span class="mark-badge mark-5">5 marks</span></li>
+  <li>List and explain the stages of publishing a website. Discuss tools and techniques at each stage. <span class="mark-badge mark-10">10 marks</span></li>
+  <li>Explain what React is and its core principles. <span class="mark-badge mark-5">5 marks</span></li>
+  <li>What are the differences between React class components and functional components? <span class="mark-badge mark-5">5 marks</span></li>
+  <li>Describe the purpose of JSX in React. How does JSX help in writing React components? <span class="mark-badge mark-5">5 marks</span></li>
+  <li>Describe the component lifecycle in Class components using React JS. <span class="mark-badge mark-10">10 marks</span></li>
+  <li>How does Axios differ from fetch() for making API requests? <span class="mark-badge mark-5">5 marks</span></li>
+  <li>Write a React component that renders a form with name and email fields, and logs the data on submission. <span class="mark-badge mark-5">5 marks</span></li>
+  <li>What is the Virtual DOM and how does it improve performance? <span class="mark-badge mark-5">5 marks</span></li>
+  <li>Compare MongoDB with MySQL in terms of data storage, performance, and scalability. <span class="mark-badge mark-10">10 marks</span></li>
+  <li>Explain the MERN stack architecture with a neat diagram. <span class="mark-badge mark-10">10 marks</span></li>
+  <li>Explain Express.js routing with suitable examples. <span class="mark-badge mark-5">5 marks</span></li>
+  <li>Write a Node.js server that serves HTML and JSON responses for different routes. <span class="mark-badge mark-5">5 marks</span></li>
+</ol>
+</div>
+</details>
+
+<details>
+<summary>How to Structure a 10-Mark Long Answer</summary>
+<div class="details-body">
+<p>A 10-mark answer in an Indian university examination should typically span 400–600 words and follow a clear, structured format. Here is a reliable template:</p>
+
+<p><strong>1. Opening Definition (2 marks):</strong> Begin with a crisp, textbook-quality definition of the concept. Use proper terminology. For example: "The Virtual DOM is a lightweight, in-memory JavaScript representation of the actual Document Object Model (DOM) maintained by React to optimize UI rendering performance."</p>
+
+<p><strong>2. Detailed Explanation (4 marks):</strong> Expand the definition into a thorough explanation covering how the concept works, its mechanism, and its components. Use 2–3 well-developed paragraphs. Include step-by-step descriptions where applicable.</p>
+
+<p><strong>3. Diagram (1 mark):</strong> Draw a neat, labeled diagram if the question involves architecture, flow, or process. Even if the question does not explicitly ask for a diagram, including one demonstrates thoroughness and earns goodwill from evaluators.</p>
+
+<p><strong>4. Example or Code (1 mark):</strong> Provide a concrete example — a code snippet, a real-world scenario, or a specific use case — that illustrates the concept in action.</p>
+
+<p><strong>5. Advantages/Significance (1 mark):</strong> Explain why this concept matters, what advantages it offers, or what problem it solves.</p>
+
+<p><strong>6. Limitations or Comparison (1 mark):</strong> Mention any limitations, or compare with an alternative approach to show analytical depth. This is the "bonus" section that elevates a good answer to an excellent one.</p>
+
+<p>This six-part structure works for virtually any technical topic and ensures that the answer is comprehensive, well-organized, and easy for the examiner to evaluate — which directly translates to higher marks.</p>
+</div>
+</details>
+
+<details>
+<summary>What Professors Usually Look For</summary>
+<div class="details-body">
+<ul style="padding-left: 1.2em;">
+  <li><strong>Definitions must be precise.</strong> Do not paraphrase loosely — use standard technical terminology.</li>
+  <li><strong>Diagrams earn marks.</strong> Even rough, hand-drawn diagrams with proper labels demonstrate understanding. Always label components, arrows, and flows.</li>
+  <li><strong>Code should be syntactically correct.</strong> Professors notice missing semicolons, incorrect function names, and wrong syntax. Practice writing code on paper.</li>
+  <li><strong>Comparison questions need structure.</strong> Use a table format or clearly numbered points. "Difference between X and Y" answers should present both sides simultaneously (point-by-point) rather than describing X fully and then Y fully.</li>
+  <li><strong>Advantages and disadvantages should be balanced.</strong> Three advantages and three disadvantages is a good rule of thumb for a 5-mark question. More for 10 marks.</li>
+  <li><strong>Examples make abstract concepts concrete.</strong> Instead of saying "Express routing allows handling different HTTP methods," say "For example, app.get('/students', ...) handles GET requests to retrieve student data, while app.post('/students', ...) handles POST requests to create new students."</li>
+  <li><strong>Do not leave any question blank.</strong> Even partial knowledge earns partial marks. Write what you know, structured clearly.</li>
+</ul>
+</div>
+</details>
+
+<details>
+<summary>Viva Voce Preparation — Key Questions &amp; Answers</summary>
+<div class="details-body">
+<div class="viva-box">
+<p><strong>Q: What is the difference between res.send() and res.json() in Express?</strong><br>
+A: <code>res.send()</code> is a general-purpose method that can send strings, buffers, or objects. When passed a string, it sends it as text/html by default. <code>res.json()</code> specifically serializes a JavaScript object to JSON using JSON.stringify(), sets the Content-Type to application/json, and sends it. In MERN stack APIs, res.json() is preferred because React expects JSON responses.</p>
+</div>
+
+<div class="viva-box">
+<p><strong>Q: Why do we need the express.json() middleware?</strong><br>
+A: By default, Express does not parse the request body. When a client sends data in a POST or PUT request with a JSON body, Express does not automatically convert that JSON string into a JavaScript object. The <code>express.json()</code> middleware intercepts incoming requests, checks if the Content-Type header is application/json, parses the body into a JavaScript object, and attaches it to <code>req.body</code>. Without this middleware, req.body would be undefined.</p>
+</div>
+
+<div class="viva-box">
+<p><strong>Q: What happens if you call setState() in the render() method of a React class component?</strong><br>
+A: It causes an infinite loop. Calling setState() triggers a re-render, which calls render() again, which calls setState() again, and so on indefinitely. React will eventually throw a "Maximum update depth exceeded" error. This is why data fetching and state updates must be performed in lifecycle methods like componentDidMount or componentDidUpdate, not in render().</p>
+</div>
+
+<div class="viva-box">
+<p><strong>Q: Why does MongoDB use _id as a default primary key?</strong><br>
+A: Every MongoDB document requires a unique identifier. If the application does not provide one during insertion, MongoDB automatically generates an _id field with an ObjectId value. The ObjectId is a 12-byte identifier composed of a 4-byte timestamp, a 5-byte random value, and a 3-byte incrementing counter. This design guarantees uniqueness across distributed systems without requiring coordination between servers, which aligns with MongoDB's horizontally scalable architecture.</p>
+</div>
+
+<div class="viva-box">
+<p><strong>Q: What is the purpose of e.preventDefault() in a React form's onSubmit handler?</strong><br>
+A: In a traditional HTML form, submitting the form triggers a full page reload — the browser sends an HTTP request to the form's action URL and loads the response as a new page. In a React single-page application, we want to handle form submission within JavaScript (sending data to an API via Axios or fetch) without reloading the page. <code>e.preventDefault()</code> prevents the browser's default form submission behavior, allowing the React handler to process the data and make API calls without disrupting the single-page experience.</p>
+</div>
+</div>
+</details>
+
+</section>
+
+<!-- ============================================================ -->
+<!-- FOOTER -->
+<!-- ============================================================ -->
+<footer class="page-footer">
+  <p>UNIT V — MERN STACK, CMS &amp; WEB APPLICATION DEPLOYMENT</p>
+  <p style="margin-top: 0.5em; color: var(--text-light);">Prepared for Indian University Examinations &middot; Comprehensive Study Guide &middot; May 2025</p>
+</footer>
+
+</div><!-- /.page-wrapper -->
+
+</body>
+</html>
