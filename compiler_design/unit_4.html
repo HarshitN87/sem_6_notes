@@ -633,7 +633,67 @@ t6 = t3 + t5</code></pre>
 </div>
 
 <p>For indirect triples, the pointer table has entries [ptr0, ptr1, ptr2, ptr3, ptr4, ptr5] pointing into the instruction pool, which contains the unique triples. Since triples 0 and 3 are identical (both compute <code>b - c</code>), the pool stores this triple once, and both ptr0 and ptr3 reference it — a natural space saving that also signals the common subexpression to the optimiser.</p>
-
+<div class="table-wrap">
+ <h3>Pointer Table</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>statement</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>0</td><td>(0)</td></tr>
+<tr><td>1</td><td>(1)</td></tr>
+<tr><td>2</td><td>(2)</td></tr>
+<tr><td>3</td><td>(3)</td></tr>
+<tr><td>4</td><td>(4)</td></tr>
+</tbody>
+</table>
+ <h3>Instruction Table</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>op</th>
+<th>arg1</th>
+<th>arg2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>(0)</td>
+<td>−</td>
+<td>b</td>
+<td>c</td>
+</tr>
+<tr>
+<td>(1)</td>
+<td>*</td>
+<td>a</td>
+<td>(0)</td>
+</tr>
+<tr>
+<td>(2)</td>
+<td>+</td>
+<td>a</td>
+<td>(1)</td>
+</tr>
+<tr>
+<td>(3)</td>
+<td>*</td>
+<td>(0)</td>
+<td>d</td>
+</tr>
+<tr>
+<td>(4)</td>
+<td>+</td>
+<td>(2)</td>
+<td>(3)</td>
+</tr>
+</tbody>
+</table>
+</div>
 <div class="box box-exam">
 <div class="box-title">✦ PYQ Alert</div>
 <p>"Construct quadruples, triples and indirect triples for: <code>m + m * (n - q) + (n - q) * p</code>" — This has appeared repeatedly in university exams. Note the structural similarity to the <code>a + a*(b-c) + (b-c)*d</code> example above. The pattern is identical: two repeated subexpressions, one multiplied on the left and one on the right, with the outermost addition combining them. Practice this pattern and you can handle any variant.</p>
