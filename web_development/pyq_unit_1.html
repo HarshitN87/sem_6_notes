@@ -1,0 +1,2960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Technology PYQs — Complete Answer Guide</title>
+<style>
+/* ─────────── RESET & ROOT ─────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#FAF6F0;
+  --surface:#FFFCF7;
+  --card:#FFFFFF;
+  --accent-rose:#E8B4B8;
+  --accent-blue:#B8D4E3;
+  --accent-gold:#F2D0A4;
+  --accent-sage:#A8C5A0;
+  --accent-lavender:#C4B6D6;
+  --accent-coral:#E8A598;
+  --text:#3D3229;
+  --text-muted:#7A6F63;
+  --border:#E8E0D4;
+  --code-bg:#2B2A28;
+  --code-text:#E8E4DC;
+  --heading-font:'Playfair Display',Georgia,'Times New Roman',serif;
+  --body-font:'Lora',Georgia,'Times New Roman',serif;
+  --mono-font:'Courier New',Courier,monospace;
+  --radius:12px;
+  --shadow:0 4px 20px rgba(61,50,41,0.08);
+  --shadow-hover:0 8px 32px rgba(61,50,41,0.14);
+}
+html{scroll-behavior:smooth;font-size:17px}
+body{
+  font-family:var(--body-font);
+  color:var(--text);
+  background:var(--bg);
+  line-height:1.72;
+  min-height:100vh;
+}
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events:none;z-index:0;
+}
+a{color:#8B5E3C;text-decoration:none;border-bottom:1px solid var(--accent-gold);transition:color .2s,border-color .2s}
+a:hover{color:#C0753A;border-color:#C0753A}
+
+/* ─────────── LAYOUT ─────────── */
+.wrapper{max-width:960px;margin:0 auto;padding:24px 20px 80px;position:relative;z-index:1}
+
+/* ─────────── HEADER ─────────── */
+.site-header{text-align:center;padding:48px 20px 36px;margin-bottom:12px}
+.site-header h1{
+  font-family:var(--heading-font);font-size:2.6rem;font-weight:700;
+  color:var(--text);letter-spacing:-.02em;line-height:1.2;margin-bottom:12px;
+}
+.site-header .subtitle{
+  font-size:1.05rem;color:var(--text-muted);max-width:600px;margin:0 auto;
+}
+.header-rule{
+  width:120px;height:3px;background:linear-gradient(90deg,var(--accent-rose),var(--accent-gold),var(--accent-sage));
+  border:none;margin:28px auto 0;border-radius:2px;
+}
+
+/* ─────────── TABLE OF CONTENTS ─────────── */
+.toc{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:28px 32px;margin-bottom:40px;box-shadow:var(--shadow);
+}
+.toc h2{font-family:var(--heading-font);font-size:1.35rem;margin-bottom:16px;color:var(--text);text-align:center}
+.toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 28px}
+.toc a{
+  display:block;padding:5px 0;font-size:.88rem;color:var(--text-muted);
+  border-bottom:none;transition:color .2s,padding-left .2s;
+}
+.toc a:hover{color:#8B5E3C;padding-left:6px}
+.toc a .toc-num{color:var(--accent-rose);font-weight:700;margin-right:6px}
+
+/* ─────────── SECTION ─────────── */
+.section{margin-bottom:48px}
+.section-title{
+  font-family:var(--heading-font);font-size:1.6rem;font-weight:700;
+  text-align:center;padding:18px 20px;margin-bottom:28px;
+  border-top:3px solid var(--accent-gold);border-bottom:3px solid var(--accent-gold);
+  color:var(--text);letter-spacing:-.01em;
+}
+
+/* ─────────── CARD ─────────── */
+.card{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:32px 36px;margin-bottom:28px;box-shadow:var(--shadow);
+  transition:box-shadow .3s ease;
+  animation:fadeUp .5s ease both;
+}
+.card:hover{box-shadow:var(--shadow-hover)}
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.card:nth-child(2){animation-delay:.05s}
+.card:nth-child(3){animation-delay:.1s}
+.card:nth-child(4){animation-delay:.15s}
+
+.card h3{
+  font-family:var(--heading-font);font-size:1.25rem;font-weight:700;
+  margin-bottom:16px;color:var(--text);line-height:1.35;
+  padding-bottom:10px;border-bottom:2px solid var(--accent-rose);
+}
+.card h3 .qnum{
+  display:inline-block;background:var(--accent-rose);color:#fff;
+  font-size:.72rem;padding:2px 10px;border-radius:20px;margin-right:10px;
+  font-family:var(--body-font);vertical-align:middle;letter-spacing:.03em;
+}
+.card h4{
+  font-family:var(--heading-font);font-size:1.05rem;font-weight:600;
+  margin:20px 0 10px;color:#5C4A3A;
+}
+.card h5{font-size:.95rem;font-weight:600;margin:14px 0 8px;color:#6B5845}
+
+.card p,.card li{font-size:.94rem;margin-bottom:10px}
+.card ul,.card ol{padding-left:22px;margin-bottom:14px}
+.card li{margin-bottom:6px}
+.card strong{color:#5C4A3A}
+
+/* ─────────── ANSWER LABEL ─────────── */
+.answer-label{
+  display:inline-block;background:var(--accent-sage);color:#fff;
+  font-size:.7rem;padding:2px 12px;border-radius:20px;margin-bottom:14px;
+  letter-spacing:.06em;text-transform:uppercase;font-weight:700;
+}
+
+/* ─────────── CODE BLOCKS ─────────── */
+.code-block{
+  background:var(--code-bg);color:var(--code-text);
+  border-radius:10px;padding:20px 24px;margin:16px 0;
+  font-family:var(--mono-font);font-size:.82rem;line-height:1.6;
+  overflow-x:auto;position:relative;border:1px solid #3D3B38;
+}
+.code-block .code-label{
+  position:absolute;top:0;right:0;
+  background:var(--accent-gold);color:#3D3229;
+  font-size:.62rem;padding:3px 14px;border-radius:0 10px 0 10px;
+  font-family:var(--body-font);letter-spacing:.05em;text-transform:uppercase;font-weight:700;
+}
+.code-block code{white-space:pre}
+/* Syntax highlighting */
+.kw{color:#F2D0A4}
+.str{color:#A8C5A0}
+.cmt{color:#6A6560;font-style:italic}
+.tag{color:#E8B4B8}
+.attr{color:#B8D4E3}
+.val{color:#A8C5A0}
+.fn{color:#C4B6D6}
+.num{color:#E8A598}
+
+/* ─────────── OUTPUT BLOCK ─────────── */
+.output-block{
+  background:#F5F0E8;border:1px dashed var(--accent-gold);border-radius:10px;
+  padding:14px 20px;margin:12px 0;font-family:var(--mono-font);font-size:.84rem;
+  color:#5C4A3A;
+}
+.output-block strong{font-family:var(--body-font);font-size:.78rem;color:var(--accent-gold);text-transform:uppercase;letter-spacing:.06em}
+
+/* ─────────── DIAGRAM BOX ─────────── */
+.diagram{
+  background:#F9F5EF;border:2px solid var(--border);border-radius:10px;
+  padding:20px;margin:16px 0;text-align:center;font-family:var(--mono-font);
+  font-size:.82rem;line-height:1.5;overflow-x:auto;color:#5C4A3A;
+}
+
+/* ─────────── TABLES ─────────── */
+.demo-table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.88rem}
+.demo-table th{
+  background:var(--accent-rose);color:#fff;padding:10px 14px;
+  text-align:left;font-weight:600;font-size:.82rem;letter-spacing:.02em;
+}
+.demo-table td{padding:9px 14px;border-bottom:1px solid var(--border)}
+.demo-table tr:nth-child(even){background:#FDF8F2}
+.demo-table tr:hover{background:#FBF2E8}
+
+/* ─────────── IMAGE MAP PLACEHOLDER ─────────── */
+.map-container{
+  border:2px solid var(--accent-gold);border-radius:10px;
+  padding:20px;margin:16px 0;background:#FDF8F2;text-align:center;
+}
+.map-container svg{max-width:100%;height:auto}
+
+/* ─────────── COLOR SWATCHES ─────────── */
+.swatch-row{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.swatch{width:40px;height:40px;border-radius:6px;border:1px solid var(--border)}
+
+/* ─────────── RESPONSIVE ─────────── */
+@media(max-width:700px){
+  html{font-size:15px}
+  .wrapper{padding:16px 12px 60px}
+  .card{padding:22px 18px}
+  .toc-grid{grid-template-columns:1fr}
+  .site-header h1{font-size:1.9rem}
+  .section-title{font-size:1.3rem}
+}
+@media print{
+  .toc{page-break-after:always}
+  .card{page-break-inside:avoid}
+}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="wrapper">
+
+<!-- ═══════════════════════════ HEADER ═══════════════════════════ -->
+<header class="site-header">
+  <h1>Web Technology — Previous Year Questions</h1>
+  <p class="subtitle">Complete, exam-ready answers with code examples, diagrams, and clear explanations. Every question answered in simple, student-friendly language.</p>
+  <hr class="header-rule">
+</header>
+
+<!-- ═══════════════════════════ TABLE OF CONTENTS ═══════════════════════════ -->
+<nav class="toc" id="toc">
+  <h2>Table of Contents</h2>
+  <div class="toc-grid">
+    <a href="#q1"><span class="toc-num">Q1.</span> Image Map + Frames + Form Elements</a>
+    <a href="#q2"><span class="toc-num">Q2.</span> Nested List (Computer System)</a>
+    <a href="#q3"><span class="toc-num">Q3.</span> HTML Table with Grid Values</a>
+    <a href="#q4"><span class="toc-num">Q4.</span> Semantic Tags in HTML5</a>
+    <a href="#q5"><span class="toc-num">Q5.</span> iframe, textarea, meta, radio</a>
+    <a href="#q6"><span class="toc-num">Q6.</span> Browser Role + Meta Tags</a>
+    <a href="#q7"><span class="toc-num">Q7.</span> Specification Table</a>
+    <a href="#q8"><span class="toc-num">Q8.</span> HTTP Protocol, Request &amp; Response</a>
+    <a href="#q9"><span class="toc-num">Q9.</span> History of WWW &amp; WWW vs Internet</a>
+    <a href="#q10"><span class="toc-num">Q10.</span> Effective Web Design</a>
+    <a href="#q11"><span class="toc-num">Q11.</span> HTML5 Features &amp; Semantic Elements</a>
+    <a href="#q12"><span class="toc-num">Q12.</span> WWW Definition &amp; Architecture</a>
+    <a href="#q13"><span class="toc-num">Q13.</span> method, action, enctype Attributes</a>
+    <a href="#q14"><span class="toc-num">Q14.</span> HTTP — Stateless Protocol</a>
+    <a href="#q15"><span class="toc-num">Q15.</span> HTML5 Form (Slider, Picker, etc.)</a>
+    <a href="#q16"><span class="toc-num">Q16.</span> DIV vs SPAN + HTML Tags</a>
+    <a href="#q17"><span class="toc-num">Q17.</span> HTML4 vs HTML5 + Audio/Video</a>
+    <a href="#q18"><span class="toc-num">Q18.</span> HTML4 vs HTML5 + JS Play/Pause</a>
+    <a href="#q19"><span class="toc-num">Q19.</span> Cross-Browser &amp; Bandwidth</a>
+    <a href="#q20"><span class="toc-num">Q20.</span> GET vs POST + Event Listeners</a>
+    <a href="#q21"><span class="toc-num">Q21.</span> CSS: Inline, Internal, External</a>
+    <a href="#q22"><span class="toc-num">Q22.</span> CSS Types + Country Capital</a>
+    <a href="#q23"><span class="toc-num">Q23.</span> Methods of Including CSS</a>
+    <a href="#q24"><span class="toc-num">Q24.</span> Tag for Internal Style Sheet</a>
+    <a href="#q25"><span class="toc-num">Q25.</span> Box Shadow, Text Shadow, Border Radius</a>
+    <a href="#q26"><span class="toc-num">Q26.</span> Fixed Background Image</a>
+    <a href="#q27"><span class="toc-num">Q27.</span> CSS Background Properties</a>
+    <a href="#q28"><span class="toc-num">Q28.</span> CSS Positioning Properties</a>
+    <a href="#q29"><span class="toc-num">Q29.</span> CSS Box Model + Margin vs Padding</a>
+    <a href="#q30"><span class="toc-num">Q30.</span> Box Model &amp; Layout Influence</a>
+    <a href="#q31"><span class="toc-num">Q31.</span> CSS Selectors (Element, Class, ID)</a>
+    <a href="#q32"><span class="toc-num">Q32.</span> Pseudo-classes vs Pseudo-elements</a>
+    <a href="#q33"><span class="toc-num">Q33.</span> Selectors &amp; Cascading Order</a>
+    <a href="#q34"><span class="toc-num">Q34.</span> Box Model + Selectors at Levels</a>
+    <a href="#q35"><span class="toc-num">Q35.</span> Calculate Width/Height from Box Model</a>
+    <a href="#q36"><span class="toc-num">Q36.</span> CSS Grid of Images + Hover</a>
+    <a href="#q37"><span class="toc-num">Q37.</span> Table with Alternating Rows</a>
+    <a href="#q38"><span class="toc-num">Q38.</span> CSS Effects (Links, Table, Text)</a>
+    <a href="#q39"><span class="toc-num">Q39.</span> Pseudo-classes, Pseudo-elements, Type Selectors</a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════ SECTION: HTML BASICS ═══════════════════════════ -->
+<div class="section">
+<h2 class="section-title">HTML — Fundamentals &amp; Elements</h2>
+
+<!-- ────── Q1 ────── -->
+<div class="card" id="q1">
+<h3><span class="qnum">Q1</span>What is an Image Map in HTML? Create a clickable Indian map with three states, use frames, and explain textarea, placeholder, radio buttons, and checkboxes.</h3>
+
+<span class="answer-label">Answer</span>
+
+<h4>What is an Image Map?</h4>
+<p>An <strong>image map</strong> in HTML is a feature that allows you to make different areas (or regions) of a single image clickable. Instead of slicing an image into multiple parts, you define clickable regions on the image using coordinates. When a user clicks on one of these regions, they are taken to a different URL or an action is performed.</p>
+<p>An image map is created using the <code>&lt;map&gt;</code> tag and <code>&lt;area&gt;</code> tag. The <code>&lt;img&gt;</code> tag uses the <code>usemap</code> attribute to connect to the map. Each <code>&lt;area&gt;</code> tag defines a clickable region with a shape (rect, circle, or polygon), coordinates, and a link.</p>
+
+<h4>Key Attributes:</h4>
+<ul>
+  <li><strong>usemap</strong> — used on the <code>&lt;img&gt;</code> tag to link the image to a map by name.</li>
+  <li><strong>name</strong> — used on the <code>&lt;map&gt;</code> tag to give it a unique identifier.</li>
+  <li><strong>shape</strong> — defines the shape of the clickable area: <code>rect</code>, <code>circle</code>, or <code>polygon</code>.</li>
+  <li><strong>coords</strong> — defines the coordinates of the clickable area.</li>
+  <li><strong>href</strong> — the URL to open when the area is clicked.</li>
+  <li><strong>title</strong> — tooltip text shown when hovering over the area.</li>
+</ul>
+
+<h4>Image Map Code (Indian Map with 3 Clickable States):</h4>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Indian Map Image Map<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>Clickable Indian Map<span class="tag">&lt;/h2&gt;</span>
+
+  <span class="cmt">&lt;!-- Image with usemap attribute --&gt;</span>
+  <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="str">"india-map.png"</span>
+       <span class="attr">usemap</span>=<span class="str">"#indiaMap"</span>
+       <span class="attr">alt</span>=<span class="str">"Map of India"</span>
+       <span class="attr">width</span>=<span class="str">"500"</span> <span class="attr">height</span>=<span class="str">"550"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- Map definition --&gt;</span>
+  <span class="tag">&lt;map</span> <span class="attr">name</span>=<span class="str">"indiaMap"</span><span class="tag">&gt;</span>
+
+    <span class="cmt">&lt;!-- Uttarakhand: circle shape --&gt;</span>
+    <span class="tag">&lt;area</span>
+      <span class="attr">shape</span>=<span class="str">"circle"</span>
+      <span class="attr">coords</span>=<span class="str">"260,120,35"</span>
+      <span class="attr">href</span>=<span class="str">"https://uk.gov.in/"</span>
+      <span class="attr">title</span>=<span class="str">"UK"</span>
+      <span class="attr">target</span>=<span class="str">"_blank"</span><span class="tag">&gt;</span>
+
+    <span class="cmt">&lt;!-- Uttar Pradesh: polygon shape --&gt;</span>
+    <span class="tag">&lt;area</span>
+      <span class="attr">shape</span>=<span class="str">"polygon"</span>
+      <span class="attr">coords</span>=<span class="str">"200,160,280,140,320,180,
+              310,240,240,250,190,210"</span>
+      <span class="attr">href</span>=<span class="str">"https://up.gov.in/en"</span>
+      <span class="attr">title</span>=<span class="str">"UP"</span>
+      <span class="attr">target</span>=<span class="str">"_blank"</span><span class="tag">&gt;</span>
+
+    <span class="cmt">&lt;!-- Rajasthan: rectangle shape --&gt;</span>
+    <span class="tag">&lt;area</span>
+      <span class="attr">shape</span>=<span class="str">"rect"</span>
+      <span class="attr">coords</span>=<span class="str">"80,150,200,280"</span>
+      <span class="attr">href</span>=<span class="str">"https://rajasthan.gov.in/"</span>
+      <span class="attr">title</span>=<span class="str">"RJ"</span>
+      <span class="attr">target</span>=<span class="str">"_blank"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;/map&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+
+<p><strong>How it works:</strong> The <code>&lt;img&gt;</code> tag has <code>usemap="#indiaMap"</code> which links it to the <code>&lt;map name="indiaMap"&gt;</code>. Inside the map, three <code>&lt;area&gt;</code> tags define clickable regions — a circle for Uttarakhand, a polygon for Uttar Pradesh, and a rectangle for Rajasthan. When a user clicks on any region, the corresponding government website opens in a new tab. The <code>title</code> attribute shows a tooltip ("UK", "UP", "RJ") when the user hovers over that region.</p>
+
+<h4>Dividing the Browser Window Using Frames:</h4>
+<p><strong>Frames</strong> allow you to divide the browser window into multiple sections, each loading a different HTML page. Although frames are deprecated in HTML5, they are still asked in exams. The <code>&lt;frameset&gt;</code> tag replaces the <code>&lt;body&gt;</code> tag.</p>
+
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="cmt">&lt;!-- frameset.html --&gt;</span>
+<span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Frames Example<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+
+<span class="cmt">&lt;!-- No &lt;body&gt; tag when using frames --&gt;</span>
+<span class="tag">&lt;frameset</span> <span class="attr">cols</span>=<span class="str">"30%,70%"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- Left frame: navigation --&gt;</span>
+  <span class="tag">&lt;frame</span> <span class="attr">src</span>=<span class="str">"menu.html"</span> <span class="attr">name</span>=<span class="str">"left"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- Right frame: content (divided into rows) --&gt;</span>
+  <span class="tag">&lt;frameset</span> <span class="attr">rows</span>=<span class="str">"20%,80%"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;frame</span> <span class="attr">src</span>=<span class="str">"header.html"</span> <span class="attr">name</span>=<span class="str">"top"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;frame</span> <span class="attr">src</span>=<span class="str">"content.html"</span> <span class="attr">name</span>=<span class="str">"main"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/frameset&gt;</span>
+
+<span class="tag">&lt;/frameset&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+
+<p>The <code>cols="30%,70%"</code> divides the window into two vertical columns. The right column is further divided horizontally using <code>rows="20%,80%"</code>. Each <code>&lt;frame&gt;</code> loads a separate HTML file. The <code>name</code> attribute allows links in one frame to target another frame.</p>
+
+<h4>Short Notes on Form Elements:</h4>
+
+<h5>Textarea:</h5>
+<p>The <code>&lt;textarea&gt;</code> tag creates a multi-line text input field. Unlike <code>&lt;input type="text"&gt;</code>, users can type multiple lines of text. You can control its size using <code>rows</code> and <code>cols</code> attributes. It is commonly used for comments, messages, and address fields.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;textarea</span> <span class="attr">rows</span>=<span class="str">"4"</span> <span class="attr">cols</span>=<span class="str">"40"</span>
+  <span class="attr">placeholder</span>=<span class="str">"Enter your message..."</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/textarea&gt;</span></code>
+</div>
+
+<h5>Placeholder Attribute:</h5>
+<p>The <code>placeholder</code> attribute provides a short hint or example text inside an input field. The text disappears when the user starts typing. It helps users understand what kind of information is expected in that field. It works with <code>&lt;input&gt;</code> and <code>&lt;textarea&gt;</code> tags.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"text"</span> <span class="attr">placeholder</span>=<span class="str">"Enter your name"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"email"</span> <span class="attr">placeholder</span>=<span class="str">"example@mail.com"</span><span class="tag">&gt;</span></code>
+</div>
+
+<h5>Radio Buttons:</h5>
+<p>Radio buttons let the user select <strong>only one option</strong> from a group of choices. All radio buttons in a group must have the same <code>name</code> attribute so that only one can be selected at a time. They are used for gender selection, payment method, etc.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;p&gt;</span>Select Gender:<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"radio"</span> <span class="attr">name</span>=<span class="str">"gender"</span> <span class="attr">value</span>=<span class="str">"male"</span><span class="tag">&gt;</span> Male
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"radio"</span> <span class="attr">name</span>=<span class="str">"gender"</span> <span class="attr">value</span>=<span class="str">"female"</span><span class="tag">&gt;</span> Female
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"radio"</span> <span class="attr">name</span>=<span class="str">"gender"</span> <span class="attr">value</span>=<span class="str">"other"</span><span class="tag">&gt;</span> Other</code>
+</div>
+
+<h5>Checkboxes:</h5>
+<p>Checkboxes allow the user to select <strong>multiple options</strong> simultaneously from a list of choices. Each checkbox works independently. Unlike radio buttons, more than one checkbox can be checked at the same time. They are used for hobbies, interests, agree to terms, etc.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;p&gt;</span>Select Hobbies:<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"checkbox"</span> <span class="attr">name</span>=<span class="str">"hobby"</span> <span class="attr">value</span>=<span class="str">"cricket"</span><span class="tag">&gt;</span> Cricket
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"checkbox"</span> <span class="attr">name</span>=<span class="str">"hobby"</span> <span class="attr">value</span>=<span class="str">"music"</span><span class="tag">&gt;</span> Music
+<span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"checkbox"</span> <span class="attr">name</span>=<span class="str">"hobby"</span> <span class="attr">value</span>=<span class="str">"reading"</span><span class="tag">&gt;</span> Reading</code>
+</div>
+</div>
+
+<!-- ────── Q2 ────── -->
+<div class="card" id="q2">
+<h3><span class="qnum">Q2</span>Create a nested list as given in the diagram (Computer System hierarchy).</h3>
+<span class="answer-label">Answer</span>
+<p>A <strong>nested list</strong> is a list inside another list. HTML supports ordered lists (<code>&lt;ol&gt;</code>), unordered lists (<code>&lt;ul&gt;</code>), and definition lists (<code>&lt;dl&gt;</code>). You can place any type of list inside another to represent hierarchy. In this example, we create a hierarchy: Computer System → Input Devices → Keyboard, Mouse, etc., and Output Devices → Monitor, Printer, etc.</p>
+
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Nested List<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>Computer System<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;ul&gt;</span>
+    <span class="tag">&lt;li&gt;</span>Input Devices
+      <span class="tag">&lt;ul&gt;</span>
+        <span class="tag">&lt;li&gt;</span>Keyboard<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>Mouse<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>Scanner<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>Microphone<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>Joystick<span class="tag">&lt;/li&gt;</span>
+      <span class="tag">&lt;/ul&gt;</span>
+    <span class="tag">&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span>Output Devices
+      <span class="tag">&lt;ul&gt;</span>
+        <span class="tag">&lt;li&gt;</span>Monitor<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>Printer<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>Speakers<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>Projector<span class="tag">&lt;/li&gt;</span>
+      <span class="tag">&lt;/ul&gt;</span>
+    <span class="tag">&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span>Storage Devices
+      <span class="tag">&lt;ul&gt;</span>
+        <span class="tag">&lt;li&gt;</span>Hard Disk<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>SSD<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>Pen Drive<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>CD/DVD<span class="tag">&lt;/li&gt;</span>
+      <span class="tag">&lt;/ul&gt;</span>
+    <span class="tag">&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span>Processing Unit
+      <span class="tag">&lt;ul&gt;</span>
+        <span class="tag">&lt;li&gt;</span>CPU (Central Processing Unit)<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>GPU (Graphics Processing Unit)<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>RAM (Memory)<span class="tag">&lt;/li&gt;</span>
+      <span class="tag">&lt;/ul&gt;</span>
+    <span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+
+<div class="output-block">
+<strong>Output:</strong><br>
+<b>Computer System</b><br>
+• Input Devices<br>
+&nbsp;&nbsp;◦ Keyboard<br>
+&nbsp;&nbsp;◦ Mouse<br>
+&nbsp;&nbsp;◦ Scanner<br>
+&nbsp;&nbsp;◦ Microphone<br>
+&nbsp;&nbsp;◦ Joystick<br>
+• Output Devices<br>
+&nbsp;&nbsp;◦ Monitor<br>
+&nbsp;&nbsp;◦ Printer<br>
+&nbsp;&nbsp;◦ Speakers<br>
+&nbsp;&nbsp;◦ Projector<br>
+• Storage Devices<br>
+&nbsp;&nbsp;◦ Hard Disk / SSD / Pen Drive / CD/DVD<br>
+• Processing Unit<br>
+&nbsp;&nbsp;◦ CPU / GPU / RAM
+</div>
+</div>
+
+<!-- ────── Q3 ────── -->
+<div class="card" id="q3">
+<h3><span class="qnum">Q3</span>Create a structure using HTML tables holding grid values (A, B, C, D, E, F, G, H, I).</h3>
+<span class="answer-label">Answer</span>
+<p>HTML tables are created using the <code>&lt;table&gt;</code> tag. The table is organized into rows using <code>&lt;tr&gt;</code> (table row), header cells using <code>&lt;th&gt;</code> (table header), and data cells using <code>&lt;td&gt;</code> (table data). Here we create a 3×3 grid with values A through I.</p>
+
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Grid Table<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    table {
+      border-collapse: collapse;
+      width: 300px;
+      margin: 20px auto;
+    }
+    td {
+      border: 2px solid #333;
+      padding: 20px;
+      text-align: center;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h2</span> <span class="attr">align</span>=<span class="str">"center"</span><span class="tag">&gt;</span>3x3 Grid Table<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;table&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td&gt;</span>A<span class="tag">&lt;/td&gt;</span>
+      <span class="tag">&lt;td&gt;</span>B<span class="tag">&lt;/td&gt;</span>
+      <span class="tag">&lt;td&gt;</span>C<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td&gt;</span>D<span class="tag">&lt;/td&gt;</span>
+      <span class="tag">&lt;td&gt;</span>E<span class="tag">&lt;/td&gt;</span>
+      <span class="tag">&lt;td&gt;</span>F<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;td&gt;</span>G<span class="tag">&lt;/td&gt;</span>
+      <span class="tag">&lt;td&gt;</span>H<span class="tag">&lt;/td&gt;</span>
+      <span class="tag">&lt;td&gt;</span>I<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/table&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+
+<div class="output-block">
+<strong>Output (Visual Grid):</strong><br>
+┌───┬───┬───┐<br>
+│ A │ B │ C │<br>
+├───┼───┼───┤<br>
+│ D │ E │ F │<br>
+├───┼───┼───┤<br>
+│ G │ H │ I │<br>
+└───┴───┴───┘
+</div>
+</div>
+
+<!-- ────── Q4 ────── -->
+<div class="card" id="q4">
+<h3><span class="qnum">Q4</span>What are semantic tags in HTML5? Explain any 5 semantic tags.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>What are Semantic Tags?</h4>
+<p><strong>Semantic tags</strong> in HTML5 are tags that carry meaningful information about the content they contain. Instead of using generic containers like <code>&lt;div&gt;</code> for everything, semantic tags clearly describe the purpose and structure of the content. For example, <code>&lt;header&gt;</code> tells the browser and developer that the content inside is a header section, while a <code>&lt;div&gt;</code> tells us nothing about what it contains.</p>
+<p>Before HTML5, developers used <code>&lt;div&gt;</code> tags with class or id names like <code>&lt;div class="header"&gt;</code> or <code>&lt;div id="navigation"&gt;</code>. HTML5 introduced semantic elements that make the code more readable, accessible, and easier for search engines to understand. Semantic tags also help screen readers (used by visually impaired users) navigate through a web page more effectively.</p>
+<p>The main benefits of semantic tags include: <strong>better readability</strong> of code, <strong>improved SEO</strong> (search engine optimization) because search engines can better understand page structure, <strong>accessibility</strong> for assistive technologies, and <strong>easier maintenance</strong> of code since developers can quickly identify different sections of a page.</p>
+
+<h4>Five Important Semantic Tags:</h4>
+
+<h5>1. &lt;header&gt;</h5>
+<p>The <code>&lt;header&gt;</code> tag defines the introductory content or navigational aids of a page or section. It typically contains the logo, site title, navigation bar, and search form. A page can have multiple <code>&lt;header&gt;</code> elements — one for the entire page and others for individual sections or articles.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;header&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>My Website<span class="tag">&lt;/h1&gt;</span>
+  <span class="tag">&lt;nav&gt;</span>
+    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span><span class="tag">&gt;</span>Home<span class="tag">&lt;/a&gt;</span> |
+    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span><span class="tag">&gt;</span>About<span class="tag">&lt;/a&gt;</span>
+  <span class="tag">&lt;/nav&gt;</span>
+<span class="tag">&lt;/header&gt;</span></code>
+</div>
+
+<h5>2. &lt;nav&gt;</h5>
+<p>The <code>&lt;nav&gt;</code> tag defines a section that contains navigation links. It is used for major navigation blocks like the main menu, table of contents, or breadcrumb trail. Not every group of links needs a <code>&lt;nav&gt;</code> — it is reserved for primary navigation.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;nav&gt;</span>
+  <span class="tag">&lt;ul&gt;</span>
+    <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"home.html"</span><span class="tag">&gt;</span>Home<span class="tag">&lt;/a&gt;</span><span class="tag">&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"courses.html"</span><span class="tag">&gt;</span>Courses<span class="tag">&lt;/a&gt;</span><span class="tag">&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"contact.html"</span><span class="tag">&gt;</span>Contact<span class="tag">&lt;/a&gt;</span><span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;/ul&gt;</span>
+<span class="tag">&lt;/nav&gt;</span></code>
+</div>
+
+<h5>3. &lt;footer&gt;</h5>
+<p>The <code>&lt;footer&gt;</code> tag defines the footer section of a page or a section. It usually contains copyright information, contact details, social media links, sitemap, and related documents. Like <code>&lt;header&gt;</code>, you can have multiple <code>&lt;footer&gt;</code> elements on a single page.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;footer&gt;</span>
+  <span class="tag">&lt;p&gt;</span>&amp;copy; 2025 My Website. All Rights Reserved.<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;p&gt;</span>Contact: info@mywebsite.com<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/footer&gt;</span></code>
+</div>
+
+<h5>4. &lt;article&gt;</h5>
+<p>The <code>&lt;article&gt;</code> tag defines a self-contained piece of content that could be independently distributed or reused. Think of it as content that makes sense on its own — like a blog post, a news article, a forum post, or a product review. An <code>&lt;article&gt;</code> can contain its own header, footer, and sections.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;article&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>Benefits of Learning HTML5<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;p&gt;</span>HTML5 is the latest version of HTML that
+  introduces many new features like semantic tags,
+  audio, video, canvas, and more...<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;footer&gt;</span>Published on: Jan 15, 2025<span class="tag">&lt;/footer&gt;</span>
+<span class="tag">&lt;/article&gt;</span></code>
+</div>
+
+<h5>5. &lt;section&gt;</h5>
+<p>The <code>&lt;section&gt;</code> tag defines a thematic grouping of content. Each section typically has a heading. It is used to divide a page into logical parts like chapters, tabs, or grouped content areas. It is different from <code>&lt;div&gt;</code> because <code>&lt;section&gt;</code> implies that the grouped content is thematically related.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;section&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>Our Services<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;p&gt;</span>We offer web design, development, and
+  digital marketing services...<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;/section&gt;</span></code>
+</div>
+</div>
+
+<!-- ────── Q5 ────── -->
+<div class="card" id="q5">
+<h3><span class="qnum">Q5</span>Write short notes on: iframe, textarea, meta, and radio tags with examples.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>1. iframe (Inline Frame)</h4>
+<p>The <code>&lt;iframe&gt;</code> tag is used to embed another HTML document or external content (like a YouTube video, Google Map, or another webpage) inside the current page. It creates an inline frame — a rectangular area on the page where external content is displayed independently. The <code>src</code> attribute specifies the URL of the page to embed. You can control the size using <code>width</code> and <code>height</code> attributes. The <code>frameborder</code> attribute (deprecated in HTML5, use CSS border instead) controls whether a border is visible. The <code>allowfullscreen</code> attribute allows the embedded content (like videos) to go fullscreen.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="cmt">&lt;!-- Embedding a YouTube video --&gt;</span>
+<span class="tag">&lt;iframe</span>
+  <span class="attr">width</span>=<span class="str">"560"</span>
+  <span class="attr">height</span>=<span class="str">"315"</span>
+  <span class="attr">src</span>=<span class="str">"https://www.youtube.com/embed/dQw4w9WgXcQ"</span>
+  <span class="attr">title</span>=<span class="str">"YouTube Video"</span>
+  <span class="attr">allowfullscreen</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/iframe&gt;</span>
+
+<span class="cmt">&lt;!-- Embedding another webpage --&gt;</span>
+<span class="tag">&lt;iframe</span>
+  <span class="attr">src</span>=<span class="str">"https://example.com"</span>
+  <span class="attr">width</span>=<span class="str">"600"</span>
+  <span class="attr">height</span>=<span class="str">"400"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/iframe&gt;</span></code>
+</div>
+
+<h4>2. textarea</h4>
+<p>The <code>&lt;textarea&gt;</code> tag creates a multi-line text input control in a form. Unlike the <code>&lt;input type="text"&gt;</code> which only allows a single line, <code>&lt;textarea&gt;</code> allows users to type long text spanning multiple lines. The <code>rows</code> attribute defines the visible number of lines, and <code>cols</code> defines the visible width in characters. The <code>placeholder</code> attribute adds hint text. You can also make it non-resizable using CSS <code>resize: none</code>.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;form&gt;</span>
+  <span class="tag">&lt;label&gt;</span>Address:<span class="tag">&lt;/label&gt;&lt;br&gt;</span>
+  <span class="tag">&lt;textarea</span>
+    <span class="attr">rows</span>=<span class="str">"5"</span>
+    <span class="attr">cols</span>=<span class="str">"40"</span>
+    <span class="attr">placeholder</span>=<span class="str">"Enter your full address..."</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;/textarea&gt;</span>
+<span class="tag">&lt;/form&gt;</span></code>
+</div>
+
+<h4>3. meta Tag</h4>
+<p>The <code>&lt;meta&gt;</code> tag provides metadata (data about data) about the HTML document. It is placed inside the <code>&lt;head&gt;</code> section and is not displayed on the page. Metadata includes the character set, page description, keywords, author, viewport settings for responsive design, and refresh rates. Search engines use meta tags to understand the page content and display it correctly in search results. The <code>&lt;meta&gt;</code> tag is self-closing (void element).</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;head&gt;</span>
+  <span class="cmt">&lt;!-- Character encoding --&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="str">"UTF-8"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- Responsive viewport --&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="str">"viewport"</span>
+        <span class="attr">content</span>=<span class="str">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- Page description for SEO --&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="str">"description"</span>
+        <span class="attr">content</span>=<span class="str">"Learn HTML5 with easy examples"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- Keywords for search engines --&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="str">"keywords"</span>
+        <span class="attr">content</span>=<span class="str">"HTML, CSS, Web Development"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- Author of the page --&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="str">"author"</span> <span class="attr">content</span>=<span class="str">"Student Name"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- Auto-refresh every 30 seconds --&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">http-equiv</span>=<span class="str">"refresh"</span> <span class="attr">content</span>=<span class="str">"30"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/head&gt;</span></code>
+</div>
+
+<h4>4. Radio Buttons</h4>
+<p>Radio buttons (<code>&lt;input type="radio"&gt;</code>) allow the user to select exactly one option from a group of choices. All radio buttons in the same group must share the same <code>name</code> attribute — this is what makes only one selectable at a time. The <code>value</code> attribute specifies the data that will be sent to the server when the form is submitted. The <code>checked</code> attribute can pre-select an option by default. Radio buttons are commonly used for choices like gender, payment mode, or yes/no answers.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;form&gt;</span>
+  <span class="tag">&lt;p&gt;</span>Choose Payment Method:<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"radio"</span> <span class="attr">name</span>=<span class="str">"payment"</span>
+         <span class="attr">value</span>=<span class="str">"cash"</span> <span class="attr">checked</span><span class="tag">&gt;</span> Cash
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"radio"</span> <span class="attr">name</span>=<span class="str">"payment"</span>
+         <span class="attr">value</span>=<span class="str">"card"</span><span class="tag">&gt;</span> Credit Card
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"radio"</span> <span class="attr">name</span>=<span class="str">"payment"</span>
+         <span class="attr">value</span>=<span class="str">"upi"</span><span class="tag">&gt;</span> UPI
+<span class="tag">&lt;/form&gt;</span></code>
+</div>
+</div>
+
+<!-- ────── Q6 ────── -->
+<div class="card" id="q6">
+<h3><span class="qnum">Q6</span>Explain the role of the browser in rendering an HTML document. How do you add meta tags to provide information about a web page?</h3>
+<span class="answer-label">Answer</span>
+
+<h4>Role of the Browser in Rendering HTML</h4>
+<p>A <strong>web browser</strong> (like Google Chrome, Mozilla Firefox, Safari, or Microsoft Edge) is a software application that retrieves, processes, and displays web content. When you type a URL in the address bar or click a link, the browser performs several steps to render the page you see on screen. Understanding this process is essential for any web developer.</p>
+
+<h5>Step-by-step Rendering Process:</h5>
+<ol>
+  <li><strong>URL Parsing and DNS Lookup:</strong> The browser first parses the URL you entered. It extracts the domain name (like www.example.com) and sends a request to a DNS (Domain Name System) server to translate the domain name into an IP address (like 93.184.216.34). The IP address tells the browser where the web server is located on the internet.</li>
+  <li><strong>Establishing Connection and HTTP Request:</strong> Once the IP address is known, the browser establishes a TCP (Transmission Control Protocol) connection with the web server. It then sends an HTTP request (or HTTPS for secure connections) asking for the HTML document. The request includes headers with information like the browser type, accepted formats, and cookies.</li>
+  <li><strong>Receiving the HTTP Response:</strong> The web server processes the request and sends back an HTTP response. This response contains the HTML document along with response headers (status code like 200 OK, content type, etc.). If the page requires additional resources like CSS, JavaScript, images, or fonts, the browser will make separate requests for each of them.</li>
+  <li><strong>Parsing HTML (DOM Construction):</strong> The browser reads the HTML document character by character from top to bottom. It follows the HTML parsing rules to build the <strong>DOM (Document Object Model)</strong> tree. The DOM is a tree-like structure where each HTML element becomes a node. For example, <code>&lt;html&gt;</code> is the root, <code>&lt;head&gt;</code> and <code>&lt;body&gt;</code> are children, and so on. The browser also encounters <code>&lt;link&gt;</code> and <code>&lt;script&gt;</code> tags and fetches external CSS and JavaScript files.</li>
+  <li><strong>Parsing CSS (CSSOM Construction):</strong> The browser parses all CSS rules (from external stylesheets, internal <code>&lt;style&gt;</code> blocks, and inline styles) and builds the <strong>CSSOM (CSS Object Model)</strong> tree. The CSSOM contains all the style information for each element — colors, fonts, sizes, positions, etc.</li>
+  <li><strong>Render Tree Construction:</strong> The browser combines the DOM tree and the CSSOM tree to create the <strong>Render Tree</strong>. The render tree contains only the visible elements (elements with <code>display: none</code> are excluded). Each node in the render tree has the computed styles applied to it.</li>
+  <li><strong>Layout (Reflow):</strong> The browser calculates the exact position and size of each element on the screen. This process is called layout or reflow. The browser determines where each element should be placed based on the box model, positioning, and the available screen space.</li>
+  <li><strong>Painting:</strong> The browser fills in pixels on the screen. It paints the elements in the correct order — backgrounds, borders, text, images, shadows, etc. This is where you actually see colors, text, and images appearing on the screen.</li>
+  <li><strong>Compositing:</strong> Finally, the browser composites (combines) different layers to produce the final image displayed on screen. Modern browsers use GPU acceleration for this step to ensure smooth rendering.</li>
+</ol>
+
+<h4>Adding Meta Tags for Web Page Information</h4>
+<p>Meta tags are placed inside the <code>&lt;head&gt;</code> section of the HTML document. They provide information to the browser, search engines, and other web services. Here is a complete example showing all commonly used meta tags:</p>
+
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="str">"en"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="cmt">&lt;!-- Character encoding --&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="str">"UTF-8"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- Responsive design --&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="str">"viewport"</span>
+        <span class="attr">content</span>=<span class="str">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- Page description (shows in search results) --&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="str">"description"</span>
+        <span class="attr">content</span>=<span class="str">"A complete guide to HTML and CSS for students"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- Keywords (less important for modern SEO) --&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="str">"keywords"</span>
+        <span class="attr">content</span>=<span class="str">"HTML, CSS, JavaScript, Web Development"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- Author --&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="str">"author"</span> <span class="attr">content</span>=<span class="str">"Web Technology Student"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- Open Graph for social media sharing --&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">property</span>=<span class="str">"og:title"</span> <span class="attr">content</span>=<span class="str">"Web Tech Guide"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">property</span>=<span class="str">"og:description"</span>
+        <span class="attr">content</span>=<span class="str">"Learn HTML, CSS, JavaScript"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;title&gt;</span>My Web Page<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>Welcome<span class="tag">&lt;/h1&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+
+<p><strong>Key points to remember:</strong> The <code>charset</code> meta tag should always be the first tag inside <code>&lt;head&gt;</code>. The <code>viewport</code> meta tag is essential for responsive (mobile-friendly) design. The <code>description</code> tag is what Google shows as the snippet in search results. The <code>og:</code> (Open Graph) tags control how your page appears when shared on social media platforms like Facebook or Twitter.</p>
+</div>
+
+<!-- ────── Q7 ────── -->
+<div class="card" id="q7">
+<h3><span class="qnum">Q7</span>Create a static web page using the Table Tag of HTML (Specification Table with Hours and Marks).</h3>
+<span class="answer-label">Answer</span>
+<p>This example creates a typical university specification table showing subjects with their teaching hours and marks distribution. We use <code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;th&gt;</code>, <code>&lt;td&gt;</code>, along with <code>rowspan</code> and <code>colspan</code> attributes for merged cells.</p>
+
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Course Specification Table<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    body { font-family: Arial, sans-serif; }
+    table {
+      border-collapse: collapse;
+      width: 90%; margin: 20px auto;
+    }
+    th, td {
+      border: 1px solid #333;
+      padding: 8px 12px;
+      text-align: center;
+    }
+    th { background-color: #4a6fa5; color: white; }
+    caption {
+      font-size: 18px; font-weight: bold;
+      margin-bottom: 10px;
+    }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+<span class="tag">&lt;table&gt;</span>
+  <span class="tag">&lt;caption&gt;</span>B.Tech Computer Science — 3rd Semester<span class="tag">&lt;/caption&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;th&gt;</span>S.No<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;th&gt;</span>Subject<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;th&gt;</span>Subject Code<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;th&gt;</span>L<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;th&gt;</span>T<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;th&gt;</span>P<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;th&gt;</span>Total Hours<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;th&gt;</span>Internal Marks<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;th&gt;</span>External Marks<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;th&gt;</span>Total Marks<span class="tag">&lt;/th&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;td&gt;</span>1<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>Data Structures<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>CS301<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>3<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>1<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>0<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>4<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>30<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>70<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>100<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;td&gt;</span>2<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>Operating Systems<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>CS302<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>3<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>0<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>0<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>3<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>30<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>70<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>100<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;td&gt;</span>3<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>Web Technology<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>CS303<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>3<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>0<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>2<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>5<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>30<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>70<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>100<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;td&gt;</span>4<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>DBMS<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>CS304<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>3<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>0<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>2<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>5<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>30<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>70<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>100<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;td&gt;</span>5<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>Mathematics-III<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>MA301<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>3<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>1<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>0<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>4<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>30<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>70<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>100<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr</span> <span class="attr">style</span>=<span class="str">"background:#eef; font-weight:bold;"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;td</span> <span class="attr">colspan</span>=<span class="str">"6"</span><span class="tag">&gt;</span>TOTAL<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>21<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>150<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>350<span class="tag">&lt;/td&gt;</span>
+    <span class="tag">&lt;td&gt;</span>500<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+<span class="tag">&lt;/table&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+
+<p><strong>Key elements used:</strong> <code>&lt;table&gt;</code> wraps the entire table. <code>&lt;caption&gt;</code> provides a title. <code>&lt;tr&gt;</code> defines each row. <code>&lt;th&gt;</code> defines header cells (bold, centered by default). <code>&lt;td&gt;</code> defines data cells. <code>colspan</code> makes a cell span multiple columns. L = Lectures, T = Tutorials, P = Practical hours per week.</p>
+</div>
+
+<!-- ────── Q8 ────── -->
+<div class="card" id="q8">
+<h3><span class="qnum">Q8</span>Explain HTTP Protocol. What are HTTP Request and HTTP Response? Draw a diagram.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>What is HTTP?</h4>
+<p><strong>HTTP</strong> stands for <strong>HyperText Transfer Protocol</strong>. It is an application-layer protocol used for transmitting hypermedia documents (HTML, images, videos, etc.) on the World Wide Web. HTTP follows a <strong>client-server model</strong> — the web browser acts as the client, and the web server acts as the server. HTTP is the foundation of data communication on the web.</p>
+<p>HTTP uses <strong>TCP/IP</strong> (Transmission Control Protocol / Internet Protocol) as its transport layer protocol. The default port for HTTP is <strong>port 80</strong>, while HTTPS (secure HTTP) uses <strong>port 443</strong>. HTTP is a <strong>stateless protocol</strong>, meaning each request is independent — the server does not remember previous requests from the same client.</p>
+
+<h4>HTTP Request</h4>
+<p>An HTTP Request is a message sent by the client (browser) to the server asking for a resource (like a webpage, image, or data). An HTTP request has the following parts:</p>
+<ul>
+  <li><strong>Request Line:</strong> Contains the HTTP method (GET, POST, PUT, DELETE), the URL of the resource (e.g., /index.html), and the HTTP version (e.g., HTTP/1.1).</li>
+  <li><strong>Request Headers:</strong> Key-value pairs that provide additional information like Host, User-Agent (browser type), Accept (accepted content types), Cookie, Content-Type, etc.</li>
+  <li><strong>Blank Line:</strong> Separates headers from the body.</li>
+  <li><strong>Request Body (optional):</strong> Contains data sent to the server, used mainly with POST and PUT requests. For example, form data like username and password.</li>
+</ul>
+
+<div class="code-block">
+<span class="code-label">HTTP REQUEST EXAMPLE</span>
+<code>POST /login HTTP/1.1
+Host: www.example.com
+User-Agent: Mozilla/5.0
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 27
+
+username=student&amp;password=1234</code>
+</div>
+
+<h4>HTTP Response</h4>
+<p>An HTTP Response is the message sent by the server back to the client after processing the request. It contains the requested resource or an error message. An HTTP response has:</p>
+<ul>
+  <li><strong>Status Line:</strong> Contains the HTTP version, a status code (e.g., 200, 404), and a reason phrase (e.g., OK, Not Found).</li>
+  <li><strong>Response Headers:</strong> Key-value pairs like Content-Type, Content-Length, Date, Server, Set-Cookie, etc.</li>
+  <li><strong>Blank Line:</strong> Separates headers from the body.</li>
+  <li><strong>Response Body:</strong> The actual content — HTML document, JSON data, image, etc.</li>
+</ul>
+
+<h4>Common HTTP Status Codes:</h4>
+<table class="demo-table">
+  <tr><th>Code</th><th>Meaning</th><th>Description</th></tr>
+  <tr><td>200</td><td>OK</td><td>Request successful</td></tr>
+  <tr><td>301</td><td>Moved Permanently</td><td>Resource has a new URL</td></tr>
+  <tr><td>404</td><td>Not Found</td><td>Resource doesn't exist</td></tr>
+  <tr><td>500</td><td>Internal Server Error</td><td>Server encountered an error</td></tr>
+  <tr><td>304</td><td>Not Modified</td><td>Cached version is still valid</td></tr>
+</table>
+
+<h4>Diagram: HTTP Request-Response Cycle</h4>
+<div class="diagram">
+<pre>
+  ┌──────────────┐         HTTP Request          ┌──────────────┐
+  │              │  ──────────────────────────▶   │              │
+  │   CLIENT     │    GET /index.html HTTP/1.1    │    SERVER    │
+  │  (Browser)   │    Host: www.example.com       │  (Web Server)│
+  │              │                                │              │
+  │              │  ◀──────────────────────────   │              │
+  └──────────────┘     HTTP Response              └──────────────┘
+                       HTTP/1.1 200 OK
+                       Content-Type: text/html
+                       &lt;html&gt;...&lt;/html&gt;
+
+  Step 1: Browser sends HTTP Request to server
+  Step 2: Server processes the request
+  Step 3: Server sends HTTP Response with HTML content
+  Step 4: Browser renders the HTML and displays the page
+  Step 5: Browser requests additional resources (CSS, JS, images)
+  Step 6: Server sends each resource as a separate response
+</pre>
+</div>
+</div>
+
+<!-- ────── Q9 ────── -->
+<div class="card" id="q9">
+<h3><span class="qnum">Q9</span>Explain the history of WWW. Also, explain how WWW is different from the Internet.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>History of the World Wide Web (WWW)</h4>
+<p>The <strong>World Wide Web</strong>, commonly known as the Web or WWW, was invented by <strong>Sir Tim Berners-Lee</strong>, a British computer scientist working at <strong>CERN</strong> (European Organization for Nuclear Research) in Geneva, Switzerland. Here is a timeline of the key events in the history of the WWW:</p>
+
+<h5>Timeline:</h5>
+<ul>
+  <li><strong>1980:</strong> Tim Berners-Lee created a program called "ENQUIRE" at CERN. It was a simple hypertext system that allowed information to be linked together. This was the earliest concept that would later evolve into the World Wide Web.</li>
+  <li><strong>1989 (March):</strong> Tim Berners-Lee submitted a proposal titled "Information Management: A Proposal" to his supervisor at CERN. The proposal described a system where documents could be linked together using hypertext — clicking on a word would take you to another related document. His supervisor famously scrawled "Vague but exciting" on the cover page.</li>
+  <li><strong>1990 (December):</strong> Berners-Lee developed the three fundamental technologies that remain the foundation of the web today:
+    <ul>
+      <li><strong>HTML (HyperText Markup Language)</strong> — the language/format for creating web pages.</li>
+      <li><strong>HTTP (HyperText Transfer Protocol)</strong> — the protocol for transferring web pages across the internet.</li>
+      <li><strong>URL (Uniform Resource Locator)</strong> — the addressing system to locate resources on the web.</li>
+    </ul>
+  </li>
+  <li><strong>1990 (December 20):</strong> The first web page was created and the first web server (at CERN) was operational. Berners-Lee also built the first web browser called "WorldWideWeb" (later renamed "Nexus").</li>
+  <li><strong>1991 (August 6):</strong> The World Wide Web was made publicly available for the first time. Berners-Lee posted a summary of the WWW project on the alt.hypertext newsgroup, inviting people to access the first website.</li>
+  <li><strong>1993 (April 30):</strong> CERN made a landmark decision — it released the WWW software into the public domain, making it free for anyone to use. This decision was crucial in making the web universal and widely adopted. Without this, the web might have become a proprietary, paid technology.</li>
+  <li><strong>1993:</strong> The <strong>Mosaic</strong> web browser was released by the National Center for Supercomputing Applications (NCSA). Mosaic was the first browser to display images inline with text (previous browsers showed images in separate windows). It made the web visually appealing and user-friendly.</li>
+  <li><strong>1994:</strong> Tim Berners-Lee founded the <strong>W3C</strong> (World Wide Web Consortium) at MIT to develop web standards and ensure the long-term growth of the web. The same year, Netscape Navigator browser was released.</li>
+  <li><strong>1995:</strong> Microsoft launched Internet Explorer, starting the "browser wars." JavaScript was created by Brendan Eich at Netscape in just 10 days.</li>
+  <li><strong>2000s:</strong> The web evolved from static pages (Web 1.0) to dynamic, interactive applications (Web 2.0) with technologies like AJAX, social media platforms, and user-generated content.</li>
+  <li><strong>2014:</strong> HTML5 was officially published as a W3C recommendation, bringing native audio, video, canvas, semantic elements, and many new APIs.</li>
+  <li><strong>Present (Web 3.0):</strong> The web is evolving toward a more intelligent, decentralized, and semantic web, incorporating AI, blockchain, and machine-readable data.</li>
+</ul>
+
+<h4>WWW vs Internet — Key Differences:</h4>
+<table class="demo-table">
+  <tr><th>Feature</th><th>Internet</th><th>World Wide Web (WWW)</th></tr>
+  <tr><td>Definition</td><td>A global network of interconnected computers and networks using TCP/IP protocol</td><td>A service/application that runs on the Internet, allowing access to hyperlinked documents</td></tr>
+  <tr><td>Invented</td><td>Evolved from ARPANET (1969), developed by DARPA</td><td>Invented by Tim Berners-Lee in 1989</td></tr>
+  <tr><td>What it is</td><td>Infrastructure — the physical network of cables, routers, servers</td><td>A service — a system of information accessed via the Internet</td></tr>
+  <tr><td>Protocols</td><td>TCP/IP, UDP, FTP, SMTP, DNS, DHCP, and many more</td><td>HTTP and HTTPS (primarily)</td></tr>
+  <tr><td>Usage</td><td>Email (SMTP), file transfer (FTP), streaming, VoIP, DNS, gaming, IoT</td><td>Browsing web pages, accessing websites through browsers</td></tr>
+  <tr><td>Dependency</td><td>Can exist without WWW (e.g., email works without a browser)</td><td>Cannot exist without the Internet</td></tr>
+  <tr><td>Requirements</td><td>Cables, routers, switches, servers, satellites</td><td>Web browser, web server, HTML/HTTP/URL</td></tr>
+  <tr><td>Scope</td><td>Much broader — includes all networked communications</td><td>A subset of the Internet — only web-based content</td></tr>
+</table>
+
+<p><strong>Simple analogy:</strong> Think of the Internet as the <strong>road/highway system</strong> — it is the infrastructure that connects places. The WWW is like the <strong>postal service</strong> that uses those roads to deliver letters (web pages). Other services like email, FTP, and streaming also use the same roads (Internet) but are not part of the WWW.</p>
+</div>
+
+<!-- ────── Q10 ────── -->
+<div class="card" id="q10">
+<h3><span class="qnum">Q10</span>Discuss the concepts of effective web design in detail.</h3>
+<span class="answer-label">Answer</span>
+<p><strong>Effective web design</strong> is the process of creating websites that are visually appealing, easy to use, accessible, and achieve their intended purpose. Good web design is not just about making a website look beautiful — it is about creating a positive user experience that helps visitors find information easily, complete tasks efficiently, and enjoy using the site. Here are the key concepts of effective web design:</p>
+
+<h4>1. Purpose and Goal Clarity</h4>
+<p>Every page on a website should have a clear purpose. Before designing, you must understand what the website is trying to achieve — is it to sell products, provide information, entertain, or collect user data? Each page should be designed with its specific goal in mind. A contact page should make it easy to find contact details, while a product page should showcase the product effectively with images, descriptions, and a clear "Buy" button.</p>
+
+<h4>2. Visual Hierarchy</h4>
+<p>Visual hierarchy refers to arranging and presenting elements in a way that guides the user's eye to the most important information first. Larger, bolder, and more colorful elements attract attention first. Designers use size, color, contrast, spacing, and placement to create a clear hierarchy. For example, the main heading should be larger and bolder than subheadings, and the "Sign Up" button should stand out with a contrasting color.</p>
+
+<h4>3. Navigation and Usability</h4>
+<p>Users should be able to find what they are looking for within 3 clicks (the "3-click rule"). Navigation menus should be consistent across all pages, clearly labeled, and easily accessible. Common navigation patterns include top navigation bars, side menus, breadcrumbs, and hamburger menus for mobile devices. Good navigation reduces frustration and keeps users on the site longer.</p>
+
+<h4>4. Responsive Design</h4>
+<p>A responsive website automatically adjusts its layout to fit different screen sizes — desktops, laptops, tablets, and mobile phones. With more than 50% of web traffic coming from mobile devices, responsive design is essential. This is achieved using flexible grids, fluid images, CSS media queries, and relative units (percentages, em, rem) instead of fixed pixel values.</p>
+
+<h4>5. Color Theory and Consistency</h4>
+<p>Colors evoke emotions and create brand identity. Effective web design uses a consistent color palette (typically 2-3 primary colors with complementary accents). Colors should provide sufficient contrast for readability — dark text on light backgrounds is easier to read. Color psychology matters: blue conveys trust (used by banks), green conveys nature/growth, red conveys urgency/excitement.</p>
+
+<h4>6. Typography</h4>
+<p>Good typography enhances readability and creates visual appeal. Key principles include: using no more than 2-3 font families, maintaining consistent font sizes (base size of 16px for body text), proper line height (1.5-1.8 for body text), and adequate letter spacing. Sans-serif fonts (like Arial, Helvetica) are generally preferred for screen reading, while serif fonts (like Georgia, Times) work well for headings.</p>
+
+<h4>7. Loading Speed</h4>
+<p>Users expect web pages to load within 2-3 seconds. Slow websites lead to high bounce rates (users leaving without interacting). Optimization techniques include: compressing images, minifying CSS and JavaScript, using browser caching, reducing HTTP requests, using Content Delivery Networks (CDNs), and optimizing code.</p>
+
+<h4>8. Accessibility</h4>
+<p>Web accessibility ensures that people with disabilities (visual, hearing, motor, cognitive) can use the website. This includes: providing alt text for images, ensuring keyboard navigation works, using sufficient color contrast, adding captions to videos, using semantic HTML tags, and following the WCAG (Web Content Accessibility Guidelines).</p>
+
+<h4>9. Content Quality</h4>
+<p>"Content is king" — even the most beautiful website fails if the content is poor. Effective content is clear, concise, well-organized, and valuable to the target audience. Use headings, bullet points, and short paragraphs to make content scannable. Avoid jargon and write at an appropriate reading level.</p>
+
+<h4>10. Consistency</h4>
+<p>Consistency in design elements (colors, fonts, button styles, spacing, layout) creates a professional look and makes the website easier to use. When elements look and behave the same way across all pages, users can predict how things work and navigate more efficiently.</p>
+
+<h4>11. Call to Action (CTA)</h4>
+<p>Effective websites guide users toward desired actions using clear and compelling call-to-action buttons. CTAs like "Sign Up," "Buy Now," "Learn More," or "Contact Us" should be visually prominent, use action-oriented language, and be placed strategically.</p>
+
+<h4>12. White Space (Negative Space)</h4>
+<p>White space is the empty space between elements. It does not have to be white — it is simply the absence of content. Proper use of white space improves readability, reduces clutter, creates visual breathing room, and draws attention to important elements. Crowded designs overwhelm users; clean, spacious designs feel professional.</p>
+</div>
+
+<!-- ────── Q11 ────── -->
+<div class="card" id="q11">
+<h3><span class="qnum">Q11</span>Key features of HTML5. Explain semantic elements: &lt;header&gt;, &lt;footer&gt;, &lt;nav&gt;, &lt;article&gt;.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>Key Features Introduced in HTML5:</h4>
+<ul>
+  <li><strong>Semantic Elements:</strong> New tags like <code>&lt;header&gt;</code>, <code>&lt;footer&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;article&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;aside&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;figure&gt;</code> that provide meaning to the structure of web pages.</li>
+  <li><strong>Multimedia Support:</strong> Native <code>&lt;audio&gt;</code> and <code>&lt;video&gt;</code> tags for embedding media without third-party plugins like Flash.</li>
+  <li><strong>Canvas and SVG:</strong> The <code>&lt;canvas&gt;</code> element allows drawing 2D graphics and animations using JavaScript. SVG support allows scalable vector graphics.</li>
+  <li><strong>Form Enhancements:</strong> New input types (date, color, email, url, range, number, search) and attributes (placeholder, required, autofocus, pattern) that provide built-in validation and better user experience.</li>
+  <li><strong>Local Storage and Session Storage:</strong> Allows websites to store data on the user's browser (up to 5-10 MB) without using cookies. <code>localStorage</code> persists even after the browser is closed; <code>sessionStorage</code> is cleared when the tab is closed.</li>
+  <li><strong>Geolocation API:</strong> Allows websites to request the user's geographic location (with permission), enabling location-based services.</li>
+  <li><strong>Web Workers:</strong> Allow running JavaScript in background threads, preventing the UI from becoming unresponsive during heavy computations.</li>
+  <li><strong>Drag and Drop API:</strong> Native support for dragging and dropping elements, previously requiring complex JavaScript libraries.</li>
+  <li><strong>Offline Support (Application Cache / Service Workers):</strong> Allows web applications to work offline by caching resources.</li>
+  <li><strong>Cross-Origin Resource Sharing (CORS):</strong> Enables secure cross-domain data transfers.</li>
+  <li><strong>Simplified Doctype:</strong> HTML5 uses a much simpler document type declaration: <code>&lt;!DOCTYPE html&gt;</code> instead of the long, complex DOCTYPE of HTML4.</li>
+  <li><strong>Error Handling:</strong> HTML5 defines standardized error handling, so browsers handle broken/malformed HTML consistently.</li>
+</ul>
+
+<h4>Semantic HTML5 Elements in Detail:</h4>
+
+<h5>&lt;header&gt;</h5>
+<p>The <code>&lt;header&gt;</code> element represents introductory content or a set of navigational aids. It typically contains the site logo, title, tagline, and main navigation. A page can have multiple <code>&lt;header&gt;</code> elements — each <code>&lt;article&gt;</code> or <code>&lt;section&gt;</code> can have its own header.</p>
+
+<h5>&lt;footer&gt;</h5>
+<p>The <code>&lt;footer&gt;</code> element represents the footer of a page or section. It typically contains copyright information, author details, contact information, related links, and social media icons. Like <code>&lt;header&gt;</code>, it can be used multiple times on a page.</p>
+
+<h5>&lt;nav&gt;</h5>
+<p>The <code>&lt;nav&gt;</code> element represents a section containing navigation links to other pages or to parts within the page. It is intended for major navigation blocks — not every group of links needs a <code>&lt;nav&gt;</code>. A page may have multiple <code>&lt;nav&gt;</code> elements (e.g., main navigation and breadcrumb navigation).</p>
+
+<h5>&lt;article&gt;</h5>
+<p>The <code>&lt;article&gt;</code> element represents a self-contained composition that is independently distributable or reusable. Examples include blog posts, news articles, forum posts, product cards, user comments, and interactive widgets. An <code>&lt;article&gt;</code> should make sense on its own, even if removed from the rest of the page.</p>
+
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="str">"en"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="str">"UTF-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Semantic HTML5 Page<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+  <span class="tag">&lt;header&gt;</span>
+    <span class="tag">&lt;h1&gt;</span>My Blog<span class="tag">&lt;/h1&gt;</span>
+    <span class="tag">&lt;nav&gt;</span>
+      <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span><span class="tag">&gt;</span>Home<span class="tag">&lt;/a&gt;</span> |
+      <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span><span class="tag">&gt;</span>About<span class="tag">&lt;/a&gt;</span> |
+      <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span><span class="tag">&gt;</span>Contact<span class="tag">&lt;/a&gt;</span>
+    <span class="tag">&lt;/nav&gt;</span>
+  <span class="tag">&lt;/header&gt;</span>
+
+  <span class="tag">&lt;main&gt;</span>
+    <span class="tag">&lt;article&gt;</span>
+      <span class="tag">&lt;header&gt;</span>
+        <span class="tag">&lt;h2&gt;</span>Understanding HTML5<span class="tag">&lt;/h2&gt;</span>
+        <span class="tag">&lt;p&gt;</span>Published: Jan 15, 2025<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;/header&gt;</span>
+      <span class="tag">&lt;p&gt;</span>HTML5 is the latest version of HTML with
+      many new features for modern web development...<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;footer&gt;</span>
+        <span class="tag">&lt;p&gt;</span>Author: Student Name<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;/footer&gt;</span>
+    <span class="tag">&lt;/article&gt;</span>
+  <span class="tag">&lt;/main&gt;</span>
+
+  <span class="tag">&lt;footer&gt;</span>
+    <span class="tag">&lt;p&gt;</span>&amp;copy; 2025 My Blog. All rights reserved.<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/footer&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+</div>
+
+<!-- ────── Q12 ────── -->
+<div class="card" id="q12">
+<h3><span class="qnum">Q12</span>Define WWW and explain its role in modern internet usage. Discuss web browsers, web servers, and URLs.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>Definition of WWW</h4>
+<p>The <strong>World Wide Web (WWW)</strong>, commonly called "the Web," is an information system of interlinked hypertext documents and resources, accessed through the Internet using web browsers. It was invented by Tim Berners-Lee in 1989 at CERN. The Web uses HTTP (HyperText Transfer Protocol) to transfer data, HTML (HyperText Markup Language) to create pages, and URLs (Uniform Resource Locators) to identify and locate resources.</p>
+
+<h4>Role of WWW in Modern Internet Usage</h4>
+<p>The WWW has transformed how humans communicate, learn, work, shop, and entertain. Its roles include: <strong>Education</strong> — online courses, research papers, educational videos; <strong>E-Commerce</strong> — online shopping, banking, and payments; <strong>Communication</strong> — email, social media, video conferencing; <strong>Entertainment</strong> — streaming music, movies, games; <strong>Government Services</strong> — online applications, digital certificates; <strong>Healthcare</strong> — telemedicine, health records; <strong>Business</strong> — cloud computing, remote work, digital marketing. The Web has essentially become the primary platform for information exchange and digital interaction in the modern world.</p>
+
+<h4>Key Components of WWW Architecture:</h4>
+
+<h5>1. Web Browsers</h5>
+<p>A web browser is a software application used to access and display web pages. It acts as the client in the client-server model. When you enter a URL, the browser sends an HTTP request to the web server, receives the response (HTML, CSS, JS files), and renders the page on your screen. Popular web browsers include:</p>
+<ul>
+  <li><strong>Google Chrome</strong> — most widely used, developed by Google, based on the Chromium open-source project and Blink rendering engine.</li>
+  <li><strong>Mozilla Firefox</strong> — open-source browser developed by Mozilla Foundation, uses the Gecko engine.</li>
+  <li><strong>Safari</strong> — Apple's default browser for macOS and iOS, uses the WebKit engine.</li>
+  <li><strong>Microsoft Edge</strong> — Microsoft's browser, now based on Chromium.</li>
+  <li><strong>Opera</strong> — known for built-in VPN and sidebar features.</li>
+</ul>
+<p>Browser components include: the <strong>address bar</strong> (for URLs), <strong>rendering engine</strong> (converts HTML/CSS to visual output), <strong>JavaScript engine</strong> (executes JS code), <strong>cache</strong> (stores previously downloaded resources for faster loading), and <strong>developer tools</strong> (for debugging and inspecting web pages).</p>
+
+<h5>2. Web Servers</h5>
+<p>A web server is a computer (hardware) or software that stores web content and delivers it to clients (browsers) upon request. When a browser requests a page, the web server processes the request, retrieves the appropriate files, and sends them back as HTTP responses. Popular web server software includes:</p>
+<ul>
+  <li><strong>Apache HTTP Server</strong> — the most widely used open-source web server.</li>
+  <li><strong>Nginx</strong> — known for high performance and low memory usage.</li>
+  <li><strong>Microsoft IIS</strong> — web server for Windows Server.</li>
+  <li><strong>LiteSpeed</strong> — high-performance commercial server.</li>
+</ul>
+<p>Web servers can serve static content (HTML, CSS, images) directly or work with application servers (PHP, Python, Node.js) to generate dynamic content based on user input, database queries, etc.</p>
+
+<h5>3. URLs (Uniform Resource Locators)</h5>
+<p>A URL is the address used to locate a resource on the Web. Every web page, image, video, and file has a unique URL. The structure of a URL is:</p>
+<div class="diagram">
+<pre>
+  https://www.example.com:443/path/page.html?key=value#section
+  ────── ───────────────── ── ───────────── ────────── ───────
+  protocol   hostname       port  path         query     fragment
+</pre>
+</div>
+<ul>
+  <li><strong>Protocol (https://):</strong> The method used to access the resource (HTTP or HTTPS).</li>
+  <li><strong>Hostname (www.example.com):</strong> The domain name of the server.</li>
+  <li><strong>Port (:443):</strong> The server port (optional; defaults to 80 for HTTP, 443 for HTTPS).</li>
+  <li><strong>Path (/path/page.html):</strong> The location of the resource on the server.</li>
+  <li><strong>Query (?key=value):</strong> Parameters sent to the server (optional).</li>
+  <li><strong>Fragment (#section):</strong> A specific section within the page (optional).</li>
+</ul>
+</div>
+
+<!-- ────── Q13 ────── -->
+<div class="card" id="q13">
+<h3><span class="qnum">Q13</span>What is the importance of method, action, and enctype attributes in an HTML form?</h3>
+<span class="answer-label">Answer</span>
+
+<p>The <code>&lt;form&gt;</code> tag in HTML has several important attributes that control how form data is collected and sent to the server. Three of the most critical attributes are <strong>method</strong>, <strong>action</strong>, and <strong>enctype</strong>.</p>
+
+<h4>1. method Attribute</h4>
+<p>The <code>method</code> attribute specifies the HTTP method used to send form data to the server. There are two main values:</p>
+<ul>
+  <li><strong>GET:</strong> Form data is appended to the URL as query parameters (e.g., <code>page.html?name=John&amp;age=25</code>). Data is visible in the URL, has a size limit (about 2048 characters), and can be bookmarked. GET is used for search forms, filtering, and when you want the URL to be shareable. It should NOT be used for sensitive data like passwords.</li>
+  <li><strong>POST:</strong> Form data is sent in the body of the HTTP request, not in the URL. Data is not visible in the URL, has no practical size limit, and cannot be bookmarked. POST is used for login forms, registration forms, file uploads, and any operation that changes data on the server.</li>
+</ul>
+<p>The default method is GET if not specified. Choosing the right method is important for security, usability, and proper functionality.</p>
+
+<h4>2. action Attribute</h4>
+<p>The <code>action</code> attribute specifies the URL of the server-side script (program) that will process the form data when the user submits the form. When the user clicks the submit button, the browser sends the form data to the URL specified in the <code>action</code> attribute.</p>
+<ul>
+  <li>If <code>action="login.php"</code>, the data is sent to the login.php file on the server for processing.</li>
+  <li>If <code>action="https://example.com/register"</code>, data is sent to an absolute URL.</li>
+  <li>If <code>action</code> is empty or omitted, the data is sent to the current page itself.</li>
+</ul>
+
+<h4>3. enctype Attribute</h4>
+<p>The <code>enctype</code> (encoding type) attribute specifies how the form data should be encoded before sending it to the server. This is especially important when uploading files. There are three possible values:</p>
+<ul>
+  <li><strong>application/x-www-form-urlencoded</strong> (default): Data is encoded as key=value pairs separated by &amp; symbols. Spaces are converted to + signs, and special characters are percent-encoded. Suitable for text data.</li>
+  <li><strong>multipart/form-data:</strong> Required when uploading files. Each form field is sent as a separate part with its own content type. This encoding allows binary data (files) to be sent along with text data.</li>
+  <li><strong>text/plain:</strong> Data is sent as plain text with no encoding. Rarely used, mainly for debugging.</li>
+</ul>
+
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="cmt">&lt;!-- Example: File upload form --&gt;</span>
+<span class="tag">&lt;form</span>
+  <span class="attr">method</span>=<span class="str">"POST"</span>
+  <span class="attr">action</span>=<span class="str">"upload.php"</span>
+  <span class="attr">enctype</span>=<span class="str">"multipart/form-data"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;label&gt;</span>Name:<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"text"</span> <span class="attr">name</span>=<span class="str">"username"</span><span class="tag">&gt;&lt;br&gt;</span>
+
+  <span class="tag">&lt;label&gt;</span>Profile Photo:<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"file"</span> <span class="attr">name</span>=<span class="str">"photo"</span><span class="tag">&gt;&lt;br&gt;</span>
+
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"submit"</span> <span class="attr">value</span>=<span class="str">"Upload"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/form&gt;</span>
+
+<span class="cmt">&lt;!-- Example: Search form (GET) --&gt;</span>
+<span class="tag">&lt;form</span> <span class="attr">method</span>=<span class="str">"GET"</span> <span class="attr">action</span>=<span class="str">"search.php"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"text"</span> <span class="attr">name</span>=<span class="str">"query"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"submit"</span> <span class="attr">value</span>=<span class="str">"Search"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/form&gt;</span></code>
+</div>
+
+<p><strong>In summary:</strong> <code>method</code> determines HOW data is sent (GET or POST), <code>action</code> determines WHERE data is sent (the server URL), and <code>enctype</code> determines HOW data is ENCODED before sending (especially important for file uploads).</p>
+</div>
+
+<!-- ────── Q14 ────── -->
+<div class="card" id="q14">
+<h3><span class="qnum">Q14</span>Describe the concept of why HTTP is a stateless protocol.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>What Does "Stateless" Mean?</h4>
+<p>A <strong>stateless protocol</strong> is a communication protocol in which the server does not retain any information about previous requests from the same client. Each request is treated as a completely independent transaction, with no memory of past interactions. HTTP is a stateless protocol, which means that every time you visit a web page, the server treats your request as if it is coming from a brand-new visitor, with no recollection of your previous visits.</p>
+
+<h4>How HTTP Works as Stateless:</h4>
+<p>When you visit a website, here is what happens:</p>
+<ol>
+  <li>Your browser sends an HTTP request (e.g., GET /home.html) to the server.</li>
+  <li>The server processes the request and sends back the response (the HTML page).</li>
+  <li>The connection is closed.</li>
+  <li>When you click another link, a NEW request is sent. The server does not remember that you just visited the home page. Each request must contain ALL the information the server needs to fulfill it.</li>
+</ol>
+<p>This is different from a <strong>stateful protocol</strong> (like FTP — File Transfer Protocol), where the server maintains a persistent connection and remembers the client's state throughout the session (e.g., which directory you are in, what files you have transferred).</p>
+
+<h4>Why Was HTTP Designed to Be Stateless?</h4>
+<ul>
+  <li><strong>Simplicity:</strong> Statelessness makes the protocol simple. The server does not need to store session data for thousands of users, which reduces complexity.</li>
+  <li><strong>Scalability:</strong> Since the server does not store state, any server in a cluster can handle any request. This makes it easy to distribute load across multiple servers (load balancing). If the server had to remember every user's state, scaling would be much harder.</li>
+  <li><strong>Reliability:</strong> If a server crashes and restarts, no user data is lost because no state was stored. Any server can pick up where another left off.</li>
+  <li><strong>Efficiency:</strong> The server does not need to allocate memory for tracking sessions. After serving a response, the server can immediately free resources and serve the next client.</li>
+</ul>
+
+<h4>How Do Websites Maintain State Then?</h4>
+<p>Even though HTTP is stateless, modern websites need to maintain state (e.g., keeping you logged in, remembering your shopping cart). This is achieved through external mechanisms:</p>
+<ul>
+  <li><strong>Cookies:</strong> Small text files stored in the browser. The server sends a cookie with each response, and the browser sends it back with each subsequent request. This lets the server recognize the user.</li>
+  <li><strong>Sessions:</strong> The server creates a session (stored on the server) and gives the browser a session ID (usually via a cookie). Each request includes this ID, allowing the server to look up the user's data.</li>
+  <li><strong>URL Parameters / Hidden Form Fields:</strong> State information can be passed through URLs or hidden fields in forms.</li>
+  <li><strong>Token-based Authentication (JWT):</strong> Modern APIs use JSON Web Tokens — the client sends a token with each request, and the server verifies it without storing session data.</li>
+</ul>
+
+<div class="diagram">
+<pre>
+  ┌─────────┐      Request 1       ┌─────────┐
+  │ Browser  │ ──────────────────▶  │ Server  │  (No memory)
+  │          │ ◀──────────────────  │         │
+  │          │      Response 1      │         │
+  │          │                       │         │
+  │          │      Request 2       │         │  ← Server doesn't know
+  │          │ ──────────────────▶  │         │    this is the same user!
+  │          │ ◀──────────────────  │         │
+  └─────────┘      Response 2      └─────────┘
+
+  WITH COOKIES:
+  ┌─────────┐  Request + Cookie    ┌─────────┐
+  │ Browser  │ ──────────────────▶  │ Server  │  ← Recognizes cookie
+  │ (cookie) │ ◀──────────────────  │ (session)│    and loads session
+  └─────────┘  Response + Cookie   └─────────┘
+</pre>
+</div>
+</div>
+
+<!-- ────── Q15 ────── -->
+<div class="card" id="q15">
+<h3><span class="qnum">Q15</span>Design an HTML5 Form with: Slider, Numeric Spinner, Date Picker, Color Picker, Text Field with Placeholder, URL Field, and Email Field.</h3>
+<span class="answer-label">Answer</span>
+<p>HTML5 introduced many new input types that provide built-in controls without requiring JavaScript. This form demonstrates all the requested input types.</p>
+
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="str">"en"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="str">"UTF-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;title&gt;</span>HTML5 Form Elements<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    body { font-family: Arial; max-width: 500px; margin: auto; }
+    label { display: block; margin-top: 15px; font-weight: bold; }
+    input { padding: 8px; margin-top: 5px; width: 100%; }
+    .btn { background: #4a6fa5; color: white; border: none;
+           padding: 12px; cursor: pointer; margin-top: 20px;
+           width: 100%; font-size: 16px; }
+    .btn:hover { background: #345a8a; }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>HTML5 Form Demo<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;form</span> <span class="attr">action</span>=<span class="str">"#"</span> <span class="attr">method</span>=<span class="str">"POST"</span><span class="tag">&gt;</span>
+
+    <span class="cmt">&lt;!-- Text Field with Placeholder --&gt;</span>
+    <span class="tag">&lt;label&gt;</span>Full Name:<span class="tag">&lt;/label&gt;</span>
+    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"text"</span> <span class="attr">name</span>=<span class="str">"name"</span>
+           <span class="attr">placeholder</span>=<span class="str">"Enter your full name"</span>
+           <span class="attr">required</span><span class="tag">&gt;</span>
+
+    <span class="cmt">&lt;!-- Email Field --&gt;</span>
+    <span class="tag">&lt;label&gt;</span>Email Address:<span class="tag">&lt;/label&gt;</span>
+    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"email"</span> <span class="attr">name</span>=<span class="str">"email"</span>
+           <span class="attr">placeholder</span>=<span class="str">"example@mail.com"</span>
+           <span class="attr">required</span><span class="tag">&gt;</span>
+
+    <span class="cmt">&lt;!-- URL Field --&gt;</span>
+    <span class="tag">&lt;label&gt;</span>Website URL:<span class="tag">&lt;/label&gt;</span>
+    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"url"</span> <span class="attr">name</span>=<span class="str">"website"</span>
+           <span class="attr">placeholder</span>=<span class="str">"https://example.com"</span><span class="tag">&gt;</span>
+
+    <span class="cmt">&lt;!-- Numeric Spinner --&gt;</span>
+    <span class="tag">&lt;label&gt;</span>Age (18-100):<span class="tag">&lt;/label&gt;</span>
+    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"number"</span> <span class="attr">name</span>=<span class="str">"age"</span>
+           <span class="attr">min</span>=<span class="str">"18"</span> <span class="attr">max</span>=<span class="str">"100"</span>
+           <span class="attr">value</span>=<span class="str">"25"</span> <span class="attr">step</span>=<span class="str">"1"</span><span class="tag">&gt;</span>
+
+    <span class="cmt">&lt;!-- Slider (Range) --&gt;</span>
+    <span class="tag">&lt;label&gt;</span>Satisfaction (1-10):<span class="tag">&lt;/label&gt;</span>
+    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"range"</span> <span class="attr">name</span>=<span class="str">"rating"</span>
+           <span class="attr">min</span>=<span class="str">"1"</span> <span class="attr">max</span>=<span class="str">"10"</span>
+           <span class="attr">value</span>=<span class="str">"7"</span> <span class="attr">step</span>=<span class="str">"1"</span><span class="tag">&gt;</span>
+
+    <span class="cmt">&lt;!-- Date Picker --&gt;</span>
+    <span class="tag">&lt;label&gt;</span>Date of Birth:<span class="tag">&lt;/label&gt;</span>
+    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"date"</span> <span class="attr">name</span>=<span class="str">"dob"</span><span class="tag">&gt;</span>
+
+    <span class="cmt">&lt;!-- Color Picker --&gt;</span>
+    <span class="tag">&lt;label&gt;</span>Favourite Color:<span class="tag">&lt;/label&gt;</span>
+    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"color"</span> <span class="attr">name</span>=<span class="str">"favcolor"</span>
+           <span class="attr">value</span>=<span class="str">"#ff0000"</span><span class="tag">&gt;</span>
+
+    <span class="cmt">&lt;!-- Submit Button --&gt;</span>
+    <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"submit"</span> <span class="attr">value</span>=<span class="str">"Submit Form"</span>
+           <span class="attr">class</span>=<span class="str">"btn"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;/form&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+
+<p><strong>How each input type works:</strong></p>
+<ul>
+  <li><strong>type="text"</strong> — Single-line text input with placeholder hint text.</li>
+  <li><strong>type="email"</strong> — Input field with built-in email validation (checks for @ symbol).</li>
+  <li><strong>type="url"</strong> — Input field that validates URL format (must start with http:// or https://).</li>
+  <li><strong>type="number"</strong> — Numeric spinner with up/down arrows. <code>min</code>, <code>max</code>, and <code>step</code> control the range and increment.</li>
+  <li><strong>type="range"</strong> — A slider control. The user drags to select a value within the range.</li>
+  <li><strong>type="date"</strong> — Displays a calendar date picker (format: YYYY-MM-DD).</li>
+  <li><strong>type="color"</strong> — Displays a color picker dialog for selecting a color.</li>
+</ul>
+</div>
+
+<!-- ────── Q16 ────── -->
+<div class="card" id="q16">
+<h3><span class="qnum">Q16</span>What is the difference between DIV and SPAN tags? List various HTML tags and develop user-friendly webpages.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>Difference between DIV and SPAN:</h4>
+<table class="demo-table">
+  <tr><th>Feature</th><th>&lt;div&gt;</th><th>&lt;span&gt;</th></tr>
+  <tr><td>Display Type</td><td>Block-level element</td><td>Inline element</td></tr>
+  <tr><td>Line Behavior</td><td>Starts on a new line and takes full width</td><td>Does NOT start on a new line; only takes as much width as needed</td></tr>
+  <tr><td>Usage</td><td>Used to group larger sections/blocks of content (headers, footers, sections, layouts)</td><td>Used to style small portions of inline content (a word, a phrase, an icon)</td></tr>
+  <tr><td>Nesting</td><td>Can contain other block-level and inline elements</td><td>Should only contain inline content (text, images, links)</td></tr>
+  <tr><td>Default Width</td><td>100% of parent width</td><td>Only as wide as its content</td></tr>
+  <tr><td>Common Use</td><td>Page layout, grouping sections, CSS grid/flexbox containers</td><td>Highlighting text, applying styles to specific words</td></tr>
+</table>
+
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="cmt">&lt;!-- DIV: Block-level (takes full line) --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">style</span>=<span class="str">"background: lightblue; padding: 10px;"</span><span class="tag">&gt;</span>
+  I am a DIV. I start on a new line and
+  take the full width of my parent.
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cmt">&lt;!-- SPAN: Inline (flows with text) --&gt;</span>
+<span class="tag">&lt;p&gt;</span>This is a paragraph with
+  <span class="tag">&lt;span</span> <span class="attr">style</span>=<span class="str">"color: red; font-weight: bold;"</span><span class="tag">&gt;</span>
+    highlighted red text
+  <span class="tag">&lt;/span&gt;</span>
+  inside it using a SPAN tag.
+<span class="tag">&lt;/p&gt;</span></code>
+</div>
+
+<h4>Common HTML Tags for User-Friendly Webpages:</h4>
+<ul>
+  <li><strong>Structural:</strong> <code>&lt;html&gt;</code>, <code>&lt;head&gt;</code>, <code>&lt;body&gt;</code>, <code>&lt;header&gt;</code>, <code>&lt;nav&gt;</code>, <code>&lt;main&gt;</code>, <code>&lt;section&gt;</code>, <code>&lt;footer&gt;</code>, <code>&lt;div&gt;</code>, <code>&lt;span&gt;</code></li>
+  <li><strong>Text:</strong> <code>&lt;h1&gt;</code>-<code>&lt;h6&gt;</code>, <code>&lt;p&gt;</code>, <code>&lt;br&gt;</code>, <code>&lt;hr&gt;</code>, <code>&lt;strong&gt;</code>, <code>&lt;em&gt;</code>, <code>&lt;blockquote&gt;</code>, <code>&lt;pre&gt;</code></li>
+  <li><strong>Lists:</strong> <code>&lt;ul&gt;</code>, <code>&lt;ol&gt;</code>, <code>&lt;li&gt;</code>, <code>&lt;dl&gt;</code>, <code>&lt;dt&gt;</code>, <code>&lt;dd&gt;</code></li>
+  <li><strong>Links &amp; Media:</strong> <code>&lt;a&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;audio&gt;</code>, <code>&lt;video&gt;</code>, <code>&lt;figure&gt;</code>, <code>&lt;figcaption&gt;</code></li>
+  <li><strong>Tables:</strong> <code>&lt;table&gt;</code>, <code>&lt;tr&gt;</code>, <code>&lt;th&gt;</code>, <code>&lt;td&gt;</code>, <code>&lt;thead&gt;</code>, <code>&lt;tbody&gt;</code>, <code>&lt;caption&gt;</code></li>
+  <li><strong>Forms:</strong> <code>&lt;form&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;textarea&gt;</code>, <code>&lt;select&gt;</code>, <code>&lt;option&gt;</code>, <code>&lt;button&gt;</code>, <code>&lt;label&gt;</code></li>
+</ul>
+
+<h4>User-Friendly Webpage Example:</h4>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang</span>=<span class="str">"en"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset</span>=<span class="str">"UTF-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">name</span>=<span class="str">"viewport"</span>
+        <span class="attr">content</span>=<span class="str">"width=device-width, initial-scale=1.0"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;title&gt;</span>College Website<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+  <span class="tag">&lt;header&gt;</span>
+    <span class="tag">&lt;h1&gt;</span>ABC Engineering College<span class="tag">&lt;/h1&gt;</span>
+    <span class="tag">&lt;nav&gt;</span>
+      <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"#home"</span><span class="tag">&gt;</span>Home<span class="tag">&lt;/a&gt;</span> |
+      <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"#courses"</span><span class="tag">&gt;</span>Courses<span class="tag">&lt;/a&gt;</span> |
+      <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"#contact"</span><span class="tag">&gt;</span>Contact<span class="tag">&lt;/a&gt;</span>
+    <span class="tag">&lt;/nav&gt;</span>
+  <span class="tag">&lt;/header&gt;</span>
+
+  <span class="tag">&lt;main&gt;</span>
+    <span class="tag">&lt;section</span> <span class="attr">id</span>=<span class="str">"home"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;h2&gt;</span>Welcome to Our College<span class="tag">&lt;/h2&gt;</span>
+      <span class="tag">&lt;p&gt;</span>We provide quality education in
+         engineering and technology.<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="str">"college.jpg"</span>
+           <span class="attr">alt</span>=<span class="str">"College Campus"</span>
+           <span class="attr">width</span>=<span class="str">"400"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;/section&gt;</span>
+
+    <span class="tag">&lt;section</span> <span class="attr">id</span>=<span class="str">"courses"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;h2&gt;</span>Our Courses<span class="tag">&lt;/h2&gt;</span>
+      <span class="tag">&lt;ul&gt;</span>
+        <span class="tag">&lt;li&gt;</span>B.Tech Computer Science<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>B.Tech Electronics<span class="tag">&lt;/li&gt;</span>
+        <span class="tag">&lt;li&gt;</span>B.Tech Mechanical<span class="tag">&lt;/li&gt;</span>
+      <span class="tag">&lt;/ul&gt;</span>
+    <span class="tag">&lt;/section&gt;</span>
+  <span class="tag">&lt;/main&gt;</span>
+
+  <span class="tag">&lt;footer&gt;</span>
+    <span class="tag">&lt;p&gt;</span>&amp;copy; 2025 ABC College | Contact: info@abc.edu<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/footer&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+</div>
+
+<!-- ────── Q17 & Q18 ────── -->
+<div class="card" id="q17">
+<h3><span class="qnum">Q17/Q18</span>Differences between HTML4 and HTML5. Explain audio and video tags with attributes. Write JavaScript code for play/pause toggle.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>Differences between HTML4 and HTML5:</h4>
+<table class="demo-table">
+  <tr><th>Feature</th><th>HTML4</th><th>HTML5</th></tr>
+  <tr><td>Doctype</td><td>Long and complex DOCTYPE declaration</td><td>Simple: <code>&lt;!DOCTYPE html&gt;</code></td></tr>
+  <tr><td>Semantic Tags</td><td>No semantic tags; used &lt;div&gt; for everything</td><td>&lt;header&gt;, &lt;footer&gt;, &lt;nav&gt;, &lt;article&gt;, &lt;section&gt;, &lt;aside&gt;</td></tr>
+  <tr><td>Audio/Video</td><td>Required third-party plugins (Flash, QuickTime)</td><td>Native &lt;audio&gt; and &lt;video&gt; tags</td></tr>
+  <tr><td>Graphics</td><td>No built-in support; relied on Flash or images</td><td>&lt;canvas&gt; for 2D/3D graphics via JavaScript</td></tr>
+  <tr><td>Form Inputs</td><td>Limited input types (text, password, checkbox, radio)</td><td>New types: date, color, email, url, range, number, search, tel</td></tr>
+  <tr><td>Storage</td><td>Only cookies (4KB limit)</td><td>localStorage (5-10MB) and sessionStorage</td></tr>
+  <tr><td>Mobile Support</td><td>No specific mobile features</td><td>viewport meta tag, touch events, geolocation</td></tr>
+  <tr><td>Error Handling</td><td>Different browsers handle errors differently</td><td>Standardized error handling (parsing rules)</td></tr>
+  <tr><td>JavaScript</td><td>Required external JS for many features</td><td>Built-in APIs: Drag &amp; Drop, Web Workers, WebSocket, Geolocation</td></tr>
+  <tr><td>Character Encoding</td><td>Complex charset specification</td><td>Simple: <code>&lt;meta charset="UTF-8"&gt;</code></td></tr>
+</table>
+
+<h4>The &lt;audio&gt; Tag:</h4>
+<p>The <code>&lt;audio&gt;</code> tag embeds sound content. Important attributes:</p>
+<ul>
+  <li><strong>src</strong> — path to the audio file</li>
+  <li><strong>controls</strong> — shows play/pause/volume buttons</li>
+  <li><strong>autoplay</strong> — plays automatically (browsers may block this)</li>
+  <li><strong>loop</strong> — replays the audio when it ends</li>
+  <li><strong>muted</strong> — starts muted</li>
+  <li><strong>preload</strong> — hints how much to preload: auto, metadata, none</li>
+</ul>
+
+<h4>The &lt;video&gt; Tag:</h4>
+<p>The <code>&lt;video&gt;</code> tag embeds video content. Attributes are similar to audio plus:</p>
+<ul>
+  <li><strong>poster</strong> — image shown before the video plays</li>
+  <li><strong>width/height</strong> — dimensions of the video player</li>
+</ul>
+
+<div class="code-block">
+<span class="code-label">HTML + JS</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Audio and Video<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+  <span class="tag">&lt;h2&gt;</span>Audio Player<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;audio</span> <span class="attr">id</span>=<span class="str">"myAudio"</span> <span class="attr">controls</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="str">"song.mp3"</span> <span class="attr">type</span>=<span class="str">"audio/mpeg"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="str">"song.ogg"</span> <span class="attr">type</span>=<span class="str">"audio/ogg"</span><span class="tag">&gt;</span>
+    Your browser does not support audio.
+  <span class="tag">&lt;/audio&gt;</span>
+  <span class="tag">&lt;button</span> <span class="attr">onclick</span>=<span class="str">"toggleAudio()"</span><span class="tag">&gt;</span>
+    Play / Pause Audio
+  <span class="tag">&lt;/button&gt;</span>
+
+  <span class="tag">&lt;h2&gt;</span>Video Player<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;video</span> <span class="attr">id</span>=<span class="str">"myVideo"</span> <span class="attr">width</span>=<span class="str">"480"</span> <span class="attr">controls</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="str">"movie.mp4"</span> <span class="attr">type</span>=<span class="str">"video/mp4"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;source</span> <span class="attr">src</span>=<span class="str">"movie.webm"</span> <span class="attr">type</span>=<span class="str">"video/webm"</span><span class="tag">&gt;</span>
+    Your browser does not support video.
+  <span class="tag">&lt;/video&gt;</span>
+  <span class="tag">&lt;button</span> <span class="attr">onclick</span>=<span class="str">"toggleVideo()"</span><span class="tag">&gt;</span>
+    Play / Pause Video
+  <span class="tag">&lt;/button&gt;</span>
+
+  <span class="tag">&lt;script&gt;</span>
+    // Toggle audio play/pause
+    function toggleAudio() {
+      var audio = document.getElementById("myAudio");
+      if (audio.paused) {
+        audio.play();       // play if paused
+      } else {
+        audio.pause();      // pause if playing
+      }
+    }
+
+    // Toggle video play/pause
+    function toggleVideo() {
+      var video = document.getElementById("myVideo");
+      if (video.paused) {
+        video.play();
+      } else {
+        video.pause();
+      }
+    }
+  <span class="tag">&lt;/script&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+</div>
+
+<!-- ────── Q19 ────── -->
+<div class="card" id="q19">
+<h3><span class="qnum">Q19</span>What is the importance of cross-browser compatibility? How does limited bandwidth affect multimedia-heavy websites?</h3>
+<span class="answer-label">Answer</span>
+
+<h4>Cross-Browser Compatibility</h4>
+<p><strong>Cross-browser compatibility</strong> means ensuring that a website looks and works correctly across all major web browsers (Chrome, Firefox, Safari, Edge, Opera) and their different versions. Different browsers use different rendering engines — Chrome uses Blink, Firefox uses Gecko, Safari uses WebKit — and these engines may interpret HTML, CSS, and JavaScript slightly differently.</p>
+
+<h4>Why is it Important?</h4>
+<ul>
+  <li><strong>Wider Audience Reach:</strong> Users use different browsers and devices. If your site works only in Chrome, you lose Firefox and Safari users.</li>
+  <li><strong>Professionalism:</strong> A broken layout in any browser reflects poorly on the developer/organization.</li>
+  <li><strong>SEO Impact:</strong> Search engines may penalize sites that render poorly in certain browsers.</li>
+  <li><strong>Accessibility:</strong> Some users (especially in corporate environments or with older hardware) cannot choose their browser.</li>
+  <li><strong>Business Impact:</strong> If customers cannot use your e-commerce site in their browser, you lose sales.</li>
+</ul>
+
+<h4>How to Achieve Cross-Browser Compatibility:</h4>
+<ul>
+  <li>Use valid, standards-compliant HTML and CSS (validate with W3C validator).</li>
+  <li>Use CSS resets or normalize.css to remove browser default styling differences.</li>
+  <li>Test on multiple browsers during development.</li>
+  <li>Avoid browser-specific features without fallbacks (use feature detection with Modernizr or @supports in CSS).</li>
+  <li>Use vendor prefixes where needed (-webkit-, -moz-, -ms-).</li>
+  <li>Use progressive enhancement — start with basic functionality that works everywhere, then add advanced features for modern browsers.</li>
+</ul>
+
+<h4>Limited Bandwidth and Multimedia-Heavy Websites</h4>
+<p><strong>Bandwidth</strong> refers to the amount of data that can be transferred over a network connection in a given time. Users with limited bandwidth (slow internet connections, mobile data caps) experience significant problems with multimedia-heavy websites:</p>
+
+<h4>Effects of Limited Bandwidth:</h4>
+<ul>
+  <li><strong>Slow Page Load:</strong> Large images, videos, and audio files take a long time to download, frustrating users.</li>
+  <li><strong>High Bounce Rate:</strong> Studies show that 53% of mobile users leave a site if it takes more than 3 seconds to load.</li>
+  <li><strong>Data Costs:</strong> In many countries (including India), users pay per MB. Heavy websites cost users real money.</li>
+  <li><strong>Broken Experience:</strong> Videos may buffer endlessly, images may not load, and the page layout may jump around as content loads.</li>
+  <li><strong>Poor SEO:</strong> Google uses page speed as a ranking factor — slow sites rank lower in search results.</li>
+</ul>
+
+<h4>Optimization Techniques:</h4>
+<ul>
+  <li><strong>Image Optimization:</strong> Use modern formats (WebP, AVIF), compress images, use responsive images with <code>&lt;picture&gt;</code> and <code>srcset</code> to serve smaller images on mobile.</li>
+  <li><strong>Lazy Loading:</strong> Load images and videos only when they are about to enter the viewport using <code>loading="lazy"</code>.</li>
+  <li><strong>Video Optimization:</strong> Use adaptive bitrate streaming (HLS, DASH), offer multiple resolutions, use poster images instead of autoplay.</li>
+  <li><strong>Minification:</strong> Minify HTML, CSS, and JavaScript files to reduce their size.</li>
+  <li><strong>Compression:</strong> Enable Gzip or Brotli compression on the server.</li>
+  <li><strong>Caching:</strong> Set proper cache headers so returning visitors don't re-download everything.</li>
+  <li><strong>CDN:</strong> Use a Content Delivery Network to serve content from servers geographically closer to the user.</li>
+  <li><strong>Critical CSS:</strong> Inline the CSS needed for above-the-fold content and defer loading the rest.</li>
+</ul>
+</div>
+
+<!-- ────── Q20 ────── -->
+<div class="card" id="q20">
+<h3><span class="qnum">Q20</span>Explain the difference between GET and POST method. Discuss event listeners to capture form submission.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>GET vs POST Method:</h4>
+<table class="demo-table">
+  <tr><th>Feature</th><th>GET</th><th>POST</th></tr>
+  <tr><td>Data Location</td><td>Appended to URL as query string (?name=John&amp;age=25)</td><td>Sent in the HTTP request body (not visible in URL)</td></tr>
+  <tr><td>Visibility</td><td>Data is visible in the URL bar and browser history</td><td>Data is hidden from the URL (more secure)</td></tr>
+  <tr><td>Data Size</td><td>Limited to ~2048 characters (URL length limit)</td><td>No practical size limit (can send large files)</td></tr>
+  <tr><td>Caching</td><td>Can be cached by the browser</td><td>Not cached by default</td></tr>
+  <tr><td>Bookmarking</td><td>Can be bookmarked with data</td><td>Cannot be bookmarked with data</td></tr>
+  <tr><td>Idempotent</td><td>Yes — same request produces same result</td><td>No — may create duplicate records if submitted twice</td></tr>
+  <tr><td>Security</td><td>NOT secure for sensitive data (passwords visible in URL)</td><td>More secure (data not in URL, but still needs HTTPS for full security)</td></tr>
+  <tr><td>Use Cases</td><td>Search forms, filtering, pagination, bookmarkable pages</td><td>Login, registration, file upload, data modification</td></tr>
+  <tr><td>Back/Reload</td><td>Harmless (just re-fetches the page)</td><td>May trigger "resubmit form data" warning</td></tr>
+</table>
+
+<h4>Event Listeners for Form Submission:</h4>
+<p>JavaScript <strong>event listeners</strong> allow you to "listen" for events (like form submission, button clicks, key presses) and execute code when they occur. For forms, the <code>submit</code> event fires when the user clicks the submit button. Using <code>addEventListener()</code>, you can:</p>
+<ul>
+  <li><strong>Prevent default form submission</strong> using <code>event.preventDefault()</code> — this stops the form from sending data to the server, allowing you to validate or modify the data with JavaScript first.</li>
+  <li><strong>Validate form data</strong> before sending (check if fields are empty, email format is correct, etc.).</li>
+  <li><strong>Dynamically modify form content</strong> — change field values, add/remove fields, show/hide sections based on user input.</li>
+  <li><strong>Submit via AJAX</strong> — send form data in the background without reloading the page.</li>
+</ul>
+
+<div class="code-block">
+<span class="code-label">HTML + JS</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Form Event Listener<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+<span class="tag">&lt;form</span> <span class="attr">id</span>=<span class="str">"myForm"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;label&gt;</span>Name:<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"text"</span> <span class="attr">id</span>=<span class="str">"name"</span><span class="tag">&gt;&lt;br&gt;&lt;br&gt;</span>
+
+  <span class="tag">&lt;label&gt;</span>Email:<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"email"</span> <span class="attr">id</span>=<span class="str">"email"</span><span class="tag">&gt;&lt;br&gt;&lt;br&gt;</span>
+
+  <span class="tag">&lt;input</span> <span class="attr">type</span>=<span class="str">"submit"</span> <span class="attr">value</span>=<span class="str">"Submit"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/form&gt;</span>
+
+<span class="tag">&lt;p</span> <span class="attr">id</span>=<span class="str">"result"</span><span class="tag">&gt;&lt;/p&gt;</span>
+
+<span class="tag">&lt;script&gt;</span>
+  // Get the form element
+  var form = document.getElementById("myForm");
+
+  // Add event listener for "submit" event
+  form.addEventListener("submit", function(event) {
+
+    // Prevent the default form submission
+    event.preventDefault();
+
+    // Get form values
+    var name = document.getElementById("name").value;
+    var email = document.getElementById("email").value;
+
+    // Validate
+    if (name === "" || email === "") {
+      alert("Please fill in all fields!");
+      return;
+    }
+
+    // Display result dynamically
+    document.getElementById("result").innerHTML =
+      "Hello, " + name + "! Your email is " + email;
+
+    // Dynamically change form content
+    form.innerHTML = "&lt;p&gt;Form submitted successfully!&lt;/p&gt;";
+  });
+<span class="tag">&lt;/script&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+
+<p><strong>How it works:</strong> <code>addEventListener("submit", ...)</code> listens for the form submit event. <code>event.preventDefault()</code> stops the browser from sending the form data to a server (page won't reload). We then read the form values, validate them, display a result message, and dynamically replace the form with a success message.</p>
+</div>
+</div>
+
+<!-- ═══════════════════════════ SECTION: CSS ═══════════════════════════ -->
+<div class="section">
+<h2 class="section-title">CSS — Styling &amp; Layout</h2>
+
+<!-- ────── Q21 ────── -->
+<div class="card" id="q21">
+<h3><span class="qnum">Q21</span>Inline, Internal, and External style sheets with font styles, background-repeat, link styles, and custom cursors.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>Three Types of CSS:</h4>
+<ul>
+  <li><strong>Inline CSS:</strong> Written directly inside an HTML element using the <code>style</code> attribute. Applies only to that specific element.</li>
+  <li><strong>Internal CSS:</strong> Written inside a <code>&lt;style&gt;</code> tag within the <code>&lt;head&gt;</code> section. Applies to the entire page.</li>
+  <li><strong>External CSS:</strong> Written in a separate <code>.css</code> file and linked using <code>&lt;link&gt;</code> tag. Can be shared across multiple pages.</li>
+</ul>
+
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>CSS Types Demo<span class="tag">&lt;/title&gt;</span>
+
+  <span class="cmt">&lt;!-- EXTERNAL CSS: Link to external file --&gt;</span>
+  <span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="str">"stylesheet"</span> <span class="attr">href</span>=<span class="str">"style.css"</span><span class="tag">&gt;</span>
+
+  <span class="cmt">&lt;!-- INTERNAL CSS: Inside &lt;style&gt; tag --&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    body {
+      font-family: Georgia, serif;
+      font-size: 16px;
+      line-height: 1.6;
+      background-image: url("bg-pattern.png");
+      background-repeat: repeat-x;
+      /* repeat-x: repeats horizontally only */
+      /* repeat-y: repeats vertically only */
+      /* no-repeat: shows image once */
+      /* repeat: repeats both directions (default) */
+    }
+
+    /* Link styles (Pseudo-classes) */
+    a:link {
+      color: blue;               /* Normal, unvisited link */
+      text-decoration: none;
+    }
+    a:visited {
+      color: purple;             /* Visited link */
+    }
+    a:hover {
+      color: red;                /* Mouse over the link */
+      text-decoration: underline;
+    }
+    a:active {
+      color: orange;             /* Link being clicked */
+    }
+
+    /* Custom cursors */
+    .pointer-link {
+      cursor: pointer;           /* Hand pointer */
+    }
+    .help-link {
+      cursor: help;              /* Question mark cursor */
+    }
+    .wait-link {
+      cursor: wait;              /* Loading/spinner cursor */
+    }
+    .custom-link {
+      cursor: url("custom.cur"), auto;
+      /* Custom cursor image with fallback */
+    }
+
+    /* Font styles */
+    .serif    { font-family: Georgia, serif; }
+    .sans     { font-family: Arial, sans-serif; }
+    .mono     { font-family: "Courier New", monospace; }
+    .bold     { font-weight: bold; }
+    .italic   { font-style: italic; }
+    .size-big { font-size: 24px; }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+  <span class="cmt">&lt;!-- INLINE CSS: Directly on element --&gt;</span>
+  <span class="tag">&lt;h1</span> <span class="attr">style</span>=<span class="str">"color: #4a6fa5; font-size: 28px;
+             text-align: center;"</span><span class="tag">&gt;</span>
+    CSS Types Demonstration
+  <span class="tag">&lt;/h1&gt;</span>
+
+  <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"serif bold"</span><span class="tag">&gt;</span>
+    This uses Internal CSS for font styling.
+  <span class="tag">&lt;/p&gt;</span>
+
+  <span class="tag">&lt;p&gt;</span>
+    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"https://google.com"</span><span class="tag">&gt;</span>Normal Link<span class="tag">&lt;/a&gt;</span> |
+    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span> <span class="attr">class</span>=<span class="str">"pointer-link"</span><span class="tag">&gt;</span>Pointer Cursor<span class="tag">&lt;/a&gt;</span> |
+    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span> <span class="attr">class</span>=<span class="str">"help-link"</span><span class="tag">&gt;</span>Help Cursor<span class="tag">&lt;/a&gt;</span>
+  <span class="tag">&lt;/p&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+</div>
+
+<!-- ────── Q22 ────── -->
+<div class="card" id="q22">
+<h3><span class="qnum">Q22</span>CSS types + Selection box with 5 countries that display capital when selected.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>Types of CSS:</h4>
+<ul>
+  <li><strong>Inline CSS:</strong> Uses the <code>style</code> attribute inside HTML tags. Highest specificity but hard to maintain.</li>
+  <li><strong>Internal CSS:</strong> Uses the <code>&lt;style&gt;</code> tag inside <code>&lt;head&gt;</code>. Good for single-page styles.</li>
+  <li><strong>External CSS:</strong> Uses a separate <code>.css</code> file linked with <code>&lt;link&gt;</code>. Best for large projects.</li>
+</ul>
+
+<div class="code-block">
+<span class="code-label">HTML + JS</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Country Capitals<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    body { font-family: Arial; text-align: center;
+           padding: 40px; }
+    select { padding: 8px; font-size: 16px; }
+    #capital {
+      margin-top: 20px;
+      color: #d43d3d;       /* text color */
+      font-weight: bold;     /* bold */
+      font-size: 28px;       /* font size */
+      font-style: italic;    /* italics */
+      text-decoration: underline; /* underline */
+    }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+  <span class="tag">&lt;h2&gt;</span>Select a Country<span class="tag">&lt;/h2&gt;</span>
+
+  <span class="tag">&lt;select</span> <span class="attr">id</span>=<span class="str">"country"</span>
+          <span class="attr">onchange</span>=<span class="str">"showCapital()"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="str">""</span><span class="tag">&gt;</span>-- Choose --<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="str">"New Delhi"</span><span class="tag">&gt;</span>India<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="str">"Washington D.C."</span><span class="tag">&gt;</span>USA<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="str">"Tokyo"</span><span class="tag">&gt;</span>Japan<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="str">"Canberra"</span><span class="tag">&gt;</span>Australia<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value</span>=<span class="str">"Berlin"</span><span class="tag">&gt;</span>Germany<span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;/select&gt;</span>
+
+  <span class="tag">&lt;p</span> <span class="attr">id</span>=<span class="str">"capital"</span><span class="tag">&gt;&lt;/p&gt;</span>
+
+  <span class="tag">&lt;script&gt;</span>
+    function showCapital() {
+      var sel = document.getElementById("country");
+      var capital = sel.value;
+      if (capital !== "") {
+        document.getElementById("capital").innerHTML =
+          "Capital: " + capital;
+      } else {
+        document.getElementById("capital").innerHTML = "";
+      }
+    }
+  <span class="tag">&lt;/script&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+</div>
+
+<!-- ────── Q23 ────── -->
+<div class="card" id="q23">
+<h3><span class="qnum">Q23</span>What are the different methods for including CSS in an HTML document? Advantages and disadvantages of each.</h3>
+<span class="answer-label">Answer</span>
+<p>There are three methods to include CSS in HTML. Each has its own use case, advantages, and disadvantages:</p>
+
+<h4>1. Inline CSS</h4>
+<p>CSS is applied directly to an HTML element using the <code>style</code> attribute.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;p</span> <span class="attr">style</span>=<span class="str">"color: red; font-size: 18px;"</span><span class="tag">&gt;</span>
+  Inline styled text
+<span class="tag">&lt;/p&gt;</span></code>
+</div>
+<ul>
+  <li><strong>Advantages:</strong> Quick and easy for testing; highest specificity (overrides other styles); no extra files needed.</li>
+  <li><strong>Disadvantages:</strong> Mixes content with presentation (bad practice); cannot be reused across elements; hard to maintain; increases HTML file size; no separation of concerns.</li>
+</ul>
+
+<h4>2. Internal (Embedded) CSS</h4>
+<p>CSS is written inside a <code>&lt;style&gt;</code> tag within the <code>&lt;head&gt;</code> section.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    p { color: blue; font-size: 18px; }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span></code>
+</div>
+<ul>
+  <li><strong>Advantages:</strong> Separates CSS from HTML content (within the same file); styles apply to the whole page; no extra HTTP request; useful for single-page styling.</li>
+  <li><strong>Disadvantages:</strong> Cannot be reused across multiple pages; increases page size; styles are loaded with every page load (not cacheable separately).</li>
+</ul>
+
+<h4>3. External CSS</h4>
+<p>CSS is written in a separate <code>.css</code> file and linked using the <code>&lt;link&gt;</code> tag.</p>
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="cmt">&lt;!-- In HTML head --&gt;</span>
+<span class="tag">&lt;link</span> <span class="attr">rel</span>=<span class="str">"stylesheet"</span>
+      <span class="attr">href</span>=<span class="str">"styles.css"</span><span class="tag">&gt;</span>
+
+<span class="cmt">&lt;!-- styles.css file contents --&gt;</span>
+p { color: green; font-size: 18px; }</code>
+</div>
+<ul>
+  <li><strong>Advantages:</strong> Complete separation of content and presentation; one CSS file can style multiple pages; cacheable by the browser (faster loading on subsequent pages); easiest to maintain; best practice for large projects; reduces HTML file size.</li>
+  <li><strong>Disadvantages:</strong> Requires an extra HTTP request to load the CSS file; if the CSS file fails to load, the page may look unstyled; slightly more setup required.</li>
+</ul>
+
+<h4>Comparison Table:</h4>
+<table class="demo-table">
+  <tr><th>Feature</th><th>Inline</th><th>Internal</th><th>External</th></tr>
+  <tr><td>Location</td><td>Inside element</td><td>In &lt;head&gt; &lt;style&gt;</td><td>Separate .css file</td></tr>
+  <tr><td>Reusability</td><td>Single element only</td><td>Single page</td><td>Multiple pages</td></tr>
+  <tr><td>Maintenance</td><td>Difficult</td><td>Moderate</td><td>Easy</td></tr>
+  <tr><td>Performance</td><td>No caching</td><td>No caching</td><td>Cacheable</td></tr>
+  <tr><td>Specificity</td><td>Highest</td><td>Medium</td><td>Lowest</td></tr>
+</table>
+</div>
+
+<!-- ────── Q24 ────── -->
+<div class="card" id="q24">
+<h3><span class="qnum">Q24</span>Which HTML tag is used to define an internal style sheet?</h3>
+<span class="answer-label">Answer — Short Answer</span>
+<p>The <strong><code>&lt;style&gt;</code></strong> tag is used to define an internal (embedded) style sheet in HTML. It is placed inside the <code>&lt;head&gt;</code> section of the HTML document. All CSS rules written inside the <code>&lt;style&gt;</code> tag apply to the elements on that specific page.</p>
+
+<div class="code-block">
+<span class="code-label">HTML</span>
+<code><span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    body { background-color: lightyellow; }
+    h1   { color: navy; }
+    p    { font-size: 16px; color: #333; }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span></code>
+</div>
+
+<p>The <code>&lt;style&gt;</code> tag can also have optional attributes like <code>type="text/css"</code> (default in HTML5, so not required) and <code>media</code> (to specify which media/device the styles apply to, e.g., <code>media="screen"</code> or <code>media="print"</code>).</p>
+</div>
+
+<!-- ────── Q25 ────── -->
+<div class="card" id="q25">
+<h3><span class="qnum">Q25</span>Box Shadow, Text Shadow, and Rounded Corners using CSS3.</h3>
+<span class="answer-label">Answer</span>
+
+<div class="code-block">
+<span class="code-label">HTML + CSS</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    body { padding: 40px; font-family: Arial; }
+
+    /* Box Shadow */
+    .box-shadow {
+      width: 300px; padding: 20px;
+      background: #f0f0f0;
+      box-shadow: 5px 5px 15px rgba(0,0,0,0.3);
+      /* h-offset v-offset blur color */
+      margin-bottom: 30px;
+    }
+
+    /* Text Shadow */
+    .text-shadow {
+      font-size: 36px; font-weight: bold;
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.4);
+      /* h-offset v-offset blur color */
+      margin-bottom: 30px;
+    }
+
+    /* Rounded Corners */
+    .rounded {
+      width: 200px; height: 100px;
+      background: #4a6fa5; color: white;
+      border-radius: 20px;  /* all corners */
+      padding: 20px; margin-bottom: 20px;
+    }
+    .rounded-different {
+      width: 200px; height: 100px;
+      background: #e8b4b8;
+      border-radius: 10px 30px 50px 70px;
+      /* top-left top-right bottom-right bottom-left */
+      padding: 20px;
+    }
+
+    /* Circle using border-radius */
+    .circle {
+      width: 120px; height: 120px;
+      background: #a8c5a0;
+      border-radius: 50%;  /* makes a perfect circle */
+      display: flex; align-items: center;
+      justify-content: center; color: white;
+    }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"box-shadow"</span><span class="tag">&gt;</span>
+    This box has a shadow!
+  <span class="tag">&lt;/div&gt;</span>
+
+  <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"text-shadow"</span><span class="tag">&gt;</span>
+    Shadow Text
+  <span class="tag">&lt;/p&gt;</span>
+
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"rounded"</span><span class="tag">&gt;</span>
+    Rounded Corners
+  <span class="tag">&lt;/div&gt;</span>
+
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"rounded-different"</span><span class="tag">&gt;</span>
+    Different Radii
+  <span class="tag">&lt;/div&gt;</span>
+
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"circle"</span><span class="tag">&gt;</span>Circle<span class="tag">&lt;/div&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+
+<p><strong>box-shadow syntax:</strong> <code>box-shadow: h-offset v-offset blur spread color inset;</code> — h-offset (horizontal), v-offset (vertical), blur (softness), spread (size), color, and optional <code>inset</code> for inner shadow.</p>
+<p><strong>text-shadow syntax:</strong> <code>text-shadow: h-offset v-offset blur color;</code></p>
+<p><strong>border-radius:</strong> One value for all corners, two values (top-left/bottom-right, top-right/bottom-left), or four values (clockwise from top-left). Use 50% for circles/ellipses.</p>
+</div>
+
+<!-- ────── Q26 ────── -->
+<div class="card" id="q26">
+<h3><span class="qnum">Q26</span>Create a web page with a fixed background image.</h3>
+<span class="answer-label">Answer</span>
+<p>A fixed background image stays in place when the user scrolls the page. The content scrolls over the background, creating a parallax-like effect. This is achieved using <code>background-attachment: fixed</code>.</p>
+
+<div class="code-block">
+<span class="code-label">HTML + CSS</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    body {
+      /* Set the background image */
+      background-image: url("background.jpg");
+
+      /* FIXED: image does not scroll with content */
+      background-attachment: fixed;
+
+      /* Center the image */
+      background-position: center;
+
+      /* Cover the entire viewport */
+      background-size: cover;
+
+      /* Do not repeat */
+      background-repeat: no-repeat;
+
+      font-family: Arial;
+      color: white;
+    }
+
+    .content {
+      max-width: 700px;
+      margin: auto;
+      padding: 40px;
+      background: rgba(0,0,0,0.6);
+    }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"content"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h1&gt;</span>Fixed Background Demo<span class="tag">&lt;/h1&gt;</span>
+    <span class="tag">&lt;p&gt;</span>Scroll down to see the background
+    stay in place while this content moves.<span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;p&gt;</span>Lorem ipsum dolor sit amet...<span class="tag">&lt;/p&gt;</span>
+    <span class="cmt">&lt;!-- Add enough content to enable scrolling --&gt;</span>
+    <span class="tag">&lt;p&gt;</span>More content here...<span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;p&gt;</span>Even more content...<span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;p&gt;</span>Keep scrolling...<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+
+<p><strong>Key property:</strong> <code>background-attachment: fixed</code> fixes the background relative to the viewport. Other values are <code>scroll</code> (default — scrolls with content) and <code>local</code> (scrolls with the element's content).</p>
+</div>
+
+<!-- ────── Q27 ────── -->
+<div class="card" id="q27">
+<h3><span class="qnum">Q27</span>Explain all CSS background properties with examples.</h3>
+<span class="answer-label">Answer</span>
+<p>CSS provides several background properties to control how backgrounds appear on elements:</p>
+
+<h4>1. background-color</h4>
+<p>Sets the background color. Accepts color names, hex, RGB, RGBA, HSL values.</p>
+<div class="code-block"><code>.box1 { background-color: #ff6347; }
+.box2 { background-color: rgb(100, 200, 150); }
+.box3 { background-color: rgba(0, 0, 0, 0.5); } /* with transparency */</code></div>
+
+<h4>2. background-image</h4>
+<p>Sets an image as the background. Uses <code>url()</code> to specify the image path.</p>
+<div class="code-block"><code>body { background-image: url("bg.jpg"); }
+.hero { background-image: linear-gradient(to right, #ff7e5f, #feb47b); }</code></div>
+
+<h4>3. background-repeat</h4>
+<p>Controls whether and how the background image repeats.</p>
+<div class="code-block"><code>.box1 { background-repeat: repeat; }    /* default: repeats both directions */
+.box2 { background-repeat: no-repeat; } /* shows image once only */
+.box3 { background-repeat: repeat-x; }  /* repeats horizontally */
+.box4 { background-repeat: repeat-y; }  /* repeats vertically */
+.box5 { background-repeat: space; }     /* repeats with even spacing */
+.box6 { background-repeat: round; }     /* repeats and scales to fit */</code></div>
+
+<h4>4. background-position</h4>
+<p>Sets the starting position of the background image.</p>
+<div class="code-block"><code>.box1 { background-position: center; }        /* center center */
+.box2 { background-position: top right; }     /* top-right corner */
+.box3 { background-position: 50px 100px; }    /* 50px from left, 100px from top */
+.box4 { background-position: 25% 75%; }       /* percentage-based */</code></div>
+
+<h4>5. background-size</h4>
+<p>Controls the size of the background image.</p>
+<div class="code-block"><code>.box1 { background-size: auto; }      /* default: original size */
+.box2 { background-size: cover; }     /* covers entire element (may crop) */
+.box3 { background-size: contain; }   /* fits entire image (may leave gaps) */
+.box4 { background-size: 200px 150px; } /* specific width and height */</code></div>
+
+<h4>6. background-attachment</h4>
+<p>Controls whether the background scrolls with the content or stays fixed.</p>
+<div class="code-block"><code>.box1 { background-attachment: scroll; } /* scrolls with content (default) */
+.box2 { background-attachment: fixed; }  /* stays fixed on screen */
+.box3 { background-attachment: local; }  /* scrolls with element content */</code></div>
+
+<h4>7. background-origin</h4>
+<p>Controls where the background positioning starts relative to the box model.</p>
+<div class="code-block"><code>.box1 { background-origin: padding-box; } /* default */
+.box2 { background-origin: border-box; }  /* starts from border edge */
+.box3 { background-origin: content-box; } /* starts from content edge */</code></div>
+
+<h4>8. background-clip</h4>
+<p>Controls how far the background extends within the element.</p>
+<div class="code-block"><code>.box1 { background-clip: border-box; }  /* extends under border (default) */
+.box2 { background-clip: padding-box; } /* extends to padding edge */
+.box3 { background-clip: content-box; } /* clipped to content area */
+.box4 { background-clip: text; -webkit-text-fill-color: transparent; }
+         /* clips to text shape — cool effect! */</code></div>
+
+<h4>9. Shorthand — background</h4>
+<div class="code-block"><code>/* Shorthand: color image position/size repeat attachment origin clip */
+.box {
+  background: #f0f0f0 url("bg.jpg") center/cover no-repeat fixed;
+}</code></div>
+</div>
+
+<!-- ────── Q28 ────── -->
+<div class="card" id="q28">
+<h3><span class="qnum">Q28</span>Explain all five CSS positioning properties with examples.</h3>
+<span class="answer-label">Answer</span>
+<p>CSS <code>position</code> property determines how an element is positioned in the document. There are 5 values:</p>
+
+<h4>1. position: static (Default)</h4>
+<p>Elements are positioned according to the normal document flow. <code>top</code>, <code>bottom</code>, <code>left</code>, <code>right</code> have no effect.</p>
+<div class="code-block"><code>.box { position: static; } /* Default behavior — no special positioning */</code></div>
+
+<h4>2. position: relative</h4>
+<p>The element is positioned relative to its <strong>normal position</strong>. Using <code>top</code>, <code>right</code>, <code>bottom</code>, <code>left</code> shifts it from where it would normally be, but the original space is still reserved.</p>
+<div class="code-block"><code>.box {
+  position: relative;
+  top: 20px;    /* moves 20px DOWN from normal position */
+  left: 30px;   /* moves 30px RIGHT from normal position */
+}</code></div>
+
+<h4>3. position: absolute</h4>
+<p>The element is removed from the normal flow and positioned relative to its <strong>nearest positioned ancestor</strong> (an ancestor with position other than static). If no positioned ancestor exists, it positions relative to the <code>&lt;html&gt;</code> element (the page).</p>
+<div class="code-block"><code>.parent { position: relative; }  /* establish positioning context */
+.child {
+  position: absolute;
+  top: 10px;
+  right: 20px;  /* 10px from top, 20px from right of parent */
+}</code></div>
+
+<h4>4. position: fixed</h4>
+<p>The element is removed from the normal flow and positioned relative to the <strong>viewport</strong> (browser window). It stays in the same position even when the user scrolls. Used for sticky headers, floating buttons, and navigation bars.</p>
+<div class="code-block"><code>.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;  /* stays at the top of the screen always */
+  z-index: 100;
+}</code></div>
+
+<h4>5. position: sticky</h4>
+<p>A hybrid of relative and fixed. The element behaves like <code>relative</code> until it reaches a specified scroll position, then it becomes <code>fixed</code>. Used for sticky table headers, section headers, and sidebar navigation.</p>
+<div class="code-block"><code>.sticky-header {
+  position: sticky;
+  top: 0;            /* sticks when it reaches top of viewport */
+  background: white;
+  z-index: 10;
+}</code></div>
+
+<h4>Comparison Table:</h4>
+<table class="demo-table">
+  <tr><th>Value</th><th>In Flow?</th><th>Positioned Relative To</th><th>Scrolls?</th></tr>
+  <tr><td>static</td><td>Yes</td><td>Normal flow</td><td>Yes</td></tr>
+  <tr><td>relative</td><td>Yes (space reserved)</td><td>Its own normal position</td><td>Yes</td></tr>
+  <tr><td>absolute</td><td>No (removed)</td><td>Nearest positioned ancestor</td><td>Yes</td></tr>
+  <tr><td>fixed</td><td>No (removed)</td><td>Viewport (browser window)</td><td>No</td></tr>
+  <tr><td>sticky</td><td>Yes (until stuck)</td><td>Scroll container + offset</td><td>Toggles</td></tr>
+</table>
+</div>
+
+<!-- ────── Q29 & Q30 ────── -->
+<div class="card" id="q29">
+<h3><span class="qnum">Q29/Q30</span>Explain the CSS Box Model. Difference between margin and padding. How does the box model influence layout?</h3>
+<span class="answer-label">Answer</span>
+
+<h4>What is the CSS Box Model?</h4>
+<p>Every HTML element on a web page is represented as a rectangular box. The <strong>CSS Box Model</strong> describes how this box is structured. It consists of four layers, from innermost to outermost:</p>
+
+<h5>Four Components:</h5>
+<ol>
+  <li><strong>Content:</strong> The innermost area where the actual content (text, images) is displayed. Its size is controlled by <code>width</code> and <code>height</code>.</li>
+  <li><strong>Padding:</strong> The space between the content and the border. It is transparent and adds space inside the element. Background color/image of the element shows through the padding area.</li>
+  <li><strong>Border:</strong> A line that wraps around the padding. You can control its width, style (solid, dashed, dotted), and color.</li>
+  <li><strong>Margin:</strong> The outermost layer — space outside the border. It separates the element from other elements. Margins are transparent (the parent's background shows through).</li>
+</ol>
+
+<div class="diagram">
+<pre>
+┌─────────────────────────────────┐
+│            MARGIN               │
+│  ┌───────────────────────────┐  │
+│  │         BORDER            │  │
+│  │  ┌─────────────────────┐  │  │
+│  │  │      PADDING        │  │  │
+│  │  │  ┌───────────────┐  │  │  │
+│  │  │  │   CONTENT     │  │  │  │
+│  │  │  │ (width×height)│  │  │  │
+│  │  │  └───────────────┘  │  │  │
+│  │  └─────────────────────┘  │  │
+│  └───────────────────────────┘  │
+└─────────────────────────────────┘
+</pre>
+</div>
+
+<h4>Difference Between Margin and Padding:</h4>
+<table class="demo-table">
+  <tr><th>Feature</th><th>Padding</th><th>Margin</th></tr>
+  <tr><td>Location</td><td>Inside the border (between content and border)</td><td>Outside the border (between elements)</td></tr>
+  <tr><td>Background</td><td>Element's background color/image is visible</td><td>Transparent — no background</td></tr>
+  <tr><td>Negative Values</td><td>NOT allowed</td><td>Allowed (pulls elements closer)</td></tr>
+  <tr><td>Auto Value</td><td>Not typically used with auto</td><td><code>margin: auto</code> centers block elements horizontally</td></tr>
+  <tr><td>Collapsing</td><td>Does NOT collapse</td><td>Vertical margins collapse (larger value wins)</td></tr>
+  <tr><td>Purpose</td><td>Adds space INSIDE the element</td><td>Adds space OUTSIDE the element</td></tr>
+</table>
+
+<div class="code-block">
+<span class="code-label">CSS</span>
+<code>.card {
+  width: 300px;
+  height: 200px;
+  padding: 20px;         /* space inside, around content */
+  border: 2px solid #333;
+  margin: 30px;          /* space outside, around element */
+  background: #f0f0f0;
+}
+
+/* Shorthand: top right bottom left (clockwise) */
+.box {
+  padding: 10px 20px 10px 20px;  /* top right bottom left */
+  margin: 10px 20px;              /* top/bottom left/right */
+}
+
+/* Centers a block element */
+.centered {
+  width: 80%;
+  margin: 0 auto;   /* top/bottom: 0, left/right: auto */
+}</code>
+</div>
+
+<h4>box-sizing Property:</h4>
+<p>By default (<code>box-sizing: content-box</code>), <code>width</code> and <code>height</code> apply only to the content area. Padding and border are <strong>added</strong> to the total size. With <code>box-sizing: border-box</code>, the width/height <strong>includes</strong> padding and border — making it much easier to control element sizes.</p>
+
+<div class="code-block">
+<span class="code-label">CSS</span>
+<code>/* Default: total width = width + padding + border */
+.content-box {
+  box-sizing: content-box;  /* default */
+  width: 300px;
+  padding: 20px;
+  border: 2px solid black;
+  /* Total width = 300 + 40 + 4 = 344px */
+}
+
+/* Border-box: total width = width (includes padding & border) */
+.border-box {
+  box-sizing: border-box;
+  width: 300px;
+  padding: 20px;
+  border: 2px solid black;
+  /* Total width = 300px (content is 300-40-4 = 256px) */
+}
+
+/* Best practice: apply border-box to everything */
+* { box-sizing: border-box; }</code>
+</div>
+</div>
+
+<!-- ────── Q31 ────── -->
+<div class="card" id="q31">
+<h3><span class="qnum">Q31</span>Explain CSS selectors: element, class, and ID selectors with examples.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>What is a CSS Selector?</h4>
+<p>A <strong>CSS selector</strong> is a pattern used to select and target HTML elements that you want to style. The selector defines which elements the CSS rules will apply to.</p>
+
+<h4>1. Element (Type) Selector</h4>
+<p>Selects all elements of a given HTML tag name. It applies styles to EVERY instance of that tag on the page.</p>
+<div class="code-block">
+<span class="code-label">CSS</span>
+<code>/* Styles ALL paragraph elements */
+p {
+  color: #333;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+/* Styles ALL h1 elements */
+h1 {
+  color: navy;
+  text-align: center;
+}</code>
+</div>
+
+<h4>2. Class Selector (.)</h4>
+<p>Selects elements with a specific <code>class</code> attribute. Denoted by a dot (.) followed by the class name. Multiple elements can share the same class, and one element can have multiple classes.</p>
+<div class="code-block">
+<span class="code-label">CSS + HTML</span>
+<code>/* CSS */
+.highlight {
+  background-color: yellow;
+  padding: 5px;
+}
+.bold-text {
+  font-weight: bold;
+}
+
+/* HTML */
+<span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"highlight"</span><span class="tag">&gt;</span>This is highlighted.<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"highlight bold-text"</span><span class="tag">&gt;</span>Highlighted AND bold!<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;p</span><span class="tag">&gt;</span>This is normal.<span class="tag">&lt;/p&gt;</span></code>
+</div>
+
+<h4>3. ID Selector (#)</h4>
+<p>Selects an element with a specific <code>id</code> attribute. Denoted by a hash (#) followed by the ID name. An ID must be <strong>unique</strong> on a page — only one element should have a particular ID.</p>
+<div class="code-block">
+<span class="code-label">CSS + HTML</span>
+<code>/* CSS */
+#main-title {
+  color: #d43d3d;
+  font-size: 32px;
+}
+#footer {
+  background: #333;
+  color: white;
+  padding: 20px;
+}
+
+/* HTML */
+<span class="tag">&lt;h1</span> <span class="attr">id</span>=<span class="str">"main-title"</span><span class="tag">&gt;</span>My Website<span class="tag">&lt;/h1&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="str">"footer"</span><span class="tag">&gt;</span>Copyright 2025<span class="tag">&lt;/div&gt;</span></code>
+</div>
+
+<h4>Comparison:</h4>
+<table class="demo-table">
+  <tr><th>Selector</th><th>Syntax</th><th>Specificity</th><th>Reusability</th></tr>
+  <tr><td>Element</td><td>tagname { }</td><td>Lowest (0,0,1)</td><td>All elements of that type</td></tr>
+  <tr><td>Class</td><td>.classname { }</td><td>Medium (0,1,0)</td><td>Multiple elements (reusable)</td></tr>
+  <tr><td>ID</td><td>#idname { }</td><td>Highest (1,0,0)</td><td>Single element only (unique)</td></tr>
+</table>
+</div>
+
+<!-- ────── Q32 ────── -->
+<div class="card" id="q32">
+<h3><span class="qnum">Q32</span>Differentiate between Pseudo-classes and Pseudo-elements with examples.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>Pseudo-classes:</h4>
+<p>A <strong>pseudo-class</strong> selects elements in a specific <strong>state</strong> or <strong>condition</strong>. It does not create new elements — it styles existing elements when they meet certain criteria. Pseudo-classes use a single colon (:).</p>
+
+<div class="code-block">
+<span class="code-label">CSS</span>
+<code>/* :hover — when mouse is over the element */
+a:hover { color: red; }
+
+/* :focus — when element is focused (clicked/tabbed) */
+input:focus { border-color: blue; background: #f0f0ff; }
+
+/* :nth-child(n) — selects the nth child */
+li:nth-child(odd) { background: #f0f0f0; }
+li:nth-child(even) { background: white; }
+
+/* :first-child — selects the first child */
+p:first-child { font-weight: bold; }
+
+/* :last-child — selects the last child */
+li:last-child { border-bottom: none; }
+
+/* :checked — when checkbox/radio is checked */
+input:checked + label { color: green; }</code>
+</div>
+
+<h4>Pseudo-elements:</h4>
+<p>A <strong>pseudo-element</strong> creates a <strong>virtual/fake element</strong> that doesn't exist in the HTML and allows you to style a specific part of an element or insert content before/after it. Pseudo-elements use a double colon (::).</p>
+
+<div class="code-block">
+<span class="code-label">CSS</span>
+<code>/* ::before — inserts content BEFORE the element */
+h2::before { content: "★ "; color: gold; }
+
+/* ::after — inserts content AFTER the element */
+h2::after { content: " ★"; color: gold; }
+
+/* ::first-line — styles the first line of text */
+p::first-line { font-weight: bold; color: navy; }
+
+/* ::first-letter — styles the first letter */
+p::first-letter { font-size: 48px; float: left; }
+
+/* ::selection — styles highlighted/selected text */
+::selection { background: yellow; color: black; }
+
+/* ::placeholder — styles placeholder text */
+input::placeholder { color: #aaa; font-style: italic; }</code>
+</div>
+
+<h4>Key Differences:</h4>
+<table class="demo-table">
+  <tr><th>Feature</th><th>Pseudo-class</th><th>Pseudo-element</th></tr>
+  <tr><td>Syntax</td><td>Single colon <code>:hover</code></td><td>Double colon <code>::before</code></td></tr>
+  <tr><td>Purpose</td><td>Styles an existing element in a special state</td><td>Creates a virtual element or styles a part of an element</td></tr>
+  <tr><td>Adds content?</td><td>No</td><td>Yes (using <code>content</code> property with ::before/::after)</td></tr>
+  <tr><td>Examples</td><td>:hover, :focus, :nth-child(), :checked, :visited</td><td>::before, ::after, ::first-line, ::first-letter, ::selection</td></tr>
+</table>
+</div>
+
+<!-- ────── Q33 ────── -->
+<div class="card" id="q33">
+<h3><span class="qnum">Q33</span>What is a selector in CSS? Can you attach more than one declaration? What is cascading order?</h3>
+<span class="answer-label">Answer</span>
+
+<h4>What is a Selector?</h4>
+<p>A CSS selector is a pattern that identifies which HTML elements should receive the styles defined in the declaration block. The entire structure of <code>selector { property: value; }</code> is called a <strong>rule set</strong>. The selector is the part before the curly braces.</p>
+
+<h4>Yes — Multiple Declarations per Selector:</h4>
+<p>You can attach as many declarations (property-value pairs) as you want to a single selector. Each declaration is separated by a semicolon.</p>
+<div class="code-block">
+<span class="code-label">CSS</span>
+<code>/* Multiple declarations on one selector */
+p {
+  color: #333;
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 12px;
+  text-align: justify;
+  font-family: Georgia, serif;
+}</code>
+</div>
+
+<h4>Cascading Order:</h4>
+<p>The "C" in CSS stands for <strong>Cascading</strong>. When multiple CSS rules target the same element, the browser uses a priority system to determine which rule wins. This system is called the <strong>cascading order</strong>. Here is the priority from lowest to highest:</p>
+
+<ol>
+  <li><strong>Browser Default Styles:</strong> Every browser has built-in default styles (e.g., &lt;h1&gt; is large and bold, &lt;p&gt; has margins). These have the lowest priority.</li>
+  <li><strong>External Stylesheet:</strong> CSS linked from a .css file using &lt;link&gt;.</li>
+  <li><strong>Internal Stylesheet:</strong> CSS inside &lt;style&gt; tags in the &lt;head&gt;.</li>
+  <li><strong>Inline Styles:</strong> CSS using the style attribute on an element.</li>
+  <li><strong>!important:</strong> Any declaration with <code>!important</code> overrides all other declarations (use sparingly!).</li>
+</ol>
+
+<p>If specificity is the same, the <strong>last rule written wins</strong> (later rules override earlier ones).</p>
+
+<h4>Specificity (When Multiple Selectors Target the Same Element):</h4>
+<table class="demo-table">
+  <tr><th>Selector Type</th><th>Specificity</th><th>Example</th></tr>
+  <tr><td>Element (type)</td><td>0,0,1</td><td>p { }</td></tr>
+  <tr><td>Class</td><td>0,1,0</td><td>.highlight { }</td></tr>
+  <tr><td>ID</td><td>1,0,0</td><td>#main { }</td></tr>
+  <tr><td>Inline style</td><td>1,0,0,0</td><td>style="color:red"</td></tr>
+  <tr><td>!important</td><td>Highest</td><td>color: red !important;</td></tr>
+</table>
+</div>
+
+<!-- ────── Q34 ────── -->
+<div class="card" id="q34">
+<h3><span class="qnum">Q34</span>Define CSS Box Model and use selectors to provide styles at various levels.</h3>
+<span class="answer-label">Answer</span>
+<p>The CSS Box Model treats every HTML element as a rectangular box with four areas: content → padding → border → margin. We can apply styles at various levels using different selectors.</p>
+
+<div class="code-block">
+<span class="code-label">HTML + CSS</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    /* Apply border-box globally */
+    * { box-sizing: border-box; }
+
+    /* Element selector: all body */
+    body {
+      font-family: Arial;
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+
+    /* Element selector: all h1 */
+    h1 {
+      color: #333;
+      border-bottom: 3px solid #4a6fa5;
+      padding-bottom: 10px;
+    }
+
+    /* Class selector */
+    .card {
+      background: white;
+      padding: 20px;         /* padding */
+      border: 1px solid #ddd; /* border */
+      margin: 15px 0;        /* margin */
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+
+    /* ID selector */
+    #special-card {
+      background: #fff3e0;
+      border: 2px solid #ff9800;
+      padding: 25px;
+      margin: 20px 0;
+    }
+
+    /* Descendant selector: p inside .card */
+    .card p {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Child selector: direct li children of ul */
+    ul > li {
+      list-style: square;
+    }
+
+    /* Pseudo-class */
+    .card:hover {
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+
+    /* Pseudo-element */
+    .card h3::before {
+      content: "📌 ";
+    }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>Box Model with Selectors<span class="tag">&lt;/h1&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"card"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h3&gt;</span>First Card<span class="tag">&lt;/h3&gt;</span>
+    <span class="tag">&lt;p&gt;</span>This card uses class selector styling
+    with padding, border, and margin.<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">id</span>=<span class="str">"special-card"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h3&gt;</span>Special Card (ID Selector)<span class="tag">&lt;/h3&gt;</span>
+    <span class="tag">&lt;p&gt;</span>This uses ID selector with orange theme.<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+</div>
+
+<!-- ────── Q35 ────── -->
+<div class="card" id="q35">
+<h3><span class="qnum">Q35</span>Calculate element width and height from box model values.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>Formula (content-box — default):</h4>
+<div class="diagram">
+<pre>
+Total Width  = width + padding-left + padding-right
+               + border-left + border-right
+               + margin-left + margin-right
+
+Total Height = height + padding-top + padding-bottom
+               + border-top + border-bottom
+               + margin-top + margin-bottom
+
+Visible Width  = width + padding-left + padding-right
+                 + border-left + border-right
+                 (excluding margin)
+
+Visible Height = height + padding-top + padding-bottom
+                 + border-top + border-bottom
+                 (excluding margin)
+</pre>
+</div>
+
+<h4>Example Calculation:</h4>
+<div class="code-block">
+<span class="code-label">CSS</span>
+<code>.box {
+  width: 300px;
+  height: 200px;
+  padding: 20px;
+  border: 5px solid black;
+  margin: 15px;
+}</code>
+</div>
+
+<h4>Solution:</h4>
+<table class="demo-table">
+  <tr><th>Component</th><th>Width Calculation</th><th>Height Calculation</th></tr>
+  <tr><td>Content</td><td>300px</td><td>200px</td></tr>
+  <tr><td>+ Padding</td><td>20 + 20 = 40px</td><td>20 + 20 = 40px</td></tr>
+  <tr><td>+ Border</td><td>5 + 5 = 10px</td><td>5 + 5 = 10px</td></tr>
+  <tr><td><strong>Visible Size</strong></td><td><strong>300 + 40 + 10 = 350px</strong></td><td><strong>200 + 40 + 10 = 250px</strong></td></tr>
+  <tr><td>+ Margin</td><td>15 + 15 = 30px</td><td>15 + 15 = 30px</td></tr>
+  <tr><td><strong>Total Space</strong></td><td><strong>350 + 30 = 380px</strong></td><td><strong>250 + 30 = 280px</strong></td></tr>
+</table>
+
+<h4>With border-box:</h4>
+<p>If <code>box-sizing: border-box</code> is applied, the <code>width</code> (300px) already includes padding and border:</p>
+<table class="demo-table">
+  <tr><th>Component</th><th>Width</th><th>Height</th></tr>
+  <tr><td>Total width = width specified</td><td>300px</td><td>200px</td></tr>
+  <tr><td>Content area = width - padding - border</td><td>300 - 40 - 10 = 250px</td><td>200 - 40 - 10 = 150px</td></tr>
+  <tr><td>Total space (with margin)</td><td>300 + 30 = 330px</td><td>200 + 30 = 230px</td></tr>
+</table>
+</div>
+
+<!-- ────── Q36 ────── -->
+<div class="card" id="q36">
+<h3><span class="qnum">Q36</span>Use CSS to create a grid of images with hover effect that enlarges and displays caption.</h3>
+<span class="answer-label">Answer</span>
+
+<div class="code-block">
+<span class="code-label">HTML + CSS</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    body { font-family: Arial; padding: 20px; }
+    h2 { text-align: center; }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      max-width: 800px;
+      margin: auto;
+    }
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    /* Caption: hidden by default */
+    .caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 10px;
+      text-align: center;
+      transform: translateY(100%); /* hidden below */
+      transition: transform 0.3s ease;
+    }
+
+    /* HOVER: enlarge image and show caption */
+    .gallery-item:hover img {
+      transform: scale(1.2);
+    }
+    .gallery-item:hover .caption {
+      transform: translateY(0);  /* slide up */
+    }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>Image Gallery<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"gallery"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"gallery-item"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="str">"img1.jpg"</span> <span class="attr">alt</span>=<span class="str">"Photo 1"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"caption"</span><span class="tag">&gt;</span>Sunset Beach<span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"gallery-item"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="str">"img2.jpg"</span> <span class="attr">alt</span>=<span class="str">"Photo 2"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"caption"</span><span class="tag">&gt;</span>Mountain View<span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"gallery-item"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="str">"img3.jpg"</span> <span class="attr">alt</span>=<span class="str">"Photo 3"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"caption"</span><span class="tag">&gt;</span>City Lights<span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"gallery-item"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="str">"img4.jpg"</span> <span class="attr">alt</span>=<span class="str">"Photo 4"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"caption"</span><span class="tag">&gt;</span>Forest Path<span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"gallery-item"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="str">"img5.jpg"</span> <span class="attr">alt</span>=<span class="str">"Photo 5"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"caption"</span><span class="tag">&gt;</span>Ocean Waves<span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"gallery-item"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;img</span> <span class="attr">src</span>=<span class="str">"img6.jpg"</span> <span class="attr">alt</span>=<span class="str">"Photo 6"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"caption"</span><span class="tag">&gt;</span>Desert Dunes<span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+
+<p><strong>How it works:</strong> CSS Grid creates a 3-column layout. Each <code>.gallery-item</code> has <code>position: relative</code> so the caption (positioned absolutely) stays within it. The caption starts hidden below (<code>translateY(100%)</code>). On hover, the image scales up (<code>transform: scale(1.2)</code>) and the caption slides up into view (<code>translateY(0)</code>). The <code>transition</code> property makes the animation smooth.</p>
+</div>
+
+<!-- ────── Q37 ────── -->
+<div class="card" id="q37">
+<h3><span class="qnum">Q37</span>HTML table with book data, alternating row colors, and fixed header.</h3>
+<span class="answer-label">Answer</span>
+
+<div class="code-block">
+<span class="code-label">HTML + CSS</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    body { font-family: Arial; padding: 20px; }
+    .table-container {
+      max-width: 700px; margin: auto;
+      max-height: 300px; overflow-y: auto;
+    }
+    table {
+      width: 100%; border-collapse: collapse;
+    }
+    /* Fixed header */
+    thead th {
+      position: sticky;
+      top: 0;
+      background: #2c3e50;
+      color: white;
+      padding: 12px 15px;
+      text-align: left;
+      z-index: 10;
+    }
+    td { padding: 10px 15px; border-bottom: 1px solid #ddd; }
+    /* Alternating row colors */
+    tbody tr:nth-child(odd)  { background: #e8f4f8; }
+    tbody tr:nth-child(even) { background: #ffffff; }
+    /* Hover effect */
+    tbody tr:hover { background: #d1ecf1; }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+<span class="tag">&lt;h2</span> <span class="attr">align</span>=<span class="str">"center"</span><span class="tag">&gt;</span>Library Books<span class="tag">&lt;/h2&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"table-container"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;table&gt;</span>
+  <span class="tag">&lt;thead&gt;</span>
+    <span class="tag">&lt;tr&gt;</span>
+      <span class="tag">&lt;th&gt;</span>ID<span class="tag">&lt;/th&gt;</span>
+      <span class="tag">&lt;th&gt;</span>Book Title<span class="tag">&lt;/th&gt;</span>
+      <span class="tag">&lt;th&gt;</span>Author<span class="tag">&lt;/th&gt;</span>
+      <span class="tag">&lt;th&gt;</span>Price<span class="tag">&lt;/th&gt;</span>
+    <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/thead&gt;</span>
+  <span class="tag">&lt;tbody&gt;</span>
+    <span class="tag">&lt;tr&gt;</span><span class="tag">&lt;td&gt;</span>1<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>Let Us C<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>Yashavant Kanetkar<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>Rs. 350<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;</span><span class="tag">&lt;td&gt;</span>2<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>HTML &amp; CSS<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>Jon Duckett<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>Rs. 600<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;</span><span class="tag">&lt;td&gt;</span>3<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>JavaScript Guide<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>David Flanagan<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>Rs. 500<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;</span><span class="tag">&lt;td&gt;</span>4<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>Python Crash Course<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>Eric Matthes<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>Rs. 450<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;</span><span class="tag">&lt;td&gt;</span>5<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>Data Structures<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>Seymour Lipschutz<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>Rs. 280<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/tbody&gt;</span>
+<span class="tag">&lt;/table&gt;</span>
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+</div>
+
+<!-- ────── Q38 ────── -->
+<div class="card" id="q38">
+<h3><span class="qnum">Q38</span>CSS effects: Link colors, alternating table rows, text styling.</h3>
+<span class="answer-label">Answer</span>
+
+<div class="code-block">
+<span class="code-label">HTML + CSS</span>
+<code><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    /* 1. Link styles */
+    a:link    { color: blue; }            /* before visited */
+    a:visited { color: red; }             /* after visited */
+    a:hover   { text-decoration: underline; }
+    a:active  { color: orange; }
+
+    /* 2. Table alternating rows */
+    table { border-collapse: collapse; width: 80%; margin: 20px auto; }
+    th, td { border: 1px solid #333; padding: 8px; }
+    tr:nth-child(odd)  { background-color: lightblue; }   /* odd rows: blue */
+    tr:nth-child(even) { background-color: lightgreen; }  /* even rows: green */
+
+    /* 3. Text styling */
+    .styled-text {
+      color: green;                 /* text color green */
+      text-transform: uppercase;    /* text case uppercase */
+    }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+  <span class="tag">&lt;p&gt;</span>
+    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"https://google.com"</span><span class="tag">&gt;</span>Visit Google<span class="tag">&lt;/a&gt;</span> |
+    <span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="str">"#"</span><span class="tag">&gt;</span>Test Link<span class="tag">&lt;/a&gt;</span>
+  <span class="tag">&lt;/p&gt;</span>
+
+  <span class="tag">&lt;table&gt;</span>
+    <span class="tag">&lt;tr&gt;</span><span class="tag">&lt;th&gt;</span>Name<span class="tag">&lt;/th&gt;</span><span class="tag">&lt;th&gt;</span>Marks<span class="tag">&lt;/th&gt;</span><span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;</span><span class="tag">&lt;td&gt;</span>Alice<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>85<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;</span><span class="tag">&lt;td&gt;</span>Bob<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>92<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;</span><span class="tag">&lt;td&gt;</span>Charlie<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>78<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;/tr&gt;</span>
+    <span class="tag">&lt;tr&gt;</span><span class="tag">&lt;td&gt;</span>Diana<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;td&gt;</span>95<span class="tag">&lt;/td&gt;</span><span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;/table&gt;</span>
+
+  <span class="tag">&lt;p</span> <span class="attr">class</span>=<span class="str">"styled-text"</span><span class="tag">&gt;</span>
+    this text is green and uppercase
+  <span class="tag">&lt;/p&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></code>
+</div>
+</div>
+
+<!-- ────── Q39 ────── -->
+<div class="card" id="q39">
+<h3><span class="qnum">Q39</span>Explain CSS Pseudo-classes, Pseudo-elements, and Type Selectors.</h3>
+<span class="answer-label">Answer</span>
+
+<h4>Pseudo-classes:</h4>
+<p>Pseudo-classes select elements based on their <strong>state or position</strong>, not their name, class, or ID. They use a single colon syntax <code>:keyword</code>. Common pseudo-classes:</p>
+<ul>
+  <li><strong>:hover</strong> — applies when the mouse is over an element.</li>
+  <li><strong>:focus</strong> — applies when an element receives focus (input field clicked).</li>
+  <li><strong>:active</strong> — applies while an element is being clicked.</li>
+  <li><strong>:visited</strong> — applies to links that have been visited.</li>
+  <li><strong>:first-child</strong> — selects an element that is the first child of its parent.</li>
+  <li><strong>:last-child</strong> — selects an element that is the last child.</li>
+  <li><strong>:nth-child(n)</strong> — selects elements based on their position (odd, even, 2n, 3n+1, etc.).</li>
+  <li><strong>:not(selector)</strong> — selects all elements that do NOT match the given selector.</li>
+  <li><strong>:checked</strong> — applies to checkboxes/radio buttons that are checked.</li>
+  <li><strong>:disabled / :enabled</strong> — applies to form elements that are disabled or enabled.</li>
+</ul>
+
+<div class="code-block"><code>/* Hover effect on buttons */
+button:hover { background: #3498db; color: white; }
+
+/* Style focused inputs */
+input:focus { outline: 2px solid blue; }
+
+/* Zebra striping */
+tr:nth-child(even) { background: #f2f2f2; }
+
+/* First paragraph bold */
+p:first-child { font-weight: bold; }
+
+/* All inputs except submit */
+input:not([type="submit"]) { border: 1px solid #ccc; }</code></div>
+
+<h4>Pseudo-elements:</h4>
+<p>Pseudo-elements create <strong>virtual elements</strong> that don't exist in the HTML. They use double colon syntax <code>::keyword</code>. They allow you to style specific parts of an element or insert generated content.</p>
+<ul>
+  <li><strong>::before</strong> — inserts content before the element's actual content.</li>
+  <li><strong>::after</strong> — inserts content after the element's actual content.</li>
+  <li><strong>::first-line</strong> — styles only the first line of a block element.</li>
+  <li><strong>::first-letter</strong> — styles only the first letter.</li>
+  <li><strong>::selection</strong> — styles text that the user highlights/selects.</li>
+  <li><strong>::placeholder</strong> — styles the placeholder text in inputs.</li>
+  <li><strong>::marker</strong> — styles the bullet/number of list items.</li>
+</ul>
+
+<div class="code-block"><code>/* Decorative quotes around blockquotes */
+blockquote::before { content: "\201C"; font-size: 40px; }
+blockquote::after  { content: "\201D"; font-size: 40px; }
+
+/* Drop cap effect */
+p.intro::first-letter {
+  font-size: 48px; float: left; margin-right: 8px;
+  line-height: 1; font-weight: bold;
+}
+
+/* Custom selection color */
+::selection { background: #ffeb3b; color: #333; }</code></div>
+
+<h4>Type Selectors (Element Selectors):</h4>
+<p>Type selectors (also called element selectors) select all elements of a specific HTML tag type. They match elements by their tag name. This is the simplest and most basic type of CSS selector.</p>
+
+<div class="code-block"><code>/* Type selector: selects ALL &lt;p&gt; elements */
+p {
+  font-size: 16px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Type selector: selects ALL &lt;h2&gt; elements */
+h2 {
+  color: #2c3e50;
+  border-bottom: 2px solid #3498db;
+}
+
+/* Type selector: selects ALL &lt;li&gt; elements */
+li {
+  padding: 5px 0;
+  list-style-type: disc;
+}
+
+/* Type selector: selects ALL &lt;img&gt; elements */
+img {
+  max-width: 100%;
+  height: auto;
+}</code></div>
+
+<h4>Comprehensive Comparison:</h4>
+<table class="demo-table">
+  <tr><th>Feature</th><th>Pseudo-class</th><th>Pseudo-element</th><th>Type Selector</th></tr>
+  <tr><td>Syntax</td><td><code>:hover</code></td><td><code>::before</code></td><td><code>p { }</code></td></tr>
+  <tr><td>Purpose</td><td>Style elements in a specific state</td><td>Create virtual elements or style parts of elements</td><td>Style all elements of a given tag type</td></tr>
+  <tr><td>Creates new elements?</td><td>No</td><td>Yes (::before, ::after)</td><td>No</td></tr>
+  <tr><td>Specificity</td><td>Same as a class (0,1,0)</td><td>Same as a class (0,1,0)</td><td>One element (0,0,1)</td></tr>
+  <tr><td>Examples</td><td>:hover, :focus, :nth-child()</td><td>::before, ::after, ::first-line</td><td>div, p, h1, span</td></tr>
+</table>
+</div>
+
+</div><!-- end section -->
+
+</div><!-- end wrapper -->
+
+</body>
+</html>

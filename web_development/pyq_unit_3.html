@@ -1,0 +1,1806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unit 3 — XML, Ajax & jQuery | PYQ Answers</title>
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; font-size: 16px; }
+  body {
+    font-family: 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', serif;
+    background: #FFF8F0;
+    color: #3D3226;
+    line-height: 1.75;
+    min-height: 100vh;
+  }
+
+  /* ── Scrollbar ── */
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-track { background: #FFF0E0; }
+  ::-webkit-scrollbar-thumb { background: #D4A87C; border-radius: 5px; }
+
+  /* ── Header ── */
+  .page-header {
+    background: linear-gradient(135deg, #F6E2C8 0%, #F0D4B8 40%, #E8C8A8 100%);
+    border-bottom: 3px double #C4A882;
+    padding: 3rem 2rem 2.5rem;
+    text-align: center;
+    position: relative;
+  }
+  .page-header::before, .page-header::after {
+    content: '✦';
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    color: #C4A882;
+  }
+  .page-header::before { left: 2rem; }
+  .page-header::after { right: 2rem; }
+  .page-header h1 {
+    font-size: 2.4rem;
+    font-weight: 700;
+    color: #5C4033;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.3rem;
+  }
+  .page-header .subtitle {
+    font-size: 1.1rem;
+    color: #8B6F5E;
+    font-style: italic;
+    letter-spacing: 0.02em;
+  }
+  .ornament {
+    display: block;
+    text-align: center;
+    color: #C4A882;
+    font-size: 1.3rem;
+    margin: 0.8rem 0 0;
+    letter-spacing: 0.6em;
+  }
+
+  /* ── TOC ── */
+  .toc-wrap {
+    max-width: 860px;
+    margin: 2rem auto;
+    padding: 0 1.5rem;
+  }
+  .toc-card {
+    background: #FFFCF7;
+    border: 2px solid #E8D5C4;
+    border-radius: 8px;
+    padding: 2rem 2.5rem;
+    box-shadow: 0 2px 12px rgba(180,150,120,0.10);
+  }
+  .toc-card h2 {
+    font-size: 1.5rem;
+    color: #5C4033;
+    margin-bottom: 1rem;
+    text-align: center;
+    border-bottom: 1px solid #E8D5C4;
+    padding-bottom: 0.7rem;
+  }
+  .toc-section-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #8B6F5E;
+    margin: 1rem 0 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .toc-list { list-style: none; }
+  .toc-list li { margin-bottom: 0.3rem; }
+  .toc-list a {
+    text-decoration: none;
+    color: #6B4F3A;
+    font-size: 0.95rem;
+    padding: 0.25rem 0.5rem;
+    display: inline-block;
+    border-radius: 4px;
+    transition: background 0.2s, color 0.2s;
+  }
+  .toc-list a:hover {
+    background: #F6E2C8;
+    color: #5C4033;
+  }
+
+  /* ── Main Content ── */
+  .main-content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 1rem 1.5rem 4rem;
+  }
+
+  /* ── Question Card ── */
+  .q-card {
+    background: #FFFCF7;
+    border: 2px solid #E8D5C4;
+    border-radius: 8px;
+    margin-bottom: 2.5rem;
+    box-shadow: 0 3px 16px rgba(180,150,120,0.10);
+    overflow: hidden;
+  }
+  .q-header {
+    background: linear-gradient(135deg, #F6E2C8, #F0D4B8);
+    border-bottom: 2px solid #E8D5C4;
+    padding: 1.2rem 2rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  .q-number {
+    background: #5C4033;
+    color: #FFF8F0;
+    font-size: 0.85rem;
+    font-weight: 700;
+    min-width: 2.4rem;
+    height: 2.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 0.1rem;
+  }
+  .q-text {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #5C4033;
+    line-height: 1.6;
+  }
+  .q-body {
+    padding: 2rem;
+  }
+
+  /* ── Sub-sections inside q-body ── */
+  .section-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #FFF8F0;
+    background: #9CB8A5;
+    display: inline-block;
+    padding: 0.25rem 0.9rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    margin-top: 1.5rem;
+  }
+  .section-label.answer { background: #9CB8A5; }
+  .section-label.code { background: #C4A882; }
+  .section-label.output { background: #D4A5A5; }
+  .section-label.explanation { background: #8B9DC3; }
+  .section-label:first-child { margin-top: 0; }
+
+  /* ── Theory content ── */
+  .answer-content {
+    font-size: 1rem;
+    line-height: 1.85;
+    color: #4A3F35;
+  }
+  .answer-content h3 {
+    font-size: 1.15rem;
+    color: #5C4033;
+    margin: 1.3rem 0 0.5rem;
+    padding-bottom: 0.2rem;
+    border-bottom: 1px dashed #E8D5C4;
+  }
+  .answer-content h4 {
+    font-size: 1.02rem;
+    color: #6B4F3A;
+    margin: 1rem 0 0.4rem;
+  }
+  .answer-content p {
+    margin-bottom: 0.8rem;
+  }
+  .answer-content ul, .answer-content ol {
+    margin: 0.5rem 0 1rem 1.5rem;
+  }
+  .answer-content li {
+    margin-bottom: 0.35rem;
+  }
+  .answer-content strong {
+    color: #5C4033;
+  }
+  .answer-content em {
+    color: #8B6F5E;
+    font-style: italic;
+  }
+
+  /* ── Code Block ── */
+  .code-block {
+    background: #2D2A26;
+    border-radius: 6px;
+    padding: 1.2rem 1.5rem;
+    overflow-x: auto;
+    margin: 0.8rem 0 1rem;
+    border: 1px solid #4A4238;
+  }
+  .code-block pre {
+    margin: 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    color: #E8D5C4;
+    white-space: pre;
+    tab-size: 2;
+  }
+  .code-block .kw { color: #E8A87C; font-weight: 600; }
+  .code-block .str { color: #A8C7A2; }
+  .code-block .cmt { color: #7A7268; font-style: italic; }
+  .code-block .tag { color: #D4A5A5; }
+  .code-block .attr { color: #C8B896; }
+  .code-block .val { color: #A8C7A2; }
+  .code-block .num { color: #D4C4A8; }
+  .code-block .punc { color: #9A8E82; }
+  .code-block .fn { color: #8BB8C4; }
+  .code-block .sel { color: #D4A5A5; }
+
+  /* ── Output Block ── */
+  .output-block {
+    background: #FFF8F0;
+    border: 2px dashed #D4A87C;
+    border-radius: 6px;
+    padding: 1rem 1.5rem;
+    margin: 0.8rem 0 1rem;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: #5C4033;
+    white-space: pre-wrap;
+  }
+
+  /* ── Explanation Block ── */
+  .explanation-block {
+    background: #F6F0E8;
+    border-left: 4px solid #9CB8A5;
+    border-radius: 0 6px 6px 0;
+    padding: 1rem 1.5rem;
+    margin: 0.8rem 0 1rem;
+    font-size: 0.95rem;
+    line-height: 1.75;
+    color: #4A3F35;
+  }
+
+  /* ── Comparison Table ── */
+  .cmp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+    font-size: 0.92rem;
+  }
+  .cmp-table th {
+    background: #F0D4B8;
+    color: #5C4033;
+    padding: 0.6rem 1rem;
+    text-align: left;
+    font-weight: 700;
+    border: 1px solid #E8D5C4;
+  }
+  .cmp-table td {
+    padding: 0.5rem 1rem;
+    border: 1px solid #E8D5C4;
+    vertical-align: top;
+  }
+  .cmp-table tr:nth-child(even) td {
+    background: #FFFAF4;
+  }
+
+  /* ── Footer ── */
+  .page-footer {
+    text-align: center;
+    padding: 2rem;
+    color: #8B6F5E;
+    font-size: 0.9rem;
+    border-top: 2px double #E8D5C4;
+    background: #FFF8F0;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .page-header h1 { font-size: 1.6rem; }
+    .page-header::before, .page-header::after { display: none; }
+    .q-header { padding: 1rem 1.2rem; }
+    .q-body { padding: 1.2rem; }
+    .toc-card { padding: 1.2rem 1.5rem; }
+    .code-block { padding: 0.8rem 1rem; }
+    .code-block pre { font-size: 0.78rem; }
+    .q-number { min-width: 2rem; height: 2rem; font-size: 0.75rem; }
+  }
+
+  /* ── Back to top ── */
+  .back-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 44px;
+    height: 44px;
+    background: #5C4033;
+    color: #FFF8F0;
+    border: 2px solid #E8D5C4;
+    border-radius: 50%;
+    font-size: 1.3rem;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(92,64,51,0.3);
+    transition: transform 0.2s;
+    z-index: 100;
+  }
+  .back-top:hover { transform: scale(1.1); }
+  .back-top.visible { display: flex; }
+</style>
+</head>
+<body>
+
+<!-- ════════════ HEADER ════════════ -->
+<header class="page-header">
+  <h1>Unit 3: XML, Ajax &amp; jQuery</h1>
+  <p class="subtitle">Previous Year Questions — Complete Answers</p>
+  <span class="ornament">— ✦ —</span>
+</header>
+
+<!-- ════════════ TABLE OF CONTENTS ════════════ -->
+<nav class="toc-wrap">
+  <div class="toc-card">
+    <h2>Table of Contents</h2>
+
+    <div class="toc-section-title">XML</div>
+    <ul class="toc-list">
+      <li><a href="#q1">Q1 — XML Definition, Rules, Namespace &amp; CSS in XML</a></li>
+      <li><a href="#q2">Q2 — XML in Web Apps, Books XML with DTD/Schema</a></li>
+      <li><a href="#q3">Q3 — XML &amp; DTD Relationship with Examples</a></li>
+      <li><a href="#q4">Q4 — XML Rules, PCDATA, CDATA &amp; Courses DTD</a></li>
+      <li><a href="#q5">Q5 — DTD Definition, PCDATA, CDATA &amp; Employees DTD</a></li>
+      <li><a href="#q6">Q6 — GEU Student XML with CSS Stylesheet</a></li>
+      <li><a href="#q7">Q7 — Music_Album XML with External DTD</a></li>
+      <li><a href="#q8">Q8 — XML vs JSON Comparison</a></li>
+    </ul>
+
+    <div class="toc-section-title">Ajax</div>
+    <ul class="toc-list">
+      <li><a href="#q9">Q9 — Ajax Definition &amp; Program</a></li>
+      <li><a href="#q10">Q10 — Ajax Explanation with Example</a></li>
+      <li><a href="#q11">Q11 — XMLHttpRequest Working</a></li>
+      <li><a href="#q12">Q12 — AJAX Concept, Fetch JSON &amp; Visualize</a></li>
+    </ul>
+
+    <div class="toc-section-title">jQuery</div>
+    <ul class="toc-list">
+      <li><a href="#q13">Q13 — jQuery Effects Purpose</a></li>
+      <li><a href="#q14">Q14 — JS vs jQuery &amp; Two Ways of Using jQuery</a></li>
+      <li><a href="#q15">Q15 — JS vs jQuery, Hide/Unhide with Tag/Class/ID</a></li>
+      <li><a href="#q16">Q16 — jQuery Syntax, Hide/Unhide &amp; Document Ready</a></li>
+      <li><a href="#q17">Q17 — Curriculum Design with jQuery DOM Traversal</a></li>
+      <li><a href="#q18">Q18 — AJAX/jQuery Concept, Fetch JSON &amp; Visualize</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ════════════ MAIN CONTENT ════════════ -->
+<main class="main-content">
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q1 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q1">
+  <div class="q-header">
+    <span class="q-number">1</span>
+    <span class="q-text">Define XML and list the rules to be followed by XML documents. What is the XML Namespace? How to use CSS inside an XML file?</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>What is XML?</h3>
+      <p>XML stands for <strong>eXtensible Markup Language</strong>. It is a markup language much like HTML, but the big difference is that HTML has predefined tags while XML allows you to create your own tags. XML was designed to store and transport data, not to display data. It is a W3C recommendation and has become one of the most widely used formats for sharing structured information between programs, organizations, and across the internet. The beauty of XML lies in its simplicity and flexibility — you can define your own tags that describe your data perfectly. For example, if you are storing data about books, you can create tags like <em>&lt;book&gt;</em>, <em>&lt;title&gt;</em>, <em>&lt;author&gt;</em>, etc. XML is self-descriptive, meaning anyone reading the file can understand what the data represents just by looking at the tag names. It is platform-independent, so it works on any operating system and with any programming language.</p>
+
+      <h3>Rules to be Followed by XML Documents</h3>
+      <p>XML documents must follow certain strict rules. If these rules are not followed, the XML file becomes invalid and the parser will reject it. This strictness is what makes XML reliable and consistent. Here are the important rules:</p>
+      <ul>
+        <li><strong>Must have a root element:</strong> Every XML document must have exactly one root element that contains all other elements. Think of it like the trunk of a tree — everything else branches out from it.</li>
+        <li><strong>All elements must have a closing tag:</strong> Unlike HTML where some tags like <em>&lt;br&gt;</em> or <em>&lt;img&gt;</em> can be left unclosed, XML requires every opening tag to have a matching closing tag. For example, <em>&lt;name&gt;John&lt;/name&gt;</em>.</li>
+        <li><strong>Tags are case-sensitive:</strong> In XML, <em>&lt;Name&gt;</em> and <em>&lt;name&gt;</em> are two completely different tags. The opening and closing tags must match exactly in case.</li>
+        <li><strong>Elements must be properly nested:</strong> If you open a tag inside another tag, you must close the inner tag before closing the outer tag. For example, <em>&lt;b&gt;&lt;i&gt;text&lt;/i&gt;&lt;/b&gt;</em> is correct, but <em>&lt;b&gt;&lt;i&gt;text&lt;/b&gt;&lt;/i&gt;</em> is wrong.</li>
+        <li><strong>Attribute values must be quoted:</strong> All attribute values must be enclosed in either single or double quotes. For example, <em>&lt;person age="25"&gt;</em> is correct.</li>
+        <li><strong>XML declaration is optional but recommended:</strong> The first line can be <em>&lt;?xml version="1.0" encoding="UTF-8"?&gt;</em>. While not mandatory, it is a good practice.</li>
+        <li><strong>Comments follow the same syntax as HTML:</strong> Use <em>&lt;!-- comment --&gt;</em> format for comments.</li>
+      </ul>
+
+      <h3>What is XML Namespace?</h3>
+      <p>An XML Namespace is a method to avoid naming conflicts in XML. When you combine XML documents from different sources, there might be tags with the same name but different meanings. For example, one document might use <em>&lt;table&gt;</em> for a furniture table, while another uses <em>&lt;table&gt;</em> for a data table. Without namespaces, this would create confusion. A namespace solves this by adding a unique identifier (usually a URI) to element names. You declare a namespace using the <strong>xmlns</strong> attribute. The syntax is: <em>xmlns:prefix="URI"</em>. For example, you could have <em>xmlns:furniture="http://example.com/furniture"</em> and <em>xmlns:data="http://example.com/data"</em>. Then you would use <em>&lt;furniture:table&gt;</em> and <em>&lt;data:table&gt;</em> to distinguish between the two. The URI does not need to point to an actual web page — it is just used as a unique identifier. Namespaces make XML more extensible and allow different XML vocabularies to be mixed without conflict.</p>
+
+      <h3>How to Use CSS Inside an XML File</h3>
+      <p>Since XML does not have any built-in display rules like HTML, you need a way to tell the browser how to present the XML data visually. One simple way is to link a CSS (Cascading Style Sheet) file to your XML document. This is done using a processing instruction at the top of the XML file. The syntax is: <em>&lt;?xml-stylesheet type="text/css" href="style.css"?&gt;</em>. This line must be placed after the XML declaration but before the root element. In the CSS file, you can style XML elements by their tag names, just like you style HTML elements. For example, if your XML has a <em>&lt;title&gt;</em> element, you can write CSS rules like <em>title { font-size: 24px; color: blue; display: block; }</em>. Note that XML elements are inline by default, so you often need to set <em>display: block</em> to make them appear on separate lines. While CSS with XML is simple, it has limitations — you cannot reorder elements, add content, or do complex layouts. For advanced styling, XSLT is the preferred technology. However, for simple visual presentations, CSS works perfectly well and is very easy to use.</p>
+    </div>
+
+    <span class="section-label code">Code — CSS Inside XML</span>
+    <div class="code-block"><pre><span class="cmt">&lt;!-- students.xml --&gt;</span>
+<span class="tag">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;?xml-stylesheet type="text/css" href="students.css"?&gt;</span>
+<span class="tag">&lt;students&gt;</span>
+  <span class="tag">&lt;student&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Amit Sharma<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;course&gt;</span>B.Tech CSE<span class="tag">&lt;/course&gt;</span>
+  <span class="tag">&lt;/student&gt;</span>
+  <span class="tag">&lt;student&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Priya Verma<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;course&gt;</span>B.Sc IT<span class="tag">&lt;/course&gt;</span>
+  <span class="tag">&lt;/student&gt;</span>
+<span class="tag">&lt;/students&gt;</span>
+
+<span class="cmt">&lt;!-- students.css --&gt;</span>
+<span class="sel">students</span> { <span class="attr">display</span>: <span class="val">block</span>; <span class="attr">font-family</span>: <span class="val">Arial</span>; <span class="attr">padding</span>: <span class="num">20px</span>; }
+<span class="sel">student</span>  { <span class="attr">display</span>: <span class="val">block</span>; <span class="attr">border</span>: <span class="num">1px solid #ccc</span>; <span class="attr">margin</span>: <span class="num">10px</span>; <span class="attr">padding</span>: <span class="num">10px</span>; }
+<span class="sel">name</span>     { <span class="attr">display</span>: <span class="val">block</span>; <span class="attr">font-size</span>: <span class="num">20px</span>; <span class="attr">font-weight</span>: <span class="val">bold</span>; }
+<span class="sel">course</span>   { <span class="attr">display</span>: <span class="val">block</span>; <span class="attr">color</span>: <span class="num">#666</span>; }</pre></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q2 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q2">
+  <div class="q-header">
+    <span class="q-number">2</span>
+    <span class="q-text">How is XML used in web applications? Write a sample XML file that stores a list of books (title, author, year) and create a simple DTD or Schema to validate it.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>How XML is Used in Web Applications</h3>
+      <p>XML plays a very important role in web applications. Even though newer technologies like JSON have become popular, XML is still widely used in many areas. The main purpose of XML in web applications is to store, organize, and transport data between different systems. Because XML is plain text, it can be read by any programming language on any platform. This makes it a universal data format. Here are the key uses of XML in web applications:</p>
+      <ul>
+        <li><strong>Data Storage and Exchange:</strong> Web applications often need to share data with other applications. XML provides a standard format for this exchange. For example, a travel website might receive flight data from an airline in XML format.</li>
+        <li><strong>Web Services (SOAP):</strong> SOAP (Simple Object Access Protocol) is a web service protocol that uses XML as its message format. When two applications communicate over the internet using SOAP, they send and receive XML messages.</li>
+        <li><strong>Configuration Files:</strong> Many web frameworks and servers use XML files for configuration. For example, the web.xml file in Java web applications configures servlets, filters, and other settings.</li>
+        <li><strong>RSS Feeds:</strong> RSS (Really Simple Syndication) feeds that deliver news and blog updates are XML documents. Websites publish RSS feeds so that users can subscribe to content.</li>
+        <li><strong>AJAX Communication:</strong> Before JSON became popular, AJAX requests commonly exchanged data in XML format. The "X" in AJAX actually stands for XML.</li>
+        <li><strong>SVG Graphics:</strong> Scalable Vector Graphics (SVG) is an XML-based format for describing two-dimensional graphics. Web applications use SVG for icons, charts, and illustrations.</li>
+        <li><strong>Microsoft Office Formats:</strong> Modern Office files (.docx, .xlsx, .pptx) are actually ZIP files containing XML documents that describe the content and formatting.</li>
+      </ul>
+      <p>XML is also used in sitemaps for SEO, in Android app development for layouts, and in many B2B (business-to-business) data exchange systems. Its structured, validated, and self-describing nature makes it ideal for situations where data accuracy and consistency are critical.</p>
+
+      <h3>Sample XML File for Books</h3>
+    </div>
+
+    <span class="section-label code">Code — XML File</span>
+    <div class="code-block"><pre><span class="cmt">&lt;!-- books.xml --&gt;</span>
+<span class="tag">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;!DOCTYPE booklist SYSTEM "books.dtd"&gt;</span>
+<span class="tag">&lt;booklist&gt;</span>
+  <span class="tag">&lt;book&gt;</span>
+    <span class="tag">&lt;title&gt;</span>The Great Gatsby<span class="tag">&lt;/title&gt;</span>
+    <span class="tag">&lt;author&gt;</span>F. Scott Fitzgerald<span class="tag">&lt;/author&gt;</span>
+    <span class="tag">&lt;year&gt;</span>1925<span class="tag">&lt;/year&gt;</span>
+  <span class="tag">&lt;/book&gt;</span>
+  <span class="tag">&lt;book&gt;</span>
+    <span class="tag">&lt;title&gt;</span>1984<span class="tag">&lt;/title&gt;</span>
+    <span class="tag">&lt;author&gt;</span>George Orwell<span class="tag">&lt;/author&gt;</span>
+    <span class="tag">&lt;year&gt;</span>1949<span class="tag">&lt;/year&gt;</span>
+  <span class="tag">&lt;/book&gt;</span>
+  <span class="tag">&lt;book&gt;</span>
+    <span class="tag">&lt;title&gt;</span>To Kill a Mockingbird<span class="tag">&lt;/title&gt;</span>
+    <span class="tag">&lt;author&gt;</span>Harper Lee<span class="tag">&lt;/author&gt;</span>
+    <span class="tag">&lt;year&gt;</span>1960<span class="tag">&lt;/year&gt;</span>
+  <span class="tag">&lt;/book&gt;</span>
+<span class="tag">&lt;/booklist&gt;</span></pre></div>
+
+    <span class="section-label code">Code — DTD File</span>
+    <div class="code-block"><pre><span class="cmt">&lt;!-- books.dtd --&gt;</span>
+<span class="tag">&lt;!ELEMENT booklist (book+)&gt;</span>
+<span class="tag">&lt;!ELEMENT book (title, author, year)&gt;</span>
+<span class="tag">&lt;!ELEMENT title (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT author (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT year (#PCDATA)&gt;</span></pre></div>
+
+    <span class="section-label explanation">Explanation</span>
+    <div class="explanation-block">
+      The XML file stores a list of books with title, author, and year. The DTD file defines the structure: <em>booklist</em> contains one or more <em>book</em> elements (the + means one or more), each <em>book</em> must have exactly one <em>title</em>, <em>author</em>, and <em>year</em> in that order, and all three contain plain text (#PCDATA). The &lt;!DOCTYPE&gt; line in the XML links it to the external DTD file for validation.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q3 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q3">
+  <div class="q-header">
+    <span class="q-number">3</span>
+    <span class="q-text">What is XML and DTD? Explain the relationship between XML and DTD with some suitable examples.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>What is XML?</h3>
+      <p>XML (eXtensible Markup Language) is a markup language used to store and transport data in a structured, human-readable, and machine-readable format. Unlike HTML, which is designed for displaying data, XML is designed for describing data. The word "eXtensible" means that you can create your own custom tags — there are no predefined tags in XML. You decide what tags to use based on what data you need to represent. XML documents are plain text files, which means they can be created and edited in any text editor. XML became a W3C recommendation in 1998 and has since become a fundamental technology in web development, data exchange, and software configuration.</p>
+
+      <h3>What is DTD?</h3>
+      <p>DTD stands for <strong>Document Type Definition</strong>. A DTD is a set of rules that defines the structure and the legal elements and attributes of an XML document. Think of DTD as a blueprint or a contract for your XML file. It specifies what elements can appear, in what order, how many times they can appear, and what content they can contain. Without a DTD, an XML file is just "well-formed" (follows XML syntax rules). With a DTD, it also becomes "valid" (follows the specific structure defined by the DTD). DTDs can be internal (written inside the XML file) or external (saved as a separate .dtd file and linked to the XML file).</p>
+
+      <h3>Relationship Between XML and DTD</h3>
+      <p>XML and DTD work together like a form and its template. XML provides the actual data, and DTD provides the rules that the data must follow. Here is how they are related:</p>
+      <ul>
+        <li><strong>XML needs structure, DTD provides it:</strong> XML by itself only requires that the document is well-formed (proper nesting, closing tags, etc.). But for real-world applications, you often need stricter rules — like "every employee must have a name and salary." DTD defines these rules.</li>
+        <li><strong>Validation:</strong> When an XML parser reads an XML document with a DTD, it can validate the document. This means it checks whether the XML follows all the rules in the DTD. If something is wrong (like a missing required element), the parser reports an error.</li>
+        <li><strong>Consistency:</strong> When multiple people or programs create XML files, DTD ensures that everyone follows the same structure. This is crucial for data exchange between organizations.</li>
+        <li><strong>Documentation:</strong> A DTD serves as documentation for your XML format. Anyone reading the DTD can understand exactly what structure the XML should have.</li>
+      </ul>
+
+      <h3>Example — Internal DTD</h3>
+    </div>
+
+    <span class="section-label code">Code</span>
+    <div class="code-block"><pre><span class="tag">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;!DOCTYPE note [</span>
+  <span class="tag">&lt;!ELEMENT note (to, from, message)&gt;</span>
+  <span class="tag">&lt;!ELEMENT to (#PCDATA)&gt;</span>
+  <span class="tag">&lt;!ELEMENT from (#PCDATA)&gt;</span>
+  <span class="tag">&lt;!ELEMENT message (#PCDATA)&gt;</span>
+<span class="tag">]&gt;</span>
+<span class="tag">&lt;note&gt;</span>
+  <span class="tag">&lt;to&gt;</span>Amit<span class="tag">&lt;/to&gt;</span>
+  <span class="tag">&lt;from&gt;</span>Priya<span class="tag">&lt;/from&gt;</span>
+  <span class="tag">&lt;message&gt;</span>Meeting at 3 PM<span class="tag">&lt;/message&gt;</span>
+<span class="tag">&lt;/note&gt;</span></pre></div>
+
+    <span class="section-label explanation">Explanation</span>
+    <div class="explanation-block">
+      In this example, the DTD is written inside the XML file (internal DTD). It declares that a <em>note</em> element must contain <em>to</em>, <em>from</em>, and <em>message</em> in that exact order. All three sub-elements contain parsed character data (#PCDATA). If someone writes a note without a <em>from</em> element, or adds an extra element like <em>date</em>, the XML will fail validation. The DTD acts as the rulebook, and the XML follows those rules. This relationship ensures data integrity and consistency.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q4 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q4">
+  <div class="q-header">
+    <span class="q-number">4</span>
+    <span class="q-text">Define XML and list the rules to be followed by XML documents. What is a PCDATA and CDATA section in DTD? With the help of XML, create a database of Courses and validate it with the help of DTD.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>What is XML?</h3>
+      <p>XML stands for <strong>eXtensible Markup Language</strong>. It is a markup language that allows you to define your own tags to organize and store data in a structured format. Unlike HTML which is used for displaying data, XML is used for carrying and storing data. It is both human-readable and machine-readable, making it ideal for sharing data between different systems over the internet. XML was developed by the World Wide Web Consortium (W3C) and has become a standard for data interchange. The key feature of XML is its extensibility — you are not limited to a fixed set of tags. You can create tags that best describe your data, whether it is books, students, products, or any other type of information.</p>
+
+      <h3>Rules to be Followed by XML Documents</h3>
+      <ul>
+        <li><strong>Single root element:</strong> There must be exactly one root element that encloses all other elements.</li>
+        <li><strong>Every element must be closed:</strong> All tags must have closing tags. Self-closing tags like <em>&lt;br/&gt;</em> are also valid.</li>
+        <li><strong>Case sensitivity:</strong> XML tags are case-sensitive. <em>&lt;Course&gt;</em> and <em>&lt;course&gt;</em> are different.</li>
+        <li><strong>Proper nesting:</strong> Elements must be properly nested inside each other — no overlapping tags.</li>
+        <li><strong>Attribute values in quotes:</strong> All attribute values must be enclosed in single or double quotes.</li>
+        <li><strong>Special characters must be escaped:</strong> Characters like &lt;, &gt;, &amp; must be written as <em>&amp;lt;</em>, <em>&amp;gt;</em>, <em>&amp;amp;</em> inside text content.</li>
+      </ul>
+
+      <h3>What is PCDATA?</h3>
+      <p>PCDATA stands for <strong>Parsed Character Data</strong>. It is the text that will be parsed (examined) by the XML parser. When you declare an element as containing #PCDATA in a DTD, it means the element can contain regular text, but that text will be processed by the parser. Any markup tags or entity references within PCDATA will be recognized and processed. For example, if you write <em>&lt;description&gt;Price is &amp;lt; 100&lt;/description&gt;</em>, the <em>&amp;lt;</em> will be converted to <em>&lt;</em> because PCDATA is parsed. Most text content in XML elements is treated as PCDATA by default.</p>
+
+      <h3>What is CDATA?</h3>
+      <p>CDATA stands for <strong>Character Data</strong>. It is text that will NOT be parsed by the XML parser. When you want to include text that contains characters like &lt;, &gt;, or &amp; but you do not want the parser to interpret them as XML markup, you wrap the text in a CDATA section. The syntax is: <em>&lt;![CDATA[ ...content... ]]&gt;</em>. Everything inside the CDATA section is treated as plain text. For example, if you want to include a JavaScript code snippet or HTML code inside XML, you would put it in a CDATA section so that the &lt; and &gt; characters do not confuse the parser. In DTD declarations, CDATA is used for attribute values (meaning the attribute contains plain text that should not be parsed).</p>
+
+      <h3>Difference Between PCDATA and CDATA</h3>
+      <table class="cmp-table">
+        <tr><th>Feature</th><th>PCDATA</th><th>CDATA</th></tr>
+        <tr><td>Full Form</td><td>Parsed Character Data</td><td>Character Data</td></tr>
+        <tr><td>Parsed?</td><td>Yes, by the XML parser</td><td>No, treated as plain text</td></tr>
+        <tr><td>Usage</td><td>Element content in DTD</td><td>Attribute type in DTD / Unparsed sections in XML</td></tr>
+        <tr><td>Escape needed?</td><td>Yes, for &lt; &gt; &amp;</td><td>No, characters treated literally</td></tr>
+      </table>
+
+      <h3>Courses Database with DTD Validation</h3>
+    </div>
+
+    <span class="section-label code">Code — courses.xml</span>
+    <div class="code-block"><pre><span class="tag">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;!DOCTYPE courselist SYSTEM "courses.dtd"&gt;</span>
+<span class="tag">&lt;courselist&gt;</span>
+  <span class="tag">&lt;course&gt;</span>
+    <span class="tag">&lt;code&gt;</span>CS101<span class="tag">&lt;/code&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Introduction to Programming<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;credits&gt;</span>4<span class="tag">&lt;/credits&gt;</span>
+    <span class="tag">&lt;description&gt;</span>Learn basics of C programming<span class="tag">&lt;/description&gt;</span>
+  <span class="tag">&lt;/course&gt;</span>
+  <span class="tag">&lt;course&gt;</span>
+    <span class="tag">&lt;code&gt;</span>CS201<span class="tag">&lt;/code&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Data Structures<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;credits&gt;</span>4<span class="tag">&lt;/credits&gt;</span>
+    <span class="tag">&lt;description&gt;</span>Arrays, Linked Lists, Trees<span class="tag">&lt;/description&gt;</span>
+  <span class="tag">&lt;/course&gt;</span>
+  <span class="tag">&lt;course&gt;</span>
+    <span class="tag">&lt;code&gt;</span>CS301<span class="tag">&lt;/code&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Database Management<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;credits&gt;</span>3<span class="tag">&lt;/credits&gt;</span>
+    <span class="tag">&lt;description&gt;</span>SQL, ER Models, Normalization<span class="tag">&lt;/description&gt;</span>
+  <span class="tag">&lt;/course&gt;</span>
+<span class="tag">&lt;/courselist&gt;</span></pre></div>
+
+    <span class="section-label code">Code — courses.dtd</span>
+    <div class="code-block"><pre><span class="tag">&lt;!ELEMENT courselist (course+)&gt;</span>
+<span class="tag">&lt;!ELEMENT course (code, name, credits, description)&gt;</span>
+<span class="tag">&lt;!ELEMENT code (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT name (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT credits (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT description (#PCDATA)&gt;</span></pre></div>
+
+    <span class="section-label explanation">Explanation</span>
+    <div class="explanation-block">
+      The XML file stores course data with code, name, credits, and description. The DTD ensures each <em>course</em> has exactly these four elements in order. The <em>+</em> after course in courselist means at least one course is required. All elements contain #PCDATA meaning they hold parsed character data.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q5 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q5">
+  <div class="q-header">
+    <span class="q-number">5</span>
+    <span class="q-text">Define DTD (Document Type Definition). What is a PCDATA and CDATA section in XML? With the help of XML, create a database of employees and validate it with the help of DTD.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>What is DTD?</h3>
+      <p>DTD stands for <strong>Document Type Definition</strong>. It is a document that defines the structure and the legal elements and attributes of an XML document. You can think of DTD as a rulebook or a blueprint for your XML data. It specifies which elements are allowed, what order they must appear in, how many times each element can occur, whether elements can contain text or other elements, and what attributes an element can have. DTD ensures that all XML documents following it have a consistent and predictable structure. This is especially important when multiple organizations or applications need to exchange data — they all need to agree on a common format, and DTD provides that agreement. DTD can be written inside the XML document (internal DTD) or in a separate file (external DTD).</p>
+
+      <h3>PCDATA in XML</h3>
+      <p>PCDATA stands for <strong>Parsed Character Data</strong>. When you write <em>#PCDATA</em> in a DTD element declaration, it means that the element can contain plain text that will be parsed by the XML parser. The word "parsed" is important — it means the XML processor will look through the text for markup, entity references, and special characters. If it finds something like <em>&amp;lt;</em>, it will convert it to <em>&lt;</em>. If it finds a tag inside the text, it will treat it as a real tag. PCDATA is the most common content type for XML elements. For example, in <em>&lt;!ELEMENT name (#PCDATA)&gt;</em>, the name element can contain text like "John Doe" and any entity references within will be resolved.</p>
+
+      <h3>CDATA in XML</h3>
+      <p>CDATA stands for <strong>Character Data</strong>. In XML, a CDATA section is a block of text that the parser will NOT parse. It is used when you want to include text that contains characters which would normally be interpreted as XML markup (like &lt;, &gt;, or &amp;), but you want them to be treated as literal text. The syntax for a CDATA section in XML is: <em>&lt;![CDATA[ your text here ]]&gt;</em>. Everything between <em>&lt;![CDATA[</em> and <em>]]&gt;</em> is ignored by the parser. This is very useful when you want to include code snippets, mathematical expressions, or HTML code inside XML. For example, if you have a <em>&lt;script&gt;</em> element containing JavaScript with &lt; and &gt; operators, you can wrap it in CDATA so the XML parser does not get confused. In DTD, CDATA is also used as an attribute type, meaning the attribute value is plain text.</p>
+
+      <h3>Key Differences Between PCDATA and CDATA</h3>
+      <ul>
+        <li>PCDATA is parsed — entity references and tags inside it are processed.</li>
+        <li>CDATA is not parsed — everything is treated as raw text.</li>
+        <li>PCDATA is used for element content declarations in DTD.</li>
+        <li>CDATA sections in XML are used to embed text with special characters safely.</li>
+        <li>Use PCDATA when your text is simple and does not contain special characters.</li>
+        <li>Use CDATA when your text contains code or lots of special characters.</li>
+      </ul>
+
+      <h3>Employees Database with DTD Validation</h3>
+    </div>
+
+    <span class="section-label code">Code — employees.xml</span>
+    <div class="code-block"><pre><span class="tag">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;!DOCTYPE empdb SYSTEM "employees.dtd"&gt;</span>
+<span class="tag">&lt;empdb&gt;</span>
+  <span class="tag">&lt;employee&gt;</span>
+    <span class="tag">&lt;empid&gt;</span>E001<span class="tag">&lt;/empid&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Rahul Mehra<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;department&gt;</span>IT<span class="tag">&lt;/department&gt;</span>
+    <span class="tag">&lt;salary&gt;</span>55000<span class="tag">&lt;/salary&gt;</span>
+    <span class="tag">&lt;remark&gt;</span><span class="tag">&lt;![CDATA[ Salary &lt; 60000 &amp; eligible for hike ]]&gt;</span><span class="tag">&lt;/remark&gt;</span>
+  <span class="tag">&lt;/employee&gt;</span>
+  <span class="tag">&lt;employee&gt;</span>
+    <span class="tag">&lt;empid&gt;</span>E002<span class="tag">&lt;/empid&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Neha Gupta<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;department&gt;</span>HR<span class="tag">&lt;/department&gt;</span>
+    <span class="tag">&lt;salary&gt;</span>48000<span class="tag">&lt;/salary&gt;</span>
+    <span class="tag">&lt;remark&gt;</span><span class="tag">&lt;![CDATA[ Performance &gt; average ]]&gt;</span><span class="tag">&lt;/remark&gt;</span>
+  <span class="tag">&lt;/employee&gt;</span>
+  <span class="tag">&lt;employee&gt;</span>
+    <span class="tag">&lt;empid&gt;</span>E003<span class="tag">&lt;/empid&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Vikram Singh<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;department&gt;</span>Finance<span class="tag">&lt;/department&gt;</span>
+    <span class="tag">&lt;salary&gt;</span>62000<span class="tag">&lt;/salary&gt;</span>
+    <span class="tag">&lt;remark&gt;</span><span class="tag">&lt;![CDATA[ Top performer &amp; team lead ]]&gt;</span><span class="tag">&lt;/remark&gt;</span>
+  <span class="tag">&lt;/employee&gt;</span>
+<span class="tag">&lt;/empdb&gt;</span></pre></div>
+
+    <span class="section-label code">Code — employees.dtd</span>
+    <div class="code-block"><pre><span class="tag">&lt;!ELEMENT empdb (employee+)&gt;</span>
+<span class="tag">&lt;!ELEMENT employee (empid, name, department, salary, remark)&gt;</span>
+<span class="tag">&lt;!ELEMENT empid (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT name (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT department (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT salary (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT remark (#PCDATA)&gt;</span></pre></div>
+
+    <span class="section-label explanation">Explanation</span>
+    <div class="explanation-block">
+      The XML file stores employee data including empid, name, department, salary, and remark. The <em>remark</em> field uses CDATA sections to safely include special characters like &lt; and &amp; without confusing the parser. The DTD declares that each employee must have all five elements in order. The <em>+</em> means at least one employee is required inside empdb.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q6 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q6">
+  <div class="q-header">
+    <span class="q-number">6</span>
+    <span class="q-text">Design an XML document to store information about a student of a Graphic Era University. The information must include Name, Branch, Year of Joining, and e-mail id. Make up sample data for 3 students. Create a CSS style sheet and use it to display the document.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+      <p>In this question, we need to create an XML document that stores student information for Graphic Era University, along with a CSS stylesheet to display the data visually. XML alone does not define how data should be displayed — it only structures the data. By linking a CSS file, we can add visual styling to the XML elements. The CSS rules target XML element names directly (since XML does not have HTML elements like div or p). We must set <em>display: block</em> for elements that should appear on separate lines, because XML elements are displayed inline by default. Let us create both the XML file and the CSS file.</p>
+    </div>
+
+    <span class="section-label code">Code — students.xml</span>
+    <div class="code-block"><pre><span class="tag">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;?xml-stylesheet type="text/css" href="geu_students.css"?&gt;</span>
+<span class="tag">&lt;university&gt;</span>
+  <span class="tag">&lt;student&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Arjun Rawat<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;branch&gt;</span>Computer Science<span class="tag">&lt;/branch&gt;</span>
+    <span class="tag">&lt;year&gt;</span>2022<span class="tag">&lt;/year&gt;</span>
+    <span class="tag">&lt;email&gt;</span>arjun.rawat@geu.ac.in<span class="tag">&lt;/email&gt;</span>
+  <span class="tag">&lt;/student&gt;</span>
+  <span class="tag">&lt;student&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Sneha Bhatt<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;branch&gt;</span>Information Technology<span class="tag">&lt;/branch&gt;</span>
+    <span class="tag">&lt;year&gt;</span>2023<span class="tag">&lt;/year&gt;</span>
+    <span class="tag">&lt;email&gt;</span>sneha.bhatt@geu.ac.in<span class="tag">&lt;/email&gt;</span>
+  <span class="tag">&lt;/student&gt;</span>
+  <span class="tag">&lt;student&gt;</span>
+    <span class="tag">&lt;name&gt;</span>Rohan Kandpal<span class="tag">&lt;/name&gt;</span>
+    <span class="tag">&lt;branch&gt;</span>Electronics<span class="tag">&lt;/branch&gt;</span>
+    <span class="tag">&lt;year&gt;</span>2021<span class="tag">&lt;/year&gt;</span>
+    <span class="tag">&lt;email&gt;</span>rohan.kandpal@geu.ac.in<span class="tag">&lt;/email&gt;</span>
+  <span class="tag">&lt;/student&gt;</span>
+<span class="tag">&lt;/university&gt;</span></pre></div>
+
+    <span class="section-label code">Code — geu_students.css</span>
+    <div class="code-block"><pre><span class="cmt">/* Root element styling */</span>
+<span class="sel">university</span> {
+  <span class="attr">display</span>: <span class="val">block</span>;
+  <span class="attr">font-family</span>: <span class="val">Georgia, serif</span>;
+  <span class="attr">background</span>: <span class="num">#FFF8F0</span>;
+  <span class="attr">padding</span>: <span class="num">30px</span>;
+}
+
+<span class="cmt">/* Each student as a card */</span>
+<span class="sel">student</span> {
+  <span class="attr">display</span>: <span class="val">block</span>;
+  <span class="attr">border</span>: <span class="num">2px solid #C4A882</span>;
+  <span class="attr">border-radius</span>: <span class="num">8px</span>;
+  <span class="attr">padding</span>: <span class="num">20px</span>;
+  <span class="attr">margin</span>: <span class="num">15px 0</span>;
+  <span class="attr">background</span>: <span class="num">#FFFCF7</span>;
+}
+
+<span class="cmt">/* Name - big and bold */</span>
+<span class="sel">name</span> {
+  <span class="attr">display</span>: <span class="val">block</span>;
+  <span class="attr">font-size</span>: <span class="num">22px</span>;
+  <span class="attr">font-weight</span>: <span class="val">bold</span>;
+  <span class="attr">color</span>: <span class="num">#5C4033</span>;
+  <span class="attr">margin-bottom</span>: <span class="num">8px</span>;
+}
+
+<span class="cmt">/* Branch */</span>
+<span class="sel">branch</span> {
+  <span class="attr">display</span>: <span class="val">block</span>;
+  <span class="attr">font-size</span>: <span class="num">16px</span>;
+  <span class="attr">color</span>: <span class="num">#6B4F3A</span>;
+  <span class="attr">margin-bottom</span>: <span class="num">4px</span>;
+}
+
+<span class="cmt">/* Year of Joining */</span>
+<span class="sel">year</span> {
+  <span class="attr">display</span>: <span class="val">block</span>;
+  <span class="attr">font-size</span>: <span class="num">14px</span>;
+  <span class="attr">color</span>: <span class="num">#8B6F5E</span>;
+  <span class="attr">margin-bottom</span>: <span class="num">4px</span>;
+}
+
+<span class="cmt">/* Email */</span>
+<span class="sel">email</span> {
+  <span class="attr">display</span>: <span class="val">block</span>;
+  <span class="attr">font-size</span>: <span class="num">14px</span>;
+  <span class="attr">color</span>: <span class="num">#4A7C6F</span>;
+  <span class="attr">font-style</span>: <span class="val">italic</span>;
+}</pre></div>
+
+    <span class="section-label explanation">Explanation</span>
+    <div class="explanation-block">
+      The XML file uses the <em>&lt;?xml-stylesheet?&gt;</em> processing instruction to link the CSS file. Each student is wrapped in a <em>&lt;student&gt;</em> element with child elements for name, branch, year, and email. The CSS styles each element by its tag name — making student elements look like cards with borders, and styling the name in bold, the email in italic, etc. The <em>display: block</em> is essential because XML elements are inline by default.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q7 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q7">
+  <div class="q-header">
+    <span class="q-number">7</span>
+    <span class="q-text">Write XML file to store information about Music_Album having fields of Title, Singer, Music_Composer, Actor, Language, Country and Release_Year. Also write corresponding external DTD file.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+      <p>Here we need to create an XML file that stores information about music albums with specific fields: Title, Singer, Music_Composer, Actor, Language, Country, and Release_Year. We also need to create a corresponding external DTD file that validates the XML document. The external DTD is stored in a separate .dtd file and is referenced from the XML file using the <em>&lt;!DOCTYPE&gt;</em> declaration with the <em>SYSTEM</em> keyword. This approach is better than internal DTDs because it allows the same DTD to be shared across multiple XML documents, keeping the XML file cleaner and the validation rules centralized.</p>
+    </div>
+
+    <span class="section-label code">Code — music_album.xml</span>
+    <div class="code-block"><pre><span class="tag">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="tag">&lt;!DOCTYPE music_albums SYSTEM "music_album.dtd"&gt;</span>
+<span class="tag">&lt;music_albums&gt;</span>
+  <span class="tag">&lt;Music_Album&gt;</span>
+    <span class="tag">&lt;Title&gt;</span>Aashiqui 2<span class="tag">&lt;/Title&gt;</span>
+    <span class="tag">&lt;Singer&gt;</span>Arijit Singh<span class="tag">&lt;/Singer&gt;</span>
+    <span class="tag">&lt;Music_Composer&gt;</span>Mithoon<span class="tag">&lt;/Music_Composer&gt;</span>
+    <span class="tag">&lt;Actor&gt;</span>Aditya Roy Kapoor<span class="tag">&lt;/Actor&gt;</span>
+    <span class="tag">&lt;Language&gt;</span>Hindi<span class="tag">&lt;/Language&gt;</span>
+    <span class="tag">&lt;Country&gt;</span>India<span class="tag">&lt;/Country&gt;</span>
+    <span class="tag">&lt;Release_Year&gt;</span>2013<span class="tag">&lt;/Release_Year&gt;</span>
+  <span class="tag">&lt;/Music_Album&gt;</span>
+  <span class="tag">&lt;Music_Album&gt;</span>
+    <span class="tag">&lt;Title&gt;</span>Dilwale Dulhania Le Jayenge<span class="tag">&lt;/Title&gt;</span>
+    <span class="tag">&lt;Singer&gt;</span>Kumar Sanu<span class="tag">&lt;/Singer&gt;</span>
+    <span class="tag">&lt;Music_Composer&gt;</span>Jatin-Lalit<span class="tag">&lt;/Music_Composer&gt;</span>
+    <span class="tag">&lt;Actor&gt;</span>Shah Rukh Khan<span class="tag">&lt;/Actor&gt;</span>
+    <span class="tag">&lt;Language&gt;</span>Hindi<span class="tag">&lt;/Language&gt;</span>
+    <span class="tag">&lt;Country&gt;</span>India<span class="tag">&lt;/Country&gt;</span>
+    <span class="tag">&lt;Release_Year&gt;</span>1995<span class="tag">&lt;/Release_Year&gt;</span>
+  <span class="tag">&lt;/Music_Album&gt;</span>
+  <span class="tag">&lt;Music_Album&gt;</span>
+    <span class="tag">&lt;Title&gt;</span>Shape of You<span class="tag">&lt;/Title&gt;</span>
+    <span class="tag">&lt;Singer&gt;</span>Ed Sheeran<span class="tag">&lt;/Singer&gt;</span>
+    <span class="tag">&lt;Music_Composer&gt;</span>Ed Sheeran<span class="tag">&lt;/Music_Composer&gt;</span>
+    <span class="tag">&lt;Actor&gt;</span>Ed Sheeran<span class="tag">&lt;/Actor&gt;</span>
+    <span class="tag">&lt;Language&gt;</span>English<span class="tag">&lt;/Language&gt;</span>
+    <span class="tag">&lt;Country&gt;</span>United Kingdom<span class="tag">&lt;/Country&gt;</span>
+    <span class="tag">&lt;Release_Year&gt;</span>2017<span class="tag">&lt;/Release_Year&gt;</span>
+  <span class="tag">&lt;/Music_Album&gt;</span>
+<span class="tag">&lt;/music_albums&gt;</span></pre></div>
+
+    <span class="section-label code">Code — music_album.dtd</span>
+    <div class="code-block"><pre><span class="cmt">&lt;!-- External DTD for Music Album --&gt;</span>
+<span class="tag">&lt;!ELEMENT music_albums (Music_Album+)&gt;</span>
+<span class="tag">&lt;!ELEMENT Music_Album (Title, Singer, Music_Composer, Actor, Language, Country, Release_Year)&gt;</span>
+<span class="tag">&lt;!ELEMENT Title (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT Singer (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT Music_Composer (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT Actor (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT Language (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT Country (#PCDATA)&gt;</span>
+<span class="tag">&lt;!ELEMENT Release_Year (#PCDATA)&gt;</span></pre></div>
+
+    <span class="section-label explanation">Explanation</span>
+    <div class="explanation-block">
+      The XML file stores three music albums with all the required fields. The DTD is saved as a separate file <em>music_album.dtd</em> and linked using <em>&lt;!DOCTYPE music_albums SYSTEM "music_album.dtd"&gt;</em>. The DTD defines that <em>music_albums</em> contains one or more <em>Music_Album</em> elements, and each album must have all seven fields in the specified order. All fields contain #PCDATA (parsed character data). The <em>+</em> quantifier means at least one album must be present.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q8 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q8">
+  <div class="q-header">
+    <span class="q-number">8</span>
+    <span class="q-text">What is the difference between XML and JSON? Which one is better for storing unstructured databases?</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>What is XML?</h3>
+      <p>XML (eXtensible Markup Language) is a markup language that uses tags to define and structure data. It has been around since 1998 and is a W3C standard. XML uses opening and closing tags like <em>&lt;name&gt;John&lt;/name&gt;</em> to wrap data. It supports attributes, namespaces, comments, and can be validated using DTD or XML Schema. XML is verbose — it requires a lot of tags and text to represent even simple data, which makes files larger. But it is very mature, well-supported, and has a rich ecosystem of tools and standards around it.</p>
+
+      <h3>What is JSON?</h3>
+      <p>JSON (JavaScript Object Notation) is a lightweight data-interchange format that was derived from JavaScript. It uses a simple key-value pair structure like <em>{"name": "John"}</em> and supports data types like strings, numbers, booleans, arrays, and objects. JSON is much more compact than XML because it does not use closing tags. It is easy for humans to read and write, and easy for machines to parse and generate. JSON has become the dominant format for web APIs and AJAX requests because it integrates naturally with JavaScript.</p>
+
+      <h3>Detailed Comparison</h3>
+      <table class="cmp-table">
+        <tr><th>Feature</th><th>XML</th><th>JSON</th></tr>
+        <tr><td>Full Form</td><td>eXtensible Markup Language</td><td>JavaScript Object Notation</td></tr>
+        <tr><td>Syntax</td><td>Tag-based (opening and closing tags)</td><td>Key-value pair based</td></tr>
+        <tr><td>Verbosity</td><td>More verbose, larger file size</td><td>Less verbose, smaller file size</td></tr>
+        <tr><td>Data Types</td><td>All data is treated as text</td><td>Supports string, number, boolean, array, object, null</td></tr>
+        <tr><td>Comments</td><td>Supports comments</td><td>Does not support comments</td></tr>
+        <tr><td>Namespaces</td><td>Supports namespaces</td><td>No namespace support</td></tr>
+        <tr><td>Validation</td><td>DTD, XML Schema (XSD)</td><td>JSON Schema (less common)</td></tr>
+        <tr><td>Attributes</td><td>Supports attributes on elements</td><td>No attributes, only key-value pairs</td></tr>
+        <tr><td>Parsing</td><td>Needs an XML parser</td><td>Parsed natively by JavaScript</td></tr>
+        <tr><td>Array Support</td><td>Requires repeated elements</td><td>Native array support with []</td></tr>
+        <tr><td>Security</td><td>More vulnerable to XXE attacks</td><td>More vulnerable to CSRF attacks</td></tr>
+        <tr><td>Browser Support</td><td>Needs XMLHttpRequest or DOM parser</td><td>Native support in all browsers</td></tr>
+      </table>
+
+      <h3>Which is Better for Storing Unstructured Databases?</h3>
+      <p>For <strong>unstructured databases</strong>, <strong>JSON is generally better</strong>. Unstructured data does not follow a rigid schema — it can have different fields, nested structures, and varying data types from one record to another. JSON handles this naturally because it supports flexible nested objects and arrays without requiring a predefined schema. NoSQL databases like MongoDB use JSON-like documents (BSON) specifically because JSON is great for storing unstructured and semi-structured data.</p>
+      <p>XML, on the other hand, is designed for structured and validated data. While XML can store unstructured data (you can always add new tags), it is heavier and more rigid. XML works best when you need strict validation, document-oriented data, or when working with legacy systems. JSON is lighter, faster to parse, and more flexible — making it the preferred choice for unstructured databases in modern web applications.</p>
+      <p>However, it is important to note that neither XML nor JSON is truly ideal for completely unstructured data (like raw text, images, or video). For truly unstructured data, file systems or specialized storage systems are more appropriate. But when comparing XML and JSON for semi-structured or flexible data storage, JSON wins because of its lightweight nature, flexible structure, and native integration with modern programming languages.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q9 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q9">
+  <div class="q-header">
+    <span class="q-number">9</span>
+    <span class="q-text">What is Ajax? Write a small program to make an Ajax call to a server and insert the response web page.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>What is Ajax?</h3>
+      <p>Ajax stands for <strong>Asynchronous JavaScript and XML</strong>. It is not a programming language or a framework — it is a <strong>technique</strong> that allows web pages to communicate with a server and update parts of the page without reloading the entire page. Before Ajax, every interaction with the server required a full page reload. For example, if you submitted a form or clicked a button, the entire page would go blank, the server would process the request, and then a completely new page would load. This was slow and provided a poor user experience. Ajax changed all of that by allowing JavaScript to send requests to the server in the background, receive the response, and update only the part of the page that needs to change — all without the user ever leaving the current page.</p>
+      <p>The key components of Ajax are:</p>
+      <ul>
+        <li><strong>XMLHttpRequest object:</strong> This is the JavaScript object that enables the browser to make HTTP requests to the server without a page reload.</li>
+        <li><strong>JavaScript:</strong> The programming language that creates the request, handles the response, and updates the DOM.</li>
+        <li><strong>DOM (Document Object Model):</strong> Used to update the HTML content dynamically without reloading the page.</li>
+        <li><strong>Server-side technology:</strong> Any server-side language (PHP, Python, Node.js, etc.) that processes the request and sends back data (XML, JSON, HTML, or plain text).</li>
+        <li><strong>CSS:</strong> Used for styling the updated content.</li>
+      </ul>
+      <p>The word "Asynchronous" is very important — it means the JavaScript code does not wait for the server response. It continues executing other code, and when the response arrives, a callback function handles it. This keeps the web page responsive and interactive while data is being fetched in the background. Today, many developers use the newer <em>fetch()</em> API instead of XMLHttpRequest, but the underlying concept is the same.</p>
+    </div>
+
+    <span class="section-label code">Code</span>
+    <div class="code-block"><pre><span class="cmt">&lt;!-- ajax_demo.html --&gt;</span>
+<span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Ajax Demo<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>Ajax Call Demo<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;button</span> <span class="attr">onclick=</span><span class="str">"loadData()"</span><span class="tag">&gt;</span>Fetch Data<span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">id=</span><span class="str">"result"</span><span class="tag">&gt;</span><span class="tag">&lt;/div&gt;</span>
+
+  <span class="tag">&lt;script&gt;</span>
+    <span class="kw">function</span> <span class="fn">loadData</span>() {
+      <span class="cmt">// Step 1: Create XMLHttpRequest object</span>
+      <span class="kw">var</span> xhr = <span class="kw">new</span> XMLHttpRequest();
+
+      <span class="cmt">// Step 2: Define what happens when response arrives</span>
+      xhr.<span class="fn">onreadystatechange</span> = <span class="kw">function</span>() {
+        <span class="kw">if</span> (xhr.readyState == <span class="num">4</span> && xhr.status == <span class="num">200</span>) {
+          <span class="cmt">// Step 4: Insert response into the page</span>
+          document.<span class="fn">getElementById</span>(<span class="str">"result"</span>).innerHTML = xhr.responseText;
+        }
+      };
+
+      <span class="cmt">// Step 3: Open and send the request</span>
+      xhr.<span class="fn">open</span>(<span class="str">"GET"</span>, <span class="str">"server_page.html"</span>, <span class="kw">true</span>);
+      xhr.<span class="fn">send</span>();
+    }
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre></div>
+
+    <span class="section-label output">Output</span>
+    <div class="output-block">When the button is clicked, the content of "server_page.html" is fetched and displayed inside the div without reloading the page.</div>
+
+    <span class="section-label explanation">Explanation</span>
+    <div class="explanation-block">
+      Step 1: We create an XMLHttpRequest object which is the core of Ajax. Step 2: We set up the <em>onreadystatechange</em> callback — it fires every time the readyState changes. When readyState is 4 (request complete) and status is 200 (OK), we take the server's response text and put it into the div. Step 3: We <em>open</em> a GET request to the server page URL, and <em>send</em> it. The third parameter <em>true</em> makes it asynchronous. When the response arrives, the callback inserts it into the page.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q10 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q10">
+  <div class="q-header">
+    <span class="q-number">10</span>
+    <span class="q-text">Explain Ajax with an example.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>Ajax Explained</h3>
+      <p>Ajax stands for <strong>Asynchronous JavaScript and XML</strong>. It is a set of web development techniques that allows a web page to send and receive data from a server asynchronously — meaning in the background, without interfering with the display and behavior of the existing page. The result is a faster, smoother, and more interactive user experience. Ajax is not a single technology — it is a combination of several technologies working together: HTML and CSS for presentation, the DOM for dynamic display, XMLHttpRequest for data exchange, and JavaScript to tie everything together.</p>
+
+      <h3>How Ajax Works — Step by Step</h3>
+      <ol>
+        <li><strong>User triggers an event:</strong> The user performs an action like clicking a button, typing in a search box, or submitting a form.</li>
+        <li><strong>JavaScript creates an XMLHttpRequest object:</strong> This object is the bridge between the browser and the server.</li>
+        <li><strong>Request is sent to the server:</strong> The XMLHttpRequest sends a request to the server in the background. The page does not freeze or reload.</li>
+        <li><strong>Server processes the request:</strong> The server-side script (PHP, Python, Node.js, etc.) processes the request, maybe queries a database, and prepares a response.</li>
+        <li><strong>Server sends back the response:</strong> The response can be in HTML, XML, JSON, or plain text format.</li>
+        <li><strong>JavaScript receives the response:</strong> The callback function is triggered when the response arrives.</li>
+        <li><strong>Page is updated:</strong> JavaScript uses the DOM to update only the specific part of the page that needs to change, without reloading the whole page.</li>
+      </ol>
+
+      <h3>Real-World Examples of Ajax</h3>
+      <ul>
+        <li><strong>Google Search suggestions:</strong> As you type, suggestions appear without reloading the page.</li>
+        <li><strong>Facebook/Twitter feeds:</strong> New posts appear automatically when you scroll.</li>
+        <li><strong>Gmail:</strong> Reading and sending emails happens without page reloads.</li>
+        <li><strong>Google Maps:</strong> Dragging the map loads new map tiles in the background.</li>
+      </ul>
+
+      <h3>Advantages of Ajax</h3>
+      <ul>
+        <li>Reduces bandwidth usage since only necessary data is fetched.</li>
+        <li>Provides a faster and more interactive user experience.</li>
+        <li>Eliminates full page reloads, making the application feel like a desktop app.</li>
+        <li>Allows asynchronous operations — the user can continue working while data loads.</li>
+      </ul>
+    </div>
+
+    <span class="section-label code">Code — Ajax Example</span>
+    <div class="code-block"><pre><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Ajax Example<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>Get User Info<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;button</span> <span class="attr">onclick=</span><span class="str">"getUser()"</span><span class="tag">&gt;</span>Load User<span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;p</span> <span class="attr">id=</span><span class="str">"output"</span><span class="tag">&gt;</span><span class="tag">&lt;/p&gt;</span>
+
+  <span class="tag">&lt;script&gt;</span>
+    <span class="kw">function</span> <span class="fn">getUser</span>() {
+      <span class="kw">var</span> xhr = <span class="kw">new</span> XMLHttpRequest();
+      xhr.<span class="fn">onreadystatechange</span> = <span class="kw">function</span>() {
+        <span class="kw">if</span> (xhr.readyState == <span class="num">4</span> && xhr.status == <span class="num">200</span>) {
+          <span class="cmt">// Parse the JSON response</span>
+          <span class="kw">var</span> data = JSON.<span class="fn">parse</span>(xhr.responseText);
+          document.<span class="fn">getElementById</span>(<span class="str">"output"</span>).innerHTML =
+            <span class="str">"Name: "</span> + data.name + <span class="str">"&lt;br&gt;Email: "</span> + data.email;
+        }
+      };
+      <span class="cmt">// Request a JSON file from the server</span>
+      xhr.<span class="fn">open</span>(<span class="str">"GET"</span>, <span class="str">"user_info.json"</span>, <span class="kw">true</span>);
+      xhr.<span class="fn">send</span>();
+    }
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre></div>
+
+    <span class="section-label code">Code — user_info.json (Server file)</span>
+    <div class="code-block"><pre>{
+  <span class="str">"name"</span>: <span class="str">"Amit Sharma"</span>,
+  <span class="str">"email"</span>: <span class="str">"amit@example.com"</span>
+}</pre></div>
+
+    <span class="section-label output">Output</span>
+    <div class="output-block">Name: Amit Sharma
+Email: amit@example.com</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q11 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q11">
+  <div class="q-header">
+    <span class="q-number">11</span>
+    <span class="q-text">How does XMLHttpRequest work in AJAX?</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>Understanding XMLHttpRequest in AJAX</h3>
+      <p>The XMLHttpRequest object (often abbreviated as XHR) is the backbone of traditional Ajax. It is a built-in JavaScript object that allows a web page to make HTTP requests to a server and receive responses, all without reloading the page. Despite its name containing "XML," it can work with any type of data — not just XML. It can handle plain text, HTML, JSON, and even binary data. The XMLHttpRequest was originally created by Microsoft for Internet Explorer and was later adopted by all other browsers as a web standard.</p>
+
+      <h3>How XMLHttpRequest Works — Complete Flow</h3>
+      <p>The XMLHttpRequest works through a series of well-defined steps. Understanding each step is crucial for working with Ajax:</p>
+      <ol>
+        <li><strong>Creating the XHR Object:</strong> The first step is to create an instance of XMLHttpRequest. This is done with <em>var xhr = new XMLHttpRequest();</em>. This object will handle the entire communication with the server.</li>
+        <li><strong>Setting up the Callback Function:</strong> Before sending the request, you need to define what should happen when the server responds. This is done using the <em>onreadystatechange</em> property. You assign a function that will be called every time the <em>readyState</em> property changes.</li>
+        <li><strong>Opening the Request:</strong> The <em>open()</em> method initializes the request. It takes three main parameters: the HTTP method (GET, POST, PUT, DELETE, etc.), the URL of the server resource, and a boolean indicating whether the request should be asynchronous (true) or synchronous (false). Example: <em>xhr.open("GET", "data.json", true);</em></li>
+        <li><strong>Sending the Request:</strong> The <em>send()</em> method actually sends the request to the server. For GET requests, you call <em>xhr.send();</em>. For POST requests, you include the data as a parameter: <em>xhr.send("name=John&amp;age=25");</em></li>
+        <li><strong>Server Processing:</strong> While the server processes the request, the browser continues to be responsive. The readyState property keeps changing as the request progresses.</li>
+        <li><strong>Handling the Response:</strong> When the server sends back the response, the callback function is triggered. You check if readyState is 4 (DONE) and status is 200 (OK), then process the response data.</li>
+      </ol>
+
+      <h3>ReadyState Values</h3>
+      <p>The readyState property holds the status of the XMLHttpRequest. It changes through five values as the request progresses:</p>
+      <table class="cmp-table">
+        <tr><th>Value</th><th>State</th><th>Description</th></tr>
+        <tr><td>0</td><td>UNSENT</td><td>XHR object created, but open() not called yet</td></tr>
+        <tr><td>1</td><td>OPENED</td><td>open() has been called</td></tr>
+        <tr><td>2</td><td>HEADERS_RECEIVED</td><td>send() has been called, headers and status available</td></tr>
+        <tr><td>3</td><td>LOADING</td><td>Downloading the response body</td></tr>
+        <tr><td>4</td><td>DONE</td><td>Operation complete, response is fully received</td></tr>
+      </table>
+
+      <h3>Important XHR Properties and Methods</h3>
+      <ul>
+        <li><strong>responseText:</strong> Contains the response data as a string.</li>
+        <li><strong>responseXML:</strong> Contains the response data as an XML document object.</li>
+        <li><strong>status:</strong> The HTTP status code (200 for OK, 404 for Not Found, etc.).</li>
+        <li><strong>statusText:</strong> The HTTP status text ("OK", "Not Found", etc.).</li>
+        <li><strong>setRequestHeader():</strong> Sets HTTP headers for the request (useful for POST requests).</li>
+        <li><strong>abort():</strong> Cancels the current request.</li>
+      </ul>
+    </div>
+
+    <span class="section-label code">Code — XMLHttpRequest Complete Example</span>
+    <div class="code-block"><pre><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>XMLHttpRequest Demo<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>XMLHttpRequest Working<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;button</span> <span class="attr">onclick=</span><span class="str">"fetchData()"</span><span class="tag">&gt;</span>Fetch Data<span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">id=</span><span class="str">"display"</span><span class="tag">&gt;&lt;/div&gt;</span>
+
+  <span class="tag">&lt;script&gt;</span>
+    <span class="kw">function</span> <span class="fn">fetchData</span>() {
+      <span class="cmt">// Step 1: Create XHR object</span>
+      <span class="kw">var</span> xhr = <span class="kw">new</span> XMLHttpRequest();
+
+      <span class="cmt">// Step 2: Define callback for state changes</span>
+      xhr.<span class="fn">onreadystatechange</span> = <span class="kw">function</span>() {
+        <span class="cmt">// Step 6: Check if request is complete and successful</span>
+        <span class="kw">if</span> (xhr.readyState == <span class="num">4</span>) {
+          <span class="kw">if</span> (xhr.status == <span class="num">200</span>) {
+            <span class="cmt">// Success - show the response</span>
+            document.<span class="fn">getElementById</span>(<span class="str">"display"</span>).innerHTML = xhr.responseText;
+          } <span class="kw">else</span> {
+            <span class="cmt">// Error - show status</span>
+            document.<span class="fn">getElementById</span>(<span class="str">"display"</span>).innerHTML = <span class="str">"Error: "</span> + xhr.status;
+          }
+        }
+      };
+
+      <span class="cmt">// Step 3: Open the request (method, url, async)</span>
+      xhr.<span class="fn">open</span>(<span class="str">"GET"</span>, <span class="str">"data.txt"</span>, <span class="kw">true</span>);
+
+      <span class="cmt">// Step 4: Send the request</span>
+      xhr.<span class="fn">send</span>();
+
+      <span class="cmt">// Step 5: Browser continues working (asynchronous)</span>
+      document.<span class="fn">getElementById</span>(<span class="str">"display"</span>).innerHTML = <span class="str">"Loading..."</span>;
+    }
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre></div>
+
+    <span class="section-label explanation">Explanation</span>
+    <div class="explanation-block">
+      This example shows the complete lifecycle of XMLHttpRequest. We create the object, set up the callback, open a GET request to "data.txt", and send it. While waiting for the response, we show "Loading..." so the user knows something is happening. When readyState becomes 4 and status is 200, we display the response. If there is an error (like a 404), we show the error code instead.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q12 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q12">
+  <div class="q-header">
+    <span class="q-number">12</span>
+    <span class="q-text">Explain the concept of AJAX? Write a program to fetch the content of a JSON file named json_demo.json with the help of AJAX and visualize the database on the client side.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>Concept of AJAX</h3>
+      <p>AJAX stands for <strong>Asynchronous JavaScript and XML</strong>. It is a web development technique that allows a web page to communicate with a server asynchronously — meaning the page can send requests and receive data in the background without requiring a full page reload. This creates a much smoother and faster user experience because the user can continue interacting with the page while data is being fetched or sent to the server. Before AJAX became popular, every interaction with the server required a complete page refresh, which was slow and disruptive.</p>
+      <p>AJAX is not a single technology but a combination of multiple technologies working together: (1) <strong>HTML and CSS</strong> for displaying content, (2) <strong>DOM</strong> for dynamically updating the page, (3) <strong>XMLHttpRequest</strong> or the newer <strong>Fetch API</strong> for communicating with the server, and (4) <strong>JavaScript</strong> to orchestrate everything. Together, these technologies enable features like live search suggestions, real-time notifications, form validation without page reloads, and dynamic content loading. The word "asynchronous" is the key — it means that JavaScript sends a request and does not wait for the response. Instead, it sets up a callback function that runs automatically when the response arrives. This allows the browser to remain responsive while waiting for the server.</p>
+      <p>Although AJAX originally used XML for data exchange, modern applications almost exclusively use JSON because it is lighter, easier to parse, and works naturally with JavaScript. The core principle remains the same: fetch data from the server without reloading the page, and update the page dynamically with the received data.</p>
+    </div>
+
+    <span class="section-label code">Code — json_demo.json</span>
+    <div class="code-block"><pre>[
+  { <span class="str">"name"</span>: <span class="str">"Amit"</span>, <span class="str">"age"</span>: <span class="num">22</span>, <span class="str">"course"</span>: <span class="str">"B.Tech CSE"</span> },
+  { <span class="str">"name"</span>: <span class="str">"Priya"</span>, <span class="str">"age"</span>: <span class="num">20</span>, <span class="str">"course"</span>: <span class="str">"B.Sc IT"</span> },
+  { <span class="str">"name"</span>: <span class="str">"Rahul"</span>, <span class="str">"age"</span>: <span class="num">21</span>, <span class="str">"course"</span>: <span class="str">"MCA"</span> }
+]</pre></div>
+
+    <span class="section-label code">Code — ajax_json.html</span>
+    <div class="code-block"><pre><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>AJAX JSON Demo<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    <span class="sel">table</span> { <span class="attr">border-collapse</span>: <span class="val">collapse</span>; <span class="attr">width</span>: <span class="num">60%</span>; }
+    <span class="sel">th, td</span> { <span class="attr">border</span>: <span class="num">1px solid #999</span>; <span class="attr">padding</span>: <span class="num">8px</span>; <span class="attr">text-align</span>: <span class="val">center</span>; }
+    <span class="sel">th</span> { <span class="attr">background</span>: <span class="num">#f0d4b8</span>; }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h2&gt;</span>Student Database<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;button</span> <span class="attr">onclick=</span><span class="str">"loadJSON()"</span><span class="tag">&gt;</span>Load Data<span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">id=</span><span class="str">"result"</span><span class="tag">&gt;&lt;/div&gt;</span>
+
+  <span class="tag">&lt;script&gt;</span>
+    <span class="kw">function</span> <span class="fn">loadJSON</span>() {
+      <span class="kw">var</span> xhr = <span class="kw">new</span> XMLHttpRequest();
+      xhr.<span class="fn">onreadystatechange</span> = <span class="kw">function</span>() {
+        <span class="kw">if</span> (xhr.readyState == <span class="num">4</span> && xhr.status == <span class="num">200</span>) {
+          <span class="cmt">// Parse JSON string into JavaScript array</span>
+          <span class="kw">var</span> students = JSON.<span class="fn">parse</span>(xhr.responseText);
+          <span class="cmt">// Build an HTML table to display the data</span>
+          <span class="kw">var</span> html = <span class="str">"&lt;table&gt;&lt;tr&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Age&lt;/th&gt;&lt;th&gt;Course&lt;/th&gt;&lt;/tr&gt;"</span>;
+          <span class="kw">for</span> (<span class="kw">var</span> i = <span class="num">0</span>; i &lt; students.length; i++) {
+            html += <span class="str">"&lt;tr&gt;"</span>;
+            html += <span class="str">"&lt;td&gt;"</span> + students[i].name + <span class="str">"&lt;/td&gt;"</span>;
+            html += <span class="str">"&lt;td&gt;"</span> + students[i].age + <span class="str">"&lt;/td&gt;"</span>;
+            html += <span class="str">"&lt;td&gt;"</span> + students[i].course + <span class="str">"&lt;/td&gt;"</span>;
+            html += <span class="str">"&lt;/tr&gt;"</span>;
+          }
+          html += <span class="str">"&lt;/table&gt;"</span>;
+          document.<span class="fn">getElementById</span>(<span class="str">"result"</span>).innerHTML = html;
+        }
+      };
+      xhr.<span class="fn">open</span>(<span class="str">"GET"</span>, <span class="str">"json_demo.json"</span>, <span class="kw">true</span>);
+      xhr.<span class="fn">send</span>();
+    }
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre></div>
+
+    <span class="section-label output">Output</span>
+    <div class="output-block">A table displaying:
+
+| Name  | Age | Course      |
+|-------|-----|-------------|
+| Amit  | 22  | B.Tech CSE  |
+| Priya | 20  | B.Sc IT     |
+| Rahul | 21  | MCA         |</div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q13 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q13">
+  <div class="q-header">
+    <span class="q-number">13</span>
+    <span class="q-text">Describe the purpose of jQuery effects and how they can enhance user interaction on web pages.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>What are jQuery Effects?</h3>
+      <p>jQuery effects are built-in methods provided by the jQuery library that allow developers to add visual animations and transitions to web pages with very little code. Before jQuery, creating even simple animations required writing long and complex JavaScript code involving timers, CSS property calculations, and cross-browser compatibility handling. jQuery simplifies all of this by providing easy-to-use methods that handle the animation logic internally. With just one line of jQuery code, you can create smooth fading, sliding, hiding, and showing effects that would otherwise require many lines of plain JavaScript.</p>
+
+      <h3>Purpose of jQuery Effects</h3>
+      <p>The primary purpose of jQuery effects is to enhance the visual appeal and interactivity of web pages. A website with no animations or transitions feels static and lifeless. jQuery effects breathe life into a page by making elements appear, disappear, move, and change smoothly. They help guide the user's attention, provide visual feedback for actions, and create a more engaging and professional user experience. Good use of effects can make a website feel modern and polished, while poor or excessive use can be distracting and annoying.</p>
+
+      <h3>Common jQuery Effects</h3>
+      <ul>
+        <li><strong>hide() and show():</strong> These methods instantly hide or show elements. They are the simplest effects but very useful for toggling visibility.</li>
+        <li><strong>fadeIn() and fadeOut():</strong> These methods gradually change the opacity of an element, making it smoothly appear or disappear. fadeIn increases opacity from 0 to 1, and fadeOut decreases it from 1 to 0.</li>
+        <li><strong>fadeToggle():</strong> Combines fadeIn and fadeOut — if the element is hidden, it fades in; if visible, it fades out.</li>
+        <li><strong>slideUp() and slideDown():</strong> These methods animate the height of an element. slideUp makes the element shrink upward until it disappears, and slideDown makes it expand downward to appear.</li>
+        <li><strong>slideToggle():</strong> Combines slideUp and slideDown based on the current state.</li>
+        <li><strong>animate():</strong> This is the most flexible effect. It allows you to create custom animations by specifying CSS properties and their target values. For example, you can animate width, height, opacity, margin, etc.</li>
+        <li><strong>delay():</strong> Adds a delay before the next animation in the chain, allowing for sequenced animations.</li>
+        <li><strong>stop():</strong> Stops the currently running animation on an element, useful for preventing animation buildup.</li>
+      </ul>
+
+      <h3>How jQuery Effects Enhance User Interaction</h3>
+      <ul>
+        <li><strong>Visual Feedback:</strong> When a user clicks a button, a fading or sliding effect provides immediate visual confirmation that their action was registered. Without feedback, users may click multiple times, thinking nothing happened.</li>
+        <li><strong>Progressive Disclosure:</strong> Instead of showing all content at once, you can use sliding or fading effects to reveal information gradually. This keeps the page uncluttered and helps users focus on one thing at a time.</li>
+        <li><strong>Attention Guidance:</strong> Animations naturally draw the eye. When an element fades in or slides down, the user's attention is directed to it. This is useful for notifications, error messages, or important updates.</li>
+        <li><strong>Smooth Transitions:</strong> Abrupt appearance and disappearance of elements can be jarring. Fading and sliding effects create smooth transitions that feel natural and professional.</li>
+        <li><strong>Engagement:</strong> Interactive elements with animations make users want to explore and interact more with the page. A collapsible menu with slideToggle is more engaging than a static list.</li>
+        <li><strong>Reduced Perceived Loading Time:</strong> When content fades in gradually, users perceive the page as loading faster compared to a blank screen that suddenly fills with content.</li>
+      </ul>
+
+      <h3>Example of jQuery Effects</h3>
+    </div>
+
+    <span class="section-label code">Code</span>
+    <div class="code-block"><pre><span class="cmt">&lt;!-- Include jQuery --&gt;</span>
+<span class="tag">&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;</span>
+
+<span class="cmt">&lt;!-- HTML --&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">id=</span><span class="str">"fadeBtn"</span><span class="tag">&gt;</span>Toggle Fade<span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;button</span> <span class="attr">id=</span><span class="str">"slideBtn"</span><span class="tag">&gt;</span>Toggle Slide<span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">id=</span><span class="str">"box"</span> <span class="attr">style=</span><span class="str">"background:#E8A87C; padding:40px; margin:10px; width:200px;"</span><span class="tag">&gt;</span>
+  Hello World!
+<span class="tag">&lt;/div&gt;</span>
+
+<span class="cmt">&lt;!-- jQuery Effects --&gt;</span>
+<span class="tag">&lt;script&gt;</span>
+  $(<span class="str">"#fadeBtn"</span>).<span class="fn">click</span>(<span class="kw">function</span>() {
+    $(<span class="str">"#box"</span>).<span class="fn">fadeToggle</span>(<span class="num">1000</span>); <span class="cmt">// fade in/out over 1 second</span>
+  });
+  $(<span class="str">"#slideBtn"</span>).<span class="fn">click</span>(<span class="kw">function</span>() {
+    $(<span class="str">"#box"</span>).<span class="fn">slideToggle</span>(<span class="num">1000</span>); <span class="cmt">// slide up/down over 1 second</span>
+  });
+<span class="tag">&lt;/script&gt;</span></pre></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q14 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q14">
+  <div class="q-header">
+    <span class="q-number">14</span>
+    <span class="q-text">What is the difference between JavaScript and jQuery? What are the two ways of using jQuery on your website and which one of them is better and why?</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>Difference Between JavaScript and jQuery</h3>
+      <p>JavaScript is a programming language, while jQuery is a library built on top of JavaScript. This is the fundamental difference. JavaScript was created in 1995 and is one of the three core technologies of the web (along with HTML and CSS). It is a full-featured programming language that can be used for everything from simple form validation to building complex web applications, server-side programs (Node.js), mobile apps, and even desktop applications. jQuery, on the other hand, was created in 2006 by John Resig specifically to make common JavaScript tasks easier and to solve cross-browser compatibility problems that plagued early web development.</p>
+
+      <table class="cmp-table">
+        <tr><th>Feature</th><th>JavaScript</th><th>jQuery</th></tr>
+        <tr><td>Type</td><td>Programming language</td><td>JavaScript library</td></tr>
+        <tr><td>Creation</td><td>1995 by Brendan Eich</td><td>2006 by John Resig</td></tr>
+        <tr><td>Usage</td><td>Can be used standalone for any purpose</td><td>Requires JavaScript; simplifies DOM manipulation, events, and Ajax</td></tr>
+        <tr><td>Code Length</td><td>More code needed for common tasks</td><td>Much less code needed (write less, do more)</td></tr>
+        <tr><td>DOM Selection</td><td>document.getElementById("id")</td><td>$("#id")</td></tr>
+        <tr><td>Cross-browser</td><td>Requires manual handling for different browsers</td><td>Handles cross-browser issues automatically</td></tr>
+        <tr><td>Animations</td><td>Complex code with setInterval/setTimeout</td><td>Simple methods like fadeIn(), slideDown()</td></tr>
+        <tr><td>AJAX</td><td>Requires XMLHttpRequest setup</td><td>Simple $.ajax() or $.get() methods</td></tr>
+        <tr><td>Performance</td><td>Faster (native execution)</td><td>Slightly slower (library overhead)</td></tr>
+        <tr><td>Learning Curve</td><td>Steeper</td><td>Easier for beginners</td></tr>
+      </table>
+
+      <h3>Two Ways of Using jQuery on Your Website</h3>
+      <p>There are two main ways to include jQuery in your website:</p>
+
+      <h4>1. Downloading and Hosting Locally (Local jQuery)</h4>
+      <p>In this method, you download the jQuery JavaScript file from the official jQuery website (jquery.com) and save it in your project folder. Then you reference it using a script tag with the path to the local file. For example: <em>&lt;script src="js/jquery-3.6.0.min.js"&gt;&lt;/script&gt;</em>. The file is stored on your own server, so it loads from there.</p>
+      <p><strong>Advantages:</strong> Works offline, no dependency on external servers, full control over the version.</p>
+      <p><strong>Disadvantages:</strong> Takes up server space, uses your server's bandwidth, no caching benefit from other websites, and you must manually update the file when a new version is released.</p>
+
+      <h4>2. Using a CDN (Content Delivery Network)</h4>
+      <p>In this method, you include jQuery by referencing it from a CDN like Google, Microsoft, or the jQuery CDN itself. For example: <em>&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;</em>. The file is loaded from the CDN server, not your own server.</p>
+      <p><strong>Advantages:</strong> Faster loading (CDN servers are distributed globally and are closer to users), reduced bandwidth usage on your server, browser caching benefit (if another website uses the same CDN URL, the file is already cached), and automatic updates are available by changing the URL.</p>
+      <p><strong>Disadvantages:</strong> Requires internet connection, depends on the CDN being available (if the CDN goes down, your site breaks).</p>
+
+      <h3>Which Method is Better and Why?</h3>
+      <p><strong>Using a CDN is generally considered better</strong> for production websites. Here is why: First, CDNs have servers all over the world, so the jQuery file is loaded from a server geographically close to the user, making it faster. Second, if a user has already visited another website that loads jQuery from the same CDN, the file is already cached in their browser — they do not need to download it again, which makes your page load even faster. Third, using a CDN reduces the load on your own server because you are not serving the jQuery file yourself. However, for development or when working offline, downloading and hosting locally is the practical choice. Many developers use a CDN in production but keep a local fallback just in case the CDN is unavailable.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q15 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q15">
+  <div class="q-header">
+    <span class="q-number">15</span>
+    <span class="q-text">Explain the difference between JavaScript and jQuery? What are the two ways of using jQuery on your website, and which one of them is better, and why? Please write the syntax of jQuery and explain how you can hide and unhide an element (using element tag, class, and ID for selecting element) when the mouse enters or leaves that element.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>Difference Between JavaScript and jQuery</h3>
+      <p>JavaScript is a full programming language that was created to make web pages interactive. It is one of the three core technologies of the World Wide Web. jQuery is a fast, small, and feature-rich JavaScript library that simplifies HTML document traversal, event handling, animation, and Ajax interactions. The key philosophy behind jQuery is "Write less, do more" — it takes common tasks that require many lines of JavaScript code and wraps them into methods that you can call with a single line.</p>
+      <p>In plain JavaScript, selecting an element requires methods like <em>document.getElementById()</em>, <em>document.getElementsByClassName()</em>, or <em>document.querySelector()</em>. In jQuery, you simply use the <em>$()</em> function with CSS-style selectors. In plain JavaScript, adding an event listener requires <em>addEventListener()</em>, while jQuery uses methods like <em>.click()</em>, <em>.hover()</em>, etc. that are simpler and automatically work across all browsers. JavaScript requires more code and more knowledge of browser differences, while jQuery abstracts away those differences and provides a simpler, consistent API.</p>
+
+      <h3>Two Ways of Using jQuery</h3>
+      <p>The two methods are the same as described in the previous question: (1) Downloading and hosting jQuery locally on your server, and (2) Including jQuery from a CDN (Content Delivery Network). <strong>The CDN method is generally better</strong> because it offers faster loading through distributed servers, browser caching from other websites, and reduced bandwidth on your own server.</p>
+
+      <h3>jQuery Syntax</h3>
+      <p>The basic syntax of jQuery is: <em>$(selector).action()</em></p>
+      <ul>
+        <li><strong>$</strong> — The dollar sign is the jQuery selector function. It tells jQuery that what follows is a selector.</li>
+        <li><strong>(selector)</strong> — A CSS-style selector that finds HTML elements. It can be a tag name (like "p"), a class (like ".myclass"), or an ID (like "#myid").</li>
+        <li><strong>.action()</strong> — The jQuery method to perform on the selected element(s). Examples: .hide(), .show(), .fadeIn(), .click(), etc.</li>
+      </ul>
+
+      <h3>Hide and Unhide Using Element Tag, Class, and ID on Mouse Enter/Leave</h3>
+      <p>jQuery provides the <em>.mouseenter()</em> and <em>.mouseleave()</em> events, and the <em>.hide()</em> and <em>.show()</em> methods. Here is how to use them with different selectors:</p>
+    </div>
+
+    <span class="section-label code">Code</span>
+    <div class="code-block"><pre><span class="cmt">&lt;!-- Include jQuery --&gt;</span>
+<span class="tag">&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;</span>
+
+<span class="cmt">&lt;!-- HTML Elements --&gt;</span>
+<span class="tag">&lt;p&gt;</span>Hide me by tag (paragraph)<span class="tag">&lt;/p&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class=</span><span class="str">"mybox"</span><span class="tag">&gt;</span>Hide me by class<span class="tag">&lt;/div&gt;</span>
+<span class="tag">&lt;span</span> <span class="attr">id=</span><span class="str">"mytext"</span><span class="tag">&gt;</span>Hide me by ID<span class="tag">&lt;/span&gt;</span>
+
+<span class="tag">&lt;script&gt;</span>
+  <span class="cmt">// Using element TAG selector</span>
+  $(<span class="str">"p"</span>).<span class="fn">mouseenter</span>(<span class="kw">function</span>() {
+    $(<span class="kw">this</span>).<span class="fn">hide</span>();  <span class="cmt">// hide when mouse enters</span>
+  });
+  $(<span class="str">"p"</span>).<span class="fn">mouseleave</span>(<span class="kw">function</span>() {
+    $(<span class="kw">this</span>).<span class="fn">show</span>();  <span class="cmt">// show when mouse leaves</span>
+  });
+
+  <span class="cmt">// Using CLASS selector</span>
+  $(<span class="str">".mybox"</span>).<span class="fn">mouseenter</span>(<span class="kw">function</span>() {
+    $(<span class="kw">this</span>).<span class="fn">hide</span>();
+  });
+  $(<span class="str">".mybox"</span>).<span class="fn">mouseleave</span>(<span class="kw">function</span>() {
+    $(<span class="kw">this</span>).<span class="fn">show</span>();
+  });
+
+  <span class="cmt">// Using ID selector</span>
+  $(<span class="str">"#mytext"</span>).<span class="fn">mouseenter</span>(<span class="kw">function</span>() {
+    $(<span class="kw">this</span>).<span class="fn">hide</span>();
+  });
+  $(<span class="str">"#mytext"</span>).<span class="fn">mouseleave</span>(<span class="kw">function</span>() {
+    $(<span class="kw">this</span>).<span class="fn">show</span>();
+  });
+<span class="tag">&lt;/script&gt;</span></pre></div>
+
+    <span class="section-label explanation">Explanation</span>
+    <div class="explanation-block">
+      The three selectors work as follows: <em>$("p")</em> selects all paragraph elements by tag name, <em>$(".mybox")</em> selects elements with the class "mybox" (using dot notation), and <em>$("#mytext")</em> selects the element with id "mytext" (using hash notation). When the mouse enters any selected element, <em>$(this).hide()</em> hides that specific element. When the mouse leaves, <em>$(this).show()</em> brings it back. The <em>$(this)</em> keyword refers to the specific element that triggered the event.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q16 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q16">
+  <div class="q-header">
+    <span class="q-number">16</span>
+    <span class="q-text">Write the syntax of jQuery and explain how you can hide and unhide an element (using element tag, class, and ID) when the mouse enters or leaves that element. Explain why you should use the document ready event.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>jQuery Syntax</h3>
+      <p>The fundamental syntax of jQuery follows a simple and consistent pattern: <em>$(selector).action()</em>. Let us break this down:</p>
+      <ul>
+        <li><strong>$ (Dollar Sign):</strong> This is the jQuery function. It is an alias for the <em>jQuery()</em> function. Whenever you see the dollar sign in jQuery code, it means you are calling jQuery.</li>
+        <li><strong>(selector):</strong> This is a string that uses CSS-style syntax to find one or more HTML elements on the page. You can select by element tag (<em>"div"</em>), by class (<em>".classname"</em>), by ID (<em>"#idname"</em>), or using complex CSS selectors.</li>
+        <li><strong>.action():</strong> This is the jQuery method you want to apply to the selected element(s). jQuery offers hundreds of methods for manipulation, events, effects, and Ajax.</li>
+      </ul>
+      <p>Examples: <em>$("p").hide()</em> hides all paragraphs, <em>$(".box").fadeIn()</em> fades in all elements with class "box", <em>$("#title").text("Hello")</em> changes the text of the element with ID "title".</p>
+
+      <h3>Hide and Unhide Using Tag, Class, and ID on Mouse Enter/Leave</h3>
+      <p>jQuery makes it very easy to respond to mouse events and change element visibility. The <em>.mouseenter()</em> event fires when the mouse pointer enters an element, and <em>.mouseleave()</em> fires when the mouse pointer leaves. The <em>.hide()</em> method sets <em>display: none</em> on the element, and <em>.show()</em> restores it. You can also use <em>.hover()</em> which accepts two functions — one for mouseenter and one for mouseleave. Here is a complete working example:</p>
+    </div>
+
+    <span class="section-label code">Code</span>
+    <div class="code-block"><pre><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>jQuery Hide/Unhide Demo<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    <span class="sel">.highlight</span> { <span class="attr">background</span>: <span class="num">#F6D186</span>; <span class="attr">padding</span>: <span class="num">15px</span>; <span class="attr">margin</span>: <span class="num">10px</span>; }
+    <span class="sel">h3</span> { <span class="attr">background</span>: <span class="num">#9CB8A5</span>; <span class="attr">padding</span>: <span class="num">15px</span>; <span class="attr">margin</span>: <span class="num">10px</span>; }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+  <span class="cmt">&lt;!-- Element selected by TAG --&gt;</span>
+  <span class="tag">&lt;h3&gt;</span>Hover over me (selected by tag h3)<span class="tag">&lt;/h3&gt;</span>
+
+  <span class="cmt">&lt;!-- Element selected by CLASS --&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">class=</span><span class="str">"highlight"</span><span class="tag">&gt;</span>Hover over me (selected by class)<span class="tag">&lt;/div&gt;</span>
+
+  <span class="cmt">&lt;!-- Element selected by ID --&gt;</span>
+  <span class="tag">&lt;p</span> <span class="attr">id=</span><span class="str">"special"</span> <span class="attr">style=</span><span class="str">"background:#D4A5A5; padding:15px; margin:10px;"</span><span class="tag">&gt;</span>
+    Hover over me (selected by ID)
+  <span class="tag">&lt;/p&gt;</span>
+
+  <span class="tag">&lt;script&gt;</span>
+    <span class="cmt">// Wrap all code in document ready</span>
+    $(document).<span class="fn">ready</span>(<span class="kw">function</span>() {
+
+      <span class="cmt">// By TAG name - select all h3 elements</span>
+      $(<span class=""h3").<span class="fn">mouseenter</span>(<span class="kw">function</span>() {
+        $(<span class="kw">this</span>).<span class="fn">hide</span>();  <span class="cmt">// hide when mouse enters</span>
+      });
+      $(<span class="str">"h3"</span>).<span class="fn">mouseleave</span>(<span class="kw">function</span>() {
+        $(<span class="kw">this</span>).<span class="fn">show</span>();  <span class="cmt">// show when mouse leaves</span>
+      });
+
+      <span class="cmt">// By CLASS - select elements with class 'highlight'</span>
+      $(<span class="str">".highlight"</span>).<span class="fn">mouseenter</span>(<span class="kw">function</span>() {
+        $(<span class="kw">this</span>).<span class="fn">hide</span>();
+      });
+      $(<span class="str">".highlight"</span>).<span class="fn">mouseleave</span>(<span class="kw">function</span>() {
+        $(<span class="kw">this</span>).<span class="fn">show</span>();
+      });
+
+      <span class="cmt">// By ID - select element with id 'special'</span>
+      $(<span class="str">"#special"</span>).<span class="fn">mouseenter</span>(<span class="kw">function</span>() {
+        $(<span class="kw">this</span>).<span class="fn">hide</span>();
+      });
+      $(<span class="str">"#special"</span>).<span class="fn">mouseleave</span>(<span class="kw">function</span>() {
+        $(<span class="kw">this</span>).<span class="fn">show</span>();
+      });
+
+    });
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre></div>
+
+    <span class="section-label explanation">Explanation</span>
+    <div class="explanation-block">
+      The code demonstrates hiding and unhiding elements using three different jQuery selectors: tag name (<em>"h3"</em>), class (<em>".highlight"</em>), and ID (<em>"#special"</em>). The <em>.mouseenter()</em> and <em>.mouseleave()</em> events trigger the <em>.hide()</em> and <em>.show()</em> methods respectively. The <em>$(this)</em> keyword refers to the specific element that triggered the event.
+    </div>
+
+      <h3>Why Use the Document Ready Event?</h3>
+      <p>The <em>$(document).ready()</em> event is one of the most important concepts in jQuery. It ensures that your jQuery code does not run until the DOM (Document Object Model) is fully loaded. Here is why it is essential:</p>
+      <ul>
+        <li><strong>Prevents errors from missing elements:</strong> If your jQuery code runs before the HTML is fully parsed, the elements you are trying to select might not exist yet. This would cause your code to fail silently or throw errors. The document ready event guarantees that all HTML elements are available before the code executes.</li>
+        <li><strong>Placement flexibility:</strong> Without document ready, you would have to place your script tags at the very end of the body element to ensure the DOM is loaded. With document ready, you can place your script in the head section or anywhere in the file, and it will still work correctly because it waits for the DOM to be ready.</li>
+        <li><strong>Does not wait for images:</strong> The document ready event fires as soon as the DOM hierarchy is fully constructed, without waiting for images, stylesheets, or iframes to finish loading. This makes your code run faster compared to using the window.onload event, which waits for all resources to load.</li>
+        <li><strong>Best practice:</strong> Wrapping all your jQuery code inside <em>$(document).ready()</em> is considered a best practice. It ensures your code is reliable, predictable, and safe regardless of where the script is included or how fast the network is.</li>
+      </ul>
+      <p>The shorthand syntax for document ready is: <em>$(function() { // your code here });</em>. This does exactly the same thing but with less typing.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q17 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q17">
+  <div class="q-header">
+    <span class="q-number">17</span>
+    <span class="q-text">Write a program to design a curriculum of a course and traverse it with the help of DOM manipulation using jQuery.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+      <p>In this question, we need to create a curriculum structure using HTML and then use jQuery to traverse (navigate through) the DOM elements. DOM traversal means moving from one element to another in the HTML tree structure — for example, going from a parent element to its children, from a child to its parent, or from one sibling to another. jQuery provides many methods for DOM traversal such as <em>children()</em>, <em>parent()</em>, <em>find()</em>, <em>siblings()</em>, <em>next()</em>, <em>prev()</em>, and <em>each()</em>. In our program, we will build a curriculum with semesters and subjects, and then use jQuery traversal methods to highlight and list the subjects dynamically when a button is clicked. This demonstrates how jQuery can navigate the DOM tree and extract or manipulate data from it.</p>
+    </div>
+
+    <span class="section-label code">Code</span>
+    <div class="code-block"><pre><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Curriculum DOM Traversal<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    <span class="sel">.semester</span> { <span class="attr">border</span>: <span class="num">2px solid #C4A882</span>; <span class="attr">margin</span>: <span class="num">10px</span>; <span class="attr">padding</span>: <span class="num">15px</span>; <span class="attr">border-radius</span>: <span class="num">6px</span>; }
+    <span class="sel">.subject</span>  { <span class="attr">background</span>: <span class="num">#F6E2C8</span>; <span class="attr">margin</span>: <span class="num">5px</span>; <span class="attr">padding</span>: <span class="num">8px</span>; <span class="attr">border-radius</span>: <span class="num">4px</span>; }
+    <span class="sel">h2</span>        { <span class="attr">color</span>: <span class="num">#5C4033</span>; }
+    <span class="sel">#output</span>   { <span class="attr">background</span>: <span class="num">#FFFCF7</span>; <span class="attr">border</span>: <span class="num">1px solid #E8D5C4</span>; <span class="attr">padding</span>: <span class="num">10px</span>; <span class="attr">margin-top</span>: <span class="num">10px</span>; }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+  <span class="cmt">&lt;!-- Curriculum Structure --&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">id=</span><span class="str">"curriculum"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h2&gt;</span>B.Tech CSE Curriculum<span class="tag">&lt;/h2&gt;</span>
+
+    <span class="tag">&lt;div</span> <span class="attr">class=</span><span class="str">"semester"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;h3&gt;</span>Semester 1<span class="tag">&lt;/h3&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class=</span><span class="str">"subject"</span><span class="tag">&gt;</span>Mathematics I<span class="tag">&lt;/div&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class=</span><span class="str">"subject"</span><span class="tag">&gt;</span>Physics<span class="tag">&lt;/div&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class=</span><span class="str">"subject"</span><span class="tag">&gt;</span>Introduction to Programming<span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+
+    <span class="tag">&lt;div</span> <span class="attr">class=</span><span class="str">"semester"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;h3&gt;</span>Semester 2<span class="tag">&lt;/h3&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class=</span><span class="str">"subject"</span><span class="tag">&gt;</span>Mathematics II<span class="tag">&lt;/div&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class=</span><span class="str">"subject"</span><span class="tag">&gt;</span>Data Structures<span class="tag">&lt;/div&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class=</span><span class="str">"subject"</span><span class="tag">&gt;</span>Digital Electronics<span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/div&gt;</span>
+  <span class="tag">&lt;/div&gt;</span>
+
+  <span class="tag">&lt;button</span> <span class="attr">id=</span><span class="str">"traverseBtn"</span><span class="tag">&gt;</span>Traverse Curriculum<span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">id=</span><span class="str">"output"</span><span class="tag">&gt;&lt;/div&gt;</span>
+
+  <span class="tag">&lt;script&gt;</span>
+    $(document).<span class="fn">ready</span>(<span class="kw">function</span>() {
+      $(<span class="str">"#traverseBtn"</span>).<span class="fn">click</span>(<span class="kw">function</span>() {
+        <span class="kw">var</span> result = <span class="str">""</span>;
+
+        <span class="cmt">// Start from the curriculum div, find all semester divs</span>
+        $(<span class="str">"#curriculum"</span>).<span class="fn">children</span>(<span class="str">".semester"</span>).<span class="fn">each</span>(<span class="kw">function</span>() {
+          <span class="cmt">// Get the semester title (the h3 inside this semester)</span>
+          <span class="kw">var</span> semTitle = $(<span class="kw">this</span>).<span class="fn">children</span>(<span class="str">"h3"</span>).<span class="fn">text</span>();
+          result += <span class="str">"&lt;b&gt;"</span> + semTitle + <span class="str">"&lt;/b&gt;&lt;br&gt;"</span>;
+
+          <span class="cmt">// Find all subjects inside this semester</span>
+          $(<span class="kw">this</span>).<span class="fn">find</span>(<span class="str">".subject"</span>).<span class="fn">each</span>(<span class="kw">function</span>() {
+            result += <span class="str">"  - "</span> + $(<span class="kw">this</span>).<span class="fn">text</span>() + <span class="str">"&lt;br&gt;"</span>;
+            <span class="cmt">// Highlight the subject using jQuery</span>
+            $(<span class="kw">this</span>).<span class="fn">css</span>(<span class="str">"background"</span>, <span class="str">"#9CB8A5"</span>);
+          });
+        });
+
+        <span class="cmt">// Display the traversed data in the output div</span>
+        $(<span class="str">"#output"</span>).<span class="fn">html</span>(result);
+      });
+    });
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre></div>
+
+    <span class="section-label output">Output</span>
+    <div class="output-block">When the "Traverse Curriculum" button is clicked:
+
+<b>Semester 1</b><br>
+  - Mathematics I<br>
+  - Physics<br>
+  - Introduction to Programming<br>
+<b>Semester 2</b><br>
+  - Mathematics II<br>
+  - Data Structures<br>
+  - Digital Electronics<br>
+
+Also, the background color of all subject divs changes to green (#9CB8A5).</div>
+
+    <span class="section-label explanation">Explanation</span>
+    <div class="explanation-block">
+      This program demonstrates jQuery DOM traversal. We start at the <em>#curriculum</em> element and use <em>.children(".semester")</em> to find all direct child elements with the class "semester". Then we use <em>.each()</em> to loop through each semester. Inside the loop, <em>$(this)</em> refers to the current semester. We use <em>.children("h3")</em> to get the semester title, and <em>.find(".subject")</em> to find all subject elements (even if they are not direct children). The <em>.find()</em> method searches through all descendants, while <em>.children()</em> only looks at direct children. We extract text using <em>.text()</em> and highlight subjects using <em>.css()</em>.
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- Q18 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<div class="q-card" id="q18">
+  <div class="q-header">
+    <span class="q-number">18</span>
+    <span class="q-text">Explain the concept of AJAX/jQuery. Write a program to fetch the content of a JSON file named json_demo.json with the help of AJAX and visualize the database on the client side.</span>
+  </div>
+  <div class="q-body">
+    <span class="section-label answer">Answer</span>
+    <div class="answer-content">
+
+      <h3>Concept of AJAX with jQuery</h3>
+      <p>AJAX (Asynchronous JavaScript and XML) is a technique that allows web pages to communicate with servers in the background, without reloading the entire page. When we combine AJAX with jQuery, the process becomes much simpler and more reliable. In plain JavaScript, making an AJAX request involves creating an XMLHttpRequest object, setting up callback functions, handling different readyStates, and dealing with cross-browser compatibility issues. jQuery simplifies all of this with built-in methods that handle the complexity for you.</p>
+      <p>jQuery provides several methods for AJAX operations:</p>
+      <ul>
+        <li><strong>$.ajax():</strong> The most versatile method. It accepts a configuration object where you can specify the URL, method (GET/POST), data type, success callback, error callback, and many other options.</li>
+        <li><strong>$.get():</strong> A shorthand method for making GET requests. It takes the URL, optional data, a success callback, and the expected data type.</li>
+        <li><strong>$.post():</strong> Similar to $.get() but makes POST requests, used when sending data to the server.</li>
+        <li><strong>$.getJSON():</strong> A specialized shorthand method that fetches JSON data from a server. It automatically parses the JSON response into a JavaScript object, saving you the step of calling JSON.parse(). This is the simplest method when you know the server returns JSON.</li>
+      </ul>
+      <p>The advantages of using jQuery for AJAX are significant: (1) <strong>Cross-browser compatibility</strong> — jQuery handles the differences between browsers internally, so your code works everywhere. (2) <strong>Simpler syntax</strong> — what takes 10-15 lines in plain JavaScript can be done in 2-3 lines with jQuery. (3) <strong>Automatic JSON parsing</strong> — methods like $.getJSON() parse the response for you. (4) <strong>Error handling</strong> — jQuery provides clean ways to handle errors using .fail() or the error callback. (5) <strong>Promise support</strong> — jQuery AJAX methods return promise-like objects that allow chaining with .done(), .fail(), and .always().</p>
+      <p>In modern web development, fetching JSON data and displaying it on the page is one of the most common tasks. The combination of jQuery's AJAX methods and DOM manipulation makes this process incredibly straightforward. You fetch the data, iterate through it, and build HTML elements to display it — all in just a few lines of code.</p>
+    </div>
+
+    <span class="section-label code">Code — json_demo.json</span>
+    <div class="code-block"><pre>[
+  { <span class="str">"id"</span>: <span class="num">1</span>, <span class="str">"name"</span>: <span class="str">"Laptop"</span>,   <span class="str">"price"</span>: <span class="num">55000</span>, <span class="str">"stock"</span>: <span class="num">12</span> },
+  { <span class="str">"id"</span>: <span class="num">2</span>, <span class="str">"name"</span>: <span class="str">"Mouse"</span>,    <span class="str">"price"</span>: <span class="num">800</span>,   <span class="str">"stock"</span>: <span class="num">50</span> },
+  { <span class="str">"id"</span>: <span class="num">3</span>, <span class="str">"name"</span>: <span class="str">"Keyboard"</span>, <span class="str">"price"</span>: <span class="num">1500</span>,  <span class="str">"stock"</span>: <span class="num">30</span> },
+  { <span class="str">"id"</span>: <span class="num">4</span>, <span class="str">"name"</span>: <span class="str">"Monitor"</span>,  <span class="str">"price"</span>: <span class="num">12000</span>, <span class="str">"stock"</span>: <span class="num">8</span>  }
+]</pre></div>
+
+    <span class="section-label code">Code — jquery_ajax_demo.html</span>
+    <div class="code-block"><pre><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;title&gt;</span>jQuery AJAX JSON Demo<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;script src="https://code.jquery.com/jquery-3.6.0.min.js"&gt;&lt;/script&gt;</span>
+  <span class="tag">&lt;style&gt;</span>
+    <span class="sel">table</span>   { <span class="attr">border-collapse</span>: <span class="val">collapse</span>; <span class="attr">width</span>: <span class="num">70%</span>; <span class="attr">margin-top</span>: <span class="num">15px</span>; }
+    <span class="sel">th, td</span>  { <span class="attr">border</span>: <span class="num">1px solid #C4A882</span>; <span class="attr">padding</span>: <span class="num">10px</span>; <span class="attr">text-align</span>: <span class="val">center</span>; }
+    <span class="sel">th</span>      { <span class="attr">background</span>: <span class="num">#F6D186</span>; <span class="attr">color</span>: <span class="num">#5C4033</span>; }
+    <span class="sel">tr:nth-child(even)</span> { <span class="attr">background</span>: <span class="num">#FFF8F0</span>; }
+    <span class="sel">#status</span> { <span class="attr">color</span>: <span class="num">#8B6F5E</span>; <span class="attr">font-style</span>: <span class="val">italic</span>; }
+  <span class="tag">&lt;/style&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+  <span class="tag">&lt;h2&gt;</span>Product Database<span class="tag">&lt;/h2&gt;</span>
+  <span class="tag">&lt;button</span> <span class="attr">id=</span><span class="str">"loadBtn"</span><span class="tag">&gt;</span>Load Products<span class="tag">&lt;/button&gt;</span>
+  <span class="tag">&lt;p</span> <span class="attr">id=</span><span class="str">"status"</span><span class="tag">&gt;&lt;/p&gt;</span>
+  <span class="tag">&lt;div</span> <span class="attr">id=</span><span class="str">"tableContainer"</span><span class="tag">&gt;&lt;/div&gt;</span>
+
+  <span class="tag">&lt;script&gt;</span>
+    $(document).<span class="fn">ready</span>(<span class="kw">function</span>() {
+      $(<span class="str">"#loadBtn"</span>).<span class="fn">click</span>(<span class="kw">function</span>() {
+        <span class="cmt">// Show loading message</span>
+        $(<span class="str">"#status"</span>).<span class="fn">text</span>(<span class="str">"Loading data..."</span>);
+
+        <span class="cmt">// Use jQuery $.getJSON to fetch the JSON file</span>
+        $.<span class="fn">getJSON</span>(<span class="str">"json_demo.json"</span>, <span class="kw">function</span>(data) {
+          <span class="cmt">// Build the HTML table</span>
+          <span class="kw">var</span> html = <span class="str">"&lt;table&gt;"</span>;
+          html += <span class="str">"&lt;tr&gt;&lt;th&gt;ID&lt;/th&gt;&lt;th&gt;Name&lt;/th&gt;&lt;th&gt;Price (₹)&lt;/th&gt;&lt;th&gt;Stock&lt;/th&gt;&lt;/tr&gt;"</span>;
+
+          <span class="cmt">// Loop through each product in the JSON array</span>
+          $.<span class="fn">each</span>(data, <span class="kw">function</span>(index, product) {
+            html += <span class="str">"&lt;tr&gt;"</span>;
+            html += <span class="str">"&lt;td&gt;"</span> + product.id + <span class="str">"&lt;/td&gt;"</span>;
+            html += <span class="str">"&lt;td&gt;"</span> + product.name + <span class="str">"&lt;/td&gt;"</span>;
+            html += <span class="str">"&lt;td&gt;"</span> + product.price + <span class="str">"&lt;/td&gt;"</span>;
+            html += <span class="str">"&lt;td&gt;"</span> + product.stock + <span class="str">"&lt;/td&gt;"</span>;
+            html += <span class="str">"&lt;/tr&gt;"</span>;
+          });
+
+          html += <span class="str">"&lt;/table&gt;"</span>;
+
+          <span class="cmt">// Insert the table into the page</span>
+          $(<span class="str">"#tableContainer"</span>).<span class="fn">html</span>(html);
+          $(<span class="str">"#status"</span>).<span class="fn">text</span>(<span class="str">"Data loaded successfully!"</span>);
+        }).<span class="fn">fail</span>(<span class="kw">function</span>() {
+          <span class="cmt">// Handle errors if the request fails</span>
+          $(<span class="str">"#status"</span>).<span class="fn">text</span>(<span class="str">"Error loading data. Check if json_demo.json exists."</span>);
+        });
+      });
+    });
+  <span class="tag">&lt;/script&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre></div>
+
+    <span class="section-label output">Output</span>
+    <div class="output-block">When the "Load Products" button is clicked, a styled table appears:
+
+| ID | Name     | Price (₹) | Stock |
+|----|----------|-----------|-------|
+| 1  | Laptop   | 55000     | 12    |
+| 2  | Mouse    | 800       | 50    |
+| 3  | Keyboard | 1500      | 30    |
+| 4  | Monitor  | 12000     | 8     |
+
+Status text changes to: "Data loaded successfully!"</div>
+
+    <span class="section-label explanation">Explanation</span>
+    <div class="explanation-block">
+      This program uses jQuery's <em>$.getJSON()</em> method to fetch data from a JSON file. The method takes two parameters: the URL of the JSON file and a callback function that receives the parsed data automatically. Inside the callback, we use <em>$.each()</em> to loop through the array of product objects. For each product, we build a table row with the product's properties. The <em>.fail()</em> method handles any errors (like if the file is not found). The entire code is wrapped in <em>$(document).ready()</em> to ensure the DOM is loaded before attaching the click event. Compared to the plain JavaScript version, this jQuery approach is much shorter and cleaner.
+    </div>
+  </div>
+</div>
+
+</main>
+
+<!-- ════════════ FOOTER ════════════ -->
+<footer class="page-footer">
+  <span class="ornament" style="font-size:1rem; letter-spacing:0.4em;">— ✦ —</span>
+  <p style="margin-top:0.5rem;">Unit 3: XML, Ajax &amp; jQuery — PYQ Answers</p>
+  <p style="font-size:0.8rem; color:#A89280;">Prepared for exam readiness</p>
+</footer>
+
+<!-- ════════════ BACK TO TOP BUTTON ════════════ -->
+<button class="back-top" id="backToTop" title="Back to top">&#8593;</button>
+
+<!-- ════════════ JAVASCRIPT ════════════ -->
+<script>
+  // Back to top button logic
+  var backBtn = document.getElementById('backToTop');
+
+  window.addEventListener('scroll', function() {
+    if (window.pageYOffset > 400) {
+      backBtn.classList.add('visible');
+    } else {
+      backBtn.classList.remove('visible');
+    }
+  });
+
+  backBtn.addEventListener('click', function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // Highlight active TOC link on scroll (optional enhancement)
+  var tocLinks = document.querySelectorAll('.toc-list a');
+  var qCards = document.querySelectorAll('.q-card');
+
+  function highlightTOC() {
+    var scrollPos = window.pageYOffset + 150;
+    qCards.forEach(function(card) {
+      var top = card.offsetTop;
+      var height = card.offsetHeight;
+      var id = card.getAttribute('id');
+      if (scrollPos >= top && scrollPos < top + height) {
+        tocLinks.forEach(function(link) {
+          link.style.background = '';
+          link.style.color = '';
+          if (link.getAttribute('href') === '#' + id) {
+            link.style.background = '#F6E2C8';
+            link.style.color = '#5C4033';
+          }
+        });
+      }
+    });
+  }
+
+  window.addEventListener('scroll', highlightTOC);
+</script>
+
+</body>
+</html>

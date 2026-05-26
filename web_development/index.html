@@ -3,211 +3,216 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Web Development — Course Index</title>
+  <title>Full Stack Web Development — Wes Anderson Study Center</title>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
   <style>
-    :root{
-      --bg: #f4efe7;
-      --card: rgba(255,255,255,0.35);
-      --border: #d8c5b4;
+    :root {
+      --bg: #F5F2EB;
+      --card: rgba(255,255,255,0.7);
+      --border: #C5A059;
       --text: #2b1e15;
       --muted: #8d715f;
-      --accent: #a85d3a;
+      --accent: #1D5C6F;
       --shadow: rgba(70, 45, 20, 0.08);
     }
 
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    body{
-      min-height:100vh;
+    body {
+      min-height: 100vh;
       background: var(--bg);
-      font-family: 'Inter', sans-serif;
+      font-family: 'Outfit', sans-serif;
       color: var(--text);
-      overflow-x:hidden;
-      position:relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
     }
 
-    /* Decorative top strip */
-    .top-pattern{
-      height:10px;
-      width:100%;
-      background:
-        repeating-linear-gradient(
-          90deg,
-          #6d4c2f 0 14px,
-          #b37a34 14px 28px,
-          #7a8b42 28px 42px,
-          #c39a3d 42px 56px,
-          #4d5f2a 56px 70px
-        );
-    }
-
-    /* Soft background blobs */
-    .bg-blur{
-      position:absolute;
-      border-radius:50%;
-      filter: blur(70px);
-      opacity:0.25;
-      z-index:0;
-    }
-
-    .blur1{
-      width:300px;
-      height:300px;
-      background:#d6b69f;
-      top:15%;
-      left:-80px;
-    }
-
-    .blur2{
-      width:250px;
-      height:250px;
-      background:#e5c8b4;
-      bottom:10%;
-      right:-50px;
-    }
-
-    .container{
-      position:relative;
-      z-index:2;
-      min-height:calc(100vh - 10px);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      padding:50px 20px;
-    }
-
-    .course-tag{
-      border:1px solid var(--border);
-      padding:12px 28px;
-      letter-spacing:6px;
-      font-size:0.78rem;
-      color:var(--muted);
-      margin-bottom:45px;
-      background:rgba(255,255,255,0.25);
-      backdrop-filter: blur(8px);
-    }
-
-    h1{
-      font-family:'Cormorant Garamond', serif;
-      font-size:7rem;
-      font-weight:500;
-      line-height:0.9;
-      margin-bottom:20px;
-      color:#2c2018;
-    }
-
-    .subtitle{
-      font-family:'Cormorant Garamond', serif;
-      font-size:2.4rem;
-      font-style:italic;
-      color:var(--accent);
-      text-align:center;
-      line-height:1.5;
-      max-width:900px;
-      margin-bottom:70px;
-    }
-
-    .units-grid{
-      width:100%;
-      max-width:1100px;
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-      gap:24px;
-    }
-
-    .unit-card{
-      text-decoration:none;
-      color:inherit;
-      background:var(--card);
-      border:1px solid rgba(216, 197, 180, 0.9);
-      border-radius:28px;
-      padding:32px 24px;
-      backdrop-filter: blur(12px);
-      box-shadow:0 10px 30px var(--shadow);
-      transition: all 0.35s ease;
-      position:relative;
-      overflow:hidden;
-    }
-
-    .unit-card::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:linear-gradient(
-        135deg,
-        rgba(255,255,255,0.45),
-        rgba(255,255,255,0.05)
+    /* Decorative top stripe */
+    .top-pattern {
+      height: 14px;
+      width: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        #1D5C6F 0 20px,
+        #E6A15C 20px 40px,
+        #9B2335 40px 60px,
+        #8A9A86 60px 80px,
+        #C5A059 80px 100px
       );
-      opacity:0;
-      transition:0.35s ease;
+      border-bottom: 2px solid var(--text);
     }
 
-    .unit-card:hover{
-      transform:translateY(-8px);
-      border-color:#b48768;
-      box-shadow:0 20px 40px rgba(60,40,20,0.12);
+    .frame-wrapper {
+      max-width: 1100px;
+      width: 100%;
+      border: 4px double var(--border);
+      padding: 50px 30px;
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 4px;
+      margin-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
     }
 
-    .unit-card:hover::before{
-      opacity:1;
+    .course-tag {
+      border: 1px solid var(--border);
+      padding: 8px 24px;
+      letter-spacing: 5px;
+      font-size: 0.75rem;
+      color: var(--muted);
+      margin-bottom: 30px;
+      text-transform: uppercase;
+      font-weight: 700;
+      background: rgba(255,255,255,0.4);
     }
 
-    .unit-number{
-      font-family:'Cormorant Garamond', serif;
-      font-size:3.5rem;
-      line-height:1;
-      margin-bottom:12px;
-      color:#2d2017;
-      position:relative;
-      z-index:2;
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 5rem;
+      font-weight: 500;
+      line-height: 0.95;
+      margin-bottom: 12px;
+      color: var(--accent);
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 2px;
     }
 
-    .unit-title{
-      font-size:0.95rem;
-      letter-spacing:2px;
-      text-transform:uppercase;
-      color:var(--muted);
-      position:relative;
-      z-index:2;
+    .subtitle {
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.8rem;
+      color: var(--muted);
+      text-align: center;
+      max-width: 800px;
+      margin-bottom: 60px;
+      line-height: 1.4;
+      border-bottom: 1px dashed var(--border);
+      padding-bottom: 30px;
     }
 
-    .footer{
-      margin-top:60px;
-      color:#a08a79;
-      font-size:0.85rem;
-      letter-spacing:2px;
+    .lobby-grid {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
     }
 
-    @media(max-width:768px){
+    .ticket-card {
+      background: var(--card);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 10px 25px var(--shadow);
+      transition: all 0.35s ease;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
 
-      h1{
-        font-size:4.5rem;
-      }
+    .ticket-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 35px rgba(29, 92, 111, 0.15);
+      border-color: var(--accent);
+    }
 
-      .subtitle{
-        font-size:1.7rem;
-        margin-bottom:50px;
-      }
+    .ticket-number {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin-bottom: 10px;
+      line-height: 1;
+    }
 
-      .course-tag{
-        letter-spacing:4px;
-        text-align:center;
-      }
+    .ticket-title {
+      font-size: 1rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text);
+      font-weight: 700;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+      width: 100%;
+    }
 
-      .units-grid{
-        grid-template-columns:1fr;
-      }
+    .ticket-desc {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 24px;
+      line-height: 1.5;
+      font-family: 'Cormorant Garamond', serif;
+      font-style: italic;
+      font-size: 1.15rem;
+    }
+
+    .btn-group {
+      display: flex;
+      width: 100%;
+      gap: 12px;
+    }
+
+    .ticket-btn {
+      flex: 1;
+      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .btn-notes {
+      background: transparent;
+      color: var(--text);
+    }
+
+    .btn-notes:hover {
+      background: var(--bg);
+      border-color: var(--text);
+    }
+
+    .btn-pyqs {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .btn-pyqs:hover {
+      background: #154553;
+      border-color: #154553;
+    }
+
+    .footer {
+      margin-top: 50px;
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
     }
   </style>
 </head>
@@ -215,48 +220,71 @@
 
   <div class="top-pattern"></div>
 
-  <div class="bg-blur blur1"></div>
-  <div class="bg-blur blur2"></div>
+  <main class="frame-wrapper">
+    <div class="course-tag">Examination Study Center</div>
+    <h1>The Cinematic Lobby</h1>
+    <p class="subtitle">Welcome to the definitive full stack web development study dashboard. Each unit presents a complete set of master lecture notes alongside our dedicated Wes Anderson-styled solved Past Year Questions (PYQs).</p>
 
-  <main class="container">
+    <section class="lobby-grid">
 
-    <div class="course-tag">
-      Full stack web development 
-    </div>
+      <!-- Unit 1 -->
+      <div class="ticket-card" style="background: #FFF5F5;">
+        <div class="ticket-number" style="color: #9B2335;">01</div>
+        <div class="ticket-title">HTML &amp; CSS</div>
+        <div class="ticket-desc">Grand Budapest Hotel Theme — Elegant layout, image maps, forms, framesets, rendering engines, and detailed CSS3 box modeling solutions.</div>
+        <div class="btn-group">
+          <a href="unit_1.html" class="ticket-btn btn-notes">Notes</a>
+          <a href="pyq_unit_1.html" class="ticket-btn btn-pyqs" style="background: #9B2335; border-color: #9B2335;">PYQ Answers</a>
+        </div>
+      </div>
 
-    <h1>Course Index</h1>
+      <!-- Unit 2 -->
+      <div class="ticket-card" style="background: #F4F9F4;">
+        <div class="ticket-number" style="color: #2E86C1;">02</div>
+        <div class="ticket-title">JS &amp; Advanced JS</div>
+        <div class="ticket-desc">Life Aquatic Theme — Browser runtime, execution contexts, pop-up calculations, dynamic DOM, object modeling, and client/server validation solutions.</div>
+        <div class="btn-group">
+          <a href="unit_2.html" class="ticket-btn btn-notes">Notes</a>
+          <a href="pyq_unit_2.html" class="ticket-btn btn-pyqs" style="background: #2E86C1; border-color: #2E86C1;">PYQ Answers</a>
+        </div>
+      </div>
 
-    <section class="units-grid">
+      <!-- Unit 3 -->
+      <div class="ticket-card" style="background: #FCF3CF;">
+        <div class="ticket-number" style="color: #8A9A86;">03</div>
+        <div class="ticket-title">XML, Ajax, &amp; jQuery</div>
+        <div class="ticket-desc">Moonrise Kingdom Theme — Well-formed XML, DTD validation schemas, standard XMLHttpRequest Ajax scripting, and traversal jQuery interactions.</div>
+        <div class="btn-group">
+          <a href="unit_3.html" class="ticket-btn btn-notes">Notes</a>
+          <a href="pyq_unit_3.html" class="ticket-btn btn-pyqs" style="background: #8A9A86; border-color: #8A9A86;">PYQ Answers</a>
+        </div>
+      </div>
 
-      <a href="unit_1.html" class="unit-card">
-        <div class="unit-number">1</div>
-        <div class="unit-title">Unit One</div>
-      </a>
+      <!-- Unit 4 -->
+      <div class="ticket-card" style="background: #FFFBFB;">
+        <div class="ticket-number" style="color: #C0392B;">04</div>
+        <div class="ticket-title">PHP &amp; Databases</div>
+        <div class="ticket-desc">Royal Tenenbaums Theme — Server-side script execution, associative array filters, file and secure image handling, session tracking, and MySQL CRUD operations.</div>
+        <div class="btn-group">
+          <a href="unit_4.html" class="ticket-btn btn-notes">Notes</a>
+          <a href="pyq_unit_4.html" class="ticket-btn btn-pyqs" style="background: #C0392B; border-color: #C0392B;">PYQ Answers</a>
+        </div>
+      </div>
 
-      <a href="unit_2.html" class="unit-card">
-        <div class="unit-number">2</div>
-        <div class="unit-title">Unit Two</div>
-      </a>
-
-      <a href="unit_3.html" class="unit-card">
-        <div class="unit-number">3</div>
-        <div class="unit-title">Unit Three</div>
-      </a>
-
-      <a href="unit_4.html" class="unit-card">
-        <div class="unit-number">4</div>
-        <div class="unit-title">Unit Four</div>
-      </a>
-
-      <a href="unit_5.html" class="unit-card">
-        <div class="unit-number">5</div>
-        <div class="unit-title">Unit Five</div>
-      </a>
+      <!-- Unit 5 -->
+      <div class="ticket-card" style="background: #FEF9E7;">
+        <div class="ticket-number" style="color: #143D59;">05</div>
+        <div class="ticket-title">MERN Stack</div>
+        <div class="ticket-desc">Darjeeling Limited Theme — Full-stack deployment, CMS paradigms, React components, Virtual DOM renders, Axios requests, and MongoDB CRUD patterns.</div>
+        <div class="btn-group">
+          <a href="unit_5.html" class="ticket-btn btn-notes">Notes</a>
+          <a href="pyq_unit_5.html" class="ticket-btn btn-pyqs" style="background: #143D59; border-color: #143D59;">PYQ Answers</a>
+        </div>
+      </div>
 
     </section>
 
-
-
+    <div class="footer">♦ Symmetric Cinematography System ♦</div>
   </main>
 
 </body>

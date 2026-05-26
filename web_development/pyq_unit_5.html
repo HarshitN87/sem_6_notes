@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PYQ Answers — Web Application Deployment, CMS & MERN Stack</title>
+<style>
+  /* ── CSS Variables ── */
+  :root {
+    --bg: #F5F0E8;
+    --fg: #3B3226;
+    --muted: #8B7355;
+    --accent: #C9918B;
+    --accent2: #7BA8A0;
+    --card: #FFFDF7;
+    --border: #DDD4C4;
+    --code-bg: #2E2A24;
+    --code-fg: #F0E4C4;
+    --pink: #E8C5C5;
+    --yellow: #F0E4C4;
+    --blue: #A4C4D4;
+    --lavender: #D4C5E0;
+    --tag-cms: #C9918B;
+    --tag-mern: #7BA8A0;
+  }
+
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Georgia', 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--fg);
+    line-height: 1.75;
+    font-size: 17px;
+    min-height: 100vh;
+  }
+
+  /* ── Decorative Background ── */
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background:
+      radial-gradient(ellipse at 10% 20%, rgba(201,145,139,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 90% 80%, rgba(123,168,160,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 50%, rgba(240,228,196,0.1) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── Header ── */
+  header {
+    position: relative;
+    text-align: center;
+    padding: 60px 20px 40px;
+    border-bottom: 2px solid var(--border);
+    background: linear-gradient(180deg, #FFFDF7 0%, var(--bg) 100%);
+  }
+
+  header .ornament {
+    font-size: 28px;
+    letter-spacing: 12px;
+    color: var(--accent);
+    margin-bottom: 16px;
+  }
+
+  header h1 {
+    font-size: clamp(28px, 5vw, 48px);
+    font-weight: 400;
+    letter-spacing: 3px;
+    color: var(--fg);
+    margin-bottom: 8px;
+  }
+
+  header .subtitle {
+    font-size: 15px;
+    color: var(--muted);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  /* ── Table of Contents ── */
+  .toc {
+    max-width: 860px;
+    margin: 40px auto;
+    padding: 36px 40px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    box-shadow: 0 2px 16px rgba(59,50,38,0.06);
+    position: relative;
+  }
+
+  .toc::before, .toc::after {
+    content: '';
+    position: absolute;
+    width: 40px; height: 2px;
+    background: var(--accent);
+  }
+  .toc::before { top: 12px; left: 50%; transform: translateX(-50%); }
+  .toc::after { bottom: 12px; left: 50%; transform: translateX(-50%); }
+
+  .toc h2 {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 6px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 28px;
+  }
+
+  .toc-section-title {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    color: var(--accent);
+    margin: 20px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .toc-section-title.mern { color: var(--accent2); }
+
+  .toc ol {
+    list-style: none;
+    counter-reset: toc-counter;
+    padding: 0;
+  }
+
+  .toc ol li {
+    counter-increment: toc-counter;
+    margin: 6px 0;
+  }
+
+  .toc ol li a {
+    text-decoration: none;
+    color: var(--fg);
+    font-size: 15px;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 6px 8px;
+    border-radius: 3px;
+    transition: background 0.2s;
+  }
+
+  .toc ol li a:hover {
+    background: var(--yellow);
+  }
+
+  .toc ol li a::before {
+    content: counter(toc-counter, decimal-leading-zero) ".";
+    font-size: 13px;
+    color: var(--muted);
+    min-width: 28px;
+  }
+
+  .toc .tag {
+    font-size: 10px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 2px;
+    margin-left: auto;
+    white-space: nowrap;
+  }
+
+  .toc .tag.cms { background: var(--pink); color: #7a4a4a; }
+  .toc .tag.mern { background: #c5ddd9; color: #3d6b63; }
+
+  /* ── Main Content ── */
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 20px 20px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Section Divider ── */
+  .section-divider {
+    text-align: center;
+    margin: 60px 0 40px;
+    padding: 20px 0;
+    position: relative;
+  }
+
+  .section-divider h2 {
+    font-size: 16px;
+    letter-spacing: 8px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+    position: relative;
+    display: inline-block;
+    padding: 0 30px;
+    background: var(--bg);
+  }
+
+  .section-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0; right: 0;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── Question Card ── */
+  .q-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    margin: 32px 0;
+    box-shadow: 0 2px 20px rgba(59,50,38,0.06);
+    overflow: hidden;
+    transition: box-shadow 0.3s;
+  }
+
+  .q-card:hover {
+    box-shadow: 0 4px 30px rgba(59,50,38,0.1);
+  }
+
+  .q-header {
+    padding: 24px 32px 16px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #FFFDF7, #FFF9F0);
+  }
+
+  .q-number {
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .q-text {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.6;
+    color: var(--fg);
+  }
+
+  .q-body {
+    padding: 28px 32px 32px;
+  }
+
+  /* ── Answer Formatting ── */
+  .a-heading {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--accent);
+    margin: 28px 0 12px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed var(--border);
+  }
+
+  .a-heading:first-child { margin-top: 0; }
+
+  .a-subheading {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--accent2);
+    margin: 20px 0 8px;
+  }
+
+  .a-p {
+    margin: 10px 0;
+    text-align: justify;
+  }
+
+  .a-ul, .a-ol {
+    margin: 10px 0 10px 24px;
+  }
+
+  .a-ul li, .a-ol li {
+    margin: 6px 0;
+  }
+
+  .highlight {
+    background: var(--yellow);
+    padding: 1px 6px;
+    border-radius: 2px;
+    font-weight: 700;
+  }
+
+  .note-box {
+    background: var(--yellow);
+    border-left: 3px solid var(--accent);
+    padding: 14px 18px;
+    margin: 16px 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 15px;
+  }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 15px;
+  }
+
+  .compare-table th {
+    background: var(--pink);
+    color: #5a3a3a;
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 700;
+    border: 1px solid var(--border);
+  }
+
+  .compare-table td {
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .compare-table tr:nth-child(even) td {
+    background: #FFF9F0;
+  }
+
+  /* ── Code Blocks ── */
+  .code-block {
+    position: relative;
+    margin: 16px 0;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #4a3f34;
+  }
+
+  .code-label {
+    background: #4a3f34;
+    color: var(--code-fg);
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .code-label .lang { font-weight: 700; }
+
+  pre {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding: 18px 20px;
+    overflow-x: auto;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.7;
+    tab-size: 2;
+  }
+
+  .kw { color: #E8A0A0; }
+  .fn { color: #A4C4D4; }
+  .str { color: #B8D4A0; }
+  .cm { color: #7a7060; font-style: italic; }
+  .num { color: #D4C5E0; }
+  .op { color: #D4B896; }
+  .tag-name { color: #E8A0A0; }
+  .attr { color: #D4B896; }
+  .attr-val { color: #B8D4A0; }
+
+  .output-box {
+    background: #1a1714;
+    color: #a0d4a0;
+    padding: 14px 18px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    border-radius: 4px;
+    margin: 12px 0;
+    border: 1px solid #3a3530;
+  }
+
+  .output-label {
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #7a7060;
+    margin-bottom: 6px;
+  }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 2px solid var(--border);
+    color: var(--muted);
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+
+  /* ── Back to Top ── */
+  .back-top {
+    position: fixed;
+    bottom: 28px;
+    right: 28px;
+    width: 44px; height: 44px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(201,145,139,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s, transform 0.3s;
+    transform: translateY(10px);
+    z-index: 999;
+  }
+
+  .back-top.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .back-top:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 18px rgba(201,145,139,0.5);
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    header { padding: 40px 16px 28px; }
+    .toc { padding: 28px 20px; margin: 24px 16px; }
+    main { padding: 10px 12px 60px; }
+    .q-header { padding: 18px 18px 12px; }
+    .q-body { padding: 20px 18px 24px; }
+    .q-text { font-size: 16px; }
+    pre { font-size: 12px; padding: 12px 14px; }
+    .compare-table { font-size: 13px; }
+    .compare-table th, .compare-table td { padding: 8px 8px; }
+    .toc ol li a { font-size: 13px; }
+  }
+
+  /* ── Focus visible ── */
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* ── Reduced motion ── */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .q-card { transition: none; }
+    .back-top { transition: none; }
+  }
+
+  /* ── Inline code ── */
+  code {
+    background: #eee8da;
+    padding: 2px 6px;
+    border-radius: 2px;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 0.9em;
+  }
+
+  pre code {
+    background: none;
+    padding: 0;
+    font-size: inherit;
+  }
+</style>
+</head>
+<body>
+
+<!-- ════════════ HEADER ════════════ -->
+<header>
+  <div class="ornament">&#9670; &#9670; &#9670;</div>
+  <h1>Previous Year Questions</h1>
+  <p class="subtitle">Web Application Deployment, CMS &amp; MERN Stack</p>
+</header>
+
+<!-- ════════════ TABLE OF CONTENTS ════════════ -->
+<nav class="toc" aria-label="Table of Contents">
+  <h2>Contents</h2>
+
+  <div class="toc-section-title">Web Application Deployment &amp; CMS</div>
+  <ol>
+    <li><a href="#q1">What is a CMS? Advantages, disadvantages, and two popular CMSs <span class="tag cms">CMS</span></a></li>
+    <li><a href="#q2">CMS meaning, other CMSs, features of CMS, WordPress technical description <span class="tag cms">CMS</span></a></li>
+    <li><a href="#q3">Role of CMS in modern web development, compare WordPress with two other CMS platforms, WordPress themes/plugins/database <span class="tag cms">CMS</span></a></li>
+    <li><a href="#q4">What is WordPress and how does it differ from other CMSs <span class="tag cms">CMS</span></a></li>
+    <li><a href="#q5">Sitemap and its use, responsive design on all resolutions <span class="tag cms">CMS</span></a></li>
+    <li><a href="#q6">Stages of publishing a website, tools and techniques <span class="tag cms">CMS</span></a></li>
+  </ol>
+
+  <div class="toc-section-title mern">MERN Stack</div>
+  <ol start="7">
+    <li><a href="#q7">Components of MERN stack, request-response lifecycle with use-case <span class="tag mern">MERN</span></a></li>
+    <li><a href="#q8">What is React and its core principles <span class="tag mern">MERN</span></a></li>
+    <li><a href="#q9">Differences between React class components and functional components <span class="tag mern">MERN</span></a></li>
+    <li><a href="#q10">Purpose of JSX in React <span class="tag mern">MERN</span></a></li>
+    <li><a href="#q11">Component lifecycle in Class components <span class="tag mern">MERN</span></a></li>
+    <li><a href="#q12">Axios vs fetch() for API requests <span class="tag mern">MERN</span></a></li>
+    <li><a href="#q13">React component: form with name and email, log on submission <span class="tag mern">MERN</span></a></li>
+    <li><a href="#q14">Virtual DOM and performance improvement <span class="tag mern">MERN</span></a></li>
+    <li><a href="#q15">MongoDB vs MySQL: data storage, performance, scalability <span class="tag mern">MERN</span></a></li>
+  </ol>
+</nav>
+
+<!-- ════════════ MAIN CONTENT ════════════ -->
+<main>
+
+<!-- ════════ SECTION DIVIDER ════════ -->
+<div class="section-divider"><h2>CMS &amp; Deployment</h2></div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 1                                                     -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q1">
+  <div class="q-header">
+    <div class="q-number">Question 01</div>
+    <div class="q-text">What is a CMS? What are its advantages and disadvantages? List any two popular Content Management Systems (CMS).</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">What is a CMS?</h3>
+    <p class="a-p">A Content Management System, commonly known as CMS, is a software application that allows users to create, edit, manage, and publish digital content on a website without needing to have any technical knowledge of programming or web development. In simple words, a CMS is a tool that makes it very easy for anyone — even a person who does not know how to write code — to build and run a website. It provides a user-friendly interface, usually with a visual editor, where you can type your content, upload images, add pages, and organize everything just like you would write a document in Microsoft Word.</p>
+    <p class="a-p">Before CMS platforms existed, building a website required writing HTML, CSS, and sometimes JavaScript code for every single page. If you wanted to change a single sentence, you had to open the code, find the right line, and edit it manually. This was time-consuming and required a skilled developer. A CMS completely removes this barrier. It stores all your content in a database and dynamically generates web pages when a visitor comes to your site. The most popular CMS in the world is WordPress, which powers more than 40% of all websites on the internet.</p>
+    <p class="a-p">A CMS typically consists of two main parts: a <span class="highlight">Content Management Application (CMA)</span>, which provides the user interface for creating and editing content, and a <span class="highlight">Content Delivery Application (CDA)</span>, which handles the backend processing, storage, and delivery of that content to visitors. Together, these two components allow anyone to manage a website efficiently.</p>
+
+    <h3 class="a-heading">Advantages of a CMS</h3>
+    <ul class="a-ul">
+      <li><strong>No coding required:</strong> The biggest advantage of a CMS is that you do not need to know any programming language to create or manage a website. The visual editor and drag-and-drop features make it accessible to everyone.</li>
+      <li><strong>Easy collaboration:</strong> Multiple users can work on the same website at the same time. Different team members can be assigned different roles like administrator, editor, or author, each with their own level of access.</li>
+      <li><strong>Quick setup:</strong> A CMS comes with pre-built templates and themes, so you can have a professional-looking website up and running within minutes instead of weeks.</li>
+      <li><strong>Plugins and extensions:</strong> Most CMS platforms offer a vast library of plugins that add extra features to your site — things like contact forms, SEO tools, e-commerce functionality, and security enhancements — without writing any code.</li>
+      <li><strong>SEO-friendly:</strong> Many CMS platforms come with built-in SEO features or plugins that help you optimize your content for search engines, manage meta tags, create sitemaps, and more.</li>
+      <li><strong>Mobile-friendly designs:</strong> Modern CMS themes are responsive, meaning your website will automatically look good on phones, tablets, and desktops.</li>
+      <li><strong>Regular updates:</strong> CMS platforms are maintained by large communities and companies, so they receive regular security patches, bug fixes, and feature updates.</li>
+    </ul>
+
+    <h3 class="a-heading">Disadvantages of a CMS</h3>
+    <ul class="a-ul">
+      <li><strong>Security risks:</strong> Because CMS platforms are so widely used, they are common targets for hackers. If you do not keep your CMS, themes, and plugins updated, your website can be vulnerable to attacks.</li>
+      <li><strong>Limited customization:</strong> While CMS platforms offer many themes and plugins, getting a truly unique or highly customized design often requires knowledge of HTML, CSS, and PHP, which defeats the purpose of a no-code solution for some users.</li>
+      <li><strong>Performance overhead:</strong> CMS platforms include a lot of code and features that you may never use. This extra bulk can slow down your website compared to a lightweight, hand-coded site.</li>
+      <li><strong>Plugin dependency:</strong> If you rely heavily on third-party plugins, your site can break if a plugin stops being updated or conflicts with another plugin after an update.</li>
+      <li><strong>Learning curve:</strong> Although a CMS is easier than coding from scratch, there is still a learning curve. Understanding how to use the dashboard, configure settings, and manage content properly takes some time.</li>
+      <li><strong>Cost of premium features:</strong> While the CMS itself may be free, premium themes, plugins, and hosting can add up to a significant cost over time.</li>
+    </ul>
+
+    <h3 class="a-heading">Two Popular Content Management Systems</h3>
+    <ol class="a-ol">
+      <li><strong>WordPress:</strong> WordPress is the most widely used CMS in the world, powering over 40% of all websites on the internet. It started as a blogging platform in 2003 but has evolved into a full-featured CMS that can build any type of website — blogs, business sites, e-commerce stores, portfolios, and more. It has a massive ecosystem of themes and plugins, a huge community for support, and is free and open-source.</li>
+      <li><strong>Joomla:</strong> Joomla is another popular open-source CMS that has been around since 2005. It is known for being powerful and flexible, making it a good choice for more complex websites like social networks, e-commerce sites, and community portals. Joomla offers more built-in features than WordPress out of the box, such as multilingual support, but it has a steeper learning curve.</li>
+    </ol>
+
+  </div>
+</article>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 2                                                     -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q2">
+  <div class="q-header">
+    <div class="q-number">Question 02</div>
+    <div class="q-text">What do you mean by CMS? Based on market share, WordPress is the most popular CMS, but can you name a few other CMSs? Please list down some of the features of CMSs and describe WordPress briefly from a technical perspective.</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">What is a CMS?</h3>
+    <p class="a-p">A Content Management System (CMS) is a software platform that enables users to create, manage, modify, and publish content on a website without needing specialized technical knowledge. The CMS handles all the backend complexity — database management, file storage, user authentication, content scheduling — and presents a simple, visual interface to the user. Think of it as the control panel for your website. Instead of editing raw HTML files and uploading them via FTP, you simply log into your CMS dashboard, write your article or upload your image, click publish, and the CMS takes care of rendering the page for your visitors.</p>
+    <p class="a-p">The CMS separates content from design. This means the actual text, images, and videos you create are stored independently from the visual layout (the theme). So you can completely change the look of your website without touching any of your content, and vice versa. This separation is one of the most powerful concepts behind any CMS.</p>
+
+    <h3 class="a-heading">Other Popular CMSs Besides WordPress</h3>
+    <p class="a-p">While WordPress dominates the market with over 60% CMS market share, there are several other notable content management systems used by millions of websites worldwide:</p>
+    <ul class="a-ul">
+      <li><strong>Joomla:</strong> An open-source CMS that is more feature-rich out of the box than WordPress. It is well-suited for e-commerce, social networking, and multilingual websites. It has a steeper learning curve but offers more built-in flexibility.</li>
+      <li><strong>Drupal:</strong> A highly robust and secure open-source CMS favored by government organizations, universities, and large enterprises. It excels at handling large amounts of content and complex data structures but requires more technical expertise.</li>
+      <li><strong>Shopify:</strong> A CMS specifically designed for e-commerce. It is a hosted platform, meaning Shopify handles the server, security, and payment processing. It is extremely popular for online stores.</li>
+      <li><strong>Wix:</strong> A cloud-based website builder with drag-and-drop functionality. It is very beginner-friendly and includes hosting, but offers less flexibility than open-source CMS options.</li>
+      <li><strong>Squarespace:</strong> Known for its beautiful, design-forward templates. It is a hosted platform popular with creative professionals, artists, and small businesses.</li>
+      <li><strong>Magento (now Adobe Commerce):</strong> A powerful open-source e-commerce CMS used by large online retailers. It is highly customizable but requires significant technical knowledge.</li>
+    </ul>
+
+    <h3 class="a-heading">Features of CMSs</h3>
+    <ul class="a-ul">
+      <li><strong>WYSIWYG Editor:</strong> What You See Is What You Get — a visual editor that lets you format text, add images, and create links without writing HTML code.</li>
+      <li><strong>User Management:</strong> Ability to create multiple user accounts with different roles (admin, editor, author, subscriber) and permission levels to control who can do what.</li>
+      <li><strong>Theme/Template System:</strong> A library of pre-designed templates that control the visual appearance of your website, which can be changed with a single click.</li>
+      <li><strong>Plugin/Extension System:</strong> Add-on software that extends the functionality of your CMS — contact forms, SEO tools, analytics, e-commerce, and much more.</li>
+      <li><strong>Media Management:</strong> Built-in tools for uploading, organizing, and managing images, videos, documents, and other media files.</li>
+      <li><strong>SEO Tools:</strong> Built-in or plugin-based features to help optimize your website for search engines, including customizable URLs, meta descriptions, and sitemaps.</li>
+      <li><strong>Content Scheduling:</strong> The ability to write content now and schedule it to be published automatically at a future date and time.</li>
+      <li><strong>Multilingual Support:</strong> Many CMS platforms allow you to create content in multiple languages to serve a global audience.</li>
+      <li><strong>Version Control:</strong> Some CMS platforms keep a history of content revisions, allowing you to revert to a previous version if needed.</li>
+      <li><strong>REST API:</strong> Modern CMSs provide APIs that allow developers to interact with the content programmatically, enabling headless CMS architectures.</li>
+    </ul>
+
+    <h3 class="a-heading">WordPress: A Technical Perspective</h3>
+    <p class="a-p">WordPress is an open-source CMS written in PHP and uses a MySQL or MariaDB database to store all its data. It was first released in 2003 by Matt Mullenweg and Mike Little as a fork of the b2/cafelog blogging tool. Over the years, it has grown into the most dominant CMS on the internet.</p>
+    <p class="a-p">Technically, WordPress follows a layered architecture. The <span class="highlight">core</span> handles the fundamental operations — database communication, user authentication, routing, and the admin interface. The <span class="highlight">theme layer</span> controls the visual presentation. A WordPress theme is a collection of PHP template files, CSS stylesheets, JavaScript, and images that determine how your site looks. WordPress follows a template hierarchy, where specific template files are loaded based on the type of content being displayed (e.g., <code>single.php</code> for individual posts, <code>page.php</code> for static pages).</p>
+    <p class="a-p">The <span class="highlight">plugin layer</span> extends functionality. WordPress has a hook system with two types: <strong>actions</strong> (which allow you to add custom code at specific points) and <strong>filters</strong> (which allow you to modify data before it is saved or displayed). Plugins use these hooks to integrate with WordPress without modifying core files, which is crucial for maintaining compatibility across updates.</p>
+    <p class="a-p">For database interactions, WordPress uses the <code>wpdb</code> class, which is a wrapper around PHP's MySQLi extension. It provides methods like <code>$wpdb->query()</code>, <code>$wpdb->get_results()</code>, and <code>$wpdb->insert()</code> for executing database operations. WordPress stores content in tables like <code>wp_posts</code> (for all content types), <code>wp_postmeta</code> (for custom fields), <code>wp_users</code> (for user accounts), <code>wp_options</code> (for site settings), and <code>wp_terms</code> (for categories and tags).</p>
+    <p class="a-p">Since WordPress 5.0, the default editor is <strong>Gutenberg</strong>, a block-based editor that represents content as a series of blocks (paragraphs, images, headings, etc.), each with its own settings. This was a major architectural shift from the classic TinyMCE editor, and it moves WordPress toward a more modern, component-based content creation experience.</p>
+
+  </div>
+</article>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 3                                                     -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q3">
+  <div class="q-header">
+    <div class="q-number">Question 03</div>
+    <div class="q-text">Analyze the role of CMS in modern web development. Compare WordPress with at least two other popular CMS platforms in terms of features, flexibility, and use-cases. From a technical perspective, explain how WordPress handles themes, plugins, and database interactions.</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">Role of CMS in Modern Web Development</h3>
+    <p class="a-p">In the modern web development landscape, a Content Management System plays a central and transformative role. Before CMS platforms existed, every website had to be hand-coded from scratch. This meant that only people with programming skills could create and maintain websites, and even small updates required a developer's time. The CMS changed all of that by democratizing web publishing — making it possible for non-technical users to create, edit, and manage professional websites on their own.</p>
+    <p class="a-p">Today, CMS platforms are the backbone of the internet. They power everything from personal blogs and small business websites to large corporate portals, government websites, online stores, and educational platforms. The role of CMS in modern web development can be understood through several key contributions:</p>
+    <ul class="a-ul">
+      <li><strong>Lowering the barrier to entry:</strong> CMS platforms have made it possible for anyone with basic computer skills to build and manage a website. Small businesses, artists, teachers, and hobbyists can all have an online presence without hiring a developer.</li>
+      <li><strong>Speeding up development:</strong> Even for professional developers, a CMS provides a huge head start. Instead of building authentication systems, content editors, and database schemas from scratch, developers can use a CMS as a foundation and customize it to meet their client's needs. What used to take months can now be done in days.</li>
+      <li><strong>Standardizing best practices:</strong> Good CMS platforms incorporate web development best practices — clean URLs, proper heading structures, accessible markup, mobile responsiveness — so that even beginners end up with websites that follow modern standards.</li>
+      <li><strong>Enabling content strategy:</strong> A CMS separates content from design, which means content creators can focus on writing and publishing without worrying about layout. This separation supports content strategy, editorial workflows, and multi-channel publishing.</li>
+      <li><strong>Supporting the headless architecture:</strong> Modern CMSs can operate in a "headless" mode, where the CMS serves purely as a content backend (via API) and the frontend is built separately with frameworks like React, Vue, or Angular. This enables omnichannel content delivery — the same content can be served to a website, a mobile app, a smart watch, or any other device.</li>
+    </ul>
+
+    <h3 class="a-heading">Comparison: WordPress vs Joomla vs Drupal</h3>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>WordPress</th>
+          <th>Joomla</th>
+          <th>Drupal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Ease of Use</strong></td>
+          <td>Very beginner-friendly. Intuitive dashboard, massive documentation, and thousands of tutorials available.</td>
+          <td>Moderate learning curve. More built-in features mean more settings to understand, but still manageable.</td>
+          <td>Steep learning curve. Requires technical knowledge to set up and customize effectively.</td>
+        </tr>
+        <tr>
+          <td><strong>Flexibility</strong></td>
+          <td>Extremely flexible through plugins (60,000+ in the official repository). Can build almost any type of website.</td>
+          <td>Flexible with extensions. Good built-in multilingual support and user management, reducing plugin dependency.</td>
+          <td>Most flexible for complex, data-heavy sites. Custom content types and views are built into the core.</td>
+        </tr>
+        <tr>
+          <td><strong>Features (Built-in)</strong></td>
+          <td>Basic features out of the box. Relies heavily on plugins for advanced functionality like SEO, forms, caching.</td>
+          <td>More built-in features than WordPress — multilingual support, access control levels, and caching are native.</td>
+          <td>Rich built-in features for content modeling, taxonomies, user roles, and API access. Less reliance on third-party modules.</td>
+        </tr>
+        <tr>
+          <td><strong>Security</strong></td>
+          <td>Good security core, but the vast plugin ecosystem creates many attack surfaces. Regular updates are essential.</td>
+          <td>Better core security than WordPress, with fewer but more stable extensions.</td>
+          <td>Strongest security of the three. Known for being the choice of government and enterprise sites. Has a dedicated security team.</td>
+        </tr>
+        <tr>
+          <td><strong>Best Use-Cases</strong></td>
+          <td>Blogs, business websites, portfolios, small to medium e-commerce, membership sites, and virtually any standard website.</td>
+          <td>Community portals, social networking sites, multilingual websites, medium e-commerce, and sites needing fine-grained user access control.</td>
+          <td>Large enterprise websites, government portals, university sites, data-intensive applications, and sites requiring complex content structures.</td>
+        </tr>
+        <tr>
+          <td><strong>Community &amp; Ecosystem</strong></td>
+          <td>Largest community. Tens of thousands of themes and plugins. Massive developer ecosystem.</td>
+          <td>Smaller but active community. Fewer extensions than WordPress, but generally higher quality.</td>
+          <td>Smallest of the three but highly technical community. Modules are well-maintained and enterprise-grade.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="a-heading">WordPress: Technical Handling of Themes, Plugins, and Database</h3>
+
+    <h4 class="a-subheading">Themes</h4>
+    <p class="a-p">A WordPress theme is a collection of files that determine the visual appearance and layout of a WordPress website. Technically, a theme resides in the <code>wp-content/themes/</code> directory and must contain at least two files: <code>style.css</code> (which includes the theme header with metadata like name, author, and version) and <code>index.php</code> (the main template file that acts as the fallback for any content type).</p>
+    <p class="a-p">WordPress uses a <span class="highlight">Template Hierarchy</span> to decide which template file to load for any given page. For example, when a visitor requests a single blog post, WordPress first looks for <code>single-{post-type}.php</code>, then <code>single.php</code>, and finally falls back to <code>index.php</code>. Similarly, for a category archive, it looks for <code>category-{slug}.php</code>, then <code>category.php</code>, then <code>archive.php</code>, and finally <code>index.php</code>. This hierarchical system gives theme developers precise control over how different types of content are displayed.</p>
+    <p class="a-p">Themes also use <span class="highlight">template tags</span> — PHP functions like <code>the_title()</code>, <code>the_content()</code>, <code>get_header()</code>, <code>get_footer()</code> — that pull content from the database and insert it into the HTML output. The <span class="highlight">functions.php</span> file in a theme acts like a plugin, allowing theme-specific functionality such as registering navigation menus, adding widget areas, enqueuing styles and scripts, and defining custom image sizes.</p>
+
+    <h4 class="a-subheading">Plugins</h4>
+    <p class="a-p">WordPress plugins are PHP scripts that extend or modify the default behavior of WordPress. They reside in the <code>wp-content/plugins/</code> directory. The plugin system works through a <span class="highlight">hook system</span> that consists of two types of hooks:</p>
+    <ul class="a-ul">
+      <li><strong>Action Hooks:</strong> These allow you to insert custom code at specific points in WordPress execution. For example, <code>wp_enqueue_scripts</code> is an action hook used to load CSS and JavaScript files, <code>init</code> fires after WordPress has finished loading, and <code>admin_menu</code> lets you add items to the admin sidebar. You register a custom function to an action hook using <code>add_action('hook_name', 'your_function')</code>.</li>
+      <li><strong>Filter Hooks:</strong> These allow you to intercept and modify data before it is used or displayed. For example, <code>the_content</code> filter lets you modify post content before it is rendered, <code>wp_title</code> lets you change the page title. You register a function to a filter using <code>add_filter('hook_name', 'your_function')</code>, and your function must return the modified data.</li>
+    </ul>
+    <p class="a-p">This hook architecture is what makes WordPress so extensible. Plugin developers can tap into virtually any part of WordPress — from the login screen to the database query process — without modifying core files. This means plugins remain compatible across WordPress updates, as long as they use the documented hook system properly.</p>
+
+    <h4 class="a-subheading">Database Interactions</h4>
+    <p class="a-p">WordPress uses MySQL or MariaDB as its database and interacts with it through the <code>wpdb</code> class, which is a global object available as <code>$wpdb</code>. This class is a wrapper around PHP's MySQLi functions and provides a set of methods for performing database operations safely. Key methods include:</p>
+    <ul class="a-ul">
+      <li><code>$wpdb->query($sql)</code> — Execute a generic SQL query.</li>
+      <li><code>$wpdb->get_var($sql)</code> — Retrieve a single value from the database.</li>
+      <li><code>$wpdb->get_row($sql)</code> — Retrieve an entire row.</li>
+      <li><code>$wpdb->get_results($sql)</code> — Retrieve multiple rows as an array.</li>
+      <li><code>$wpdb->insert($table, $data)</code> — Insert a new row into a table.</li>
+      <li><code>$wpdb->update($table, $data, $where)</code> — Update existing rows.</li>
+      <li><code>$wpdb->delete($table, $where)</code> — Delete rows from a table.</li>
+    </ul>
+    <p class="a-p">The WordPress database consists of several core tables: <code>wp_posts</code> stores all content types (posts, pages, revisions, attachments), <code>wp_postmeta</code> stores custom fields and metadata for posts, <code>wp_users</code> stores user accounts, <code>wp_usermeta</code> stores user metadata, <code>wp_options</code> stores site-wide configuration settings, <code>wp_terms</code> stores categories and tags, <code>wp_term_taxonomy</code> defines the taxonomy type for each term, and <code>wp_term_relationships</code> links terms to posts. WordPress also provides helper functions like <code>get_post()</code>, <code>get_option()</code>, <code>update_option()</code>, <code>WP_Query</code> (a powerful class for querying posts with various parameters), and <code>wp_insert_post()</code> that abstract away direct SQL queries and make it easier to interact with the database in a WordPress-idiomatic way.</p>
+
+  </div>
+</article>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 4                                                     -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q4">
+  <div class="q-header">
+    <div class="q-number">Question 04</div>
+    <div class="q-text">What is WordPress, and how does it differ from other content management systems (CMS)?</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">What is WordPress?</h3>
+    <p class="a-p">WordPress is a free, open-source content management system (CMS) that was originally created as a blogging platform in 2003 by Matt Mullenweg and Mike Little. Over the past two decades, it has evolved into the most powerful and widely used CMS in the world, powering more than 40% of all websites on the entire internet. WordPress is built using PHP as its primary programming language and uses MySQL or MariaDB as its database management system. It is licensed under the GPLv2 license, which means anyone can use, modify, and distribute it freely.</p>
+    <p class="a-p">At its core, WordPress allows users to create and manage websites without needing to write any code. It provides a user-friendly admin dashboard where you can write blog posts, create static pages, upload media files, install themes to change your site's appearance, and add plugins to extend functionality. The platform handles all the behind-the-scenes work — storing content in a database, generating HTML pages dynamically, managing user accounts, handling comments, and serving content to visitors.</p>
+    <p class="a-p">There are two versions of WordPress that people often confuse. <span class="highlight">WordPress.org</span> is the self-hosted version, where you download the WordPress software and install it on your own web server. This gives you complete control over your site, including the ability to install any theme or plugin. <span class="highlight">WordPress.com</span> is a hosted service run by Automattic (the company co-founded by Mullenweg) that handles hosting for you but limits your customization options unless you pay for premium plans. For most developers and businesses, WordPress.org (self-hosted) is the preferred choice because of its full flexibility.</p>
+
+    <h3 class="a-heading">How WordPress Differs from Other CMSs</h3>
+
+    <h4 class="a-subheading">1. Market Dominance and Community Size</h4>
+    <p class="a-p">WordPress has no equal when it comes to market share. It powers over 60% of all CMS-based websites, which is more than all other CMS platforms combined. This massive user base means that WordPress has the largest community of developers, designers, and users. There are thousands of tutorials, forums, Stack Overflow answers, and YouTube videos dedicated to WordPress. This makes it much easier to find help when you run into problems compared to smaller CMS platforms.</p>
+
+    <h4 class="a-subheading">2. Plugin and Theme Ecosystem</h4>
+    <p class="a-p">The WordPress ecosystem is unparalleled. The official plugin repository has over 60,000 free plugins, and thousands more are available as premium plugins from third-party marketplaces. Whether you need SEO tools (Yoast SEO), e-commerce functionality (WooCommerce), page building (Elementor), security (Wordfence), caching (WP Super Cache), or forms (Contact Form 7), there is a well-established WordPress plugin for it. The theme marketplace is equally vast, with thousands of free and premium themes covering every industry and design style. No other CMS comes close to this level of ecosystem support.</p>
+
+    <h4 class="a-subheading">3. Ease of Use vs. Other CMSs</h4>
+    <p class="a-p">Compared to Drupal, which has a steep learning curve and requires technical knowledge to set up properly, WordPress is far more beginner-friendly. The WordPress dashboard is intuitive and well-organized, and the Gutenberg block editor makes content creation feel natural even for first-time users. Compared to Joomla, WordPress has a simpler interface and a gentler learning curve, though Joomla offers more built-in features without needing extensions.</p>
+
+    <h4 class="a-subheading">4. Technical Architecture</h4>
+    <p class="a-p">WordPress is built on PHP and MySQL, which are among the most widely supported web technologies. This means WordPress hosting is inexpensive and widely available, even on budget shared hosting plans. Drupal, by contrast, has more demanding server requirements and is better suited for VPS or dedicated hosting. WordPress's hook-based plugin architecture (actions and filters) is simpler and more accessible than Drupal's module system, making it easier for beginner developers to create plugins. However, Drupal's module system is more structured and better suited for complex, enterprise-level applications.</p>
+
+    <h4 class="a-subheading">5. Blogging Heritage</h4>
+    <p class="a-p">WordPress was born as a blogging tool, and it still has the best blogging functionality of any CMS. Features like categories, tags, comments, pingbacks, RSS feeds, and built-in revision tracking are native to WordPress. Other CMS platforms like Drupal and Joomla were designed more as general-purpose content management systems from the start, and while they can handle blogging, they do not match WordPress's blogging experience out of the box.</p>
+
+    <h4 class="a-subheading">6. Cost Comparison</h4>
+    <p class="a-p">WordPress itself is free, and because of the huge ecosystem, you can find free themes and plugins for almost any feature. Hosting is also affordable because WordPress runs well on basic shared hosting. Enterprise CMSs like Sitecore, Adobe Experience Manager, or even Drupal (when you factor in developer costs) can be significantly more expensive. Shopify, while popular for e-commerce, charges monthly fees and transaction fees that can add up quickly. WordPress with WooCommerce gives you a free, open-source e-commerce platform with no monthly fees.</p>
+
+    <h4 class="a-subheading">7. Headless Capabilities</h4>
+    <p class="a-p">WordPress has a robust REST API that allows it to function as a headless CMS — serving content via API endpoints while the frontend is built separately using React, Vue, or any other framework. While Drupal also has strong API support and was actually earlier to the headless game with its JSON:API integration, WordPress's REST API is simpler and more widely documented. Joomla has weaker headless support compared to both.</p>
+
+    <div class="note-box">
+      <strong>In summary:</strong> WordPress stands out because of its unmatched ease of use, massive ecosystem, affordability, and flexibility. It differs from other CMSs primarily in its blogging roots, its dominant market position, and its plugin-centric architecture that allows it to power virtually any type of website.
+    </div>
+
+  </div>
+</article>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 5                                                     -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q5">
+  <div class="q-header">
+    <div class="q-number">Question 05</div>
+    <div class="q-text">What is a sitemap and its use? How to make a website look good on all resolutions?</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">What is a Sitemap?</h3>
+    <p class="a-p">A sitemap is a file or document that lists all the pages, posts, and other content on a website in a structured, organized manner. Think of it as a table of contents or a map for your website — just like a map helps you navigate a city, a sitemap helps search engines and users navigate your website. There are two main types of sitemaps, and each serves a different but important purpose.</p>
+
+    <h4 class="a-subheading">Types of Sitemaps</h4>
+    <ul class="a-ul">
+      <li><strong>XML Sitemap:</strong> This is the technical sitemap designed specifically for search engines like Google, Bing, and Yahoo. It is an XML file (usually named <code>sitemap.xml</code>) that lists every URL on your website along with additional metadata like when the page was last updated, how frequently it changes, and its relative importance compared to other pages. Search engine crawlers (also called bots or spiders) use this file to discover and index all the pages on your site efficiently. Without an XML sitemap, search engines have to find your pages by following links from other pages, which means some pages — especially deeply nested ones or new pages with no incoming links — might be missed.</li>
+      <li><strong>HTML Sitemap:</strong> This is a visual sitemap designed for human visitors. It is a regular web page on your site that displays a hierarchical list of all your pages, organized by category or section. If a visitor is having trouble finding something through your navigation menu, they can visit the HTML sitemap to see everything at a glance. While less common on modern websites (because search features and good navigation have largely replaced them), HTML sitemaps still improve user experience and accessibility.</li>
+    </ul>
+
+    <h4 class="a-subheading">Uses of a Sitemap</h4>
+    <ul class="a-ul">
+      <li><strong>Better Search Engine Indexing:</strong> An XML sitemap ensures that search engines can find and index all your pages, including pages that might not be easily discoverable through normal crawling (like pages buried deep in your site structure, pages with no internal links pointing to them, or newly created pages).</li>
+      <li><strong>Faster Indexing of New Content:</strong> When you publish a new page or post, the sitemap tells search engines about it. You can also submit your sitemap to Google Search Console and Bing Webmaster Tools, which can speed up the process of getting new content into search results.</li>
+      <li><strong>Priority and Frequency Signals:</strong> The XML sitemap allows you to specify which pages are most important (priority) and how often they are updated (change frequency). While search engines may not strictly follow these signals, they provide useful hints about how to allocate crawling resources.</li>
+      <li><strong>Improved User Navigation:</strong> An HTML sitemap gives visitors a complete overview of your website's structure, helping them find what they are looking for quickly.</li>
+      <li><strong>SEO Benefit:</strong> Having a sitemap is considered a best practice for SEO. Google themselves recommend submitting a sitemap, especially for large websites, new websites with few external links, and websites with rich media content.</li>
+    </ul>
+
+    <h3 class="a-heading">How to Make a Website Look Good on All Resolutions (Responsive Web Design)</h3>
+    <p class="a-p">Making a website look good on all screen sizes and resolutions — from large desktop monitors to small mobile phones — is achieved through a practice called <span class="highlight">Responsive Web Design (RWD)</span>. The term was coined by Ethan Marcotte in 2010, and it has since become the industry standard. Here are the key techniques and principles involved:</p>
+
+    <h4 class="a-subheading">1. The Viewport Meta Tag</h4>
+    <p class="a-p">The very first step is to include the viewport meta tag in the <code>&lt;head&gt;</code> of your HTML document. This tag tells the browser to render the page at the device's natural width instead of zooming out to show the full desktop version on a small screen. Without this tag, mobile browsers will display your website as if it were a desktop page and then shrink it down, making text tiny and unreadable.</p>
+    <div class="code-block">
+      <div class="code-label"><span class="lang">HTML</span></div>
+      <pre><code><span class="cm">&lt;!-- Add this inside &lt;head&gt; --&gt;</span>
+<span class="tag-name">&lt;meta</span> <span class="attr">name</span>=<span class="attr-val">"viewport"</span> <span class="attr">content</span>=<span class="attr-val">"width=device-width, initial-scale=1.0"</span><span class="tag-name">&gt;</span></code></pre>
+    </div>
+
+    <h4 class="a-subheading">2. Fluid / Flexible Layouts</h4>
+    <p class="a-p">Instead of using fixed widths in pixels (like <code>width: 960px</code>), use relative units like percentages, <code>vw</code> (viewport width), <code>em</code>, or <code>rem</code>. A fluid layout automatically adjusts to fill the available space. For example, setting <code>max-width: 100%</code> on images ensures they never overflow their container, and using <code>width: 80%</code> for a content area means it takes up 80% of the screen regardless of the device size.</p>
+
+    <h4 class="a-subheading">3. CSS Media Queries</h4>
+    <p class="a-p">Media queries are the heart of responsive design. They allow you to apply different CSS styles based on the characteristics of the device, most commonly the screen width. You can define breakpoints — specific screen widths where your layout changes to accommodate the available space. Common breakpoints include 480px (mobile), 768px (tablet), 1024px (laptop), and 1200px+ (desktop).</p>
+    <div class="code-block">
+      <div class="code-label"><span class="lang">CSS</span></div>
+      <pre><code><span class="cm">/* Default styles (mobile-first) */</span>
+<span class="fn">.container</span> {
+  <span class="kw">width</span>: <span class="num">100%</span>;
+  <span class="kw">padding</span>: <span class="num">10px</span>;
+}
+
+<span class="cm">/* Tablet and above */</span>
+<span class="kw">@media</span> (<span class="attr">min-width</span>: <span class="num">768px</span>) {
+  <span class="fn">.container</span> {
+    <span class="kw">width</span>: <span class="num">750px</span>;
+    <span class="kw">margin</span>: <span class="num">0</span> <span class="kw">auto</span>;
+  }
+}
+
+<span class="cm">/* Desktop and above */</span>
+<span class="kw">@media</span> (<span class="attr">min-width</span>: <span class="num">1024px</span>) {
+  <span class="fn">.container</span> {
+    <span class="kw">width</span>: <span class="num">960px</span>;
+  }
+}</code></pre>
+    </div>
+
+    <h4 class="a-subheading">4. Flexible Images and Media</h4>
+    <p class="a-p">Images should scale with the layout. The simplest approach is to set <code>max-width: 100%; height: auto;</code> on all images. This ensures that images are never wider than their container and maintain their aspect ratio. For more advanced control, you can use the <code>&lt;picture&gt;</code> element or the <code>srcset</code> attribute to serve different image sizes based on the screen resolution, which also improves performance.</p>
+
+    <h4 class="a-subheading">5. CSS Flexbox and Grid</h4>
+    <p class="a-p">Modern CSS layout systems like Flexbox and CSS Grid make it much easier to create responsive layouts. Flexbox is ideal for one-dimensional layouts (rows or columns) where items need to flex and wrap naturally. CSS Grid is perfect for two-dimensional layouts (rows and columns simultaneously). Both systems allow you to create complex layouts that reflow seamlessly on different screen sizes without resorting to complex media queries for every element.</p>
+
+    <h4 class="a-subheading">6. Mobile-First Approach</h4>
+    <p class="a-p">The recommended practice is to design and code for mobile screens first (the smallest, most constrained layout), and then progressively enhance the design for larger screens using <code>min-width</code> media queries. This approach ensures that the mobile experience is not an afterthought and that the core content and functionality work well on the most limited devices.</p>
+
+    <h4 class="a-subheading">7. Typography Scaling</h4>
+    <p class="a-p">Use relative units for font sizes (<code>rem</code>, <code>em</code>, <code>vw</code>) instead of fixed pixel values. This allows text to scale proportionally with the viewport. You can also use <code>clamp()</code> in CSS to set a minimum, preferred, and maximum font size in one declaration, ensuring text is never too small on mobile or too large on wide screens.</p>
+
+    <h4 class="a-subheading">8. Testing on Real Devices</h4>
+    <p class="a-p">Finally, always test your website on actual devices or use browser developer tools (like Chrome DevTools' device simulation mode) to check how your site looks and functions at various resolutions. Pay attention to touch targets (make buttons large enough to tap on mobile), readability (sufficient line height and font size), and navigation (hamburger menus for mobile, full menus for desktop).</p>
+
+  </div>
+</article>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 6                                                     -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q6">
+  <div class="q-header">
+    <div class="q-number">Question 06</div>
+    <div class="q-text">List the stages of publishing a website. Discuss tools and techniques involved in each stage.</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">Stages of Publishing a Website</h3>
+    <p class="a-p">Publishing a website is not a single step — it is a multi-stage process that involves careful planning, design, development, testing, deployment, and ongoing maintenance. Each stage requires specific tools and techniques to ensure the final product is functional, attractive, and reliable. Let us walk through each stage in detail.</p>
+
+    <h4 class="a-subheading">Stage 1: Planning and Research</h4>
+    <p class="a-p">Before writing a single line of code, you need to plan your website thoroughly. This stage involves understanding the purpose of the website, identifying the target audience, defining the site's goals, researching competitors, and creating a project timeline and budget. You also decide on the technology stack — whether you will use a CMS like WordPress, a framework like React, or build from scratch. A well-planned project has a much higher chance of success.</p>
+    <p class="a-p"><strong>Tools and Techniques:</strong></p>
+    <ul class="a-ul">
+      <li><strong>Wireframing tools:</strong> Figma, Balsamiq, Wireframe.cc, or even pen and paper to sketch the layout and structure of each page before building it.</li>
+      <li><strong>Project management tools:</strong> Trello, Asana, Jira, or Notion to organize tasks, set deadlines, and collaborate with team members.</li>
+      <li><strong>Competitor analysis:</strong> Browser developer tools, SimilarWeb, and manual review of competitor websites to identify best practices and gaps.</li>
+      <li><strong>Requirements document:</strong> A written document (often called a PRD — Product Requirements Document) that clearly defines what the website will include, who it is for, and what success looks like.</li>
+    </ul>
+
+    <h4 class="a-subheading">Stage 2: Design</h4>
+    <p class="a-p">In the design stage, you create the visual appearance of the website. This includes the overall layout, color scheme, typography, spacing, images, and interactive elements. Designers typically start with low-fidelity wireframes (basic structural sketches) and then create high-fidelity mockups (detailed, pixel-perfect designs) that show exactly how the website will look. Responsive design considerations are made at this stage — ensuring the design works on mobile, tablet, and desktop.</p>
+    <p class="a-p"><strong>Tools and Techniques:</strong></p>
+    <ul class="a-ul">
+      <li><strong>Design software:</strong> Figma (most popular, collaborative), Adobe XD, Sketch (macOS only), or Canva for simpler projects.</li>
+      <li><strong>Design systems:</strong> Creating a consistent set of colors, fonts, buttons, and components that are reused throughout the site for visual consistency.</li>
+      <li><strong>Prototyping:</strong> Figma and Adobe XD allow you to create clickable prototypes that simulate how the website will behave, which can be shared with stakeholders for feedback before development begins.</li>
+      <li><strong>Responsive design previews:</strong> Previewing designs at different screen sizes within the design tool.</li>
+    </ul>
+
+    <h4 class="a-subheading">Stage 3: Development / Coding</h4>
+    <p class="a-p">This is the stage where the designs are converted into actual working code. Frontend development involves writing HTML for structure, CSS for styling, and JavaScript for interactivity. Backend development involves setting up the server, database, and application logic. If using a CMS like WordPress, this stage involves installing WordPress, configuring the theme, installing plugins, and customizing templates. If building a custom application (like a MERN stack app), this involves setting up the project, writing components, creating API endpoints, and connecting to the database.</p>
+    <p class="a-p"><strong>Tools and Techniques:</strong></p>
+    <ul class="a-ul">
+      <li><strong>Code editors:</strong> Visual Studio Code (most popular), Sublime Text, or Atom for writing code.</li>
+      <li><strong>Version control:</strong> Git and GitHub/GitLab for tracking changes, collaborating with others, and reverting to previous versions if something goes wrong.</li>
+      <li><strong>Frontend frameworks:</strong> React, Vue, or Angular for building interactive UIs. Bootstrap or Tailwind CSS for rapid styling.</li>
+      <li><strong>Backend frameworks:</strong> Express.js (Node.js), Django (Python), or Laravel (PHP) for server-side logic.</li>
+      <li><strong>Package managers:</strong> npm or yarn to manage project dependencies.</li>
+      <li><strong>Local development server:</strong> XAMPP, WAMP, or Node.js local server to test the website on your computer before deploying.</li>
+    </ul>
+
+    <h4 class="a-subheading">Stage 4: Testing and Quality Assurance</h4>
+    <p class="a-p">Before a website goes live, it must be thoroughly tested to ensure everything works correctly. This includes testing for functionality (do all links, forms, and features work?), cross-browser compatibility (does it look right in Chrome, Firefox, Safari, and Edge?), responsiveness (does it work on mobile, tablet, and desktop?), performance (does it load quickly?), accessibility (can people with disabilities use it?), and security (is it protected against common vulnerabilities?).</p>
+    <p class="a-p"><strong>Tools and Techniques:</strong></p>
+    <ul class="a-ul">
+      <li><strong>Browser testing:</strong> Chrome DevTools, BrowserStack, or LambdaTest for testing across different browsers and devices.</li>
+      <li><strong>Performance testing:</strong> Google PageSpeed Insights, GTmetrix, or Lighthouse (built into Chrome DevTools) to measure load times and get optimization suggestions.</li>
+      <li><strong>Accessibility testing:</strong> WAVE (Web Accessibility Evaluation Tool), axe DevTools, or manual keyboard navigation testing.</li>
+      <li><strong>Functional testing:</strong> Selenium or Cypress for automated testing of user interactions. Manual testing for smaller projects.</li>
+      <li><strong>Security testing:</strong> OWASP ZAP, Sucuri Site Check, or manual review for common vulnerabilities like XSS and SQL injection.</li>
+    </ul>
+
+    <h4 class="a-subheading">Stage 5: Domain Registration and Hosting Setup</h4>
+    <p class="a-p">To make your website accessible on the internet, you need a domain name (like www.example.com) and a hosting server where your website files will be stored. The domain name is registered through a domain registrar, and hosting can be set up with a hosting provider. You also need to configure DNS (Domain Name System) settings to point your domain to your hosting server.</p>
+    <p class="a-p"><strong>Tools and Techniques:</strong></p>
+    <ul class="a-ul">
+      <li><strong>Domain registrars:</strong> GoDaddy, Namecheap, Google Domains, or Cloudflare Registrar.</li>
+      <li><strong>Hosting providers:</strong> Shared hosting (Hostinger, Bluehost), VPS hosting (DigitalOcean, Linode), cloud hosting (AWS, Google Cloud, Azure), or managed WordPress hosting (WP Engine, Kinsta).</li>
+      <li><strong>DNS management:</strong> Cloudflare, Route53 (AWS), or your domain registrar's DNS panel.</li>
+      <li><strong>SSL certificates:</strong> Let's Encrypt (free), Cloudflare (free), or paid certificates from your hosting provider to enable HTTPS.</li>
+    </ul>
+
+    <h4 class="a-subheading">Stage 6: Deployment / Going Live</h4>
+    <p class="a-p">Deployment is the process of uploading your website files to the hosting server and making the site accessible to the public. This involves transferring files, setting up the database, configuring the server environment, and making sure everything works correctly in the live environment. For modern applications, deployment often involves continuous integration/continuous deployment (CI/CD) pipelines that automatically deploy code changes when they are pushed to the repository.</p>
+    <p class="a-p"><strong>Tools and Techniques:</strong></p>
+    <ul class="a-ul">
+      <li><strong>File transfer:</strong> FTP/SFTP clients like FileZilla, or command-line tools like SCP.</li>
+      <li><strong>CI/CD platforms:</strong> GitHub Actions, GitLab CI, or Netlify for automated deployments.</li>
+      <li><strong>Platform-as-a-Service:</strong> Vercel, Netlify, Heroku, or Render — these platforms handle deployment automatically when you push code.</li>
+      <li><strong>SSH access:</strong> For advanced server configuration using terminal commands.</li>
+    </ul>
+
+    <h4 class="a-subheading">Stage 7: Post-Launch Maintenance and Monitoring</h4>
+    <p class="a-p">Publishing a website is not the end — it is the beginning of an ongoing process. Websites need regular maintenance to stay secure, perform well, and remain relevant. This includes updating the CMS, themes, and plugins; fixing bugs that are discovered after launch; adding new content; monitoring uptime and performance; backing up data regularly; and analyzing traffic to make improvements.</p>
+    <p class="a-p"><strong>Tools and Techniques:</strong></p>
+    <ul class="a-ul">
+      <li><strong>Analytics:</strong> Google Analytics or Plausible to track visitor behavior, traffic sources, and popular content.</li>
+      <li><strong>Uptime monitoring:</strong> UptimeRobot or Pingdom to alert you if your site goes down.</li>
+      <li><strong>Backups:</strong> UpdraftPlus (WordPress), or automated server backups via your hosting provider.</li>
+      <li><strong>Content updates:</strong> Regularly publishing new blog posts, updating outdated information, and refreshing designs.</li>
+      <li><strong>Security scans:</strong> Wordfence (WordPress), Sucuri, or manual security audits.</li>
+    </ul>
+
+  </div>
+</article>
+
+<!-- ════════ SECTION DIVIDER ════════ -->
+<div class="section-divider"><h2>MERN Stack</h2></div>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 7                                                     -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q7">
+  <div class="q-header">
+    <div class="q-number">Question 07</div>
+    <div class="q-text">Explain the components of the MERN stack (MongoDB, Express.js, React.js, and Node.js) and how they interact in a typical full-stack web application. Illustrate the request-response lifecycle through the stack with a simple use-case like user login or data submission.</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">Components of the MERN Stack</h3>
+    <p class="a-p">The MERN stack is a popular set of technologies used together to build full-stack web applications. The name MERN is an acronym formed from the four technologies that make up the stack: MongoDB, Express.js, React.js, and Node.js. Each of these technologies handles a specific part of the application, and together they cover everything from the database to the user interface. Let us understand each component in detail.</p>
+
+    <h4 class="a-subheading">MongoDB (Database Layer)</h4>
+    <p class="a-p">MongoDB is a NoSQL database that stores data in flexible, JSON-like documents called BSON (Binary JSON). Unlike traditional relational databases like MySQL that store data in tables with rows and columns, MongoDB stores data in collections of documents. Each document can have a different structure, which makes MongoDB very flexible and well-suited for applications where the data schema might evolve over time. In the MERN stack, MongoDB is responsible for persistently storing all the application data — user accounts, blog posts, product information, comments, and anything else the application needs to remember. MongoDB is also known for being highly scalable, supporting horizontal scaling through a technique called sharding, which distributes data across multiple servers.</p>
+
+    <h4 class="a-subheading">Express.js (Backend Framework)</h4>
+    <p class="a-p">Express.js is a lightweight, minimal web application framework that runs on top of Node.js. It provides a set of features for building web servers and APIs — things like routing (defining what happens when a user visits a particular URL), handling HTTP requests and responses, serving static files, and integrating with middleware functions. Express.js does not impose a rigid structure on your application; instead, it gives you the building blocks and lets you organize your code however you prefer. In the MERN stack, Express.js acts as the bridge between the frontend (React) and the database (MongoDB). When the frontend makes an API request, Express.js receives that request, processes it (perhaps validating data, checking authentication, or querying the database), and sends back an appropriate response.</p>
+
+    <h4 class="a-subheading">React.js (Frontend Library)</h4>
+    <p class="a-p">React.js is a JavaScript library created by Facebook (now Meta) for building user interfaces. It allows developers to create reusable UI components that manage their own state and can be composed together to build complex interfaces. React uses a Virtual DOM (a lightweight copy of the actual DOM in memory) to efficiently update only the parts of the page that change, rather than re-rendering the entire page. In the MERN stack, React handles everything the user sees and interacts with — the HTML structure, the CSS styling, the interactive elements like forms and buttons, and the client-side logic like form validation, state management, and API calls. React runs entirely in the browser (client-side).</p>
+
+    <h4 class="a-subheading">Node.js (Runtime Environment)</h4>
+    <p class="a-p">Node.js is a JavaScript runtime built on Chrome's V8 JavaScript engine that allows JavaScript to be executed on the server side (outside the browser). Before Node.js, JavaScript could only run in web browsers. Node.js made it possible to use JavaScript for server-side programming, which means developers can use the same language (JavaScript) for both the frontend and the backend. In the MERN stack, Node.js provides the runtime environment in which Express.js runs. It handles file system operations, network communication, and other server-side tasks. Node.js is known for its non-blocking, event-driven architecture, which makes it efficient at handling many concurrent connections — perfect for real-time applications like chat apps, collaboration tools, and live updates.</p>
+
+    <h3 class="a-heading">How the MERN Stack Components Interact</h3>
+    <p class="a-p">In a typical MERN stack application, the interaction flow is as follows:</p>
+    <ol class="a-ol">
+      <li><strong>React (Frontend):</strong> The user interacts with the React application in their browser. When they perform an action (like clicking a "Login" button or submitting a form), React captures that event and makes an HTTP request (using fetch or Axios) to the Express.js backend API.</li>
+      <li><strong>Express.js (Backend):</strong> The Express.js server receives the HTTP request, routes it to the appropriate handler function, and processes it. This processing might involve validating the incoming data, checking authentication tokens, or querying the MongoDB database.</li>
+      <li><strong>MongoDB (Database):</strong> If the request requires reading or writing data, Express.js communicates with MongoDB (usually through a library called Mongoose, which provides a schema-based way to model application data). MongoDB performs the database operation and returns the result to Express.js.</li>
+      <li><strong>Express.js (Response):</strong> Express.js formats the result (usually as JSON data) and sends it back as an HTTP response to the React frontend.</li>
+      <li><strong>React (Frontend Update):</strong> React receives the response data and updates the UI accordingly — perhaps showing a success message, redirecting to a dashboard, or displaying an error alert.</li>
+    </ol>
+
+    <h3 class="a-heading">Request-Response Lifecycle: User Login Use-Case</h3>
+    <p class="a-p">Let us trace a complete request-response lifecycle through the MERN stack for a user login scenario:</p>
+    <ol class="a-ol">
+      <li><strong>User Action:</strong> The user enters their email and password into a login form rendered by a React component and clicks the "Login" button.</li>
+      <li><strong>React Handles Submission:</strong> The React component's event handler captures the form submission, prevents the default browser behavior, and creates a POST request with the email and password in the request body as JSON.</li>
+      <li><strong>HTTP Request Sent:</strong> React sends the POST request to the endpoint <code>/api/login</code> on the Express.js server. This is typically done using <code>fetch()</code> or Axios.</li>
+      <li><strong>Express Receives Request:</strong> Express.js matches the incoming request URL (<code>/api/login</code>) and HTTP method (POST) to the corresponding route handler defined in the backend code.</li>
+      <li><strong>Middleware Processing:</strong> Before the route handler executes, any middleware functions run. For example, a body-parser middleware might parse the JSON request body, and a validation middleware might check that the email and password fields are present and properly formatted.</li>
+      <li><strong>Database Query:</strong> The route handler uses Mongoose to query the MongoDB database — specifically, it looks for a user document where the email matches the provided email. If found, it compares the provided password (after hashing) with the stored password hash.</li>
+      <li><strong>MongoDB Returns Result:</strong> MongoDB returns the matching user document (or null if no match is found) to the Express.js route handler.</li>
+      <li><strong>Express Sends Response:</strong> If the credentials are valid, Express generates a JWT (JSON Web Token) for authentication and sends a success response with the token. If invalid, it sends an error response with an appropriate message.</li>
+      <li><strong>React Receives Response:</strong> The React component receives the HTTP response. If successful, it stores the JWT (usually in localStorage or a state management solution), updates the application state to reflect that the user is logged in, and redirects to the dashboard page. If unsuccessful, it displays an error message to the user.</li>
+      <li><strong>UI Updated:</strong> React re-renders the relevant components to show the logged-in state — perhaps changing the navigation bar to show the user's name and a logout button instead of the login button.</li>
+    </ol>
+
+    <div class="note-box">
+      <strong>Key Point:</strong> The MERN stack uses JavaScript throughout the entire stack, which is one of its biggest advantages. Developers only need to know one language to build both the frontend and the backend, which reduces complexity and speeds up development significantly.
+    </div>
+
+  </div>
+</article>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 8                                                     -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q8">
+  <div class="q-header">
+    <div class="q-number">Question 08</div>
+    <div class="q-text">Explain what React is and its core principles.</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">What is React?</h3>
+    <p class="a-p">React is an open-source JavaScript library created by Facebook (now Meta) for building user interfaces, particularly for single-page applications. It was first released in 2013 and has since become one of the most popular and widely used frontend libraries in the world. React is not a full framework like Angular — it is specifically focused on the view layer, meaning it handles rendering the UI and managing the state of UI components. For other concerns like routing, data fetching, or state management across the entire application, React relies on its ecosystem of companion libraries.</p>
+    <p class="a-p">React allows developers to build complex user interfaces by breaking them down into small, reusable pieces called <span class="highlight">components</span>. A component is essentially a self-contained unit that represents a part of the user interface — it has its own structure (HTML-like code), its own style, and its own logic. Components can be nested inside other components, creating a tree-like structure that mirrors the structure of the UI. This modular approach makes code easier to understand, test, and maintain, especially in large applications.</p>
+    <p class="a-p">React is used by some of the biggest companies in the world, including Facebook, Instagram, Netflix, Airbnb, Uber, and many more. It has a massive community, a rich ecosystem of tools and libraries, and excellent documentation, which makes it a great choice for both beginners and experienced developers.</p>
+
+    <h3 class="a-heading">Core Principles of React</h3>
+
+    <h4 class="a-subheading">1. Component-Based Architecture</h4>
+    <p class="a-p">The most fundamental principle of React is its component-based architecture. In React, everything is a component. A web page is not built as one large chunk of HTML — instead, it is composed of many small, independent components, each responsible for a specific part of the UI. For example, a typical web page might have a Header component, a Navigation component, a Sidebar component, a Content component, and a Footer component. Each of these can be developed, tested, and maintained independently. Components can be reused across different pages or even different projects, which saves time and ensures consistency. Components can also accept inputs (called props) and manage their own internal state, making them dynamic and interactive.</p>
+
+    <h4 class="a-subheading">2. Declarative Programming</h4>
+    <p class="a-p">React follows a declarative programming paradigm, which means you describe <em>what</em> the UI should look like for a given state, and React takes care of <em>how</em> to update the DOM to match that description. This is in contrast to imperative programming, where you would manually write step-by-step instructions for how to modify the DOM. With React, you simply write JSX code that describes the desired output, and React efficiently updates the actual DOM to match. If the data changes, you just update the state, and React automatically re-renders the relevant components. This makes code much easier to read, understand, and debug, because you never have to worry about manually manipulating the DOM.</p>
+
+    <h4 class="a-subheading">3. Virtual DOM</h4>
+    <p class="a-p">One of React's most innovative features is the Virtual DOM. The Virtual DOM is a lightweight, in-memory representation of the actual DOM. When the state of a component changes, React first updates the Virtual DOM (which is fast because it is just a JavaScript object, not the real browser DOM). Then, React compares the new Virtual DOM with the previous version using a process called <strong>reconciliation</strong> (or diffing). It identifies the minimal set of changes needed and updates only those specific parts of the real DOM. This approach is far more efficient than directly manipulating the real DOM, which is slow and expensive. The Virtual DOM is what allows React applications to feel fast and responsive, even when dealing with frequent updates.</p>
+
+    <h4 class="a-subheading">4. Unidirectional Data Flow (One-Way Data Binding)</h4>
+    <p class="a-p">React enforces a one-way data flow, meaning data in a React application flows in a single direction — from parent components down to child components via props. A parent component passes data to its children, and children can notify parents of changes through callback functions (also passed as props), but children cannot directly modify the parent's state. This unidirectional flow makes the application's data flow predictable and easy to trace. When a bug occurs, you can follow the data flow from the top down to find where things went wrong. This is much simpler than two-way data binding (as used in AngularJS), where changes in the view automatically update the model and vice versa, which can create complex, hard-to-debug interactions.</p>
+
+    <h4 class="a-subheading">5. JSX (JavaScript XML)</h4>
+    <p class="a-p">React uses JSX, which is a syntax extension for JavaScript that allows you to write HTML-like code directly within your JavaScript files. While JSX is not required to use React, it is the recommended way to describe the UI because it makes the code more readable and visually resembles the final output. JSX is not HTML — it is syntactic sugar that gets compiled (by tools like Babel) into regular JavaScript function calls that create React elements. For example, <code>&lt;h1&gt;Hello&lt;/h1&gt;</code> in JSX becomes <code>React.createElement('h1', null, 'Hello')</code> in regular JavaScript. JSX also allows you to embed JavaScript expressions within curly braces, making it easy to dynamically render content based on variables, function results, or conditions.</p>
+
+    <h4 class="a-subheading">6. State and Props</h4>
+    <p class="a-p">React components manage data through two primary mechanisms: <strong>state</strong> and <strong>props</strong>. State is data that belongs to and is managed by a specific component. It is internal to the component and can be changed over time, typically in response to user actions. When state changes, the component re-renders. Props (short for properties) are data passed from a parent component to a child component. Props are read-only — a child component cannot modify the props it receives. This distinction between mutable state and immutable props, combined with the one-way data flow, gives React its predictable and manageable data model.</p>
+
+    <h4 class="a-subheading">7. Learn Once, Write Anywhere</h4>
+    <p class="a-p">React's design philosophy emphasizes that the concepts you learn for building web applications with React can be applied to other platforms as well. React Native allows you to build mobile applications for iOS and Android using the same component-based architecture and concepts. React 360 can be used for building VR applications. This "learn once, write anywhere" philosophy means that investing time in learning React pays dividends across multiple platforms, making it an extremely valuable skill for developers.</p>
+
+  </div>
+</article>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 9                                                     -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q9">
+  <div class="q-header">
+    <div class="q-number">Question 09</div>
+    <div class="q-text">What are the differences between React class components and functional components?</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">React Class Components vs Functional Components</h3>
+    <p class="a-p">In React, there are two ways to define a component: as a class component or as a functional component. Both types of components serve the same fundamental purpose — they describe a part of the user interface. However, they differ significantly in their syntax, how they manage state and lifecycle methods, and their overall complexity. Understanding these differences is essential for any React developer, especially since the React ecosystem has evolved to favor functional components.</p>
+
+    <h4 class="a-subheading">Class Components</h4>
+    <p class="a-p">Class components are defined using ES6 JavaScript classes. They extend the <code>React.Component</code> base class and must implement a <code>render()</code> method that returns JSX. Class components have access to React's lifecycle methods (like <code>componentDidMount</code>, <code>componentDidUpdate</code>, and <code>componentWillUnmount</code>) and manage state through a <code>this.state</code> object that is updated using <code>this.setState()</code>.</p>
+    <p class="a-p">Class components were the original way to create stateful components in React. Before the introduction of hooks in React 16.8, if you needed a component with state or lifecycle methods, you had to use a class component. Functional components at that time were only used for simple, stateless presentational components.</p>
+
+    <h4 class="a-subheading">Functional Components</h4>
+    <p class="a-p">Functional components are defined as plain JavaScript functions that accept props as an argument and return JSX. They are simpler, more concise, and easier to read than class components. Since the introduction of React Hooks in version 16.8 (February 2019), functional components can now use state (via <code>useState</code>) and lifecycle-like behavior (via <code>useEffect</code>), which has made them the preferred way to write React components.</p>
+
+    <h3 class="a-heading">Detailed Comparison</h3>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>Class Components</th>
+          <th>Functional Components</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Definition</strong></td>
+          <td>Defined as an ES6 class extending <code>React.Component</code></td>
+          <td>Defined as a plain JavaScript function</td>
+        </tr>
+        <tr>
+          <td><strong>Syntax</strong></td>
+          <td>More verbose. Requires a render() method, uses the <code>this</code> keyword extensively.</td>
+          <td>Much simpler and shorter. No <code>this</code> keyword, no render() method needed.</td>
+        </tr>
+        <tr>
+          <td><strong>State Management</strong></td>
+          <td>Uses <code>this.state</code> object and <code>this.setState()</code> method. State is always an object.</td>
+          <td>Uses <code>useState()</code> hook. State can be any type (string, number, array, object, etc.).</td>
+        </tr>
+        <tr>
+          <td><strong>Lifecycle Methods</strong></td>
+          <td>Has explicit lifecycle methods like <code>componentDidMount</code>, <code>componentDidUpdate</code>, <code>componentWillUnmount</code>.</td>
+          <td>Uses the <code>useEffect()</code> hook, which can replicate all lifecycle methods in a single, unified API.</td>
+        </tr>
+        <tr>
+          <td><strong>this Keyword</strong></td>
+          <td>Requires careful handling of <code>this</code>. Methods need to be bound manually or defined as arrow functions to preserve the correct <code>this</code> context.</td>
+          <td>No <code>this</code> keyword at all. This eliminates a whole class of bugs and confusion.</td>
+        </tr>
+        <tr>
+          <td><strong>Props Access</strong></td>
+          <td>Accessed via <code>this.props</code></td>
+          <td>Received as a function parameter, e.g., <code>function MyComponent(props)</code></td>
+        </tr>
+        <tr>
+          <td><strong>Performance</strong></td>
+          <td>Slightly slower due to class instantiation overhead and the need to create and bind methods.</td>
+          <td>Slightly faster since they are just functions with no class overhead.</td>
+        </tr>
+        <tr>
+          <td><strong>Code Reusability</strong></td>
+          <td>Logic reuse is done through patterns like Higher-Order Components (HOCs) or render props, which can be complex.</td>
+          <td>Custom hooks allow easy logic reuse by extracting stateful logic into reusable functions.</td>
+        </tr>
+        <tr>
+          <td><strong>Readability</strong></td>
+          <td>More boilerplate code makes it harder to read, especially for beginners.</td>
+          <td>Less boilerplate, more straightforward, easier for beginners to understand.</td>
+        </tr>
+        <tr>
+          <td><strong>Current Recommendation</strong></td>
+          <td>Still supported but no longer recommended for new code. Used in older codebases.</td>
+          <td>The recommended way to write React components. All new React features are designed for functional components.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="a-heading">Code Example: Same Component in Both Styles</h3>
+
+    <p class="a-p"><strong>Class Component Example:</strong></p>
+    <div class="code-block">
+      <div class="code-label"><span class="lang">JavaScript — Class Component</span></div>
+      <pre><code><span class="kw">import</span> React <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">class</span> <span class="fn">Counter</span> <span class="kw">extends</span> React.Component {
+  <span class="cm">// Constructor to initialize state</span>
+  <span class="fn">constructor</span>(props) {
+    <span class="kw">super</span>(props);
+    <span class="kw">this</span>.state = { count: <span class="num">0</span> };
+    <span class="cm">// Must bind 'this' for event handlers</span>
+    <span class="kw">this</span>.increment = <span class="kw">this</span>.increment.bind(<span class="kw">this</span>);
+  }
+
+  <span class="fn">increment</span>() {
+    <span class="cm">// Must use this.setState to update state</span>
+    <span class="kw">this</span>.setState({ count: <span class="kw">this</span>.state.count + <span class="num">1</span> });
+  }
+
+  <span class="fn">componentDidMount</span>() {
+    <span class="cm">// Runs once after the component is added to the DOM</span>
+    console.log(<span class="str">'Component mounted'</span>);
+  }
+
+  <span class="cm">// The render method is required</span>
+  <span class="fn">render</span>() {
+    <span class="kw">return</span> (
+      &lt;div&gt;
+        &lt;p&gt;Count: {<span class="kw">this</span>.state.count}&lt;/p&gt;
+        &lt;button onClick={<span class="kw">this</span>.increment}&gt;Add 1&lt;/button&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+
+<span class="kw">export default</span> Counter;</code></pre>
+    </div>
+
+    <p class="a-p"><strong>Functional Component Example:</strong></p>
+    <div class="code-block">
+      <div class="code-label"><span class="lang">JavaScript — Functional Component</span></div>
+      <pre><code><span class="kw">import</span> React, { useState, useEffect } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">Counter</span>() {
+  <span class="cm">// useState hook to declare state</span>
+  <span class="kw">const</span> [count, setCount] = useState(<span class="num">0</span>);
+
+  <span class="cm">// useEffect hook replaces componentDidMount and others</span>
+  useEffect(() =&gt; {
+    console.log(<span class="str">'Component mounted'</span>);
+  }, []); <span class="cm">// Empty array means run only once</span>
+
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      <span class="cm">{/* No 'this' needed, just use the variable directly */}</span>
+      &lt;p&gt;Count: {count}&lt;/p&gt;
+      &lt;button onClick={() =&gt; setCount(count + <span class="num">1</span>)}&gt;Add 1&lt;/button&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="kw">export default</span> Counter;</code></pre>
+    </div>
+
+    <div class="note-box">
+      <strong>Key Takeaway:</strong> Functional components with hooks are now the standard way to write React code. They are simpler, shorter, and easier to understand. Class components are still supported for backward compatibility, but the React team recommends using functional components for all new development.
+    </div>
+
+  </div>
+</article>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 10                                                    -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q10">
+  <div class="q-header">
+    <div class="q-number">Question 10</div>
+    <div class="q-text">Describe the purpose of JSX in React. How does JSX help in writing React components?</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">What is JSX?</h3>
+    <p class="a-p">JSX stands for JavaScript XML. It is a syntax extension for JavaScript that allows you to write HTML-like code directly within your JavaScript files. JSX was created by the React team to make building user interfaces more intuitive and readable. Instead of writing complex JavaScript function calls to create UI elements, JSX lets you write markup that looks almost identical to HTML, making it much easier to visualize and understand what your component will render.</p>
+    <p class="a-p">It is important to understand that JSX is not HTML. It is also not a template language like the ones used in Angular or Vue. JSX is syntactic sugar — a more pleasant way to write <code>React.createElement()</code> function calls. When you write JSX, a tool called Babel (a JavaScript compiler/transpiler) transforms your JSX code into regular JavaScript that the browser can understand. For example, the JSX code <code>&lt;h1&gt;Hello World&lt;/h1&gt;</code> is compiled into <code>React.createElement('h1', null, 'Hello World')</code>. While you could write your React components using <code>React.createElement()</code> directly, it would be extremely tedious and hard to read, especially for complex UIs. JSX makes this process much more pleasant.</p>
+
+    <h3 class="a-heading">Purpose of JSX</h3>
+    <ul class="a-ul">
+      <li><strong>Visual clarity:</strong> JSX allows you to write your UI structure in a way that closely resembles the final HTML output. When you look at a JSX block, you can immediately see what the rendered component will look like, which makes the code much more intuitive to read and write.</li>
+      <li><strong>Combining markup and logic:</strong> In traditional web development, HTML (structure), CSS (style), and JavaScript (logic) are kept in separate files. JSX takes a different approach — it combines the markup and the logic into a single unit (the component). This is based on the principle that the structure and the logic of a UI element are inherently related and should be co-located. JSX makes this possible by allowing you to embed JavaScript expressions directly within your markup using curly braces <code>{}</code>.</li>
+      <li><strong>Type safety and error catching:</strong> Because JSX is compiled into JavaScript, errors in your markup (like a misspelled attribute name or an unclosed tag) are caught at compile time rather than at runtime. This means you get immediate feedback about mistakes, which saves debugging time.</li>
+      <li><strong>Performance optimization:</strong> JSX compilation can detect and optimize certain patterns. React's JSX compiler also provides warnings and error messages that help you write better code, such as reminding you to use <code>className</code> instead of <code>class</code> or <code>htmlFor</code> instead of <code>for</code>.</li>
+    </ul>
+
+    <h3 class="a-heading">How JSX Helps in Writing React Components</h3>
+
+    <h4 class="a-subheading">1. Makes Code More Readable</h4>
+    <p class="a-p">Consider the difference between writing a component with JSX versus without. Without JSX, you would have to write nested <code>React.createElement()</code> calls, which become deeply nested and very hard to read for anything beyond a simple element. With JSX, the same structure looks almost like HTML, which every web developer is already familiar with. This readability is one of the biggest advantages of JSX.</p>
+
+    <div class="code-block">
+      <div class="code-label"><span class="lang">JavaScript — Without JSX vs With JSX</span></div>
+      <pre><code><span class="cm">// WITHOUT JSX - Hard to read and write</span>
+React.createElement(<span class="str">'div'</span>, { className: <span class="str">'card'</span> },
+  React.createElement(<span class="str">'h2'</span>, <span class="kw">null</span>, <span class="str">'Title'</span>),
+  React.createElement(<span class="str">'p'</span>, <span class="kw">null</span>, <span class="str">'Some description text here'</span>),
+  React.createElement(<span class="str">'button'</span>, { onClick: handleClick }, <span class="str">'Click Me'</span>)
+);
+
+<span class="cm">// WITH JSX - Clean and easy to understand</span>
+&lt;div className=<span class="str">"card"</span>&gt;
+  &lt;h2&gt;Title&lt;/h2&gt;
+  &lt;p&gt;Some description text here&lt;/p&gt;
+  &lt;button onClick={handleClick}&gt;Click Me&lt;/button&gt;
+&lt;/div&gt;</code></pre>
+    </div>
+
+    <h4 class="a-subheading">2. Embedding JavaScript Expressions</h4>
+    <p class="a-p">One of the most powerful features of JSX is the ability to embed any JavaScript expression inside curly braces <code>{}</code>. This means you can dynamically render content based on variables, call functions, perform calculations, use conditional logic (ternary operators), and map over arrays to render lists — all within your JSX markup. This tight integration between JavaScript and markup is what makes React components so expressive and powerful.</p>
+
+    <div class="code-block">
+      <div class="code-label"><span class="lang">JavaScript — JSX with Expressions</span></div>
+      <pre><code><span class="kw">function</span> <span class="fn">Greeting</span>({ name, isLoggedIn }) {
+  <span class="kw">const</span> time = <span class="kw">new</span> Date().getHours();
+
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      <span class="cm">{/* Embedding a variable */}</span>
+      &lt;h1&gt;Hello, {name}!&lt;/h1&gt;
+
+      <span class="cm">{/* Conditional rendering with ternary */}</span>
+      &lt;p&gt;{isLoggedIn ? <span class="str">'Welcome back!'</span> : <span class="str">'Please log in.'</span>}&lt;/p&gt;
+
+      <span class="cm">{/* Calling a function / expression */}</span>
+      &lt;p&gt;Current hour: {time}&lt;/p&gt;
+
+      <span class="cm">{/* Mapping over an array */}</span>
+      &lt;ul&gt;
+        {[<span class="str">'Apple'</span>, <span class="str">'Banana'</span>, <span class="str">'Cherry'</span>].map(fruit =&gt; (
+          &lt;li key={fruit}&gt;{fruit}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  );
+}</code></pre>
+    </div>
+
+    <h4 class="a-subheading">3. Component Composition</h4>
+    <p class="a-p">JSX makes it very natural to compose components — that is, to use one component inside another. In JSX, you use a custom component just like you would use an HTML tag, simply by writing its name with a capital letter (e.g., <code>&lt;MyComponent /&gt;</code>). This makes the tree structure of your application visually obvious in the code, and it makes composing complex UIs from simple building blocks feel natural and intuitive.</p>
+
+    <h4 class="a-subheading">4. JSX Enforces Good Practices</h4>
+    <p class="a-p">JSX enforces some best practices that help prevent common errors. For example, all tags must be properly closed (self-closing tags like <code>&lt;img /&gt;</code> and <code>&lt;br /&gt;</code> need the closing slash), and a JSX expression must have a single root parent element (which encourages wrapping content in semantic containers or using React Fragments). JSX also uses <code>className</code> instead of <code>class</code> because <code>class</code> is a reserved keyword in JavaScript, and <code>htmlFor</code> instead of <code>for</code> for the same reason.</p>
+
+    <div class="note-box">
+      <strong>Summary:</strong> JSX is not a separate language — it is just a more pleasant way to write React element creation code. It makes components easier to read, write, and maintain by combining markup and logic in a single, visually intuitive format. Without JSX, React development would be significantly more tedious and less accessible to new developers.
+    </div>
+
+  </div>
+</article>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 11                                                    -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q11">
+  <div class="q-header">
+    <div class="q-number">Question 11</div>
+    <div class="q-text">Describe the component lifecycle in Class components using React JS.</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">Component Lifecycle in React Class Components</h3>
+    <p class="a-p">Every React component goes through a series of phases from the moment it is created (mounted on the DOM) to the moment it is removed (unmounted from the DOM). These phases are collectively called the component lifecycle. Understanding the lifecycle is crucial because it allows you to run specific code at specific points in a component's existence — such as fetching data when the component first appears, updating the DOM when data changes, or cleaning up resources when the component is removed.</p>
+    <p class="a-p">In React class components, the lifecycle is divided into three main phases: <span class="highlight">Mounting</span>, <span class="highlight">Updating</span>, and <span class="highlight">Unmounting</span>. There is also a fourth phase called <span class="highlight">Error Handling</span>. Each phase has specific lifecycle methods that are called automatically by React at the appropriate time.</p>
+
+    <h3 class="a-heading">Phase 1: Mounting</h3>
+    <p class="a-p">Mounting is the phase when a component is being created and inserted into the DOM for the first time. This happens when the component first renders on the screen. The mounting phase includes the following lifecycle methods, called in this exact order:</p>
+
+    <h4 class="a-subheading">1. constructor()</h4>
+    <p class="a-p">The constructor is the very first method that is called when a class component is instantiated. It is called before the component is mounted to the DOM. The constructor is used for two primary purposes: initializing the component's local state by assigning an object to <code>this.state</code>, and binding event handler methods to the component instance. You must call <code>super(props)</code> at the beginning of the constructor if you are defining one, otherwise <code>this.props</code> will be undefined. If you do not need to initialize state or bind methods, you do not need to write a constructor at all.</p>
+
+    <h4 class="a-subheading">2. static getDerivedStateFromProps()</h4>
+    <p class="a-p">This is a rarely used method that is called right before the render method, both during mounting and updating. It takes props and state as arguments and returns an object to update the state, or null to change nothing. It exists for rare cases where the state depends on changes in props over time. Most components will never need this method.</p>
+
+    <h4 class="a-subheading">3. render()</h4>
+    <p class="a-p">The render method is the only required method in a class component. It examines <code>this.props</code> and <code>this.state</code> and returns the JSX that describes what should appear on the screen. The render method should be pure — it should not modify the component state, it should not directly interact with the browser, and it should return the same result each time it is called with the same inputs. The render method can also return null (to render nothing) or a string/number (to render plain text).</p>
+
+    <h4 class="a-subheading">4. componentDidMount()</h4>
+    <p class="a-p">This method is called immediately after the component is mounted to the DOM (that is, after the render method has been called and the component's output has been inserted into the DOM). This is the most commonly used mounting lifecycle method. It is the perfect place to perform side effects such as: making API calls to fetch data from a server, setting up subscriptions (like WebSocket connections or event listeners), setting timers with <code>setTimeout</code> or <code>setInterval</code>, or directly manipulating the DOM (though this is generally discouraged in React). You can also call <code>this.setState()</code> inside <code>componentDidMount()</code>, which will trigger an additional render before the browser updates the screen.</p>
+
+    <h3 class="a-heading">Phase 2: Updating</h3>
+    <p class="a-p">The updating phase occurs when a component's state or props change, causing it to re-render. There are several reasons a component might update: the parent component passes new props, the component calls <code>this.setState()</code> to change its own state, or <code>this.forceUpdate()</code> is called. The updating lifecycle methods are called in the following order:</p>
+
+    <h4 class="a-subheading">1. static getDerivedStateFromProps()</h4>
+    <p class="a-p">Same as in the mounting phase — called right before render during an update as well. Same purpose and behavior.</p>
+
+    <h4 class="a-subheading">2. shouldComponentUpdate()</h4>
+    <p class="a-p">This method is called before the render method during an update. It receives the new props and new state as arguments and returns a boolean value — true if the component should re-render, and false if it should skip re-rendering. This method exists for performance optimization. By default, React re-renders whenever state or props change, but sometimes you know that a change in props or state does not affect the visual output. In those cases, you can return false from <code>shouldComponentUpdate()</code> to prevent an unnecessary render and improve performance.</p>
+
+    <h4 class="a-subheading">3. render()</h4>
+    <p class="a-p">The render method is called again with the updated props and/or state. It produces the new JSX that reflects the updated state of the component.</p>
+
+    <h4 class="a-subheading">4. getSnapshotBeforeUpdate()</h4>
+    <p class="a-p">This method is called right after render but before the new output is committed to the DOM. It captures some information from the DOM (like the current scroll position) before it is potentially changed by the update. The value returned by this method is passed as the third argument to <code>componentDidUpdate()</code>. This method is useful for cases like preserving the scroll position in a chat window when new messages are added.</p>
+
+    <h4 class="a-subheading">5. componentDidUpdate()</h4>
+    <p class="a-p">This method is called immediately after the component updates and the new output has been rendered to the DOM. It receives the previous props, previous state, and the snapshot value (from <code>getSnapshotBeforeUpdate</code>) as arguments. This is a good place to perform side effects in response to a state or prop change — for example, making an API call when a prop changes, updating the document title, or interacting with the DOM. You can also call <code>this.setState()</code> inside <code>componentDidUpdate()</code>, but you must wrap it in a condition to prevent an infinite loop (because calling setState triggers another update, which calls componentDidUpdate again).</p>
+
+    <h3 class="a-heading">Phase 3: Unmounting</h3>
+    <p class="a-p">The unmounting phase occurs when a component is being removed from the DOM. This happens when the component is no longer needed — for example, when the user navigates to a different page or when a conditional rendering hides the component.</p>
+
+    <h4 class="a-subheading">componentWillUnmount()</h4>
+    <p class="a-p">This is the only lifecycle method in the unmounting phase. It is called immediately before the component is unmounted and destroyed. This is the place to perform cleanup operations — things like: clearing timers (<code>clearInterval</code>, <code>clearTimeout</code>), canceling network requests, removing event listeners, closing WebSocket connections, or invalidating subscriptions. If you do not clean up these resources, they can continue to run in the background even after the component is gone, which causes memory leaks and errors.</p>
+
+    <h3 class="a-heading">Phase 4: Error Handling</h3>
+    <p class="a-p">React also provides lifecycle methods for handling errors that occur during rendering, in lifecycle methods, or in constructors of child components.</p>
+    <ul class="a-ul">
+      <li><strong>static getDerivedStateFromError(error):</strong> Called when a child component throws an error. It receives the error as a parameter and returns a value to update the state, typically to show a fallback UI.</li>
+      <li><strong>componentDidCatch(error, info):</strong> Called after an error has been thrown by a child component. It receives the error and an info object containing the component stack trace. This is the place to log the error to an error reporting service.</li>
+    </ul>
+
+    <h3 class="a-heading">Lifecycle Methods Summary Diagram</h3>
+    <div class="code-block">
+      <div class="code-label"><span class="lang">Lifecycle Order</span></div>
+      <pre><code><span class="cm">// MOUNTING ORDER:</span>
+constructor()
+  → getDerivedStateFromProps()
+    → render()
+      → componentDidMount()
+
+<span class="cm">// UPDATING ORDER:</span>
+getDerivedStateFromProps()
+  → shouldComponentUpdate()
+    → render()
+      → getSnapshotBeforeUpdate()
+        → componentDidUpdate()
+
+<span class="cm">// UNMOUNTING:</span>
+componentWillUnmount()
+
+<span class="cm">// ERROR HANDLING:</span>
+getDerivedStateFromError()
+  → componentDidCatch()</code></pre>
+    </div>
+
+  </div>
+</article>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 12                                                    -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q12">
+  <div class="q-header">
+    <div class="q-number">Question 12</div>
+    <div class="q-text">How does Axios differ from fetch() for making API requests?</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">Axios vs fetch()</h3>
+    <p class="a-p">Both Axios and the built-in <code>fetch()</code> function are used to make HTTP requests from the browser (and also from Node.js in the case of Axios). They serve the same fundamental purpose — sending requests to a server and receiving responses — but they differ in several important ways regarding syntax, features, error handling, and developer experience. Let us explore these differences in detail.</p>
+
+    <h3 class="a-heading">1. Error Handling</h3>
+    <p class="a-p">This is one of the most significant differences between the two. The <code>fetch()</code> function only rejects a Promise when a <strong>network error</strong> occurs — for example, when the request cannot reach the server at all (no internet connection, DNS failure, CORS block). However, <code>fetch()</code> does <strong>not</strong> reject the Promise when the server responds with an HTTP error status code like 404 (Not Found), 500 (Internal Server Error), or 403 (Forbidden). In these cases, the Promise still resolves, and you have to manually check the <code>response.ok</code> property or the <code>response.status</code> code to determine if the request was actually successful.</p>
+    <p class="a-p">Axios, on the other hand, <strong>automatically rejects</strong> the Promise when the HTTP status code falls outside the range of 2xx. This means that 404, 500, and other error responses are treated as errors and are caught in the <code>.catch()</code> block, which is much more intuitive and matches how most developers expect error handling to work. This automatic error handling makes Axios code cleaner and less error-prone.</p>
+
+    <div class="code-block">
+      <div class="code-label"><span class="lang">JavaScript — Error Handling Comparison</span></div>
+      <pre><code><span class="cm">// fetch() - 404 does NOT reject the promise</span>
+<span class="fn">fetch</span>(<span class="str">'/api/users/999'</span>)
+  .then(response =&gt; {
+    <span class="cm">// Must manually check for errors</span>
+    <span class="kw">if</span> (!response.ok) {
+      <span class="kw">throw new</span> Error(<span class="str">`HTTP error! Status: ${response.status}`</span>);
+    }
+    <span class="kw">return</span> response.json();
+  })
+  .catch(err =&gt; console.error(err));
+
+<span class="cm">// Axios - 404 automatically rejects the promise</span>
+axios.get(<span class="str">'/api/users/999'</span>)
+  .then(response =&gt; console.log(response.data))
+  .catch(err =&gt; {
+    <span class="cm">// Automatically catches HTTP errors</span>
+    console.error(err.response.status);
+  });</code></pre>
+    </div>
+
+    <h3 class="a-heading">2. Automatic JSON Parsing</h3>
+    <p class="a-p">When you use <code>fetch()</code>, you receive a Response object, and you must call <code>response.json()</code> (which returns a Promise) to parse the response body as JSON. This extra step is necessary because <code>fetch()</code> does not assume the response is JSON — it could be text, a blob, or any other format. With Axios, the response body is <strong>automatically parsed as JSON</strong> when the Content-Type header indicates JSON. The parsed data is available directly as <code>response.data</code>, without needing an extra parsing step. This makes Axios code shorter and more convenient.</p>
+
+    <h3 class="a-heading">3. Request and Response Interceptors</h3>
+    <p class="a-p">Axios provides a powerful feature called <strong>interceptors</strong>, which allow you to run your code before a request is sent or before a response is handled. This is incredibly useful for tasks like adding authentication tokens to every request header, logging requests and responses, transforming data, or handling errors globally. The native <code>fetch()</code> API does not have built-in interceptor support. To achieve similar functionality with <code>fetch()</code>, you would need to write a custom wrapper function around <code>fetch()</code>, which adds extra complexity.</p>
+
+    <h3 class="a-heading">4. Request Timeout</h3>
+    <p class="a-p">Axios has a built-in <code>timeout</code> option that allows you to specify a maximum time (in milliseconds) that a request can take before it is automatically cancelled. This is very simple to use — you just add <code>timeout: 5000</code> to your Axios config, and the request will be aborted after 5 seconds if the server has not responded. With <code>fetch()</code>, there is no built-in timeout option. To implement a timeout, you need to use <code>AbortController</code> and manually set a <code>setTimeout</code> that calls <code>controller.abort()</code>, which is more code and more error-prone.</p>
+
+    <h3 class="a-heading">5. Request Cancellation</h3>
+    <p class="a-p">Both Axios and <code>fetch()</code> support request cancellation, but the API differs. Modern <code>fetch()</code> uses <code>AbortController</code> for cancellation. Axios also supports <code>AbortController</code> (since version 0.22.0) and previously used its own <code>CancelToken</code> mechanism. Axios's implementation is slightly more convenient because you can pass the cancellation signal directly in the config object.</p>
+
+    <h3 class="a-heading">6. Automatic Data Transformation</h3>
+    <p class="a-p">Axios automatically transforms request data to JSON when you send an object as the request body (you just pass the object and Axios stringifies it). With <code>fetch()</code>, you must manually call <code>JSON.stringify()</code> on your data and set the <code>Content-Type</code> header to <code>application/json</code>. This is another area where Axios saves you from writing boilerplate code.</p>
+
+    <h3 class="a-heading">7. XSRF/CSRF Protection</h3>
+    <p class="a-p">Axios has built-in support for Cross-Site Request Forgery (XSRF/CSRF) protection. You can configure Axios to automatically include a CSRF token in request headers, which is important for securing web applications. The <code>fetch()</code> API does not have built-in CSRF support — you would need to manually read the CSRF token from a cookie or meta tag and add it to your request headers.</p>
+
+    <h3 class="a-heading">8. Browser and Node.js Support</h3>
+    <p class="a-p">Axios works in both the browser and Node.js with the same API. In the browser, it uses XMLHttpRequests internally, and in Node.js, it uses the built-in <code>http</code> module. The <code>fetch()</code> API is built into modern browsers, but it was not available in Node.js until Node.js version 18 (when it was added experimentally). For older Node.js versions, you would need to install a polyfill like <code>node-fetch</code>.</p>
+
+    <h3 class="a-heading">Comparison Table</h3>
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Feature</th>
+          <th>fetch()</th>
+          <th>Axios</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Built-in</strong></td>
+          <td>Yes (no installation needed)</td>
+          <td>No (needs npm install)</td>
+        </tr>
+        <tr>
+          <td><strong>Error handling</strong></td>
+          <td>Only rejects on network errors; HTTP errors resolve normally</td>
+          <td>Rejects on HTTP errors (status outside 2xx) automatically</td>
+        </tr>
+        <tr>
+          <td><strong>JSON parsing</strong></td>
+          <td>Manual: must call response.json()</td>
+          <td>Automatic: response.data is already parsed</td>
+        </tr>
+        <tr>
+          <td><strong>Request body</strong></td>
+          <td>Must call JSON.stringify() manually</td>
+          <td>Automatically stringifies objects</td>
+        </tr>
+        <tr>
+          <td><strong>Interceptors</strong></td>
+          <td>Not built-in</td>
+          <td>Built-in request and response interceptors</td>
+        </tr>
+        <tr>
+          <td><strong>Timeout</strong></td>
+          <td>Not built-in; requires AbortController + setTimeout</td>
+          <td>Built-in timeout option in config</td>
+        </tr>
+        <tr>
+          <td><strong>CSRF protection</strong></td>
+          <td>Manual implementation</td>
+          <td>Built-in XSRF protection</td>
+        </tr>
+        <tr>
+          <td><strong>Node.js support</strong></td>
+          <td>Only from Node 18+; earlier versions need node-fetch</td>
+          <td>Works in both browser and Node.js natively</td>
+        </tr>
+        <tr>
+          <td><strong>Response schema</strong></td>
+          <td>Raw Response object; data accessed via .json() etc.</td>
+          <td>Wrapped response object with data, status, headers, config</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="note-box">
+      <strong>Summary:</strong> Axios provides a more developer-friendly, feature-rich experience out of the box, especially for error handling, JSON parsing, interceptors, and timeouts. <code>fetch()</code> is the native browser API that requires no installation but needs more manual code for the same tasks. For simple requests, <code>fetch()</code> is perfectly fine. For larger applications with many API calls, Axios can save significant development time and reduce boilerplate.
+    </div>
+
+  </div>
+</article>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 13                                                    -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q13">
+  <div class="q-header">
+    <div class="q-number">Question 13</div>
+    <div class="q-text">Write a React component that renders a form with name and email fields, and logs the data on submission.</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">React Form Component</h3>
+    <p class="a-p">Below is a simple React functional component that renders a form with two input fields — one for name and one for email. When the user fills in the form and clicks the submit button, the component captures the entered data and logs it to the console. This example uses the <code>useState</code> hook to manage the form input values (controlled components pattern), which is the recommended approach in React.</p>
+
+    <div class="code-block">
+      <div class="code-label"><span class="lang">JavaScript — React Component</span></div>
+      <pre><code><span class="kw">import</span> React, { useState } <span class="kw">from</span> <span class="str">'react'</span>;
+
+<span class="kw">function</span> <span class="fn">UserForm</span>() {
+  <span class="cm">// Step 1: Create state variables for each field</span>
+  <span class="kw">const</span> [name, setName] = useState(<span class="str">''</span>);
+  <span class="kw">const</span> [email, setEmail] = useState(<span class="str">''</span>);
+
+  <span class="cm">// Step 2: Handle form submission</span>
+  <span class="kw">const</span> <span class="fn">handleSubmit</span> = (e) =&gt; {
+    <span class="cm">// Prevent the default form submission (page reload)</span>
+    e.preventDefault();
+
+    <span class="cm">// Log the form data to the console</span>
+    console.log(<span class="str">'Form Submitted!'</span>);
+    console.log(<span class="str">'Name:'</span>, name);
+    console.log(<span class="str">'Email:'</span>, email);
+
+    <span class="cm">// Optional: Clear the form after submission</span>
+    setName(<span class="str">''</span>);
+    setEmail(<span class="str">''</span>);
+  };
+
+  <span class="cm">// Step 3: Render the form with controlled inputs</span>
+  <span class="kw">return</span> (
+    &lt;div&gt;
+      &lt;h2&gt;User Form&lt;/h2&gt;
+      &lt;form onSubmit={handleSubmit}&gt;
+
+        <span class="cm">{/* Name input field */}</span>
+        &lt;div&gt;
+          &lt;label&gt;Name: &lt;/label&gt;
+          &lt;input
+            type=<span class="str">"text"</span>
+            value={name}
+            onChange={(e) =&gt; setName(e.target.value)}
+            placeholder=<span class="str">"Enter your name"</span>
+          /&gt;
+        &lt;/div&gt;
+
+        <span class="cm">{/* Email input field */}</span>
+        &lt;div&gt;
+          &lt;label&gt;Email: &lt;/label&gt;
+          &lt;input
+            type=<span class="str">"email"</span>
+            value={email}
+            onChange={(e) =&gt; setEmail(e.target.value)}
+            placeholder=<span class="str">"Enter your email"</span>
+          /&gt;
+        &lt;/div&gt;
+
+        <span class="cm">{/* Submit button */}</span>
+        &lt;button type=<span class="str">"submit"</span>&gt;Submit&lt;/button&gt;
+
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}
+
+<span class="kw">export default</span> UserForm;</code></pre>
+    </div>
+
+    <h3 class="a-heading">Explanation</h3>
+    <ul class="a-ul">
+      <li><strong>useState hook:</strong> We create two state variables — <code>name</code> and <code>email</code> — each with their own setter function. These state variables hold the current values of the input fields. When the user types in a field, the <code>onChange</code> event handler updates the corresponding state variable, and React re-renders the component with the new value. This pattern is called <span class="highlight">controlled components</span> because React controls the value of each input through state.</li>
+      <li><strong>e.preventDefault():</strong> This is crucial. By default, when an HTML form is submitted, the browser sends the data to the server and reloads the page. In a React single-page application, we do not want the page to reload. Calling <code>e.preventDefault()</code> stops this default behavior and lets us handle the form submission entirely in JavaScript.</li>
+      <li><strong>handleSubmit function:</strong> This function runs when the form is submitted. It logs the name and email values to the console, then optionally clears the form fields by resetting the state to empty strings.</li>
+      <li><strong>value and onChange:</strong> The <code>value</code> attribute on each input is set to the corresponding state variable, and the <code>onChange</code> handler updates the state on every keystroke. This two-way binding ensures the input always shows the current state value and the state always reflects what the user has typed.</li>
+    </ul>
+
+    <h3 class="a-heading">Sample Output (Console)</h3>
+    <div class="output-box">
+      <div class="output-label">Console Output when user enters "Rahul" and "rahul@example.com":</div>
+      Form Submitted!<br>
+      Name: Rahul<br>
+      Email: rahul@example.com
+    </div>
+
+  </div>
+</article>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 14                                                    -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q14">
+  <div class="q-header">
+    <div class="q-number">Question 14</div>
+    <div class="q-text">What is the Virtual DOM and how does it improve performance?</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">What is the Virtual DOM?</h3>
+    <p class="a-p">The Virtual DOM (VDOM) is one of the most important concepts in React. It is a lightweight, in-memory representation of the actual browser DOM (Document Object Model). Think of it as a copy or a blueprint of the real DOM that React keeps in JavaScript memory. When you create React components and write JSX, React does not directly create or modify real DOM elements. Instead, it creates virtual DOM nodes — plain JavaScript objects that describe what the real DOM should look like.</p>
+    <p class="a-p">To understand why the Virtual DOM exists, you need to understand the problem it solves. The real browser DOM is slow. Every time you modify the DOM — adding an element, changing text, updating a style — the browser has to recalculate the layout (reflow), repaint the screen, and potentially recalculate the styles for many other elements. These operations are expensive in terms of performance. In traditional JavaScript applications, developers would directly manipulate the DOM, which often led to many small, inefficient updates scattered throughout the code. This could make applications feel sluggish, especially when there were frequent updates (like typing in a form, scrolling through a list, or real-time data updates).</p>
+    <p class="a-p">The Virtual DOM provides an elegant solution to this problem. Instead of updating the real DOM directly every time something changes, React first updates the Virtual DOM. Then, it compares the new Virtual DOM with the previous version to figure out exactly what changed. Finally, it updates only those specific parts of the real DOM that actually changed — nothing more, nothing less. This process of comparing two versions of the Virtual DOM is called <span class="highlight">reconciliation</span> or <span class="highlight">diffing</span>.</p>
+
+    <h3 class="a-heading">How the Virtual DOM Works (Step by Step)</h3>
+    <ol class="a-ol">
+      <li><strong>Initial Render:</strong> When a React application starts, React creates a Virtual DOM tree based on the initial state of all components. It then uses this Virtual DOM to create the actual DOM elements and render them on the screen. At this point, the Virtual DOM and the real DOM are identical.</li>
+      <li><strong>State Change:</strong> When something causes a component's state or props to change (user interaction, API response, timer, etc.), React does not immediately update the real DOM. Instead, it creates a <strong>new</strong> Virtual DOM tree that reflects the updated state.</li>
+      <li><strong>Diffing:</strong> React compares the new Virtual DOM tree with the previous (old) Virtual DOM tree. It walks through both trees node by node and identifies every difference — a changed text content, a new attribute, an added child element, a removed element, or any other change. This comparison algorithm is highly optimized and runs very quickly because it operates on JavaScript objects in memory, not on actual DOM elements.</li>
+      <li><strong>Batching Updates:</strong> React collects all the identified changes and batches them together into a minimal set of real DOM updates. Instead of making one DOM update per change, React applies all the changes at once.</li>
+      <li><strong>Reconciliation / Commit:</strong> React applies only the necessary changes to the real DOM. If only the text inside a <code>&lt;p&gt;</code> tag changed, React updates only that text node. If a new list item was added, React inserts only that new element. The rest of the DOM remains untouched.</li>
+    </ol>
+
+    <h3 class="a-heading">How the Virtual DOM Improves Performance</h3>
+
+    <h4 class="a-subheading">1. Minimizes DOM Manipulations</h4>
+    <p class="a-p">The single most important performance benefit of the Virtual DOM is that it minimizes the number of direct DOM manipulations. Since real DOM operations are the slowest part of any web application, reducing them has a huge impact on performance. Without the Virtual DOM, a developer might update the DOM ten times in response to a single state change, triggering ten reflows and repaints. With the Virtual DOM, React calculates the minimal set of changes and applies them in one batch, resulting in perhaps only one or two DOM updates.</p>
+
+    <h4 class="a-subheading">2. Batching Multiple Updates</h4>
+    <p class="a-p">When multiple state changes happen in quick succession — for example, when a user types rapidly in an input field, or when several API responses arrive at the same time — React does not update the Virtual DOM for each individual change. Instead, it batches these updates together and processes them in a single render cycle. This means the real DOM is updated only once for the combined result of all those changes, rather than being updated separately for each change. Batching dramatically reduces the number of expensive DOM operations and keeps the UI responsive even during rapid state changes.</p>
+
+    <h4 class="a-subheading">3. Efficient Diffing Algorithm</h4>
+    <p class="a-p">React's diffing algorithm is optimized for speed. It uses a set of heuristics (rules of thumb) to make the comparison process fast. For example, it assumes that two elements of different types will produce different trees (so it does not waste time comparing their children), and it uses the <code>key</code> attribute on list items to identify which items have changed, been added, or been removed. This makes the diffing process run in O(n) time (linear time) rather than the O(n³) time that a naive tree comparison algorithm would require. The result is that even for large applications with thousands of components, the diffing process completes in milliseconds.</p>
+
+    <h4 class="a-subheading">4. Avoids Unnecessary Repaints and Reflows</h4>
+    <p class="a-p">By updating only the specific parts of the DOM that actually changed, the Virtual DOM avoids triggering unnecessary repaints (visual updates) and reflows (layout recalculations) for parts of the page that have not changed. In a traditional approach, modifying even a small part of the DOM can sometimes cause the browser to recalculate the layout for large sections of the page, because the browser does not know exactly what was affected. The Virtual DOM's surgical precision in updating only what changed minimizes this collateral damage.</p>
+
+    <h4 class="a-subheading">5. Declarative Abstraction</h4>
+    <p class="a-p">The Virtual DOM also improves developer productivity, which indirectly improves performance. Because developers write declarative code (describing <em>what</em> the UI should look like for a given state) rather than imperative code (manually <em>how</em> to update the DOM), they do not have to worry about optimizing individual DOM operations. The Virtual DOM handles the optimization automatically. This means developers can focus on building features rather than micro-optimizing DOM updates, and the application still performs well.</p>
+
+    <h3 class="a-heading">Simple Analogy</h3>
+    <p class="a-p">Imagine you are editing a document. Without the Virtual DOM, every time you type a single character, the entire document is reprinted from scratch. With the Virtual DOM, you make all your edits on a rough draft first, then compare the rough draft with the final copy, and only reprint the pages that actually changed. This is obviously much more efficient.</p>
+
+    <div class="note-box">
+      <strong>Important Note:</strong> The Virtual DOM is not necessarily faster than highly optimized manual DOM manipulation in every single case. A skilled developer who carefully minimizes DOM updates can sometimes outperform the Virtual DOM for very specific scenarios. However, the Virtual DOM provides excellent performance for the vast majority of applications while being much easier and more maintainable to work with. It gives you good performance "for free" without requiring you to manually optimize every DOM operation.
+    </div>
+
+  </div>
+</article>
+
+<!-- ════════════════════════════════════════════════════════════════ -->
+<!-- QUESTION 15                                                    -->
+<!-- ════════════════════════════════════════════════════════════════ -->
+<article class="q-card" id="q15">
+  <div class="q-header">
+    <div class="q-number">Question 15</div>
+    <div class="q-text">Compare MongoDB with MySQL in terms of data storage, performance, and scalability.</div>
+  </div>
+  <div class="q-body">
+
+    <h3 class="a-heading">MongoDB vs MySQL: A Detailed Comparison</h3>
+    <p class="a-p">MongoDB and MySQL are two of the most widely used database systems in the world, but they belong to fundamentally different categories of databases. MySQL is a <span class="highlight">relational database management system (RDBMS)</span> that has been around since 1995 and uses a structured, table-based approach to storing data. MongoDB is a <span class="highlight">NoSQL document database</span> that was first released in 2009 and uses a flexible, document-based approach. Understanding the differences between these two databases is crucial for choosing the right one for your project.</p>
+
+    <h3 class="a-heading">1. Data Storage</h3>
+
+    <h4 class="a-subheading">MySQL — Tables, Rows, and Columns</h4>
+    <p class="a-p">MySQL stores data in a structured format using <strong>tables</strong>. Each table has a fixed schema — a predefined set of columns with specific data types (integer, varchar, date, etc.). Data is stored in <strong>rows</strong>, where each row represents a single record, and each column represents a specific attribute of that record. For example, a "users" table might have columns for id, name, email, and created_at, and every row in that table must have values (or NULL) for each of these columns.</p>
+    <p class="a-p">Relationships between tables are established using <strong>foreign keys</strong>, and data is typically normalized to reduce redundancy. This means that instead of storing all related data in one table, you split it across multiple tables and join them when needed. For example, user data might be in one table, orders in another, and order items in a third table, linked by foreign key relationships.</p>
+
+    <h4 class="a-subheading">MongoDB — Documents and Collections</h4>
+    <p class="a-p">MongoDB stores data as <strong>documents</strong> in <strong>collections</strong>. A document is a JSON-like data structure (stored in a format called BSON — Binary JSON) that consists of field-value pairs. Documents can contain nested objects, arrays, and other complex data types. A collection is a group of related documents — similar to a table in MySQL, but without a fixed schema.</p>
+    <p class="a-p">The key difference is <span class="highlight">schema flexibility</span>. In MongoDB, each document in a collection can have a completely different structure. One document might have fields for name, email, and phone, while another document in the same collection might have name, email, address, and a list of hobbies. There is no need to define a schema beforehand or to run "ALTER TABLE" commands when the data structure changes. This flexibility makes MongoDB ideal for projects where the data model evolves rapidly or where different records have different attributes.</p>
+
+    <div class="code-block">
+      <div class="code-label"><span class="lang">Data Storage Comparison</span></div>
+      <pre><code><span class="cm">// MySQL — Fixed table structure (rows and columns)</span>
+<span class="kw">Table</span>: users
++----+-------+-------------------+------------+
+| id | name  | email             | created_at |
++----+-------+-------------------+------------+
+|  1 | Rahul | rahul@example.com | 2024-01-15 |
+|  2 | Priya | priya@example.com | 2024-02-20 |
++----+-------+-------------------+------------+
+<span class="cm">// Every row MUST have the same columns</span>
+
+<span class="cm">// MongoDB — Flexible document structure</span>
+<span class="fn">Collection</span>: users
+{ <span class="str">"name"</span>: <span class="str">"Rahul"</span>, <span class="str">"email"</span>: <span class="str">"rahul@example.com"</span>,
+  <span class="str">"hobbies"</span>: [<span class="str">"reading"</span>, <span class="str">"coding"</span>] }
+
+{ <span class="str">"name"</span>: <span class="str">"Priya"</span>, <span class="str">"email"</span>: <span class="str">"priya@example.com"</span>,
+  <span class="str">"address"</span>: { <span class="str">"city"</span>: <span class="str">"Delhi"</span>, <span class="str">"zip"</span>: <span class="str">"110001"</span> } }
+<span class="cm">// Each document can have DIFFERENT fields</span></code></pre>
+    </div>
+
+    <h3 class="a-heading">2. Performance</h3>
+
+    <h4 class="a-subheading">MySQL Performance</h4>
+    <p class="a-p">MySQL is highly optimized for <strong>read-heavy workloads</strong> where the data structure is well-defined and queries are predictable. It uses powerful indexing mechanisms (B-tree indexes, full-text indexes, etc.) and a sophisticated query optimizer that can efficiently execute complex JOIN operations across multiple tables. For transactional applications that require ACID (Atomicity, Consistency, Isolation, Durability) compliance — like banking systems, inventory management, or e-commerce order processing — MySQL provides excellent performance and data integrity guarantees.</p>
+    <p class="a-p">However, MySQL's performance can degrade when dealing with large volumes of unstructured or semi-structured data, or when the schema needs to change frequently. ALTER TABLE operations on large tables can lock the table and take a long time. Complex JOINs across many large tables can also be slow, especially if the indexes are not properly configured.</p>
+
+    <h4 class="a-subheading">MongoDB Performance</h4>
+    <p class="a-p">MongoDB excels in scenarios involving <strong>write-heavy workloads</strong>, large volumes of data, and rapidly changing data structures. Because documents can contain all related data in a single document (embedding), MongoDB often eliminates the need for JOIN operations entirely. Instead of joining three tables to get a user's profile and their orders, you can store the user's profile and their recent orders in a single document and retrieve everything with one query. This can result in significantly faster read performance for certain access patterns.</p>
+    <p class="a-p">MongoDB also supports flexible indexing, including indexes on nested fields and arrays, geospatial indexes, and text indexes. It includes an aggregation pipeline for complex data transformations that can replace many use-cases that would require SQL queries with JOINs and subqueries. MongoDB also supports in-memory storage for even faster access when needed.</p>
+    <p class="a-p">However, MongoDB is not ideal for applications that require complex multi-document transactions with strong consistency guarantees. While MongoDB has added multi-document ACID transactions (since version 4.0), they come with a performance overhead and are not as mature or as performant as MySQL's transaction handling for complex relational data.</p>
+
+    <h3 class="a-heading">3. Scalability</h3>
+
+    <h4 class="a-subheading">MySQL — Vertical Scaling</h4>
+    <p class="a-p">MySQL traditionally scales <strong>vertically</strong> (scaling up), which means you improve performance by upgrading the server's hardware — adding more CPU, more RAM, or faster storage. This approach has natural limits because there is only so much you can upgrade a single machine. MySQL also supports <strong>horizontal scaling</strong> (scaling out) through replication and sharding, but this is more complex. Read scaling can be achieved by setting up read replicas — additional servers that hold copies of the data and handle read queries while the primary server handles writes. However, write scaling is much harder because all writes must go to the primary server. MySQL's native sharding support is limited, and implementing sharding at the application level is complex and error-prone.</p>
+
+    <h4 class="a-subheading">MongoDB — Horizontal Scaling</h4>
+    <p class="a-p">MongoDB was designed from the ground up for <strong>horizontal scaling</strong> (scaling out). It has built-in support for <span class="highlight">sharding</span>, which distributes data across multiple servers (called shards) automatically. MongoDB handles the data partitioning, balancing, and routing transparently — your application connects to a MongoDB router (mongos), which automatically forwards queries to the correct shard. This means you can scale your database capacity simply by adding more servers to the cluster, without changing your application code.</p>
+    <p class="a-p">MongoDB also supports <strong>replica sets</strong> — groups of servers that maintain the same data set for high availability and read scaling. One member is the primary (handling writes), and the others are secondaries (handling reads and serving as backups). If the primary fails, one of the secondaries is automatically elected as the new primary, providing automatic failover.</p>
+    <p class="a-p">This built-in horizontal scaling capability makes MongoDB much easier to scale for applications that need to handle massive amounts of data or very high traffic loads. You do not need to implement complex sharding logic at the application level — MongoDB handles it for you.</p>
+
+    <h3 class="a-heading">Comprehensive Comparison Table</h3>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Aspect</th>
+          <th>MySQL</th>
+          <th>MongoDB</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Database Type</strong></td>
+          <td>Relational Database (RDBMS)</td>
+          <td>NoSQL Document Database</td>
+        </tr>
+        <tr>
+          <td><strong>Data Storage Format</strong></td>
+          <td>Tables with rows and columns</td>
+          <td>Collections with BSON documents</td>
+        </tr>
+        <tr>
+          <td><strong>Schema</strong></td>
+          <td>Rigid, predefined schema. Changes require ALTER TABLE commands.</td>
+          <td>Flexible, schema-less. Each document can have different fields.</td>
+        </tr>
+        <tr>
+          <td><strong>Relationships</strong></td>
+          <td>Foreign keys, JOINs, normalization</td>
+          <td>Embedding documents, referencing, $lookup (limited JOIN)</td>
+        </tr>
+        <tr>
+          <td><strong>Query Language</strong></td>
+          <td>SQL (Structured Query Language) — standardized and widely known</td>
+          <td>MongoDB Query Language (MQL) — JSON-based, less standardized</td>
+        </tr>
+        <tr>
+          <td><strong>ACID Transactions</strong></td>
+          <td>Full ACID support, mature and robust</td>
+          <td>ACID support added in v4.0, but with performance overhead for multi-document transactions</td>
+        </tr>
+        <tr>
+          <td><strong>Performance (Read)</strong></td>
+          <td>Excellent for complex queries with JOINs and indexed searches</td>
+          <td>Excellent for single-document reads and embedded data; weaker for complex relational queries</td>
+        </tr>
+        <tr>
+          <td><strong>Performance (Write)</strong></td>
+          <td>Good, but can slow down with heavy writes and index maintenance</td>
+          <td>Excellent for high-volume writes, especially with flexible schemas</td>
+        </tr>
+        <tr>
+          <td><strong>Scalability</strong></td>
+          <td>Primarily vertical scaling; horizontal scaling is complex and limited</td>
+          <td>Built-in horizontal scaling with auto-sharding; very easy to scale out</td>
+        </tr>
+        <tr>
+          <td><strong>Best Use Cases</strong></td>
+          <td>Banking, ERP, CRM, e-commerce, applications with complex relationships and strict data integrity</td>
+          <td>Real-time analytics, content management, IoT data, mobile apps, rapid prototyping, big data</td>
+        </tr>
+        <tr>
+          <td><strong>Data Structure</strong></td>
+          <td>Structured data with clear relationships</td>
+          <td>Semi-structured or unstructured data with evolving schemas</td>
+        </tr>
+        <tr>
+          <td><strong>Community &amp; Ecosystem</strong></td>
+          <td>Mature, established since 1995, huge ecosystem of tools</td>
+          <td>Rapidly growing, modern ecosystem, strong cloud support (Atlas)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 class="a-heading">When to Use Which?</h3>
+    <ul class="a-ul">
+      <li><strong>Choose MySQL when:</strong> Your data has clear, stable relationships; you need complex queries with JOINs; data integrity (ACID) is critical; your team is experienced with SQL; the schema is well-defined and unlikely to change frequently; you are building financial, healthcare, or enterprise applications where consistency is paramount.</li>
+      <li><strong>Choose MongoDB when:</strong> Your data structure is evolving or unpredictable; you need to handle large volumes of diverse data; you want built-in horizontal scaling; your application is read/write-heavy with simple access patterns; you are building real-time applications, content management systems, IoT platforms, or mobile backends; you want to iterate quickly and change your data model without downtime.</li>
+      <li><strong>Use both when:</strong> Many modern applications use a polyglot persistence strategy — MySQL for transactional data (orders, payments, user accounts) and MongoDB for analytics, logs, content, or other semi-structured data. This approach gives you the best of both worlds.</li>
+    </ul>
+
+    <div class="note-box">
+      <strong>Key Takeaway:</strong> Neither database is universally "better" than the other. MySQL is the right choice when you need strong consistency, complex relationships, and a mature, proven technology. MongoDB is the right choice when you need flexibility, scalability, and speed of development. The best choice depends entirely on the requirements of your specific project.
+    </div>
+
+  </div>
+</article>
+
+</main>
+
+<!-- ════════════ FOOTER ════════════ -->
+<footer>
+  <div style="margin-bottom: 8px;">&#9670; &#9670; &#9670;</div>
+  PYQ Answers &mdash; Web Application Deployment, CMS &amp; MERN Stack
+</footer>
+
+<!-- ════════════ BACK TO TOP BUTTON ════════════ -->
+<button class="back-top" id="backTop" aria-label="Back to top">&#8593;</button>
+
+<!-- ════════════ JAVASCRIPT ════════════ -->
+<script>
+  // Back-to-top button visibility toggle
+  (function() {
+    var backTopBtn = document.getElementById('backTop');
+
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 400) {
+        backTopBtn.classList.add('visible');
+      } else {
+        backTopBtn.classList.remove('visible');
+      }
+    });
+
+    backTopBtn.addEventListener('click', function() {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    // Smooth scroll for TOC links (fallback for browsers without CSS scroll-behavior)
+    var tocLinks = document.querySelectorAll('.toc a[href^="#"]');
+    tocLinks.forEach(function(link) {
+      link.addEventListener('click', function(e) {
+        var targetId = this.getAttribute('href').slice(1);
+        var targetEl = document.getElementById(targetId);
+        if (targetEl) {
+          e.preventDefault();
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          // Update URL hash without jumping
+          history.pushState(null, '', '#' + targetId);
+        }
+      });
+    });
+
+    // Add subtle entrance animation for cards when they scroll into view
+    if ('IntersectionObserver' in window) {
+      var cards = document.querySelectorAll('.q-card');
+      cards.forEach(function(card) {
+        card.style.opacity = '0';
+        card.style.transform = 'translateY(20px)';
+        card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+      });
+
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+      cards.forEach(function(card) {
+        observer.observe(card);
+      });
+    }
+
+    // Respect reduced motion preference — disable animations
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      var allCards = document.querySelectorAll('.q-card');
+      allCards.forEach(function(card) {
+        card.style.opacity = '1';
+        card.style.transform = 'none';
+        card.style.transition = 'none';
+      });
+    }
+  })();
+</script>
+
+</body>
+</html>

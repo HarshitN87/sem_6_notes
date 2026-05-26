@@ -1,0 +1,2198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PHP PYQ - Complete Answers | Wes Anderson Inspired</title>
+    <style>
+        :root {
+            --bg: #FDF6EC;
+            --card: #FFFCF7;
+            --primary: #C45B4A;
+            --primary-light: #E8776A;
+            --secondary: #E8A87C;
+            --accent-gold: #D4A055;
+            --accent-pink: #D98E9E;
+            --accent-blue: #7FAAC2;
+            --accent-green: #8BAA7E;
+            --accent-mauve: #B08DA6;
+            --text: #2D2926;
+            --text-light: #6B5E54;
+            --text-muted: #9A8E84;
+            --border: #E8DDD0;
+            --border-light: #F0E8DB;
+            --highlight: #FFF3D6;
+            --code-bg: #2B2522;
+            --code-text: #F2E8DA;
+            --shadow: 0 2px 12px rgba(45, 41, 38, 0.06);
+            --shadow-lg: 0 6px 30px rgba(45, 41, 38, 0.1);
+            --radius: 8px;
+            --radius-lg: 14px;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            font-size: 17px;
+        }
+
+        body {
+            font-family: 'Georgia', 'Palatino Linotype', 'Book Antiqua', 'Palatino', serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.75;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 920px;
+            margin: 0 auto;
+            padding: 2rem 1.5rem 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header {
+            text-align: center;
+            padding: 3.5rem 1rem 2.5rem;
+            margin-bottom: 2.5rem;
+            border-bottom: 2px solid var(--border);
+            position: relative;
+        }
+
+        .header::after {
+            content: '✦';
+            display: block;
+            position: absolute;
+            bottom: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg);
+            padding: 0 1rem;
+            color: var(--primary);
+            font-size: 1.2rem;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            font-weight: 400;
+            color: var(--primary);
+            letter-spacing: 0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .header .subtitle {
+            font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+            font-size: 0.95rem;
+            color: var(--text-light);
+            font-weight: 400;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .toc {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem 2.5rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow);
+        }
+
+        .toc h2 {
+            font-size: 1.3rem;
+            font-weight: 400;
+            color: var(--primary);
+            margin-bottom: 1.2rem;
+            text-align: center;
+            letter-spacing: 0.05em;
+        }
+
+        .toc-section-title {
+            font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--accent-gold);
+            margin: 1.2rem 0 0.6rem;
+            font-weight: 700;
+        }
+
+        .toc ol {
+            list-style: none;
+            counter-reset: toc-counter;
+        }
+
+        .toc ol li {
+            counter-increment: toc-counter;
+            margin-bottom: 0.35rem;
+        }
+
+        .toc ol li a {
+            text-decoration: none;
+            color: var(--text-light);
+            font-size: 0.88rem;
+            line-height: 1.55;
+            transition: color 0.2s, padding-left 0.2s;
+            display: block;
+            padding: 0.15rem 0;
+            font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+        }
+
+        .toc ol li a::before {
+            content: counter(toc-counter) ".";
+            display: inline-block;
+            width: 2.2rem;
+            color: var(--accent-pink);
+            font-weight: 700;
+            font-size: 0.82rem;
+        }
+
+        .toc ol li a:hover {
+            color: var(--primary);
+            padding-left: 0.4rem;
+        }
+
+        .section-divider {
+            text-align: center;
+            margin: 3rem 0 2.5rem;
+            position: relative;
+        }
+
+        .section-divider::before,
+        .section-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 30%;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .section-divider::before {
+            left: 0;
+        }
+        .section-divider::after {
+            right: 0;
+        }
+
+        .section-divider h2 {
+            display: inline-block;
+            background: var(--bg);
+            padding: 0 1.5rem;
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: var(--primary);
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 1;
+        }
+
+        .q-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 2rem 2.2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+            transition: box-shadow 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .q-card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .q-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+        }
+
+        .q-card:nth-child(6n+1)::before {
+            background: var(--primary);
+        }
+        .q-card:nth-child(6n+2)::before {
+            background: var(--accent-gold);
+        }
+        .q-card:nth-child(6n+3)::before {
+            background: var(--accent-pink);
+        }
+        .q-card:nth-child(6n+4)::before {
+            background: var(--accent-blue);
+        }
+        .q-card:nth-child(6n+5)::before {
+            background: var(--accent-green);
+        }
+        .q-card:nth-child(6n+6)::before {
+            background: var(--accent-mauve);
+        }
+
+        .q-number {
+            font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+            font-weight: 700;
+        }
+
+        .q-title {
+            font-size: 1.12rem;
+            font-weight: 400;
+            color: var(--text);
+            margin-bottom: 1.5rem;
+            line-height: 1.55;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+
+        .q-title em {
+            font-style: italic;
+            color: var(--primary);
+        }
+
+        .answer-label {
+            font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--accent-gold);
+            font-weight: 700;
+            margin-bottom: 0.8rem;
+            display: block;
+        }
+
+        .answer h3 {
+            font-size: 1.05rem;
+            font-weight: 400;
+            color: var(--primary);
+            margin: 1.5rem 0 0.5rem;
+        }
+
+        .answer h4 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 1.2rem 0 0.4rem;
+        }
+
+        .answer p {
+            margin-bottom: 0.8rem;
+            text-align: justify;
+        }
+
+        .answer ul,
+        .answer ol {
+            margin: 0.5rem 0 1rem 1.5rem;
+        }
+
+        .answer li {
+            margin-bottom: 0.4rem;
+        }
+
+        .answer strong {
+            color: var(--text);
+        }
+
+        .answer table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+        }
+
+        .answer table th,
+        .answer table td {
+            border: 1px solid var(--border);
+            padding: 0.6rem 0.9rem;
+            text-align: left;
+        }
+
+        .answer table th {
+            background: var(--highlight);
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .answer table td {
+            color: var(--text-light);
+        }
+
+        .answer-note {
+            background: var(--highlight);
+            border-left: 3px solid var(--accent-gold);
+            padding: 0.8rem 1rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            border-radius: 0 var(--radius) var(--radius) 0;
+            font-style: italic;
+            color: var(--text-light);
+        }
+
+        .code-label {
+            font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--accent-blue);
+            font-weight: 700;
+            margin: 1.5rem 0 0.5rem;
+            display: block;
+        }
+
+        pre {
+            background: var(--code-bg);
+            color: var(--code-text);
+            padding: 1.2rem 1.5rem;
+            border-radius: var(--radius);
+            overflow-x: auto;
+            font-family: 'Consolas', 'Courier New', 'Lucida Console', monospace;
+            font-size: 0.82rem;
+            line-height: 1.65;
+            margin: 0.5rem 0 1rem;
+            border: 1px solid #3a3430;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        pre .cmt {
+            color: #7a9e7e;
+        }
+        pre .kw {
+            color: #d9a0c8;
+        }
+        pre .fn {
+            color: #e8c87a;
+        }
+        pre .str {
+            color: #a8cfa0;
+        }
+        pre .num {
+            color: #d4a070;
+        }
+        pre .tag {
+            color: #d98e8e;
+        }
+        pre .attr {
+            color: #c8b88a;
+        }
+        pre .val {
+            color: #a8cfa0;
+        }
+
+        .output-label {
+            font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            color: var(--accent-green);
+            font-weight: 700;
+            margin: 1rem 0 0.4rem;
+            display: block;
+        }
+
+        .output-block {
+            background: #F5F0E8;
+            border: 1px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 0.8rem 1.2rem;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin: 0.3rem 0 1rem;
+            line-height: 1.6;
+        }
+
+        .tf-answer {
+            display: inline-block;
+            font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            padding: 0.3rem 1.2rem;
+            border-radius: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .tf-false {
+            background: #FDEAEA;
+            color: #B33A3A;
+            border: 1px solid #E8B4B4;
+        }
+
+        .tf-true {
+            background: #EAF5EA;
+            color: #3A7A3A;
+            border: 1px solid #B4D8B4;
+        }
+
+        .back-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 44px;
+            height: 44px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: var(--shadow-lg);
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .back-top.visible {
+            opacity: 1;
+        }
+        .back-top:hover {
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            html {
+                font-size: 15px;
+            }
+            .container {
+                padding: 1rem 0.8rem 3rem;
+            }
+            .header {
+                padding: 2rem 0.5rem 1.8rem;
+            }
+            .header h1 {
+                font-size: 1.6rem;
+            }
+            .toc {
+                padding: 1.5rem 1.2rem;
+            }
+            .q-card {
+                padding: 1.5rem 1.2rem;
+            }
+            pre {
+                padding: 1rem;
+                font-size: 0.76rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header h1 {
+                font-size: 1.35rem;
+            }
+            .q-title {
+                font-size: 1rem;
+            }
+            pre {
+                font-size: 0.72rem;
+            }
+        }
+
+        @media print {
+            body::before {
+                display: none;
+            }
+            .back-top {
+                display: none;
+            }
+            .q-card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ccc;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+
+        <!-- HEADER -->
+        <header class="header">
+            <h1>PHP Previous Year Questions</h1>
+            <p class="subtitle">Complete Answers &mdash; Theory, Code &amp; Explanations</p>
+        </header>
+
+        <!-- TABLE OF CONTENTS -->
+        <nav class="toc" id="toc">
+            <h2>Table of Contents</h2>
+
+            <p class="toc-section-title">Section A &mdash; PHP Fundamentals</p>
+            <ol>
+                <li><a href="#q1">What is PHP? Advantages, Disadvantages &amp; Popularity</a></li>
+                <li><a href="#q2">PHP server scripts are surrounded by delimiters (Fill in the blank)</a></li>
+                <li><a href="#q3">Difference between $message and $$message</a></li>
+                <li><a href="#q4">Use of header() function &amp; Magic Constants</a></li>
+                <li><a href="#q5">Global and Static Scope of a Variable</a></li>
+                <li><a href="#q6">Error Handling in PHP</a></li>
+            </ol>
+
+            <p class="toc-section-title">Section B &mdash; Arrays &amp; Strings</p>
+            <ol start="7">
+                <li><a href="#q7">Associative Array vs Indexed Array &amp; Sorting</a></li>
+                <li><a href="#q8">Associative Arrays with $_GET and $_POST</a></li>
+                <li><a href="#q9">Sorting Methods of Associative Arrays (by keys)</a></li>
+                <li><a href="#q10">Array and String in PHP &mdash; Combine Names</a></li>
+                <li><a href="#q11">PHP Array Sort Functions &mdash; Descending by Key</a></li>
+                <li><a href="#q12">Sum of Array Numbers (Function)</a></li>
+                <li><a href="#q13">Associative Array &mdash; Student Names &amp; Grades</a></li>
+                <li><a href="#q14">Indexed, Associative &amp; Multidimensional Arrays</a></li>
+                <li><a href="#q15">explode(), split(), implode(), compact(), extract()</a></li>
+                <li><a href="#q16">gettype(), settype(), isset(), unset()</a></li>
+            </ol>
+
+            <p class="toc-section-title">Section C &mdash; File Handling &amp; Includes</p>
+            <ol start="17">
+                <li><a href="#q17">File Handling &mdash; Open, Read, Write Syntax</a></li>
+                <li><a href="#q18">Steps for Reading/Writing Files &mdash; log.txt</a></li>
+                <li><a href="#q19">Insert Text into File &amp; Read Back</a></li>
+                <li><a href="#q20">Read Char by Char &mdash; Consonants &amp; Vowels</a></li>
+                <li><a href="#q21">Upload File &mdash; Client &amp; Server Side (Image)</a></li>
+                <li><a href="#q22">Secure File Upload &amp; $_FILES Superglobal</a></li>
+                <li><a href="#q23">include vs require &amp; require_once()</a></li>
+            </ol>
+
+            <p class="toc-section-title">Section D &mdash; Cookies, Sessions &amp; Forms</p>
+            <ol start="24">
+                <li><a href="#q24">Cookies and Sessions &mdash; Program &amp; Differences</a></li>
+                <li><a href="#q25">Sessions vs Cookies &mdash; Storage, Security, Use-Cases</a></li>
+                <li><a href="#q26">Concept of Sessions &mdash; Maintenance &amp; Access</a></li>
+                <li><a href="#q27">Login Page with Remember Me</a></li>
+                <li><a href="#q28">Store Date-Time in COOKIE &mdash; Last Visited</a></li>
+                <li><a href="#q29">$_GET, $_POST, $_REQUEST &mdash; GET vs POST</a></li>
+                <li><a href="#q30">True/False: $_GLOBALS is a Super Global Variable</a></li>
+            </ol>
+
+            <p class="toc-section-title">Section E &mdash; Database (MySQLi)</p>
+            <ol start="31">
+                <li><a href="#q31">MySQL Connection &amp; Database Creation</a></li>
+                <li><a href="#q32">Connection with mysqli &mdash; Insert, Update, Delete</a></li>
+                <li><a href="#q33">Check if Table is Empty &amp; Print Rows</a></li>
+                <li><a href="#q34">Create Student Table &amp; Insert 5 Records</a></li>
+                <li><a href="#q35">Student Database &mdash; 5 Basic Queries</a></li>
+                <li><a href="#q36">Username-Password Check &amp; Welcome/Redirect</a></li>
+                <li><a href="#q37">Login Form &mdash; Student Records &amp; CRUD</a></li>
+                <li><a href="#q38">Retrieve Data from MySQL Result Set</a></li>
+                <li><a href="#q39">Registration Form &mdash; Upload &amp; Display</a></li>
+                <li><a href="#q40">XSS &mdash; Types &amp; Prevention</a></li>
+            </ol>
+
+            <p class="toc-section-title">Section F &mdash; Form Handling &amp; Validation</p>
+            <ol start="41">
+                <li><a href="#q41">Form with Server-Side Validation &amp; Insert</a></li>
+                <li><a href="#q42">HTML Form with JS Validation &amp; PHP DB Save</a></li>
+            </ol>
+        </nav>
+
+        <!-- ==================== SECTION A: PHP FUNDAMENTALS ==================== -->
+        <div class="section-divider"><h2>Section A &mdash; PHP Fundamentals</h2></div>
+
+        <!-- Q1 -->
+        <article class="q-card" id="q1">
+            <div class="q-number">Question 1</div>
+            <div class="q-title">What is PHP and explain the advantages and disadvantages of PHP. Mention 5 reasons why PHP is so popular. What does PHP stand for?</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <h3>What is PHP?</h3>
+                <p>PHP stands for <strong>Hypertext Preprocessor</strong>. It was originally created by Rasmus Lerdorf in 1994 and stood for "Personal Home Page." PHP is a widely-used, open-source, server-side scripting language designed specifically for web development. It can be embedded directly into HTML code, making it incredibly convenient for building dynamic web pages. When a user requests a PHP page, the server processes the PHP code, executes any logic, interacts with databases if needed, and then sends pure HTML back to the browser. The user never sees the PHP code itself—only the output. This makes PHP both powerful and secure for web applications. PHP runs on almost all web servers (like Apache, Nginx) and operating systems (Windows, Linux, macOS), which contributes greatly to its popularity. It also supports a vast range of databases including MySQL, PostgreSQL, and SQLite.</p>
+
+                <h3>Advantages of PHP</h3>
+                <ul>
+                    <li><strong>Free and Open Source:</strong> PHP is completely free to download and use. There are no licensing fees, which makes it accessible to students, freelancers, and large enterprises alike.</li>
+                    <li><strong>Cross-Platform Compatibility:</strong> PHP runs on all major operating systems—Windows, Linux, macOS—and works with most web servers like Apache and Nginx.</li>
+                    <li><strong>Easy to Learn:</strong> PHP has a gentle learning curve. Its syntax is similar to C and Java, but simpler. Beginners can quickly start building functional websites.</li>
+                    <li><strong>Large Community Support:</strong> Being one of the most used server-side languages, PHP has an enormous community. Countless tutorials, forums, and documentation are available.</li>
+                    <li><strong>Database Flexibility:</strong> PHP connects easily with many databases, especially MySQL. This makes it the backbone of popular CMS platforms like WordPress, Drupal, and Joomla.</li>
+                    <li><strong>Fast Development:</strong> PHP allows rapid prototyping and development. You can see results immediately by refreshing the browser.</li>
+                </ul>
+
+                <h3>Disadvantages of PHP</h3>
+                <ul>
+                    <li><strong>Security Concerns:</strong> Because PHP is forgiving and flexible, beginners often write insecure code vulnerable to SQL injection, XSS, and other attacks if not careful.</li>
+                    <li><strong>Inconsistent Naming Conventions:</strong> PHP's built-in functions sometimes have inconsistent naming patterns (e.g., <code>strpos()</code> vs <code>str_replace()</code>), which can confuse learners.</li>
+                    <li><strong>Not Ideal for Very Large Applications:</strong> While PHP can handle large applications, languages like Java or Node.js are sometimes preferred for massive enterprise-level systems due to stricter architecture.</li>
+                    <li><strong>Weak Typing:</strong> PHP is loosely typed, meaning variables can change types unexpectedly, sometimes leading to bugs that are hard to trace.</li>
+                </ul>
+
+                <h3>5 Reasons Why PHP is So Popular</h3>
+                <ol>
+                    <li><strong>Powers WordPress:</strong> Over 40% of all websites run on WordPress, which is built entirely on PHP. This alone ensures PHP's dominance.</li>
+                    <li><strong>Low Hosting Costs:</strong> Almost every shared hosting provider supports PHP by default, making it the cheapest option for deploying websites.</li>
+                    <li><strong>Rich Built-in Functions:</strong> PHP comes with thousands of built-in functions for file handling, string manipulation, arrays, and more, reducing development time.</li>
+                    <li><strong>Great Documentation:</strong> The official PHP manual (php.net) is one of the best-documented resources, with user-contributed examples for almost every function.</li>
+                    <li><strong>Continuous Improvement:</strong> PHP has evolved significantly. Modern versions (PHP 8+) offer huge performance improvements, JIT compilation, and better syntax.</li>
+                </ol>
+                <p><strong>PHP stands for:</strong> Hypertext Preprocessor (a recursive acronym).</p>
+            </div>
+        </article>
+
+        <!-- Q2 -->
+        <article class="q-card" id="q2">
+            <div class="q-number">Question 2</div>
+            <div class="q-title">PHP server scripts are surrounded by delimiters. (Fill in the blank)</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <p>PHP server scripts are surrounded by <strong>&lt;?php</strong> and <strong>?&gt;</strong> delimiters. These are called PHP opening and closing tags. The opening tag <code>&lt;?php</code> tells the server to start interpreting PHP code, and the closing tag <code>?&gt;</code> tells the server to stop. Everything between these tags is processed as PHP. There is also a short echo tag <code>&lt;?=</code> which is equivalent to <code>&lt;?php echo</code> and is commonly used for quick output. In pure PHP files (files containing only PHP code with no HTML mixed in), it is actually recommended to omit the closing <code>?&gt;</code> tag to prevent accidental whitespace from being sent to the browser, which could cause "headers already sent" errors.</p>
+                <div class="answer-note">The blank is filled with: <strong>&lt;?php ... ?&gt;</strong> — these are the standard PHP delimiters that surround PHP server scripts.</div>
+            </div>
+        </article>
+
+        <!-- Q3 -->
+        <article class="q-card" id="q3">
+            <div class="q-number">Question 3</div>
+            <div class="q-title">What is the difference between $message and $$message?</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <p><strong>$message</strong> is a regular variable in PHP. It holds a single value such as a string, number, or array. You assign a value to it directly, like <code>$message = "Hello";</code>, and you can access that value anytime by referring to <code>$message</code>. This is the standard way of storing data in PHP and is used in almost every script. The dollar sign <code>$</code> simply tells PHP that what follows is a variable name.</p>
+                <p><strong>$$message</strong> (double dollar) is something entirely different—it is called a <strong>variable variable</strong>. In PHP, a variable variable allows you to use the <em>value</em> of one variable as the <em>name</em> of another variable. This means the variable name is dynamic and can change during program execution. For example, if <code>$message = "greeting";</code>, then <code>$$message</code> is the same as <code>$greeting</code>. Whatever string is stored inside <code>$message</code> becomes the name of the new variable. So if you then write <code>$$message = "Hi there!";</code>, you are actually creating a variable called <code>$greeting</code> with the value <code>"Hi there!"</code>. You can then echo <code>$greeting</code> and see "Hi there!". This feature provides great flexibility but should be used carefully because it can make code difficult to read and debug. Variable variables are useful in situations where variable names need to be generated programmatically, such as when looping through data and creating variables dynamically. However, in most practical situations, arrays are a cleaner and safer alternative to variable variables.</p>
+                <div class="code-label">PHP Code Example</div>
+                <pre><span class="cmt">// Regular variable</span>
+<span class="kw">$message</span> = <span class="str">"Hello World"</span>;
+<span class="kw">echo</span> <span class="kw">$message</span>; <span class="cmt">// Output: Hello World</span>
+
+<span class="cmt">// Variable variable</span>
+<span class="kw">$message</span> = <span class="str">"greeting"</span>;   <span class="cmt">// $message holds the string "greeting"</span>
+<span class="kw">$$message</span> = <span class="str">"Hi there!"</span>; <span class="cmt">// This creates $greeting = "Hi there!"</span>
+<span class="kw">echo</span> <span class="kw">$greeting</span>;        <span class="cmt">// Output: Hi there!</span>
+<span class="kw">echo</span> <span class="kw">$$message</span>;        <span class="cmt">// Also Output: Hi there!</span></pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">Hello World<br>Hi there!<br>Hi there!</div>
+            </div>
+        </article>
+
+        <!-- Q4 -->
+        <article class="q-card" id="q4">
+            <div class="q-number">Question 4</div>
+            <div class="q-title">What is the use of the header() function in PHP? What are magic constants in PHP?</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <h3>The header() Function</h3>
+                <p>The <strong>header()</strong> function in PHP is used to send raw HTTP headers to the browser before any actual output is sent. HTTP headers are pieces of information that travel between the server and the browser, telling the browser how to handle the response. The header() function must be called before any HTML, whitespace, or echo statements—otherwise, it will produce a "headers already sent" error. Common uses include redirecting users to another page using <code>header("Location: page.php")</code>, setting the content type of the response (like JSON, XML, or PDF), controlling caching behavior with cache-control headers, and sending HTTP status codes like 404 (Not Found) or 500 (Internal Server Error). For example, <code>header("Location: welcome.php")</code> tells the browser to navigate to welcome.php. This is extremely useful after form submissions, login verifications, or any scenario where you want to redirect the user programmatically.</p>
+
+                <h3>Magic Constants in PHP</h3>
+                <p>Magic constants are predefined constants in PHP that change their value depending on where they are used in the code. Unlike regular constants (defined with <code>define()</code> or <code>const</code>), magic constants are resolved at compile time and are automatically provided by PHP. They always start and end with double underscores. Here are the most important magic constants:</p>
+                <ul>
+                    <li><strong>__LINE__:</strong> Returns the current line number in the PHP file where it is used. Very helpful for debugging—you can see exactly which line is executing.</li>
+                    <li><strong>__FILE__:</strong> Returns the full absolute path and filename of the current file. Useful for include paths and logging.</li>
+                    <li><strong>__DIR__:</strong> Returns the directory of the current file without the trailing slash. Equivalent to <code>dirname(__FILE__)</code>.</li>
+                    <li><strong>__FUNCTION__:</strong> Returns the name of the current function. Useful for debugging inside functions to know exactly which function is being called.</li>
+                    <li><strong>__CLASS__:</strong> Returns the name of the current class including the namespace.</li>
+                    <li><strong>__METHOD__:</strong> Returns the name of the current class method.</li>
+                    <li><strong>__NAMESPACE__:</strong> Returns the name of the current namespace.</li>
+                </ul>
+                <p>These constants are invaluable for debugging, logging, and creating flexible code that adapts to its environment without manual configuration.</p>
+            </div>
+        </article>
+
+        <!-- Q5 -->
+        <article class="q-card" id="q5">
+            <div class="q-number">Question 5</div>
+            <div class="q-title">Write a PHP script to show global and static scope of a variable.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <p>In PHP, variables declared outside functions have <strong>global scope</strong> and are not accessible inside functions unless the <code>global</code> keyword is used. Variables declared inside functions with the <code>static</code> keyword retain their value between function calls instead of being re-initialized each time.</p>
+                <div class="code-label">PHP Code</div>
+                <pre><span class="cmt">// Global variable</span>
+<span class="kw">$globalVar</span> = <span class="str">"I am a global variable"</span>;
+
+<span class="kw">function</span> <span class="fn">testGlobal</span>() {
+    <span class="cmt">// Access global variable inside function</span>
+    <span class="kw">global</span> <span class="kw">$globalVar</span>;
+    <span class="kw">echo</span> <span class="str">"Inside function (global): "</span> . <span class="kw">$globalVar</span> . <span class="str">"&lt;br&gt;"</span>;
+}
+
+<span class="kw">function</span> <span class="fn">testStatic</span>() {
+    <span class="cmt">// Static variable retains value between calls</span>
+    <span class="kw">static</span> <span class="kw">$count</span> = <span class="num">0</span>;
+    <span class="kw">$count</span>++;
+    <span class="kw">echo</span> <span class="str">"Static count: "</span> . <span class="kw">$count</span> . <span class="str">"&lt;br&gt;"</span>;
+}
+
+<span class="kw">echo</span> <span class="str">"Outside function: "</span> . <span class="kw">$globalVar</span> . <span class="str">"&lt;br&gt;"</span>;
+<span class="fn">testGlobal</span>();
+<span class="fn">testStatic</span>();
+<span class="fn">testStatic</span>();
+<span class="fn">testStatic</span>();</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">Outside function: I am a global variable<br>Inside function (global): I am a global variable<br>Static count: 1<br>Static count: 2<br>Static count: 3</div>
+                <p>The global variable was accessed inside the function using the <code>global</code> keyword. The static variable <code>$count</code> preserved its value across three function calls, incrementing from 1 to 3 instead of resetting to 0 each time.</p>
+            </div>
+        </article>
+
+        <!-- Q6 -->
+        <article class="q-card" id="q6">
+            <div class="q-number">Question 6</div>
+            <div class="q-title">Explain the concept of error handling in PHP. How can errors and exceptions be handled effectively?</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <h3>Error Handling in PHP</h3>
+                <p>Error handling is the process of detecting, managing, and responding to errors that occur during the execution of a PHP script. Proper error handling ensures that your application behaves gracefully even when something goes wrong, instead of showing ugly error messages to users or crashing entirely. PHP has several types of errors: <strong>Notices</strong> (minor issues like accessing an undefined variable), <strong>Warnings</strong> (non-fatal errors like including a missing file—the script continues running), and <strong>Fatal Errors</strong> (critical errors that halt script execution, like calling an undefined function). There are also <strong>Parse Errors</strong> which occur when PHP cannot understand your syntax.</p>
+
+                <h3>Handling Errors Effectively</h3>
+                <p><strong>1. Using die() or exit():</strong> The simplest form of error handling. If a critical operation fails (like a database connection), you can stop the script and show a message: <code>mysqli_connect("host","user","pass","db") or die("Connection failed!");</code></p>
+                <p><strong>2. Custom Error Handler with set_error_handler():</strong> This function lets you define your own function to handle all errors. You can log errors to a file, send emails, or display friendly messages while keeping the real error hidden from users.</p>
+                <p><strong>3. Exception Handling (try-catch):</strong> Modern PHP uses exceptions—objects that represent errors. You wrap risky code in a <code>try</code> block and catch exceptions with <code>catch</code>. This gives you fine-grained control: <code>try { /* risky code */ } catch (Exception $e) { echo "Error: " . $e->getMessage(); }</code>. The <code>finally</code> block runs regardless of whether an exception was thrown, making it perfect for cleanup tasks like closing database connections.</p>
+                <p><strong>4. Error Reporting Levels:</strong> PHP allows you to control which errors are reported using <code>error_reporting()</code>. In development, you want to see all errors (<code>E_ALL</code>). In production, you want to hide errors from users but log them: <code>error_reporting(0);</code> combined with <code>ini_set('log_errors', 1);</code>.</p>
+                <p><strong>5. Logging Errors:</strong> Instead of displaying errors to users (which is a security risk), you should log them to a file using <code>error_log()</code> or configure PHP's error log settings in php.ini. This way, developers can review issues without exposing sensitive information to end users.</p>
+                <div class="answer-note">Effective error handling combines multiple techniques: use try-catch for exceptions, set_error_handler for traditional errors, log everything, and show only user-friendly messages on the front end.</div>
+            </div>
+        </article>
+
+        <!-- ==================== SECTION B: ARRAYS & STRINGS ==================== -->
+        <div class="section-divider"><h2>Section B &mdash; Arrays &amp; Strings</h2></div>
+
+        <!-- Q7 -->
+        <article class="q-card" id="q7">
+            <div class="q-number">Question 7</div>
+            <div class="q-title">What is an associative array in PHP and how does it differ from an indexed array? Explain a few functions for sorting in associative arrays in PHP and also write PHP script to create an associative array of student names and their marks. Sort the array by values in ascending order and by keys in descending order.</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <h3>Associative Array vs Indexed Array</h3>
+                <p>An <strong>indexed array</strong> (or numeric array) uses numbers as keys to access its elements. The keys start from 0 by default and increase automatically. For example, <code>$fruits = ["Apple", "Banana", "Mango"];</code> — here <code>$fruits[0]</code> is "Apple", <code>$fruits[1]</code> is "Banana", and so on. You access elements by their numeric position.</p>
+                <p>An <strong>associative array</strong>, on the other hand, uses named keys (strings) that you assign manually. Each key is associated with a specific value. This makes the data more meaningful and easier to work with. For example, <code>$student = ["name" => "Rahul", "age" => 20, "grade" => "A"];</code> — here you access <code>$student["name"]</code> to get "Rahul". Associative arrays behave like dictionaries or maps where each key has a specific meaning, making code more readable and self-documenting.</p>
+                <h3>Sorting Functions for Associative Arrays</h3>
+                <ul>
+                    <li><strong>asort():</strong> Sorts the array by its <em>values</em> in ascending order while preserving the key-value associations.</li>
+                    <li><strong>arsort():</strong> Sorts by values in descending order, preserving keys.</li>
+                    <li><strong>ksort():</strong> Sorts the array by its <em>keys</em> in ascending order.</li>
+                    <li><strong>krsort():</strong> Sorts by keys in descending order.</li>
+                </ul>
+                <div class="code-label">PHP Code</div>
+                <pre><span class="cmt">// Create associative array of student names and marks</span>
+<span class="kw">$students</span> = [
+    <span class="str">"Rahul"</span> => <span class="num">85</span>,
+    <span class="str">"Priya"</span> => <span class="num">92</span>,
+    <span class="str">"Amit"</span> => <span class="num">78</span>,
+    <span class="str">"Sneha"</span> => <span class="num">95</span>,
+    <span class="str">"Vikram"</span> => <span class="num">88</span>
+];
+
+<span class="cmt">// Sort by values (marks) in ascending order</span>
+<span class="kw">asort</span>(<span class="kw">$students</span>);
+<span class="kw">echo</span> <span class="str">"Sorted by marks (ascending):&lt;br&gt;"</span>;
+<span class="kw">foreach</span> (<span class="kw">$students</span> <span class="kw">as</span> <span class="kw">$name</span> => <span class="kw">$mark</span>) {
+    <span class="kw">echo</span> <span class="str">"$name: $mark&lt;br&gt;"</span>;
+}
+
+<span class="cmt">// Sort by keys (names) in descending order</span>
+<span class="kw">krsort</span>(<span class="kw">$students</span>);
+<span class="kw">echo</span> <span class="str">"&lt;br&gt;Sorted by names (descending):&lt;br&gt;"</span>;
+<span class="kw">foreach</span> (<span class="kw">$students</span> <span class="kw">as</span> <span class="kw">$name</span> => <span class="kw">$mark</span>) {
+    <span class="kw">echo</span> <span class="str">"$name: $mark&lt;br&gt;"</span>;
+}</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">Sorted by marks (ascending):<br>Amit: 78<br>Rahul: 85<br>Vikram: 88<br>Priya: 92<br>Sneha: 95<br><br>Sorted by names (descending):<br>Vikram: 88<br>Sneha: 95<br>Rahul: 85<br>Priya: 92<br>Amit: 78</div>
+            </div>
+        </article>
+
+        <!-- Q8 -->
+        <article class="q-card" id="q8">
+            <div class="q-number">Question 8</div>
+            <div class="q-title">Explain the associative arrays in PHP along with the detailed description of $_GET and $_POST global variables? Also, use a suitable example, to explain the way you can extract the data from $_GET and $_POST from server side using PHP.</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <h3>Associative Arrays in PHP</h3>
+                <p>Associative arrays are arrays where each element is stored as a key-value pair. Instead of numeric indices (0, 1, 2...), you use meaningful string keys to identify values. This is incredibly powerful because it lets you label data in a way that makes sense semantically. For instance, instead of remembering that index 2 holds a person's email, you simply use <code>$person["email"]</code>. PHP implements associative arrays using hash tables internally, making lookups very fast. Keys must be unique within an array, and they can be strings or integers.</p>
+                <h3>$_GET and $_POST Superglobals</h3>
+                <p><strong>$_GET</strong> and <strong>$_POST</strong> are both PHP superglobal associative arrays, meaning they are available in all scopes throughout your script without needing the <code>global</code> keyword. They are used to collect data sent from HTML forms.</p>
+                <p><strong>$_GET</strong> collects data sent via the URL query string (the GET method). Data is visible in the browser's address bar after the <code>?</code> symbol. For example: <code>page.php?name=Rahul&age=20</code>. The $_GET array would contain <code>$_GET["name"] = "Rahul"</code> and <code>$_GET["age"] = "20"</code>. Because data is visible in the URL, GET is suitable for non-sensitive data like search queries, pagination parameters, or filter options. There is also a size limit (around 2000 characters depending on the browser).</p>
+                <p><strong>$_POST</strong> collects data sent in the HTTP request body (the POST method). Data is not visible in the URL, making it more secure for sensitive information like passwords, credit card details, and personal data. POST has no practical size limit, so it can handle large amounts of data including file uploads. The data is still sent as plain text unless HTTPS is used, so encryption at the transport layer is essential for true security.</p>
+                <div class="code-label">Example: Extracting Data</div>
+                <pre><span class="cmt">// HTML form (save as form.html)</span>
+<span class="cmt">// &lt;form action="process.php" method="post"&gt;</span>
+<span class="cmt">//   &lt;input name="username"&gt;</span>
+<span class="cmt">//   &lt;input name="email"&gt;</span>
+<span class="cmt">//   &lt;button type="submit"&gt;Send&lt;/button&gt;</span>
+<span class="cmt">// &lt;/form&gt;</span>
+
+<span class="cmt">// process.php - extract POST data</span>
+<span class="kw">$username</span> = <span class="kw">$_POST</span>[<span class="str">"username"</span>];
+<span class="kw">$email</span> = <span class="kw">$_POST</span>[<span class="str">"email"</span>];
+<span class="kw">echo</span> <span class="str">"Welcome, $username! Your email is $email."</span>;
+
+<span class="cmt">// For GET: if URL is process.php?username=Rahul&email=rahul@test.com</span>
+<span class="kw">$username</span> = <span class="kw">$_GET</span>[<span class="str">"username"</span>];
+<span class="kw">$email</span> = <span class="kw">$_GET</span>[<span class="str">"email"</span>];
+<span class="kw">echo</span> <span class="str">"GET data: $username, $email"</span>;</pre>
+                <div class="output-label">Output (POST example)</div>
+                <div class="output-block">Welcome, Rahul! Your email is rahul@test.com.</div>
+            </div>
+        </article>
+
+        <!-- Q9 -->
+        <article class="q-card" id="q9">
+            <div class="q-number">Question 9</div>
+            <div class="q-title">Explain some of the sorting methods of associative arrays in PHP? Write a program to declare an associative array and sort them in ascending order with the help of keys.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <h3>Sorting Methods for Associative Arrays</h3>
+                <p>PHP provides several built-in functions specifically designed for sorting associative arrays. The key distinction is whether you want to sort by <strong>keys</strong> or by <strong>values</strong>, and whether you want ascending or descending order. Here are the main sorting methods:</p>
+                <ul>
+                    <li><strong>ksort():</strong> Sorts by keys in ascending order (A to Z, 0 to 9). The key-value relationship is maintained.</li>
+                    <li><strong>krsort():</strong> Sorts by keys in descending order (Z to A, 9 to 0). Maintains key-value pairs.</li>
+                    <li><strong>asort():</strong> Sorts by values in ascending order while preserving the keys. Perfect when you need to rank by value but keep the original keys intact.</li>
+                    <li><strong>arsort():</strong> Sorts by values in descending order, preserving keys. Useful for leaderboards where highest values should appear first.</li>
+                </ul>
+                <div class="code-label">PHP Code — Sort by Keys Ascending</div>
+                <pre><span class="cmt">// Declare associative array</span>
+<span class="kw">$fruits</span> = [
+    <span class="str">"banana"</span> => <span class="num">30</span>,
+    <span class="str">"apple"</span> => <span class="num">50</span>,
+    <span class="str">"mango"</span> => <span class="num">40</span>,
+    <span class="str">"grape"</span> => <span class="num">25</span>,
+    <span class="str">"orange"</span> => <span class="num">35</span>
+];
+
+<span class="cmt">// Sort by keys in ascending order (alphabetical)</span>
+<span class="kw">ksort</span>(<span class="kw">$fruits</span>);
+
+<span class="kw">echo</span> <span class="str">"Sorted by keys (ascending):&lt;br&gt;"</span>;
+<span class="kw">foreach</span> (<span class="kw">$fruits</span> <span class="kw">as</span> <span class="kw">$fruit</span> => <span class="kw">$price</span>) {
+    <span class="kw">echo</span> <span class="str">"$fruit costs Rs. $price&lt;br&gt;"</span>;
+}</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">Sorted by keys (ascending):<br>apple costs Rs. 50<br>banana costs Rs. 30<br>grape costs Rs. 25<br>mango costs Rs. 40<br>orange costs Rs. 35</div>
+                <p>The <code>ksort()</code> function rearranged the array so that keys appear in alphabetical order: apple → banana → grape → mango → orange. Each fruit's price remained correctly associated with its name.</p>
+            </div>
+        </article>
+
+        <!-- Q10 -->
+        <article class="q-card" id="q10">
+            <div class="q-number">Question 10</div>
+            <div class="q-title">Explain what is an array and string in PHP. Write a PHP program to accept a user's firstname and lastname, combine them, and output the result.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <h3>Arrays in PHP</h3>
+                <p>An <strong>array</strong> in PHP is a special variable that can hold multiple values at the same time. Instead of creating separate variables for each piece of related data (<code>$fruit1</code>, <code>$fruit2</code>, <code>$fruit3</code>), you store them all in one array. PHP supports three types of arrays: indexed arrays (numeric keys), associative arrays (named keys), and multidimensional arrays (arrays containing other arrays). Arrays are incredibly flexible—they can grow or shrink dynamically, hold mixed data types, and are used extensively in almost every PHP application for storing collections of data like database results, form inputs, and configuration settings.</p>
+                <h3>Strings in PHP</h3>
+                <p>A <strong>string</strong> is a sequence of characters enclosed in quotes. PHP supports single quotes (<code>' '</code>) and double quotes (<code>" "</code>). Single-quoted strings are literal—they display exactly what you type, and variables inside them are not expanded. Double-quoted strings interpret escape sequences (like <code>\n</code> for newline) and expand variable names to their values (this is called variable interpolation). PHP has dozens of built-in string functions: <code>strlen()</code> for length, <code>strpos()</code> for finding substrings, <code>substr()</code> for extracting parts, <code>str_replace()</code> for replacements, and <code>strtolower()</code> / <code>strtoupper()</code> for case conversion. The dot operator (<code>.</code>) concatenates (joins) strings together.</p>
+                <div class="code-label">PHP Code — Combine First &amp; Last Name</div>
+                <pre><span class="cmt">// Accept firstname and lastname (simulated via variables)</span>
+<span class="kw">$firstName</span> = <span class="str">"Rahul"</span>;
+<span class="kw">$lastName</span> = <span class="str">"Sharma"</span>;
+
+<span class="cmt">// Combine using concatenation</span>
+<span class="kw">$fullName</span> = <span class="kw">$firstName</span> . <span class="str">" "</span> . <span class="kw">$lastName</span>;
+
+<span class="cmt">// Output the combined result</span>
+<span class="kw">echo</span> <span class="str">"First Name: "</span> . <span class="kw">$firstName</span> . <span class="str">"&lt;br&gt;"</span>;
+<span class="kw">echo</span> <span class="str">"Last Name: "</span> . <span class="kw">$lastName</span> . <span class="str">"&lt;br&gt;"</span>;
+<span class="kw">echo</span> <span class="str">"Full Name: "</span> . <span class="kw">$fullName</span>;
+
+<span class="cmt">// If accepting from a form, you would use:</span>
+<span class="cmt">// $firstName = $_POST['firstname'];</span>
+<span class="cmt">// $lastName = $_POST['lastname'];</span></pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">First Name: Rahul<br>Last Name: Sharma<br>Full Name: Rahul Sharma</div>
+            </div>
+        </article>
+
+        <!-- Q11 -->
+        <article class="q-card" id="q11">
+            <div class="q-number">Question 11</div>
+            <div class="q-title">Explain the PHP array sort functions with examples. Write a PHP script to sort a given associative array in descending order according to key.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <h3>PHP Array Sort Functions</h3>
+                <p>PHP provides a rich set of sorting functions. For indexed arrays: <code>sort()</code> sorts values in ascending order (re-indexes keys), <code>rsort()</code> sorts in descending order. For associative arrays: <code>asort()</code> sorts by values ascending (preserves keys), <code>arsort()</code> sorts by values descending, <code>ksort()</code> sorts by keys ascending, and <code>krsort()</code> sorts by keys descending. These functions modify the original array directly and return a boolean indicating success.</p>
+                <div class="code-label">PHP Code — Sort by Key Descending</div>
+                <pre><span class="cmt">// Given associative array</span>
+<span class="kw">$inventory</span> = [
+    <span class="str">"pen"</span> => <span class="num">100</span>,
+    <span class="str">"notebook"</span> => <span class="num">50</span>,
+    <span class="str">"eraser"</span> => <span class="num">75</span>,
+    <span class="str">"pencil"</span> => <span class="num">120</span>,
+    <span class="str">"sharpener"</span> => <span class="num">30</span>
+];
+
+<span class="cmt">// Sort by keys in descending order (Z to A)</span>
+<span class="kw">krsort</span>(<span class="kw">$inventory</span>);
+
+<span class="kw">echo</span> <span class="str">"Sorted by keys (descending):&lt;br&gt;"</span>;
+<span class="kw">foreach</span> (<span class="kw">$inventory</span> <span class="kw">as</span> <span class="kw">$item</span> => <span class="kw">$qty</span>) {
+    <span class="kw">echo</span> <span class="str">"$item: $qty units&lt;br&gt;"</span>;
+}</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">Sorted by keys (descending):<br>sharpener: 30 units<br>pencil: 120 units<br>pen: 100 units<br>notebook: 50 units<br>eraser: 75 units</div>
+                <p>The <code>krsort()</code> function arranged the array so keys appear in reverse alphabetical order. Each item's quantity remained correctly associated with its name throughout the sorting process.</p>
+            </div>
+        </article>
+
+        <!-- Q12 -->
+        <article class="q-card" id="q12">
+            <div class="q-number">Question 12</div>
+            <div class="q-title">Create a PHP function that takes an array of numbers as input and returns the sum of all the numbers in the array.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <p>This is a straightforward function that iterates through an array, accumulates the total, and returns it. While PHP has a built-in <code>array_sum()</code> function, the question asks us to create our own function, which demonstrates understanding of loops and return values.</p>
+                <div class="code-label">PHP Code</div>
+                <pre><span class="cmt">// Function to calculate sum of array numbers</span>
+<span class="kw">function</span> <span class="fn">calculateSum</span>(<span class="kw">$numbers</span>) {
+    <span class="kw">$sum</span> = <span class="num">0</span>; <span class="cmt">// Initialize sum to zero</span>
+    <span class="kw">foreach</span> (<span class="kw">$numbers</span> <span class="kw">as</span> <span class="kw">$num</span>) {
+        <span class="kw">$sum</span> += <span class="kw">$num</span>; <span class="cmt">// Add each number to the sum</span>
+    }
+    <span class="kw">return</span> <span class="kw">$sum</span>; <span class="cmt">// Return the final total</span>
+}
+
+<span class="cmt">// Test the function</span>
+<span class="kw">$myNumbers</span> = [<span class="num">10</span>, <span class="num">25</span>, <span class="num">35</span>, <span class="num">40</span>, <span class="num">50</span>];
+<span class="kw">$result</span> = <span class="fn">calculateSum</span>(<span class="kw">$myNumbers</span>);
+<span class="kw">echo</span> <span class="str">"The sum is: "</span> . <span class="kw">$result</span>;
+
+<span class="cmt">// Test with another array</span>
+<span class="kw">$anotherArray</span> = [<span class="num">5</span>, <span class="num">15</span>, <span class="num">25</span>];
+<span class="kw">echo</span> <span class="str">"&lt;br&gt;Another sum: "</span> . <span class="fn">calculateSum</span>(<span class="kw">$anotherArray</span>);</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">The sum is: 160<br>Another sum: 45</div>
+                <p>The function loops through each element of the array using <code>foreach</code>, adds every number to the running total <code>$sum</code>, and returns the accumulated value. This is simple, beginner-friendly, and easy to remember for exams.</p>
+            </div>
+        </article>
+
+        <!-- Q13 -->
+        <article class="q-card" id="q13">
+            <div class="q-number">Question 13</div>
+            <div class="q-title">What is meant by an associative array in PHP? Write a PHP script to create an associative array of student names and their grades.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <h3>Meaning of Associative Array</h3>
+                <p>An associative array in PHP is a collection of key-value pairs where each key is a string (or integer) that you define yourself, rather than an automatically assigned numeric index. The key acts as a label or identifier for the value it holds. This makes associative arrays perfect for storing records where each piece of data has a name—like a student's name paired with their grade. Instead of remembering that index 3 corresponds to a particular student's grade, you simply use the student's name as the key and the grade as the value. This is much more intuitive and reduces errors. Associative arrays are the foundation of many PHP features, including the superglobal arrays like <code>$_GET</code>, <code>$_POST</code>, and <code>$_SESSION</code>, all of which use string keys to organize data.</p>
+                <div class="code-label">PHP Code — Student Names &amp; Grades</div>
+                <pre><span class="cmt">// Create associative array of student names and grades</span>
+<span class="kw">$grades</span> = [
+    <span class="str">"Rahul Sharma"</span> => <span class="str">"A+"</span>,
+    <span class="str">"Priya Patel"</span> => <span class="str">"A"</span>,
+    <span class="str">"Amit Singh"</span> => <span class="str">"B+"</span>,
+    <span class="str">"Sneha Gupta"</span> => <span class="str">"A"</span>,
+    <span class="str">"Vikram Das"</span> => <span class="str">"B"</span>
+];
+
+<span class="cmt">// Display the array</span>
+<span class="kw">echo</span> <span class="str">"Student Grades:&lt;br&gt;&lt;br&gt;"</span>;
+<span class="kw">foreach</span> (<span class="kw">$grades</span> <span class="kw">as</span> <span class="kw">$student</span> => <span class="kw">$grade</span>) {
+    <span class="kw">echo</span> <span class="str">"$student — Grade: $grade&lt;br&gt;"</span>;
+}
+
+<span class="cmt">// Access individual grade</span>
+<span class="kw">echo</span> <span class="str">"&lt;br&gt;Priya Patel's grade: "</span> . <span class="kw">$grades</span>[<span class="str">"Priya Patel"</span>];</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">Student Grades:<br><br>Rahul Sharma — Grade: A+<br>Priya Patel — Grade: A<br>Amit Singh — Grade: B+<br>Sneha Gupta — Grade: A<br>Vikram Das — Grade: B<br><br>Priya Patel's grade: A</div>
+            </div>
+        </article>
+
+        <!-- Q14 -->
+        <article class="q-card" id="q14">
+            <div class="q-number">Question 14</div>
+            <div class="q-title">Write a PHP program for creating and manipulating: Indexed array, Associative array, Multidimensional array.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <p>This program demonstrates all three array types: indexed (numeric keys), associative (named keys), and multidimensional (arrays within arrays). Each type is created, manipulated, and displayed clearly.</p>
+                <div class="code-label">PHP Code</div>
+                <pre><span class="cmt">// 1. INDEXED ARRAY</span>
+<span class="kw">$fruits</span> = [<span class="str">"Apple"</span>, <span class="str">"Banana"</span>, <span class="str">"Mango"</span>];
+<span class="kw">echo</span> <span class="str">"Indexed Array:&lt;br&gt;"</span>;
+<span class="kw">echo</span> <span class="str">"First fruit: "</span> . <span class="kw">$fruits</span>[<span class="num">0</span>] . <span class="str">"&lt;br&gt;"</span>;
+<span class="cmt">// Add new element</span>
+<span class="kw">$fruits</span>[] = <span class="str">"Orange"</span>;
+<span class="kw">echo</span> <span class="str">"After adding: "</span> . <span class="kw">implode</span>(<span class="str">", "</span>, <span class="kw">$fruits</span>) . <span class="str">"&lt;br&gt;&lt;br&gt;"</span>;
+
+<span class="cmt">// 2. ASSOCIATIVE ARRAY</span>
+<span class="kw">$person</span> = [
+    <span class="str">"name"</span> => <span class="str">"Rahul"</span>,
+    <span class="str">"age"</span> => <span class="num">25</span>,
+    <span class="str">"city"</span> => <span class="str">"Mumbai"</span>
+];
+<span class="kw">echo</span> <span class="str">"Associative Array:&lt;br&gt;"</span>;
+<span class="kw">echo</span> <span class="str">"Name: "</span> . <span class="kw">$person</span>[<span class="str">"name"</span>] . <span class="str">"&lt;br&gt;"</span>;
+<span class="cmt">// Modify value</span>
+<span class="kw">$person</span>[<span class="str">"age"</span>] = <span class="num">26</span>;
+<span class="kw">echo</span> <span class="str">"Updated age: "</span> . <span class="kw">$person</span>[<span class="str">"age"</span>] . <span class="str">"&lt;br&gt;&lt;br&gt;"</span>;
+
+<span class="cmt">// 3. MULTIDIMENSIONAL ARRAY</span>
+<span class="kw">$students</span> = [
+    [<span class="str">"name"</span> => <span class="str">"Rahul"</span>, <span class="str">"marks"</span> => <span class="num">85</span>],
+    [<span class="str">"name"</span> => <span class="str">"Priya"</span>, <span class="str">"marks"</span> => <span class="num">92</span>],
+    [<span class="str">"name"</span> => <span class="str">"Amit"</span>, <span class="str">"marks"</span> => <span class="num">78</span>]
+];
+<span class="kw">echo</span> <span class="str">"Multidimensional Array:&lt;br&gt;"</span>;
+<span class="kw">foreach</span> (<span class="kw">$students</span> <span class="kw">as</span> <span class="kw">$student</span>) {
+    <span class="kw">echo</span> <span class="str">"Name: "</span> . <span class="kw">$student</span>[<span class="str">"name"</span>] . <span class="str">", Marks: "</span> . <span class="kw">$student</span>[<span class="str">"marks"</span>] . <span class="str">"&lt;br&gt;"</span>;
+}</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">Indexed Array:<br>First fruit: Apple<br>After adding: Apple, Banana, Mango, Orange<br><br>Associative Array:<br>Name: Rahul<br>Updated age: 26<br><br>Multidimensional Array:<br>Name: Rahul, Marks: 85<br>Name: Priya, Marks: 92<br>Name: Amit, Marks: 78</div>
+            </div>
+        </article>
+
+        <!-- Q15 -->
+        <article class="q-card" id="q15">
+            <div class="q-number">Question 15</div>
+            <div class="q-title">What is the use of explode() and split() functions in PHP? Write a program to implement explode(), implode(), compact(), and extract().</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <h3>explode() and split()</h3>
+                <p><strong>explode():</strong> This function splits a string into an array based on a specified delimiter. For example, <code>explode(",", "apple,banana,mango")</code> returns an array <code>["apple", "banana", "mango"]</code>. It takes the delimiter as the first argument and the string as the second. An optional third argument limits the number of array elements. <strong>Note:</strong> <code>split()</code> is actually deprecated in modern PHP. It was used for splitting strings using regular expressions, but <code>preg_split()</code> or <code>explode()</code> should be used instead. The <code>explode()</code> function is the standard way to break a string into parts.</p>
+                <div class="code-label">PHP Code</div>
+                <pre><span class="cmt">// explode() - split string into array</span>
+<span class="kw">$csv</span> = <span class="str">"Rahul,Priya,Amit,Sneha"</span>;
+<span class="kw">$namesArray</span> = <span class="kw">explode</span>(<span class="str">","</span>, <span class="kw">$csv</span>);
+<span class="kw">echo</span> <span class="str">"explode() result:&lt;br&gt;"</span>;
+<span class="kw">print_r</span>(<span class="kw">$namesArray</span>);
+<span class="kw">echo</span> <span class="str">"&lt;br&gt;&lt;br&gt;"</span>;
+
+<span class="cmt">// implode() - join array into string</span>
+<span class="kw">$joined</span> = <span class="kw">implode</span>(<span class="str">" | "</span>, <span class="kw">$namesArray</span>);
+<span class="kw">echo</span> <span class="str">"implode() result: $joined&lt;br&gt;&lt;br&gt;"</span>;
+
+<span class="cmt">// compact() - create array from variables</span>
+<span class="kw">$name</span> = <span class="str">"Rahul"</span>;
+<span class="kw">$age</span> = <span class="num">25</span>;
+<span class="kw">$city</span> = <span class="str">"Delhi"</span>;
+<span class="kw">$personArray</span> = <span class="kw">compact</span>(<span class="str">"name"</span>, <span class="str">"age"</span>, <span class="str">"city"</span>);
+<span class="kw">echo</span> <span class="str">"compact() result:&lt;br&gt;"</span>;
+<span class="kw">print_r</span>(<span class="kw">$personArray</span>);
+<span class="kw">echo</span> <span class="str">"&lt;br&gt;&lt;br&gt;"</span>;
+
+<span class="cmt">// extract() - create variables from array</span>
+<span class="kw">$data</span> = [<span class="str">"fruit"</span> => <span class="str">"Mango"</span>, <span class="str">"color"</span> => <span class="str">"Yellow"</span>];
+<span class="kw">extract</span>(<span class="kw">$data</span>);
+<span class="kw">echo</span> <span class="str">"extract() result:&lt;br&gt;"</span>;
+<span class="kw">echo</span> <span class="str">"Fruit: $fruit, Color: $color"</span>;</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">explode() result:<br>Array ( [0] => Rahul [1] => Priya [2] => Amit [3] => Sneha )<br><br>implode() result: Rahul | Priya | Amit | Sneha<br><br>compact() result:<br>Array ( [name] => Rahul [age] => 25 [city] => Delhi )<br><br>extract() result:<br>Fruit: Mango, Color: Yellow</div>
+            </div>
+        </article>
+
+        <!-- Q16 -->
+        <article class="q-card" id="q16">
+            <div class="q-number">Question 16</div>
+            <div class="q-title">Write a PHP program to demonstrate the variable functions gettype(), settype(), isset(), and unset().</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <p>These four functions are essential for working with variables in PHP. <code>gettype()</code> returns the type of a variable as a string. <code>settype()</code> converts a variable to a specified type. <code>isset()</code> checks whether a variable is declared and is not NULL. <code>unset()</code> destroys a variable, making it undefined.</p>
+                <div class="code-label">PHP Code</div>
+                <pre><span class="cmt">// gettype() - find the type of a variable</span>
+<span class="kw">$value1</span> = <span class="num">42</span>;
+<span class="kw">$value2</span> = <span class="str">"Hello"</span>;
+<span class="kw">$value3</span> = <span class="num">3.14</span>;
+<span class="kw">echo</span> <span class="str">"gettype() examples:&lt;br&gt;"</span>;
+<span class="kw">echo</span> <span class="str">"Type of 42: "</span> . <span class="kw">gettype</span>(<span class="kw">$value1</span>) . <span class="str">"&lt;br&gt;"</span>;
+<span class="kw">echo</span> <span class="str">"Type of 'Hello': "</span> . <span class="kw">gettype</span>(<span class="kw">$value2</span>) . <span class="str">"&lt;br&gt;"</span>;
+<span class="kw">echo</span> <span class="str">"Type of 3.14: "</span> . <span class="kw">gettype</span>(<span class="kw">$value3</span>) . <span class="str">"&lt;br&gt;&lt;br&gt;"</span>;
+
+<span class="cmt">// settype() - change the type of a variable</span>
+<span class="kw">$num</span> = <span class="str">"100"</span>; <span class="cmt">// This is a string</span>
+<span class="kw">echo</span> <span class="str">"Before settype: "</span> . <span class="kw">gettype</span>(<span class="kw">$num</span>) . <span class="str">"&lt;br&gt;"</span>;
+<span class="kw">settype</span>(<span class="kw">$num</span>, <span class="str">"integer"</span>); <span class="cmt">// Convert to integer</span>
+<span class="kw">echo</span> <span class="str">"After settype to integer: "</span> . <span class="kw">gettype</span>(<span class="kw">$num</span>) . <span class="str">"&lt;br&gt;&lt;br&gt;"</span>;
+
+<span class="cmt">// isset() - check if variable is set and not NULL</span>
+<span class="kw">$testVar</span> = <span class="str">"I exist"</span>;
+<span class="kw">echo</span> <span class="str">"isset(\$testVar): "</span> . (<span class="kw">isset</span>(<span class="kw">$testVar</span>) ? <span class="str">"true"</span> : <span class="str">"false"</span>) . <span class="str">"&lt;br&gt;"</span>;
+<span class="kw">echo</span> <span class="str">"isset(\$noVar): "</span> . (<span class="kw">isset</span>(<span class="kw">$noVar</span>) ? <span class="str">"true"</span> : <span class="str">"false"</span>) . <span class="str">"&lt;br&gt;&lt;br&gt;"</span>;
+
+<span class="cmt">// unset() - destroy a variable</span>
+<span class="kw">$deleteMe</span> = <span class="str">"I will be removed"</span>;
+<span class="kw">echo</span> <span class="str">"Before unset: "</span> . (<span class="kw">isset</span>(<span class="kw">$deleteMe</span>) ? <span class="str">"exists"</span> : <span class="str">"doesn't exist"</span>) . <span class="str">"&lt;br&gt;"</span>;
+<span class="kw">unset</span>(<span class="kw">$deleteMe</span>);
+<span class="kw">echo</span> <span class="str">"After unset: "</span> . (<span class="kw">isset</span>(<span class="kw">$deleteMe</span>) ? <span class="str">"exists"</span> : <span class="str">"doesn't exist"</span>);</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">gettype() examples:<br>Type of 42: integer<br>Type of 'Hello': string<br>Type of 3.14: double<br><br>Before settype: string<br>After settype to integer: integer<br><br>isset($testVar): true<br>isset($noVar): false<br><br>Before unset: exists<br>After unset: doesn't exist</div>
+            </div>
+        </article>
+
+        <!-- ==================== SECTION C: FILE HANDLING ==================== -->
+        <div class="section-divider"><h2>Section C &mdash; File Handling &amp; Includes</h2></div>
+
+        <!-- Q17 -->
+        <article class="q-card" id="q17">
+            <div class="q-number">Question 17</div>
+            <div class="q-title">Describe file handling in PHP. Write syntax for file handling like open file, read file, write file in PHP.</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <h3>File Handling in PHP</h3>
+                <p>File handling in PHP allows you to create, read, write, append, and delete files directly from your server-side scripts. This is essential for many web applications—storing logs, saving user-generated content, managing configuration files, handling uploads, and generating reports. PHP treats files as streams of data, and you work with them using a pointer (like a cursor) that moves through the file as you read or write. The basic workflow involves opening a file (which creates a connection between your script and the file on disk), performing operations (reading or writing), and then closing the file to free up system resources. PHP provides the <code>fopen()</code> function to open files with various modes, <code>fread()</code> and <code>fgets()</code> for reading, <code>fwrite()</code> for writing, and <code>fclose()</code> for closing. There are also simpler functions like <code>file_get_contents()</code> and <code>file_put_contents()</code> that handle opening, reading/writing, and closing in a single step.</p>
+
+                <h3>Syntax for File Operations</h3>
+                <p><strong>Opening a File:</strong> <code>$handle = fopen("filename.txt", "mode");</code> — Common modes include <code>"r"</code> (read-only), <code>"w"</code> (write, overwrites existing), <code>"a"</code> (append, adds to end), <code>"r+"</code> (read and write). Returns a file resource on success or <code>false</code> on failure.</p>
+                <p><strong>Reading a File:</strong> <code>$content = fread($handle, filesize("filename.txt"));</code> — Reads the entire file. Alternatively, <code>fgets($handle)</code> reads one line at a time, and <code>fgetc($handle)</code> reads one character. For simplicity, <code>file_get_contents("filename.txt")</code> reads the whole file in one call without needing fopen/fclose.</p>
+                <p><strong>Writing to a File:</strong> <code>fwrite($handle, "Text to write");</code> — Writes the string to the file at the current pointer position. The simpler alternative is <code>file_put_contents("filename.txt", "content");</code> which overwrites the file with new content.</p>
+                <p><strong>Closing a File:</strong> <code>fclose($handle);</code> — Always close files when done to free memory and prevent file locking issues.</p>
+                <div class="answer-note">Always check if <code>fopen()</code> returned a valid handle before attempting to read or write. Use <code>or die("Error message")</code> for basic error handling.</div>
+            </div>
+        </article>
+
+        <!-- Q18 -->
+        <article class="q-card" id="q18">
+            <div class="q-number">Question 18</div>
+            <div class="q-title">Describe the typical steps involved in reading from and writing to a file using PHP. Write a PHP script that creates a text file named log.txt, writes a message to it, and then reads and displays its contents on the browser.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <h3>Typical Steps for File Operations</h3>
+                <p><strong>Step 1 — Open the file:</strong> Use <code>fopen()</code> with the appropriate mode. For writing, use <code>"w"</code> to create a new file or overwrite an existing one. For appending, use <code>"a"</code>. For reading, use <code>"r"</code>.</p>
+                <p><strong>Step 2 — Perform the operation:</strong> Use <code>fwrite()</code> to write data or <code>fread()</code> / <code>fgets()</code> to read data. Check that the operation succeeded.</p>
+                <p><strong>Step 3 — Close the file:</strong> Use <code>fclose()</code> to properly close the file handle. This ensures all data is flushed to disk and system resources are released.</p>
+                <div class="code-label">PHP Code — log.txt</div>
+                <pre><span class="cmt">// Step 1: Create/Open log.txt for writing</span>
+<span class="kw">$file</span> = <span class="kw">fopen</span>(<span class="str">"log.txt"</span>, <span class="str">"w"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Cannot open file for writing!"</span>);
+
+<span class="cmt">// Step 2: Write a message to the file</span>
+<span class="kw">$message</span> = <span class="str">"Log entry: User logged in at "</span> . <span class="kw">date</span>(<span class="str">"Y-m-d H:i:s"</span>) . <span class="str">"\n"</span>;
+<span class="kw">fwrite</span>(<span class="kw">$file</span>, <span class="kw">$message</span>);
+<span class="kw">fwrite</span>(<span class="kw">$file</span>, <span class="str">"Log entry: Page viewed successfully.\n"</span>);
+
+<span class="cmt">// Step 3: Close the file after writing</span>
+<span class="kw">fclose</span>(<span class="kw">$file</span>);
+
+<span class="cmt">// Now open the file for reading</span>
+<span class="kw">$file</span> = <span class="kw">fopen</span>(<span class="str">"log.txt"</span>, <span class="str">"r"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Cannot open file for reading!"</span>);
+
+<span class="cmt">// Read and display contents</span>
+<span class="kw">echo</span> <span class="str">"Contents of log.txt:&lt;br&gt;&lt;pre&gt;"</span>;
+<span class="kw">while</span> (!<span class="kw">feof</span>(<span class="kw">$file</span>)) {
+    <span class="kw">echo</span> <span class="kw">fgets</span>(<span class="kw">$file</span>);
+}
+<span class="kw">echo</span> <span class="str">"&lt;/pre&gt;"</span>;
+<span class="kw">fclose</span>(<span class="kw">$file</span>);</pre>
+                <div class="output-label">Output (example)</div>
+                <div class="output-block">Contents of log.txt:<br>Log entry: User logged in at 2026-05-26 14:30:00<br>Log entry: Page viewed successfully.</div>
+            </div>
+        </article>
+
+        <!-- Q19 -->
+        <article class="q-card" id="q19">
+            <div class="q-number">Question 19</div>
+            <div class="q-title">Describe file handling in PHP, With the help of PHP code insert some text in text file. After inserting the text read the text from the same text file and shows it on web page.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <p>File handling in PHP enables scripts to interact with the server's file system. You can create new files, write data to them, read existing content, append additional information, and delete files when they are no longer needed. The core functions revolve around <code>fopen()</code> which establishes a connection to a file, <code>fwrite()</code> which sends data to the file, <code>fread()</code> or <code>fgets()</code> which retrieves data, and <code>fclose()</code> which terminates the connection. Files can be opened in different modes: write mode <code>"w"</code> creates a new file or truncates an existing one; append mode <code>"a"</code> adds data to the end without deleting existing content; read mode <code>"r"</code> only allows reading. Proper error checking with <code>or die()</code> ensures the script handles failures gracefully rather than producing cryptic errors. File handling is critical for applications like content management systems, logging systems, user data storage, and configuration management.</p>
+                <div class="code-label">PHP Code</div>
+                <pre><span class="cmt">// Insert text into a text file</span>
+<span class="kw">$filename</span> = <span class="str">"sample.txt"</span>;
+
+<span class="cmt">// Open file in write mode (creates if not exists)</span>
+<span class="kw">$file</span> = <span class="kw">fopen</span>(<span class="kw">$filename</span>, <span class="str">"w"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Unable to open file for writing!"</span>);
+
+<span class="cmt">// Insert some text</span>
+<span class="kw">$text</span> = <span class="str">"Hello, this is line one.\n"</span>;
+<span class="kw">$text</span> .= <span class="str">"This is line two.\n"</span>;
+<span class="kw">$text</span> .= <span class="str">"PHP file handling is easy to learn.\n"</span>;
+<span class="kw">fwrite</span>(<span class="kw">$file</span>, <span class="kw">$text</span>);
+<span class="kw">fclose</span>(<span class="kw">$file</span>);
+
+<span class="kw">echo</span> <span class="str">"Text inserted successfully!&lt;br&gt;&lt;br&gt;"</span>;
+
+<span class="cmt">// Now read the text from the same file</span>
+<span class="kw">$file</span> = <span class="kw">fopen</span>(<span class="kw">$filename</span>, <span class="str">"r"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Unable to open file for reading!"</span>);
+<span class="kw">echo</span> <span class="str">"Contents of the file:&lt;br&gt;&lt;pre&gt;"</span>;
+<span class="kw">while</span> (!<span class="kw">feof</span>(<span class="kw">$file</span>)) {
+    <span class="kw">echo</span> <span class="kw">fgets</span>(<span class="kw">$file</span>);
+}
+<span class="kw">echo</span> <span class="str">"&lt;/pre&gt;"</span>;
+<span class="kw">fclose</span>(<span class="kw">$file</span>);</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">Text inserted successfully!<br><br>Contents of the file:<br>Hello, this is line one.<br>This is line two.<br>PHP file handling is easy to learn.</div>
+            </div>
+        </article>
+
+        <!-- Q20 -->
+        <article class="q-card" id="q20">
+            <div class="q-number">Question 20</div>
+            <div class="q-title">Write a PHP program to open a file and read contents char by char till the end of the file, find all the consonants in a separate file and vowels in a separate file. Explain fopen() permissions.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <h3>fopen() Permissions (Modes)</h3>
+                <ul>
+                    <li><strong>"r"</strong> — Read-only. File must exist. Pointer starts at beginning.</li>
+                    <li><strong>"w"</strong> — Write-only. Creates file if it doesn't exist; truncates (empties) if it does.</li>
+                    <li><strong>"a"</strong> — Append. Creates file if it doesn't exist. Pointer starts at end.</li>
+                    <li><strong>"r+"</strong> — Read and write. File must exist. Pointer at beginning.</li>
+                    <li><strong>"w+"</strong> — Read and write. Truncates or creates. Pointer at beginning.</li>
+                    <li><strong>"a+"</strong> — Read and append. Creates if needed. Pointer at end for writing.</li>
+                </ul>
+                <div class="code-label">PHP Code</div>
+                <pre><span class="cmt">// Source file with some text</span>
+<span class="kw">$sourceFile</span> = <span class="kw">fopen</span>(<span class="str">"source.txt"</span>, <span class="str">"r"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Cannot open source file"</span>);
+<span class="kw">$vowelFile</span> = <span class="kw">fopen</span>(<span class="str">"vowels.txt"</span>, <span class="str">"w"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Cannot create vowels file"</span>);
+<span class="kw">$consonantFile</span> = <span class="kw">fopen</span>(<span class="str">"consonants.txt"</span>, <span class="str">"w"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Cannot create consonants file"</span>);
+
+<span class="kw">$vowels</span> = <span class="str">"aeiouAEIOU"</span>;
+
+<span class="cmt">// Read char by char till end of file</span>
+<span class="kw">while</span> (!<span class="kw">feof</span>(<span class="kw">$sourceFile</span>)) {
+    <span class="kw">$char</span> = <span class="kw">fgetc</span>(<span class="kw">$sourceFile</span>);
+    <span class="kw">if</span> (<span class="kw">$char</span> === <span class="kw">false</span>) <span class="kw">break</span>; <span class="cmt">// End of file</span>
+
+    <span class="cmt">// Check if it's a letter</span>
+    <span class="kw">if</span> (<span class="kw">ctype_alpha</span>(<span class="kw">$char</span>)) {
+        <span class="kw">if</span> (<span class="kw">strpos</span>(<span class="kw">$vowels</span>, <span class="kw">$char</span>) !== <span class="kw">false</span>) {
+            <span class="kw">fwrite</span>(<span class="kw">$vowelFile</span>, <span class="kw">$char</span>);
+        } <span class="kw">else</span> {
+            <span class="kw">fwrite</span>(<span class="kw">$consonantFile</span>, <span class="kw">$char</span>);
+        }
+    }
+}
+
+<span class="kw">fclose</span>(<span class="kw">$sourceFile</span>);
+<span class="kw">fclose</span>(<span class="kw">$vowelFile</span>);
+<span class="kw">fclose</span>(<span class="kw">$consonantFile</span>);
+
+<span class="kw">echo</span> <span class="str">"Processing complete!&lt;br&gt;"</span>;
+<span class="kw">echo</span> <span class="str">"Vowels saved to vowels.txt&lt;br&gt;"</span>;
+<span class="kw">echo</span> <span class="str">"Consonants saved to consonants.txt"</span>;</pre>
+                <div class="output-label">Output (if source.txt contains "Hello World")</div>
+                <div class="output-block">Processing complete!<br>Vowels saved to vowels.txt (contains: eoo)<br>Consonants saved to consonants.txt (contains: HllWrld)</div>
+            </div>
+        </article>
+
+        <!-- Q21 -->
+        <article class="q-card" id="q21">
+            <div class="q-number">Question 21</div>
+            <div class="q-title">Write client-side and server-side code to save an uploaded file in PHP. Write a program to upload an image to the server (check type is image, size ≤ 50000, jpeg only).</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <div class="code-label">Client-Side (HTML Form)</div>
+                <pre><span class="cmt">&lt;!-- upload.html --&gt;</span>
+&lt;<span class="tag">form</span> <span class="attr">action</span>=<span class="val">"upload.php"</span> <span class="attr">method</span>=<span class="val">"post"</span> <span class="attr">enctype</span>=<span class="val">"multipart/form-data"</span>&gt;
+    Select image: &lt;<span class="tag">input</span> <span class="attr">type</span>=<span class="val">"file"</span> <span class="attr">name</span>=<span class="val">"imageFile"</span>&gt;&lt;<span class="tag">br</span>&gt;&lt;<span class="tag">br</span>&gt;
+    &lt;<span class="tag">button</span> <span class="attr">type</span>=<span class="val">"submit"</span>&gt;Upload Image&lt;/<span class="tag">button</span>&gt;
+&lt;/<span class="tag">form</span>&gt;</pre>
+                <div class="code-label">Server-Side (PHP — upload.php)</div>
+                <pre><span class="cmt">// Check if file was uploaded</span>
+<span class="kw">if</span> (<span class="kw">isset</span>(<span class="kw">$_FILES</span>[<span class="str">"imageFile"</span>]) && <span class="kw">$_FILES</span>[<span class="str">"imageFile"</span>][<span class="str">"error"</span>] == <span class="num">0</span>) {
+    <span class="kw">$file</span> = <span class="kw">$_FILES</span>[<span class="str">"imageFile"</span>];
+
+    <span class="cmt">// Check file type (must be JPEG)</span>
+    <span class="kw">$fileType</span> = <span class="kw">$file</span>[<span class="str">"type"</span>];
+    <span class="kw">if</span> (<span class="kw">$fileType</span> != <span class="str">"image/jpeg"</span>) {
+        <span class="kw">die</span>(<span class="str">"Error: Only JPEG images are allowed."</span>);
+    }
+
+    <span class="cmt">// Check file size (≤ 50000 bytes)</span>
+    <span class="kw">if</span> (<span class="kw">$file</span>[<span class="str">"size"</span>] > <span class="num">50000</span>) {
+        <span class="kw">die</span>(<span class="str">"Error: File size must be 50KB or less."</span>);
+    }
+
+    <span class="cmt">// Move uploaded file to server directory</span>
+    <span class="kw">$targetDir</span> = <span class="str">"uploads/"</span>;
+    <span class="kw">$targetPath</span> = <span class="kw">$targetDir</span> . <span class="kw">basename</span>(<span class="kw">$file</span>[<span class="str">"name"</span>]);
+
+    <span class="kw">if</span> (<span class="kw">move_uploaded_file</span>(<span class="kw">$file</span>[<span class="str">"tmp_name"</span>], <span class="kw">$targetPath</span>)) {
+        <span class="kw">echo</span> <span class="str">"Image uploaded successfully!&lt;br&gt;"</span>;
+        <span class="kw">echo</span> <span class="str">"File: "</span> . <span class="kw">$file</span>[<span class="str">"name"</span>] . <span class="str">"&lt;br&gt;"</span>;
+        <span class="kw">echo</span> <span class="str">"Size: "</span> . <span class="kw">$file</span>[<span class="str">"size"</span>] . <span class="str">" bytes"</span>;
+    } <span class="kw">else</span> {
+        <span class="kw">echo</span> <span class="str">"Error uploading file."</span>;
+    }
+} <span class="kw">else</span> {
+    <span class="kw">echo</span> <span class="str">"No file selected or upload error occurred."</span>;
+}</pre>
+                <div class="output-label">Output (successful upload)</div>
+                <div class="output-block">Image uploaded successfully!<br>File: photo.jpg<br>Size: 45200 bytes</div>
+            </div>
+        </article>
+
+        <!-- Q22 -->
+        <article class="q-card" id="q22">
+            <div class="q-number">Question 22</div>
+            <div class="q-title">Describe the steps involved in securely uploading a file to the server and checking for potential security risks like file size, type, and extension. What is the role of the $_FILES superglobal?</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <h3>Steps for Secure File Upload</h3>
+                <p><strong>Step 1 — Use the correct form encoding:</strong> The HTML form must have <code>enctype="multipart/form-data"</code> and use <code>method="post"</code>. Without this, the file data won't be transmitted properly.</p>
+                <p><strong>Step 2 — Validate the file size:</strong> Check <code>$_FILES["input_name"]["size"]</code> against your maximum allowed size. Large files can exhaust server resources, so always enforce a reasonable limit (e.g., 2MB for images, 10MB for documents).</p>
+                <p><strong>Step 3 — Validate the file type/MIME:</strong> Check <code>$_FILES["input_name"]["type"]</code> to ensure only allowed MIME types are accepted. For images, accept <code>image/jpeg</code>, <code>image/png</code>, <code>image/gif</code>. Never trust the MIME type alone—attackers can spoof it. Also verify using PHP's <code>getimagesize()</code> for images or <code>finfo</code> for other files.</p>
+                <p><strong>Step 4 — Validate the file extension:</strong> Extract the extension using <code>pathinfo($filename, PATHINFO_EXTENSION)</code> and check against a whitelist of allowed extensions (e.g., <code>jpg</code>, <code>jpeg</code>, <code>png</code>, <code>pdf</code>). Be strict—reject anything not explicitly allowed.</p>
+                <p><strong>Step 5 — Generate a unique filename:</strong> Never use the original filename directly. Generate a random or timestamped name to prevent overwriting existing files and to avoid path traversal attacks where attackers use filenames like <code>../../etc/passwd</code>.</p>
+                <p><strong>Step 6 — Store outside the web root:</strong> If possible, save uploaded files in a directory that is not directly accessible from the browser. Serve them through a PHP script that checks permissions before delivering the file.</p>
+                <p><strong>Step 7 — Use move_uploaded_file():</strong> Always use <code>move_uploaded_file()</code> instead of <code>copy()</code> or <code>rename()</code>. This function performs additional security checks to ensure the file was actually uploaded via HTTP POST.</p>
+
+                <h3>Role of $_FILES Superglobal</h3>
+                <p><code>$_FILES</code> is a PHP superglobal associative array that contains all information about uploaded files. For each file input in a form, it stores: <code>$_FILES["input_name"]["name"]</code> (original filename), <code>["type"]</code> (MIME type), <code>["size"]</code> (bytes), <code>["tmp_name"]</code> (temporary location on server), and <code>["error"]</code> (error code—0 means success). This array is populated automatically by PHP when a form with <code>enctype="multipart/form-data"</code> is submitted. It is the central mechanism for accessing and validating uploaded files before moving them to a permanent location.</p>
+            </div>
+        </article>
+
+        <!-- Q23 -->
+        <article class="q-card" id="q23">
+            <div class="q-number">Question 23</div>
+            <div class="q-title">Explain include vs require function in PHP. How are execution failures handled? What is the main difference between require() and require_once()?</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <h3>include vs require</h3>
+                <p>Both <code>include</code> and <code>require</code> are used to insert the contents of one PHP file into another. This promotes code reusability—you can keep common functions, headers, footers, or configuration in separate files and pull them in wherever needed. The critical difference lies in how they handle failures. <strong>include()</strong> produces a <em>warning</em> (E_WARNING) if the specified file is not found, but the script <em>continues executing</em>. This means the page will still load, just without the included content. <strong>require()</strong> produces a <em>fatal error</em> (E_COMPILE_ERROR) if the file is missing, and the script <em>stops completely</em>. Use <code>require</code> when the file is absolutely essential for the application to function (like database configuration). Use <code>include</code> for optional content (like a sidebar widget) where the page can still function without it.</p>
+                <h3>require() vs require_once()</h3>
+                <p>The <strong>require_once()</strong> function works exactly like <code>require()</code> in terms of error handling (fatal error if file is missing), but with one crucial addition: it ensures that the file is included only <em>once</em> during the entire script execution. If the same file has already been included earlier, <code>require_once()</code> will not include it again. This prevents problems like function re-declaration errors, which occur when the same function is defined multiple times. Similarly, <code>include_once()</code> exists for <code>include</code>. The "once" variants are especially important when files have interdependencies—for example, if <code>fileA.php</code> requires <code>config.php</code> and <code>fileB.php</code> also requires <code>config.php</code>, using <code>require_once()</code> in both prevents duplicate declarations.</p>
+                <div class="answer-note">Rule of thumb: Use <code>require_once()</code> for critical configuration and function libraries. Use <code>include()</code> for template parts that are nice-to-have but not essential.</div>
+            </div>
+        </article>
+
+        <!-- ==================== SECTION D: COOKIES, SESSIONS & FORMS ==================== -->
+        <div class="section-divider"><h2>Section D &mdash; Cookies, Sessions &amp; Forms</h2></div>
+
+        <!-- Q24 -->
+        <article class="q-card" id="q24">
+            <div class="q-number">Question 24</div>
+            <div class="q-title">What are cookies and sessions in PHP? Explain both with the help of a program. Explain 3 differences between a cookie and a session.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <h3>Cookies</h3>
+                <p>A cookie is a small text file (usually limited to 4KB) that the server stores on the user's browser. Cookies are sent back to the server with every subsequent HTTP request to the same domain. They are used for remembering user preferences, tracking user behavior, and maintaining state across multiple visits. In PHP, cookies are created using <code>setcookie()</code> and accessed via the <code>$_COOKIE</code> superglobal. Cookies have an expiration date and can persist even after the browser is closed.</p>
+                <h3>Sessions</h3>
+                <p>A session stores user data on the <em>server</em> side, with only a unique session ID stored in a cookie on the browser. This makes sessions more secure because sensitive data never leaves the server. Sessions are started with <code>session_start()</code> and data is stored in the <code>$_SESSION</code> superglobal. Sessions typically expire when the browser is closed or after a period of inactivity.</p>
+                <h3>3 Key Differences</h3>
+                <ol>
+                    <li><strong>Storage Location:</strong> Cookies are stored on the client's browser; sessions are stored on the server.</li>
+                    <li><strong>Security:</strong> Cookies are less secure since data is on the client and can be tampered with; sessions are more secure because data stays on the server.</li>
+                    <li><strong>Lifespan:</strong> Cookies can persist for days or years (based on expiry); sessions usually end when the browser closes.</li>
+                </ol>
+                <div class="code-label">PHP Code — Cookie &amp; Session Example</div>
+                <pre><span class="cmt">// Start session</span>
+<span class="kw">session_start</span>();
+
+<span class="cmt">// Set a cookie (expires in 7 days)</span>
+<span class="kw">setcookie</span>(<span class="str">"user_theme"</span>, <span class="str">"dark"</span>, <span class="kw">time</span>() + (<span class="num">7</span> * <span class="num">86400</span>), <span class="str">"/"</span>);
+
+<span class="cmt">// Set session variable</span>
+<span class="kw">$_SESSION</span>[<span class="str">"username"</span>] = <span class="str">"Rahul"</span>;
+<span class="kw">$_SESSION</span>[<span class="str">"logged_in"</span>] = <span class="kw">true</span>;
+
+<span class="cmt">// Access cookie</span>
+<span class="kw">if</span> (<span class="kw">isset</span>(<span class="kw">$_COOKIE</span>[<span class="str">"user_theme"</span>])) {
+    <span class="kw">echo</span> <span class="str">"Cookie - Theme: "</span> . <span class="kw">$_COOKIE</span>[<span class="str">"user_theme"</span>] . <span class="str">"&lt;br&gt;"</span>;
+}
+
+<span class="cmt">// Access session</span>
+<span class="kw">if</span> (<span class="kw">isset</span>(<span class="kw">$_SESSION</span>[<span class="str">"username"</span>])) {
+    <span class="kw">echo</span> <span class="str">"Session - Username: "</span> . <span class="kw">$_SESSION</span>[<span class="str">"username"</span>];
+}</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">Cookie - Theme: dark<br>Session - Username: Rahul</div>
+            </div>
+        </article>
+
+        <!-- Q25 -->
+        <article class="q-card" id="q25">
+            <div class="q-number">Question 25</div>
+            <div class="q-title">What is the difference between sessions and cookies in PHP? Compare them in terms of storage location, security, and typical use-cases. How data can be stored and retrieved using sessions and cookies in PHP and also explain how session data is destroyed and how cookies can be deleted from the client browser.</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <h3>Comparison Table</h3>
+                <table>
+                    <tr><th>Aspect</th><th>Cookies</th><th>Sessions</th></tr>
+                    <tr><td>Storage Location</td><td>Client's browser</td><td>Server (temp files/memory)</td></tr>
+                    <tr><td>Security</td><td>Less secure; data visible to client</td><td>More secure; data stays on server</td></tr>
+                    <tr><td>Typical Use-Cases</td><td>Remember me, themes, preferences, tracking</td><td>Login state, shopping carts, user data during visit</td></tr>
+                    <tr><td>Size Limit</td><td>~4KB per cookie</td><td>Limited only by server memory</td></tr>
+                    <tr><td>Lifespan</td><td>Can last days/years</td><td>Ends when browser closes or timeout</td></tr>
+                </table>
+                <h3>Storing and Retrieving Data</h3>
+                <p><strong>Cookies:</strong> Store using <code>setcookie("key", "value", time() + 3600, "/");</code> — this sets a cookie named "key" that expires in 1 hour. Retrieve using <code>$_COOKIE["key"]</code>. Always check with <code>isset()</code> before accessing.</p>
+                <p><strong>Sessions:</strong> Start with <code>session_start();</code> (must be at the very top of the script). Store data with <code>$_SESSION["key"] = "value";</code>. Retrieve with <code>$_SESSION["key"]</code>. Sessions persist across page loads during the same browser session.</p>
+                <h3>Destroying Sessions and Deleting Cookies</h3>
+                <p><strong>Destroy session data:</strong> Use <code>session_unset()</code> to clear all session variables, then <code>session_destroy()</code> to completely remove the session from the server. For a full logout, also delete the session cookie: <code>setcookie(session_name(), "", time() - 3600, "/");</code>.</p>
+                <p><strong>Delete a cookie:</strong> Set the cookie with an expiration time in the past. For example: <code>setcookie("user_theme", "", time() - 3600, "/");</code>. This tells the browser to remove the cookie immediately because it has already expired.</p>
+            </div>
+        </article>
+
+        <!-- Q26 -->
+        <article class="q-card" id="q26">
+            <div class="q-number">Question 26</div>
+            <div class="q-title">Explain the concept of sessions in PHP. How are sessions maintained, and how can session variables be accessed?</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <h3>Concept of Sessions</h3>
+                <p>HTTP is a stateless protocol—each request from a browser to a server is independent. The server does not automatically remember who you are from one page to the next. Sessions solve this problem by creating a temporary link between the browser and the server. When a session is started, PHP generates a unique session ID (a long random string) and stores it in a cookie on the user's browser (usually named <code>PHPSESSID</code>). On the server side, a corresponding file or database entry is created that holds all the session variables. On every subsequent request, the browser sends the session ID cookie back to the server, PHP looks up the matching session data, and the <code>$_SESSION</code> array is populated. This all happens automatically once you call <code>session_start()</code>.</p>
+                <h3>How Sessions Are Maintained</h3>
+                <p>Sessions are maintained through the session ID. The ID is typically transmitted via a cookie, but it can also be passed through URL parameters if cookies are disabled. PHP's session handler manages the storage of session data—by default, it saves data as files in a temporary directory on the server. You can configure sessions to use a database or Redis instead for better scalability. Sessions expire after a configurable period of inactivity (default is usually 24 minutes of garbage collection). The <code>session_start()</code> function must be called on every page where you want to access session data, and it must be called before any HTML output.</p>
+                <h3>Accessing Session Variables</h3>
+                <p>After calling <code>session_start()</code>, all session variables are available in the <code>$_SESSION</code> superglobal array. You can read them directly: <code>echo $_SESSION["username"];</code>. You can modify them: <code>$_SESSION["cart_count"] = 5;</code>. And you can remove individual ones: <code>unset($_SESSION["temp_data"]);</code>. Always check with <code>isset()</code> before accessing to avoid undefined index errors.</p>
+            </div>
+        </article>
+
+        <!-- Q27 -->
+        <article class="q-card" id="q27">
+            <div class="q-number">Question 27</div>
+            <div class="q-title">Write a program to design a login page with remember me. If checked, store credentials in cookies and sessions. Destroy sessions upon logout.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <div class="code-label">Login Page (login.php)</div>
+                <pre><span class="cmt">// Start session at the top</span>
+<span class="kw">session_start</span>();
+
+<span class="cmt">// If already logged in, redirect to welcome page</span>
+<span class="kw">if</span> (<span class="kw">isset</span>(<span class="kw">$_SESSION</span>[<span class="str">"user"</span>])) {
+    <span class="kw">header</span>(<span class="str">"Location: welcome.php"</span>);
+    <span class="kw">exit</span>();
+}
+
+<span class="cmt">// Check if "Remember Me" cookie exists</span>
+<span class="kw">if</span> (<span class="kw">isset</span>(<span class="kw">$_COOKIE</span>[<span class="str">"remember_user"</span>])) {
+    <span class="kw">$_SESSION</span>[<span class="str">"user"</span>] = <span class="kw">$_COOKIE</span>[<span class="str">"remember_user"</span>];
+    <span class="kw">header</span>(<span class="str">"Location: welcome.php"</span>);
+    <span class="kw">exit</span>();
+}
+
+<span class="cmt">// Process login form submission</span>
+<span class="kw">if</span> (<span class="kw">$_SERVER</span>[<span class="str">"REQUEST_METHOD"</span>] == <span class="str">"POST"</span>) {
+    <span class="kw">$username</span> = <span class="kw">$_POST</span>[<span class="str">"username"</span>];
+    <span class="kw">$password</span> = <span class="kw">$_POST</span>[<span class="str">"password"</span>];
+
+    <span class="cmt">// Simple validation (in real apps, check database)</span>
+    <span class="kw">if</span> (<span class="kw">$username</span> == <span class="str">"admin"</span> && <span class="kw">$password</span> == <span class="str">"12345"</span>) {
+        <span class="kw">$_SESSION</span>[<span class="str">"user"</span>] = <span class="kw">$username</span>;
+
+        <span class="cmt">// If "Remember Me" is checked, store cookie for 30 days</span>
+        <span class="kw">if</span> (<span class="kw">isset</span>(<span class="kw">$_POST</span>[<span class="str">"remember"</span>])) {
+            <span class="kw">setcookie</span>(<span class="str">"remember_user"</span>, <span class="kw">$username</span>, <span class="kw">time</span>() + (<span class="num">30</span> * <span class="num">86400</span>), <span class="str">"/"</span>);
+        }
+        <span class="kw">header</span>(<span class="str">"Location: welcome.php"</span>);
+        <span class="kw">exit</span>();
+    } <span class="kw">else</span> {
+        <span class="kw">$error</span> = <span class="str">"Invalid credentials!"</span>;
+    }
+}
+<span class="cmt">// HTML form below (username, password, remember me checkbox, submit)</span></pre>
+                <div class="code-label">Logout (logout.php)</div>
+                <pre><span class="kw">session_start</span>();
+<span class="kw">session_unset</span>();   <span class="cmt">// Clear all session variables</span>
+<span class="kw">session_destroy</span>(); <span class="cmt">// Destroy the session</span>
+<span class="cmt">// Delete remember me cookie</span>
+<span class="kw">setcookie</span>(<span class="str">"remember_user"</span>, <span class="str">""</span>, <span class="kw">time</span>() - <span class="num">3600</span>, <span class="str">"/"</span>);
+<span class="kw">header</span>(<span class="str">"Location: login.php"</span>);
+<span class="kw">exit</span>();</pre>
+                <div class="answer-note">This implements a complete remember-me flow: login with session, optional persistent cookie, and full logout that destroys both session and cookie.</div>
+            </div>
+        </article>
+
+        <!-- Q28 -->
+        <article class="q-card" id="q28">
+            <div class="q-number">Question 28</div>
+            <div class="q-title">Write a PHP program to store current date-time in a COOKIE and display the 'Last visited on' date-time on the web page upon reopening of the same page.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <p>This program checks if a "last_visit" cookie exists. If it does, it displays the stored date-time as the last visit. Then it updates (or creates) the cookie with the current date-time, so the next visit will show this visit's time.</p>
+                <div class="code-label">PHP Code</div>
+                <pre><span class="cmt">// Check if the cookie exists</span>
+<span class="kw">if</span> (<span class="kw">isset</span>(<span class="kw">$_COOKIE</span>[<span class="str">"last_visit"</span>])) {
+    <span class="kw">$lastVisit</span> = <span class="kw">$_COOKIE</span>[<span class="str">"last_visit"</span>];
+    <span class="kw">echo</span> <span class="str">"Last visited on: "</span> . <span class="kw">$lastVisit</span> . <span class="str">"&lt;br&gt;"</span>;
+} <span class="kw">else</span> {
+    <span class="kw">echo</span> <span class="str">"Welcome! This is your first visit.&lt;br&gt;"</span>;
+}
+
+<span class="cmt">// Get current date-time</span>
+<span class="kw">$currentDateTime</span> = <span class="kw">date</span>(<span class="str">"Y-m-d H:i:s"</span>);
+
+<span class="cmt">// Store current date-time in cookie (expires in 30 days)</span>
+<span class="kw">setcookie</span>(<span class="str">"last_visit"</span>, <span class="kw">$currentDateTime</span>, <span class="kw">time</span>() + (<span class="num">30</span> * <span class="num">86400</span>), <span class="str">"/"</span>);
+
+<span class="kw">echo</span> <span class="str">"Current visit recorded at: "</span> . <span class="kw">$currentDateTime</span>;
+<span class="kw">echo</span> <span class="str">"&lt;br&gt;(Refresh the page to see the last visit time update)"</span>;</pre>
+                <div class="output-label">Output (first visit)</div>
+                <div class="output-block">Welcome! This is your first visit.<br>Current visit recorded at: 2026-05-26 14:30:00<br>(Refresh the page to see the last visit time update)</div>
+                <div class="output-label">Output (second visit after refresh)</div>
+                <div class="output-block">Last visited on: 2026-05-26 14:30:00<br>Current visit recorded at: 2026-05-26 14:35:22<br>(Refresh the page to see the last visit time update)</div>
+            </div>
+        </article>
+
+        <!-- Q29 -->
+        <article class="q-card" id="q29">
+            <div class="q-number">Question 29</div>
+            <div class="q-title">Write a PHP script to implement super global variables $_GET, $_POST, and $_REQUEST. Differentiate between GET and POST methods, explaining use cases and security.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <h3>GET vs POST</h3>
+                <table>
+                    <tr><th>Aspect</th><th>GET</th><th>POST</th></tr>
+                    <tr><td>Data Visibility</td><td>Visible in URL query string</td><td>Hidden in request body</td></tr>
+                    <tr><td>Security</td><td>Less secure; data in URL can be bookmarked/shared</td><td>More secure for sensitive data (use HTTPS)</td></tr>
+                    <tr><td>Data Limit</td><td>~2000 characters</td><td>No practical limit</td></tr>
+                    <tr><td>Use Cases</td><td>Search queries, filters, pagination</td><td>Login, registration, file uploads, payments</td></tr>
+                    <tr><td>Caching</td><td>Can be cached</td><td>Not cached by default</td></tr>
+                </table>
+                <div class="code-label">PHP Code</div>
+                <pre><span class="cmt">// $_GET example - URL: page.php?name=Rahul&city=Mumbai</span>
+<span class="kw">if</span> (<span class="kw">isset</span>(<span class="kw">$_GET</span>[<span class="str">"name"</span>])) {
+    <span class="kw">echo</span> <span class="str">"GET - Name: "</span> . <span class="kw">$_GET</span>[<span class="str">"name"</span>] . <span class="str">"&lt;br&gt;"</span>;
+    <span class="kw">echo</span> <span class="str">"GET - City: "</span> . <span class="kw">$_GET</span>[<span class="str">"city"</span>] . <span class="str">"&lt;br&gt;&lt;br&gt;"</span>;
+}
+
+<span class="cmt">// $_POST example - from a form with method="post"</span>
+<span class="kw">if</span> (<span class="kw">$_SERVER</span>[<span class="str">"REQUEST_METHOD"</span>] == <span class="str">"POST"</span>) {
+    <span class="kw">$username</span> = <span class="kw">$_POST</span>[<span class="str">"username"</span>];
+    <span class="kw">$email</span> = <span class="kw">$_POST</span>[<span class="str">"email"</span>];
+    <span class="kw">echo</span> <span class="str">"POST - Username: $username&lt;br&gt;"</span>;
+    <span class="kw">echo</span> <span class="str">"POST - Email: $email&lt;br&gt;&lt;br&gt;"</span>;
+}
+
+<span class="cmt">// $_REQUEST - combines $_GET, $_POST, and $_COOKIE</span>
+<span class="kw">if</span> (<span class="kw">isset</span>(<span class="kw">$_REQUEST</span>[<span class="str">"search"</span>])) {
+    <span class="kw">echo</span> <span class="str">"REQUEST - Search: "</span> . <span class="kw">$_REQUEST</span>[<span class="str">"search"</span>];
+}</pre>
+                <div class="output-label">Output (example)</div>
+                <div class="output-block">GET - Name: Rahul<br>GET - City: Mumbai<br>POST - Username: rahul123<br>POST - Email: rahul@example.com<br>REQUEST - Search: PHP tutorials</div>
+                <div class="answer-note">Use <code>$_GET</code> for non-sensitive, shareable data. Use <code>$_POST</code> for sensitive or large data. <code>$_REQUEST</code> is convenient but less secure because it can pull data from cookies, so prefer <code>$_GET</code> or <code>$_POST</code> explicitly.</div>
+            </div>
+        </article>
+
+        <!-- Q30 -->
+        <article class="q-card" id="q30">
+            <div class="q-number">Question 30</div>
+            <div class="q-title">True/False: $_GLOBALS is a Super global variable.</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <span class="tf-answer tf-false">FALSE</span>
+                <p>The correct name of the superglobal variable is <strong>$GLOBALS</strong> (without the underscore). <code>$GLOBALS</code> is a PHP superglobal array that contains references to all variables in the global scope of the script. The keys of this array are the names of the global variables. <code>$_GLOBALS</code> (with an underscore) does not exist as a standard PHP superglobal. The superglobals that do exist with underscores are: <code>$_GET</code>, <code>$_POST</code>, <code>$_REQUEST</code>, <code>$_SERVER</code>, <code>$_FILES</code>, <code>$_COOKIE</code>, <code>$_SESSION</code>, and <code>$_ENV</code>. The only superglobal without an underscore is <code>$GLOBALS</code>. This is a common trick question in exams, so it's important to remember the distinction: <strong>$GLOBALS</strong> (no underscore) is the correct superglobal.</p>
+            </div>
+        </article>
+
+        <!-- ==================== SECTION E: DATABASE ==================== -->
+        <div class="section-divider"><h2>Section E &mdash; Database (MySQLi)</h2></div>
+
+        <!-- Q31 -->
+        <article class="q-card" id="q31">
+            <div class="q-number">Question 31</div>
+            <div class="q-title">How to create a MySQL connection and Database in PHP? How do you connect to a MySQL database using PHP?</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <p>To connect to MySQL using PHP, we use the <strong>mysqli</strong> extension (MySQL Improved). The process involves creating a connection object using <code>mysqli_connect()</code> with the server hostname, username, password, and optionally the database name. Once connected, you can create databases and tables using SQL queries executed via <code>mysqli_query()</code>.</p>
+                <div class="code-label">PHP Code — mysqli Connection &amp; Database Creation</div>
+                <pre><span class="cmt">// Step 1: Connect to MySQL server (without specifying database)</span>
+<span class="kw">$conn</span> = <span class="kw">mysqli_connect</span>(<span class="str">"localhost"</span>, <span class="str">"root"</span>, <span class="str">""</span>);
+
+<span class="cmt">// Check connection</span>
+<span class="kw">if</span> (!<span class="kw">$conn</span>) {
+    <span class="kw">die</span>(<span class="str">"Connection failed: "</span> . <span class="kw">mysqli_connect_error</span>());
+}
+<span class="kw">echo</span> <span class="str">"Connected to MySQL successfully!&lt;br&gt;"</span>;
+
+<span class="cmt">// Step 2: Create a database</span>
+<span class="kw">$sql</span> = <span class="str">"CREATE DATABASE IF NOT EXISTS college_db"</span>;
+<span class="kw">if</span> (<span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$sql</span>)) {
+    <span class="kw">echo</span> <span class="str">"Database 'college_db' created or already exists.&lt;br&gt;"</span>;
+} <span class="kw">else</span> {
+    <span class="kw">echo</span> <span class="str">"Error creating database: "</span> . <span class="kw">mysqli_error</span>(<span class="kw">$conn</span>);
+}
+
+<span class="cmt">// Step 3: Select the database for further operations</span>
+<span class="kw">mysqli_select_db</span>(<span class="kw">$conn</span>, <span class="str">"college_db"</span>);
+<span class="kw">echo</span> <span class="str">"Database 'college_db' selected.&lt;br&gt;"</span>;
+
+<span class="cmt">// Alternative: Connect directly with database name</span>
+<span class="cmt">// $conn = mysqli_connect("localhost", "root", "", "college_db");</span>
+
+<span class="cmt">// Always close the connection when done</span>
+<span class="kw">mysqli_close</span>(<span class="kw">$conn</span>);</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">Connected to MySQL successfully!<br>Database 'college_db' created or already exists.<br>Database 'college_db' selected.</div>
+            </div>
+        </article>
+
+        <!-- Q32 -->
+        <article class="q-card" id="q32">
+            <div class="q-number">Question 32</div>
+            <div class="q-title">Describe how to establish a connection to a MySQL database using PHP with mysqli or PDO. Write PHP scripts to insert, update, and delete records in a students table with the following fields: EnrolmentNo, Username, Name, Email, PhoneNo, Gender, Country.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <p>Using <strong>mysqli</strong>, we establish a connection and then perform CRUD operations using SQL queries with <code>mysqli_query()</code>. Always use <code>mysqli_real_escape_string()</code> or prepared statements to prevent SQL injection.</p>
+                <div class="code-label">PHP Code — CRUD Operations</div>
+                <pre><span class="cmt">// Establish connection</span>
+<span class="kw">$conn</span> = <span class="kw">mysqli_connect</span>(<span class="str">"localhost"</span>, <span class="str">"root"</span>, <span class="str">""</span>, <span class="str">"college_db"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Connection failed"</span>);
+
+<span class="cmt">// INSERT a new student</span>
+<span class="kw">$insertSQL</span> = <span class="str">"INSERT INTO students (EnrolmentNo, Username, Name, Email, PhoneNo, Gender, Country)
+VALUES ('EN001', 'rahul_s', 'Rahul Sharma', 'rahul@test.com', '9876543210', 'Male', 'India')"</span>;
+<span class="kw">if</span> (<span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$insertSQL</span>)) {
+    <span class="kw">echo</span> <span class="str">"Record inserted successfully!&lt;br&gt;"</span>;
+}
+
+<span class="cmt">// UPDATE a student's email</span>
+<span class="kw">$updateSQL</span> = <span class="str">"UPDATE students SET Email='rahul.new@test.com' WHERE EnrolmentNo='EN001'"</span>;
+<span class="kw">if</span> (<span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$updateSQL</span>)) {
+    <span class="kw">echo</span> <span class="str">"Record updated successfully!&lt;br&gt;"</span>;
+}
+
+<span class="cmt">// DELETE a student</span>
+<span class="kw">$deleteSQL</span> = <span class="str">"DELETE FROM students WHERE EnrolmentNo='EN001'"</span>;
+<span class="kw">if</span> (<span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$deleteSQL</span>)) {
+    <span class="kw">echo</span> <span class="str">"Record deleted successfully!&lt;br&gt;"</span>;
+}
+
+<span class="kw">mysqli_close</span>(<span class="kw">$conn</span>);</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">Record inserted successfully!<br>Record updated successfully!<br>Record deleted successfully!</div>
+                <div class="answer-note">For production code, always use prepared statements: <code>$stmt = mysqli_prepare($conn, "INSERT INTO students VALUES (?, ?, ?, ?, ?, ?, ?)");</code> followed by <code>mysqli_stmt_bind_param()</code> and <code>mysqli_stmt_execute()</code>. This prevents SQL injection.</div>
+            </div>
+        </article>
+
+        <!-- Q33 -->
+        <article class="q-card" id="q33">
+            <div class="q-number">Question 33</div>
+            <div class="q-title">Write a PHP program to query a database and check if a table is empty or not. Print rows from the table.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <div class="code-label">PHP Code</div>
+                <pre><span class="cmt">// Connect to database</span>
+<span class="kw">$conn</span> = <span class="kw">mysqli_connect</span>(<span class="str">"localhost"</span>, <span class="str">"root"</span>, <span class="str">""</span>, <span class="str">"college_db"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Connection failed"</span>);
+
+<span class="cmt">// Query the table</span>
+<span class="kw">$sql</span> = <span class="str">"SELECT * FROM students"</span>;
+<span class="kw">$result</span> = <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$sql</span>);
+
+<span class="cmt">// Check if table is empty</span>
+<span class="kw">if</span> (<span class="kw">mysqli_num_rows</span>(<span class="kw">$result</span>) == <span class="num">0</span>) {
+    <span class="kw">echo</span> <span class="str">"The table is empty. No records found.&lt;br&gt;"</span>;
+} <span class="kw">else</span> {
+    <span class="kw">echo</span> <span class="str">"Table has "</span> . <span class="kw">mysqli_num_rows</span>(<span class="kw">$result</span>) . <span class="str">" record(s).&lt;br&gt;&lt;br&gt;"</span>;
+
+    <span class="cmt">// Print all rows</span>
+    <span class="kw">echo</span> <span class="str">"Records:&lt;br&gt;"</span>;
+    <span class="kw">while</span> (<span class="kw">$row</span> = <span class="kw">mysqli_fetch_assoc</span>(<span class="kw">$result</span>)) {
+        <span class="kw">echo</span> <span class="str">"Enrolment: "</span> . <span class="kw">$row</span>[<span class="str">"EnrolmentNo"</span>] . <span class="str">", "</span>;
+        <span class="kw">echo</span> <span class="str">"Name: "</span> . <span class="kw">$row</span>[<span class="str">"Name"</span>] . <span class="str">", "</span>;
+        <span class="kw">echo</span> <span class="str">"Email: "</span> . <span class="kw">$row</span>[<span class="str">"Email"</span>] . <span class="str">"&lt;br&gt;"</span>;
+    }
+}
+
+<span class="kw">mysqli_close</span>(<span class="kw">$conn</span>);</pre>
+                <div class="output-label">Output (if table has records)</div>
+                <div class="output-block">Table has 3 record(s).<br><br>Records:<br>Enrolment: EN001, Name: Rahul Sharma, Email: rahul@test.com<br>Enrolment: EN002, Name: Priya Patel, Email: priya@test.com<br>Enrolment: EN003, Name: Amit Singh, Email: amit@test.com</div>
+                <div class="output-label">Output (if table is empty)</div>
+                <div class="output-block">The table is empty. No records found.</div>
+            </div>
+        </article>
+
+        <!-- Q34 -->
+        <article class="q-card" id="q34">
+            <div class="q-number">Question 34</div>
+            <div class="q-title">Write a PHP script to create a student table and insert at least 5 records in it.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <div class="code-label">PHP Code</div>
+                <pre><span class="cmt">// Connect to database</span>
+<span class="kw">$conn</span> = <span class="kw">mysqli_connect</span>(<span class="str">"localhost"</span>, <span class="str">"root"</span>, <span class="str">""</span>, <span class="str">"college_db"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Connection failed"</span>);
+
+<span class="cmt">// Create table</span>
+<span class="kw">$createTable</span> = <span class="str">"CREATE TABLE IF NOT EXISTS students (
+    EnrolmentNo VARCHAR(20) PRIMARY KEY,
+    Username VARCHAR(50) NOT NULL,
+    Name VARCHAR(100) NOT NULL,
+    Email VARCHAR(100),
+    PhoneNo VARCHAR(15),
+    Gender VARCHAR(10),
+    Country VARCHAR(50)
+)"</span>;
+<span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$createTable</span>);
+<span class="kw">echo</span> <span class="str">"Table 'students' created successfully!&lt;br&gt;&lt;br&gt;"</span>;
+
+<span class="cmt">// Insert 5 records</span>
+<span class="kw">$records</span> = [
+    [<span class="str">"EN001"</span>, <span class="str">"rahul_s"</span>, <span class="str">"Rahul Sharma"</span>, <span class="str">"rahul@test.com"</span>, <span class="str">"9876543210"</span>, <span class="str">"Male"</span>, <span class="str">"India"</span>],
+    [<span class="str">"EN002"</span>, <span class="str">"priya_p"</span>, <span class="str">"Priya Patel"</span>, <span class="str">"priya@test.com"</span>, <span class="str">"9876543211"</span>, <span class="str">"Female"</span>, <span class="str">"India"</span>],
+    [<span class="str">"EN003"</span>, <span class="str">"amit_k"</span>, <span class="str">"Amit Kumar"</span>, <span class="str">"amit@test.com"</span>, <span class="str">"9876543212"</span>, <span class="str">"Male"</span>, <span class="str">"Nepal"</span>],
+    [<span class="str">"EN004"</span>, <span class="str">"sneha_g"</span>, <span class="str">"Sneha Gupta"</span>, <span class="str">"sneha@test.com"</span>, <span class="str">"9876543213"</span>, <span class="str">"Female"</span>, <span class="str">"India"</span>],
+    [<span class="str">"EN005"</span>, <span class="str">"vikram_d"</span>, <span class="str">"Vikram Das"</span>, <span class="str">"vikram@test.com"</span>, <span class="str">"9876543214"</span>, <span class="str">"Male"</span>, <span class="str">"Bangladesh"</span>]
+];
+
+<span class="kw">foreach</span> (<span class="kw">$records</span> <span class="kw">as</span> <span class="kw">$rec</span>) {
+    <span class="kw">$sql</span> = <span class="str">"INSERT INTO students VALUES ('$rec[0]', '$rec[1]', '$rec[2]', '$rec[3]', '$rec[4]', '$rec[5]', '$rec[6]')"</span>;
+    <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$sql</span>);
+}
+<span class="kw">echo</span> <span class="str">"5 records inserted successfully!&lt;br&gt;"</span>;
+
+<span class="cmt">// Display inserted records</span>
+<span class="kw">$result</span> = <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"SELECT * FROM students"</span>);
+<span class="kw">echo</span> <span class="str">"&lt;br&gt;All Records:&lt;br&gt;"</span>;
+<span class="kw">while</span> (<span class="kw">$row</span> = <span class="kw">mysqli_fetch_assoc</span>(<span class="kw">$result</span>)) {
+    <span class="kw">echo</span> <span class="kw">$row</span>[<span class="str">"EnrolmentNo"</span>] . <span class="str">" - "</span> . <span class="kw">$row</span>[<span class="str">"Name"</span>] . <span class="str">" - "</span> . <span class="kw">$row</span>[<span class="str">"Email"</span>] . <span class="str">"&lt;br&gt;"</span>;
+}
+
+<span class="kw">mysqli_close</span>(<span class="kw">$conn</span>);</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">Table 'students' created successfully!<br>5 records inserted successfully!<br><br>All Records:<br>EN001 - Rahul Sharma - rahul@test.com<br>EN002 - Priya Patel - priya@test.com<br>EN003 - Amit Kumar - amit@test.com<br>EN004 - Sneha Gupta - sneha@test.com<br>EN005 - Vikram Das - vikram@test.com</div>
+            </div>
+        </article>
+
+        <!-- Q35 -->
+        <article class="q-card" id="q35">
+            <div class="q-number">Question 35</div>
+            <div class="q-title">Create a Student database with the following fields using MySQL queries and perform any 5 basic queries on the table. Name, Reg No, Course, College, Grade.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <div class="code-label">PHP Code — Create Table &amp; 5 Queries</div>
+                <pre><span class="cmt">// Connect</span>
+<span class="kw">$conn</span> = <span class="kw">mysqli_connect</span>(<span class="str">"localhost"</span>, <span class="str">"root"</span>, <span class="str">""</span>, <span class="str">"college_db"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Connection failed"</span>);
+
+<span class="cmt">// Create table</span>
+<span class="kw">$sql</span> = <span class="str">"CREATE TABLE IF NOT EXISTS student_records (
+    RegNo VARCHAR(20) PRIMARY KEY,
+    Name VARCHAR(100) NOT NULL,
+    Course VARCHAR(50),
+    College VARCHAR(100),
+    Grade VARCHAR(5)
+)"</span>;
+<span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$sql</span>);
+
+<span class="cmt">// Insert some records (for demo)</span>
+<span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"INSERT INTO student_records VALUES
+    ('REG001','Rahul','BCA','ABC College','A'),
+    ('REG002','Priya','BSc','XYZ College','B+'),
+    ('REG003','Amit','BCom','ABC College','A'),
+    ('REG004','Sneha','BCA','PQR College','C')"</span>);
+
+<span class="kw">echo</span> <span class="str">"--- Query 1: SELECT all records ---&lt;br&gt;"</span>;
+<span class="kw">$r</span> = <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"SELECT * FROM student_records"</span>);
+<span class="kw">while</span> (<span class="kw">$row</span> = <span class="kw">mysqli_fetch_assoc</span>(<span class="kw">$r</span>)) { <span class="kw">echo</span> <span class="kw">$row</span>[<span class="str">"Name"</span>].<span class="str">" "</span>; }
+
+<span class="kw">echo</span> <span class="str">"&lt;br&gt;--- Query 2: WHERE clause ---&lt;br&gt;"</span>;
+<span class="kw">$r</span> = <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"SELECT * FROM student_records WHERE Grade='A'"</span>);
+<span class="kw">while</span> (<span class="kw">$row</span> = <span class="kw">mysqli_fetch_assoc</span>(<span class="kw">$r</span>)) { <span class="kw">echo</span> <span class="kw">$row</span>[<span class="str">"Name"</span>].<span class="str">" "</span>; }
+
+<span class="kw">echo</span> <span class="str">"&lt;br&gt;--- Query 3: ORDER BY ---&lt;br&gt;"</span>;
+<span class="kw">$r</span> = <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"SELECT * FROM student_records ORDER BY Name ASC"</span>);
+<span class="kw">while</span> (<span class="kw">$row</span> = <span class="kw">mysqli_fetch_assoc</span>(<span class="kw">$r</span>)) { <span class="kw">echo</span> <span class="kw">$row</span>[<span class="str">"Name"</span>].<span class="str">" "</span>; }
+
+<span class="kw">echo</span> <span class="str">"&lt;br&gt;--- Query 4: COUNT ---&lt;br&gt;"</span>;
+<span class="kw">$r</span> = <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"SELECT COUNT(*) as total FROM student_records"</span>);
+<span class="kw">$row</span> = <span class="kw">mysqli_fetch_assoc</span>(<span class="kw">$r</span>); <span class="kw">echo</span> <span class="str">"Total: "</span>.<span class="kw">$row</span>[<span class="str">"total"</span>];
+
+<span class="kw">echo</span> <span class="str">"&lt;br&gt;--- Query 5: GROUP BY ---&lt;br&gt;"</span>;
+<span class="kw">$r</span> = <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"SELECT College, COUNT(*) as cnt FROM student_records GROUP BY College"</span>);
+<span class="kw">while</span> (<span class="kw">$row</span> = <span class="kw">mysqli_fetch_assoc</span>(<span class="kw">$r</span>)) { <span class="kw">echo</span> <span class="kw">$row</span>[<span class="str">"College"</span>].<span class="str">": "</span>.<span class="kw">$row</span>[<span class="str">"cnt"</span>].<span class="str">" "</span>; }
+
+<span class="kw">mysqli_close</span>(<span class="kw">$conn</span>);</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">--- Query 1: SELECT all records ---<br>Rahul Priya Amit Sneha<br>--- Query 2: WHERE clause ---<br>Rahul Amit<br>--- Query 3: ORDER BY ---<br>Amit Priya Rahul Sneha<br>--- Query 4: COUNT ---<br>Total: 4<br>--- Query 5: GROUP BY ---<br>ABC College: 2 XYZ College: 1 PQR College: 1</div>
+            </div>
+        </article>
+
+        <!-- Q36 -->
+        <article class="q-card" id="q36">
+            <div class="q-number">Question 36</div>
+            <div class="q-title">Write a PHP program to connect to a database and check if a username-password combination is correct. Show a welcome message or redirect to login upon error.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <div class="code-label">PHP Code (login_check.php)</div>
+                <pre><span class="kw">session_start</span>();
+
+<span class="cmt">// Connect to database</span>
+<span class="kw">$conn</span> = <span class="kw">mysqli_connect</span>(<span class="str">"localhost"</span>, <span class="str">"root"</span>, <span class="str">""</span>, <span class="str">"college_db"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Connection failed"</span>);
+
+<span class="cmt">// Get form data</span>
+<span class="kw">$username</span> = <span class="kw">mysqli_real_escape_string</span>(<span class="kw">$conn</span>, <span class="kw">$_POST</span>[<span class="str">"username"</span>]);
+<span class="kw">$password</span> = <span class="kw">$_POST</span>[<span class="str">"password"</span>]; <span class="cmt">// In real apps, use password_hash()</span>
+
+<span class="cmt">// Query to check username-password</span>
+<span class="kw">$sql</span> = <span class="str">"SELECT * FROM users WHERE username='$username' AND password='$password'"</span>;
+<span class="kw">$result</span> = <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$sql</span>);
+
+<span class="kw">if</span> (<span class="kw">mysqli_num_rows</span>(<span class="kw">$result</span>) == <span class="num">1</span>) {
+    <span class="cmt">// Login successful</span>
+    <span class="kw">$_SESSION</span>[<span class="str">"user"</span>] = <span class="kw">$username</span>;
+    <span class="kw">$row</span> = <span class="kw">mysqli_fetch_assoc</span>(<span class="kw">$result</span>);
+    <span class="kw">echo</span> <span class="str">"Welcome, "</span> . <span class="kw">$row</span>[<span class="str">"fullname"</span>] . <span class="str">"! You are logged in.&lt;br&gt;"</span>;
+    <span class="kw">echo</span> <span class="str">"&lt;a href='dashboard.php'&gt;Go to Dashboard&lt;/a&gt;"</span>;
+} <span class="kw">else</span> {
+    <span class="cmt">// Login failed - redirect to login page</span>
+    <span class="kw">header</span>(<span class="str">"Location: login.php?error=Invalid credentials"</span>);
+    <span class="kw">exit</span>();
+}
+
+<span class="kw">mysqli_close</span>(<span class="kw">$conn</span>);</pre>
+                <div class="output-label">Output (successful login)</div>
+                <div class="output-block">Welcome, Rahul Sharma! You are logged in.<br>Go to Dashboard</div>
+                <div class="output-label">Output (failed login)</div>
+                <div class="output-block">(Redirects to login.php with error message in URL)</div>
+                <div class="answer-note">Always use <code>mysqli_real_escape_string()</code> or prepared statements to prevent SQL injection. In production, never store plain-text passwords—use <code>password_hash()</code> and <code>password_verify()</code>.</div>
+            </div>
+        </article>
+
+        <!-- Q37 -->
+        <article class="q-card" id="q37">
+            <div class="q-number">Question 37</div>
+            <div class="q-title">Create an HTML form taking username and password. On login, redirect to an index page with student records. Write insert, edit, and delete queries on the records table and execute them with PHP.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <p>This combines a login system with full CRUD operations on a student records table. After successful login, the user is redirected to an index page where they can view, insert, edit, and delete student records.</p>
+                <div class="code-label">Login Form (login.html) + Processing + CRUD</div>
+                <pre><span class="cmt">// --- login.php (processes login) ---</span>
+<span class="kw">session_start</span>();
+<span class="kw">$conn</span> = <span class="kw">mysqli_connect</span>(<span class="str">"localhost"</span>, <span class="str">"root"</span>, <span class="str">""</span>, <span class="str">"college_db"</span>);
+<span class="kw">$u</span> = <span class="kw">mysqli_real_escape_string</span>(<span class="kw">$conn</span>, <span class="kw">$_POST</span>[<span class="str">"username"</span>]);
+<span class="kw">$p</span> = <span class="kw">$_POST</span>[<span class="str">"password"</span>];
+<span class="kw">$r</span> = <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"SELECT * FROM users WHERE username='$u' AND password='$p'"</span>);
+<span class="kw">if</span> (<span class="kw">mysqli_num_rows</span>(<span class="kw">$r</span>) == <span class="num">1</span>) {
+    <span class="kw">$_SESSION</span>[<span class="str">"user"</span>] = <span class="kw">$u</span>;
+    <span class="kw">header</span>(<span class="str">"Location: index.php"</span>);
+} <span class="kw">else</span> { <span class="kw">header</span>(<span class="str">"Location: login.html?error=1"</span>); }
+
+<span class="cmt">// --- index.php (displays records + CRUD) ---</span>
+<span class="kw">session_start</span>();
+<span class="kw">if</span> (!<span class="kw">isset</span>(<span class="kw">$_SESSION</span>[<span class="str">"user"</span>])) { <span class="kw">header</span>(<span class="str">"Location: login.html"</span>); <span class="kw">exit</span>(); }
+<span class="kw">$conn</span> = <span class="kw">mysqli_connect</span>(<span class="str">"localhost"</span>, <span class="str">"root"</span>, <span class="str">""</span>, <span class="str">"college_db"</span>);
+
+<span class="cmt">// INSERT</span>
+<span class="kw">if</span> (<span class="kw">isset</span>(<span class="kw">$_POST</span>[<span class="str">"insert"</span>])) {
+    <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"INSERT INTO students VALUES ('{$_POST['eno']}','{$_POST['name']}','{$_POST['email']}')"</span>);
+}
+<span class="cmt">// EDIT</span>
+<span class="kw">if</span> (<span class="kw">isset</span>(<span class="kw">$_POST</span>[<span class="str">"edit"</span>])) {
+    <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"UPDATE students SET Name='{$_POST['name']}', Email='{$_POST['email']}' WHERE EnrolmentNo='{$_POST['eno']}'"</span>);
+}
+<span class="cmt">// DELETE</span>
+<span class="kw">if</span> (<span class="kw">isset</span>(<span class="kw">$_GET</span>[<span class="str">"delete"</span>])) {
+    <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"DELETE FROM students WHERE EnrolmentNo='{$_GET['delete']}'"</span>);
+}
+
+<span class="cmt">// Display all records</span>
+<span class="kw">$result</span> = <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"SELECT * FROM students"</span>);
+<span class="kw">echo</span> <span class="str">"Welcome, "</span> . <span class="kw">$_SESSION</span>[<span class="str">"user"</span>] . <span class="str">"! &lt;a href='logout.php'&gt;Logout&lt;/a&gt;&lt;br&gt;&lt;br&gt;"</span>;
+<span class="kw">while</span> (<span class="kw">$row</span> = <span class="kw">mysqli_fetch_assoc</span>(<span class="kw">$result</span>)) {
+    <span class="kw">echo</span> <span class="kw">$row</span>[<span class="str">"EnrolmentNo"</span>] . <span class="str">" - "</span> . <span class="kw">$row</span>[<span class="str">"Name"</span>];
+    <span class="kw">echo</span> <span class="str">" &lt;a href='?delete="</span> . <span class="kw">$row</span>[<span class="str">"EnrolmentNo"</span>] . <span class="str">"'&gt;Delete&lt;/a&gt;&lt;br&gt;"</span>;
+}
+<span class="kw">mysqli_close</span>(<span class="kw">$conn</span>);</pre>
+                <div class="answer-note">This is a simplified CRUD system. In production, use prepared statements and proper password hashing. The index page shows all records with delete links, while insert/edit forms appear on the same page.</div>
+            </div>
+        </article>
+
+        <!-- Q38 -->
+        <article class="q-card" id="q38">
+            <div class="q-number">Question 38</div>
+            <div class="q-title">How can we retrieve the data in the result set of MySQL using PHP?</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <p>PHP provides several functions to fetch data from a MySQL result set. After executing a SELECT query with <code>mysqli_query()</code>, the returned result object can be iterated using different fetch functions:</p>
+                <ul>
+                    <li><strong>mysqli_fetch_assoc():</strong> Returns each row as an associative array where column names are the keys. This is the most commonly used method.</li>
+                    <li><strong>mysqli_fetch_row():</strong> Returns each row as a numeric (indexed) array. Column order matters, not names.</li>
+                    <li><strong>mysqli_fetch_array():</strong> Returns each row as both associative and numeric array. More memory-intensive.</li>
+                    <li><strong>mysqli_fetch_all():</strong> Fetches all rows at once into a multi-dimensional array (requires MYSQLI_ASSOC or MYSQLI_NUM parameter).</li>
+                    <li><strong>mysqli_fetch_object():</strong> Returns each row as an object where column names become properties.</li>
+                </ul>
+                <div class="code-label">PHP Code — All Fetch Methods</div>
+                <pre><span class="kw">$conn</span> = <span class="kw">mysqli_connect</span>(<span class="str">"localhost"</span>, <span class="str">"root"</span>, <span class="str">""</span>, <span class="str">"college_db"</span>);
+<span class="kw">$sql</span> = <span class="str">"SELECT EnrolmentNo, Name FROM students LIMIT 3"</span>;
+<span class="kw">$result</span> = <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$sql</span>);
+
+<span class="cmt">// Method 1: Associative array</span>
+<span class="kw">echo</span> <span class="str">"--- fetch_assoc ---&lt;br&gt;"</span>;
+<span class="kw">while</span> (<span class="kw">$row</span> = <span class="kw">mysqli_fetch_assoc</span>(<span class="kw">$result</span>)) {
+    <span class="kw">echo</span> <span class="kw">$row</span>[<span class="str">"EnrolmentNo"</span>] . <span class="str">": "</span> . <span class="kw">$row</span>[<span class="str">"Name"</span>] . <span class="str">"&lt;br&gt;"</span>;
+}
+
+<span class="cmt">// Reset pointer and use fetch_row</span>
+<span class="kw">mysqli_data_seek</span>(<span class="kw">$result</span>, <span class="num">0</span>);
+<span class="kw">echo</span> <span class="str">"--- fetch_row ---&lt;br&gt;"</span>;
+<span class="kw">while</span> (<span class="kw">$row</span> = <span class="kw">mysqli_fetch_row</span>(<span class="kw">$result</span>)) {
+    <span class="kw">echo</span> <span class="kw">$row</span>[<span class="num">0</span>] . <span class="str">": "</span> . <span class="kw">$row</span>[<span class="num">1</span>] . <span class="str">"&lt;br&gt;"</span>;
+}
+
+<span class="kw">mysqli_close</span>(<span class="kw">$conn</span>);</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">--- fetch_assoc ---<br>EN001: Rahul Sharma<br>EN002: Priya Patel<br>EN003: Amit Kumar<br>--- fetch_row ---<br>EN001: Rahul Sharma<br>EN002: Priya Patel<br>EN003: Amit Kumar</div>
+                <p>The <code>mysqli_fetch_assoc()</code> method is preferred because it makes code more readable—you can see exactly which column you're accessing by its name rather than remembering numeric positions.</p>
+            </div>
+        </article>
+
+        <!-- Q39 -->
+        <article class="q-card" id="q39">
+            <div class="q-number">Question 39</div>
+            <div class="q-title">Write a PHP program to upload a registration form into a database and display the registration form from the database.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <div class="code-label">PHP Code — Registration &amp; Display</div>
+                <pre><span class="cmt">// Connect to database</span>
+<span class="kw">$conn</span> = <span class="kw">mysqli_connect</span>(<span class="str">"localhost"</span>, <span class="str">"root"</span>, <span class="str">""</span>, <span class="str">"college_db"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Connection failed"</span>);
+
+<span class="cmt">// Create registrations table if not exists</span>
+<span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"CREATE TABLE IF NOT EXISTS registrations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    fullname VARCHAR(100),
+    email VARCHAR(100),
+    phone VARCHAR(15),
+    course VARCHAR(50),
+    reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)"</span>);
+
+<span class="cmt">// Process form submission (INSERT)</span>
+<span class="kw">if</span> (<span class="kw">$_SERVER</span>[<span class="str">"REQUEST_METHOD"</span>] == <span class="str">"POST"</span>) {
+    <span class="kw">$name</span> = <span class="kw">mysqli_real_escape_string</span>(<span class="kw">$conn</span>, <span class="kw">$_POST</span>[<span class="str">"fullname"</span>]);
+    <span class="kw">$email</span> = <span class="kw">mysqli_real_escape_string</span>(<span class="kw">$conn</span>, <span class="kw">$_POST</span>[<span class="str">"email"</span>]);
+    <span class="kw">$phone</span> = <span class="kw">mysqli_real_escape_string</span>(<span class="kw">$conn</span>, <span class="kw">$_POST</span>[<span class="str">"phone"</span>]);
+    <span class="kw">$course</span> = <span class="kw">mysqli_real_escape_string</span>(<span class="kw">$conn</span>, <span class="kw">$_POST</span>[<span class="str">"course"</span>]);
+
+    <span class="kw">$sql</span> = <span class="str">"INSERT INTO registrations (fullname, email, phone, course)
+            VALUES ('$name', '$email', '$phone', '$course')"</span>;
+    <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$sql</span>);
+    <span class="kw">echo</span> <span class="str">"Registration successful!&lt;br&gt;&lt;br&gt;"</span>;
+}
+
+<span class="cmt">// Display all registrations from database</span>
+<span class="kw">echo</span> <span class="str">"&lt;h3&gt;Registered Students:&lt;/h3&gt;"</span>;
+<span class="kw">$result</span> = <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"SELECT * FROM registrations ORDER BY reg_date DESC"</span>);
+<span class="kw">if</span> (<span class="kw">mysqli_num_rows</span>(<span class="kw">$result</span>) > <span class="num">0</span>) {
+    <span class="kw">while</span> (<span class="kw">$row</span> = <span class="kw">mysqli_fetch_assoc</span>(<span class="kw">$result</span>)) {
+        <span class="kw">echo</span> <span class="str">"ID: "</span> . <span class="kw">$row</span>[<span class="str">"id"</span>] . <span class="str">" | "</span>;
+        <span class="kw">echo</span> <span class="str">"Name: "</span> . <span class="kw">$row</span>[<span class="str">"fullname"</span>] . <span class="str">" | "</span>;
+        <span class="kw">echo</span> <span class="str">"Email: "</span> . <span class="kw">$row</span>[<span class="str">"email"</span>] . <span class="str">" | "</span>;
+        <span class="kw">echo</span> <span class="str">"Course: "</span> . <span class="kw">$row</span>[<span class="str">"course"</span>] . <span class="str">"&lt;br&gt;"</span>;
+    }
+} <span class="kw">else</span> {
+    <span class="kw">echo</span> <span class="str">"No registrations found."</span>;
+}
+<span class="kw">mysqli_close</span>(<span class="kw">$conn</span>);</pre>
+                <div class="output-label">Output</div>
+                <div class="output-block">Registration successful!<br><br>Registered Students:<br>ID: 1 | Name: Rahul Sharma | Email: rahul@test.com | Course: BCA<br>ID: 2 | Name: Priya Patel | Email: priya@test.com | Course: BSc</div>
+                <p>The HTML form (not shown above for brevity) would have inputs for fullname, email, phone, and course, submitting via POST to this same PHP script. The script handles both inserting new registrations and displaying existing ones.</p>
+            </div>
+        </article>
+
+        <!-- Q40 -->
+        <article class="q-card" id="q40">
+            <div class="q-number">Question 40</div>
+            <div class="q-title">What is Cross-Site Scripting (XSS)? Explain the different types of XSS attacks (Stored, Reflected, and DOM-based) with examples. Write a PHP program that includes a form and safely displays submitted user input. Use htmlspecialchars() and $_SERVER['PHP_SELF'] to demonstrate XSS prevention.</div>
+            <div class="answer">
+                <span class="answer-label">Answer</span>
+                <h3>What is XSS?</h3>
+                <p>Cross-Site Scripting (XSS) is a security vulnerability that allows attackers to inject malicious scripts into web pages viewed by other users. The injected script runs in the victim's browser and can steal cookies, session tokens, redirect users to malicious sites, or deface websites. XSS occurs when user input is displayed on a page without proper sanitization or escaping.</p>
+                <h3>Types of XSS</h3>
+                <p><strong>1. Stored XSS (Persistent):</strong> The malicious script is permanently stored on the target server—in a database, comment field, forum post, or user profile. When other users view the stored content, the script executes in their browsers. Example: An attacker posts a comment containing <code>&lt;script&gt;alert('XSS')&lt;/script&gt;</code> on a blog. Every visitor who views that comment triggers the script.</p>
+                <p><strong>2. Reflected XSS (Non-Persistent):</strong> The malicious script is reflected off the web server in an immediate response, usually via a URL parameter or form submission. The attacker sends a crafted link to the victim, and when clicked, the server echoes the script back in the response. Example: A search page that displays the search term in the results without sanitizing—<code>search.php?q=&lt;script&gt;alert('XSS')&lt;/script&gt;</code>.</p>
+                <p><strong>3. DOM-based XSS:</strong> The vulnerability exists in client-side JavaScript rather than server-side code. The malicious payload manipulates the Document Object Model (DOM) directly in the browser. The server never sees or processes the attack. Example: JavaScript that reads <code>window.location.hash</code> and writes it to <code>innerHTML</code> without sanitization.</p>
+
+                <h3>Prevention</h3>
+                <p><code>htmlspecialchars()</code> converts special HTML characters (<code>&lt;</code>, <code>&gt;</code>, <code>&amp;</code>, <code>"</code>, <code>'</code>) into their safe entity equivalents, preventing scripts from executing. Using <code>$_SERVER['PHP_SELF']</code> carefully (with <code>htmlspecialchars()</code>) prevents XSS in form action attributes.</p>
+                <div class="code-label">PHP Code — Safe Form with XSS Prevention</div>
+                <pre><span class="cmt">// Get and sanitize user input</span>
+<span class="kw">$name</span> = <span class="str">""</span>;
+<span class="kw">if</span> (<span class="kw">$_SERVER</span>[<span class="str">"REQUEST_METHOD"</span>] == <span class="str">"POST"</span>) {
+    <span class="kw">$name</span> = <span class="kw">htmlspecialchars</span>(<span class="kw">$_POST</span>[<span class="str">"username"</span>], <span class="kw">ENT_QUOTES</span>, <span class="str">"UTF-8"</span>);
+}
+
+<span class="cmt">// Safe form action using htmlspecialchars on PHP_SELF</span>
+<span class="kw">$formAction</span> = <span class="kw">htmlspecialchars</span>(<span class="kw">$_SERVER</span>[<span class="str">"PHP_SELF"</span>], <span class="kw">ENT_QUOTES</span>, <span class="str">"UTF-8"</span>);
+<span class="kw">echo</span> <span class="str">'&lt;form method="post" action="'</span> . <span class="kw">$formAction</span> . <span class="str">'"&gt;'</span>;
+<span class="kw">echo</span> <span class="str">'Name: &lt;input type="text" name="username"&gt;'</span>;
+<span class="kw">echo</span> <span class="str">'&lt;button type="submit"&gt;Submit&lt;/button&gt;'</span>;
+<span class="kw">echo</span> <span class="str">'&lt;/form&gt;'</span>;
+
+<span class="cmt">// Safely display user input</span>
+<span class="kw">if</span> (!<span class="kw">empty</span>(<span class="kw">$name</span>)) {
+    <span class="kw">echo</span> <span class="str">"Hello, "</span> . <span class="kw">$name</span> . <span class="str">"! Your input was safely displayed."</span>;
+}</pre>
+                <div class="output-label">Output (with safe display)</div>
+                <div class="output-block">Hello, Rahul! Your input was safely displayed.</div>
+                <p>If someone enters <code>&lt;script&gt;alert('hack')&lt;/script&gt;</code> as their name, <code>htmlspecialchars()</code> converts it to <code>&amp;lt;script&amp;gt;alert('hack')&amp;lt;/script&amp;gt;</code>, which displays as plain text rather than executing as JavaScript.</p>
+            </div>
+        </article>
+
+        <!-- ==================== SECTION F: FORM HANDLING ==================== -->
+        <div class="section-divider"><h2>Section F &mdash; Form Handling &amp; Validation</h2></div>
+
+        <!-- Q41 -->
+        <article class="q-card" id="q41">
+            <div class="q-number">Question 41</div>
+            <div class="q-title">Write a PHP program to accept values from a form (name, residential address, email, mobile). Apply server-side validations on it and insert the data into an appropriate table or show an error.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <div class="code-label">PHP Code — Form with Server-Side Validation</div>
+                <pre><span class="cmt">// Database connection</span>
+<span class="kw">$conn</span> = <span class="kw">mysqli_connect</span>(<span class="str">"localhost"</span>, <span class="str">"root"</span>, <span class="str">""</span>, <span class="str">"college_db"</span>) <span class="kw">or</span> <span class="kw">die</span>(<span class="str">"Connection failed"</span>);
+
+<span class="cmt">// Create table if not exists</span>
+<span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"CREATE TABLE IF NOT EXISTS contacts (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    address TEXT NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    mobile VARCHAR(15) NOT NULL
+)"</span>);
+
+<span class="kw">$errors</span> = [];
+<span class="kw">$success</span> = <span class="str">""</span>;
+
+<span class="kw">if</span> (<span class="kw">$_SERVER</span>[<span class="str">"REQUEST_METHOD"</span>] == <span class="str">"POST"</span>) {
+    <span class="cmt">// Get form values</span>
+    <span class="kw">$name</span> = <span class="kw">trim</span>(<span class="kw">$_POST</span>[<span class="str">"name"</span>]);
+    <span class="kw">$address</span> = <span class="kw">trim</span>(<span class="kw">$_POST</span>[<span class="str">"address"</span>]);
+    <span class="kw">$email</span> = <span class="kw">trim</span>(<span class="kw">$_POST</span>[<span class="str">"email"</span>]);
+    <span class="kw">$mobile</span> = <span class="kw">trim</span>(<span class="kw">$_POST</span>[<span class="str">"mobile"</span>]);
+
+    <span class="cmt">// Validation: Name (required, min 3 chars)</span>
+    <span class="kw">if</span> (<span class="kw">empty</span>(<span class="kw">$name</span>) || <span class="kw">strlen</span>(<span class="kw">$name</span>) < <span class="num">3</span>) {
+        <span class="kw">$errors</span>[] = <span class="str">"Name must be at least 3 characters long."</span>;
+    }
+
+    <span class="cmt">// Validation: Address (required, min 10 chars)</span>
+    <span class="kw">if</span> (<span class="kw">empty</span>(<span class="kw">$address</span>) || <span class="kw">strlen</span>(<span class="kw">$address</span>) < <span class="num">10</span>) {
+        <span class="kw">$errors</span>[] = <span class="str">"Address must be at least 10 characters long."</span>;
+    }
+
+    <span class="cmt">// Validation: Email (must be valid format)</span>
+    <span class="kw">if</span> (<span class="kw">empty</span>(<span class="kw">$email</span>) || !<span class="kw">filter_var</span>(<span class="kw">$email</span>, <span class="kw">FILTER_VALIDATE_EMAIL</span>)) {
+        <span class="kw">$errors</span>[] = <span class="str">"Please enter a valid email address."</span>;
+    }
+
+    <span class="cmt">// Validation: Mobile (must be 10 digits)</span>
+    <span class="kw">if</span> (<span class="kw">empty</span>(<span class="kw">$mobile</span>) || !<span class="kw">preg_match</span>(<span class="str">"/^[0-9]{10}$/"</span>, <span class="kw">$mobile</span>)) {
+        <span class="kw">$errors</span>[] = <span class="str">"Mobile must be exactly 10 digits."</span>;
+    }
+
+    <span class="cmt">// If no errors, insert into database</span>
+    <span class="kw">if</span> (<span class="kw">empty</span>(<span class="kw">$errors</span>)) {
+        <span class="kw">$name</span> = <span class="kw">mysqli_real_escape_string</span>(<span class="kw">$conn</span>, <span class="kw">$name</span>);
+        <span class="kw">$address</span> = <span class="kw">mysqli_real_escape_string</span>(<span class="kw">$conn</span>, <span class="kw">$address</span>);
+        <span class="kw">$email</span> = <span class="kw">mysqli_real_escape_string</span>(<span class="kw">$conn</span>, <span class="kw">$email</span>);
+        <span class="kw">$mobile</span> = <span class="kw">mysqli_real_escape_string</span>(<span class="kw">$conn</span>, <span class="kw">$mobile</span>);
+
+        <span class="kw">$sql</span> = <span class="str">"INSERT INTO contacts (name, address, email, mobile)
+                VALUES ('$name', '$address', '$email', '$mobile')"</span>;
+        <span class="kw">if</span> (<span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="kw">$sql</span>)) {
+            <span class="kw">$success</span> = <span class="str">"Data inserted successfully!"</span>;
+        } <span class="kw">else</span> {
+            <span class="kw">$errors</span>[] = <span class="str">"Database error: "</span> . <span class="kw">mysqli_error</span>(<span class="kw">$conn</span>);
+        }
+    }
+}
+
+<span class="cmt">// Display errors or success</span>
+<span class="kw">if</span> (!<span class="kw">empty</span>(<span class="kw">$errors</span>)) {
+    <span class="kw">foreach</span> (<span class="kw">$errors</span> <span class="kw">as</span> <span class="kw">$err</span>) { <span class="kw">echo</span> <span class="str">"Error: $err&lt;br&gt;"</span>; }
+}
+<span class="kw">if</span> (<span class="kw">$success</span>) { <span class="kw">echo</span> <span class="kw">$success</span>; }
+<span class="kw">mysqli_close</span>(<span class="kw">$conn</span>);</pre>
+                <div class="output-label">Output (validation errors)</div>
+                <div class="output-block">Error: Name must be at least 3 characters long.<br>Error: Mobile must be exactly 10 digits.</div>
+                <div class="output-label">Output (success)</div>
+                <div class="output-block">Data inserted successfully!</div>
+                <p>The HTML form (with inputs for name, address, email, and mobile) submits to this script via POST. The script validates each field and either shows specific errors or inserts the sanitized data into the contacts table.</p>
+            </div>
+        </article>
+
+        <!-- Q42 -->
+        <article class="q-card" id="q42">
+            <div class="q-number">Question 42</div>
+            <div class="q-title">Write a program in HTML (Web-Page) having a form with firstname, lastname and a submit button. On clicking the button form validation should work (Use Javascript for that) and data entry should be saved in a database (PHP code needed). Form should be styled using CSS.</div>
+            <div class="answer">
+                <span class="answer-label">Answer &amp; Code</span>
+                <p>This combines HTML, CSS, JavaScript (client-side validation), and PHP (server-side + database insertion).</p>
+                <div class="code-label">Complete HTML + CSS + JS + PHP</div>
+                <pre><span class="cmt">&lt;!-- Save as index.php --&gt;</span>
+&lt;!DOCTYPE html&gt;
+&lt;html&gt;&lt;head&gt;
+&lt;style&gt;
+    <span class="cmt">/* CSS Styling */</span>
+    body { font-family: Georgia, serif; background: #fdf6ec; text-align: center; padding: 2rem; }
+    .form-box { background: #fffcf7; border: 1px solid #e8ddd0; border-radius: 14px;
+        padding: 2rem; max-width: 400px; margin: 0 auto; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+    input { width: 90%; padding: 0.6rem; margin: 0.5rem 0; border: 1px solid #e8ddd0;
+        border-radius: 6px; font-size: 1rem; }
+    button { background: #c45b4a; color: white; border: none; padding: 0.7rem 2rem;
+        border-radius: 6px; cursor: pointer; font-size: 1rem; margin-top: 0.8rem; }
+    .error { color: #c45b4a; font-size: 0.85rem; }
+    .success { color: #3a7a3a; font-weight: bold; }
+&lt;/style&gt;
+&lt;/head&gt;&lt;body&gt;
+
+&lt;div class="form-box"&gt;
+    &lt;h2&gt;Student Form&lt;/h2&gt;
+    &lt;form name="myForm" method="post" onsubmit="return validateForm()"&gt;
+        First Name: &lt;input type="text" name="firstname" id="fn"&gt;
+        &lt;span class="error" id="fnError"&gt;&lt;/span&gt;&lt;br&gt;
+        Last Name: &lt;input type="text" name="lastname" id="ln"&gt;
+        &lt;span class="error" id="lnError"&gt;&lt;/span&gt;&lt;br&gt;
+        &lt;button type="submit"&gt;Submit&lt;/button&gt;
+    &lt;/form&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+    <span class="cmt">// JavaScript validation</span>
+    function validateForm() {
+        var fn = document.getElementById("fn").value.trim();
+        var ln = document.getElementById("ln").value.trim();
+        var valid = true;
+        if (fn === "") { document.getElementById("fnError").innerText = "First name required"; valid = false; }
+        else { document.getElementById("fnError").innerText = ""; }
+        if (ln === "") { document.getElementById("lnError").innerText = "Last name required"; valid = false; }
+        else { document.getElementById("lnError").innerText = ""; }
+        return valid;
+    }
+&lt;/script&gt;
+
+<span class="kw">&lt;?php</span>
+<span class="cmt">// PHP code to save in database</span>
+<span class="kw">if</span> (<span class="kw">$_SERVER</span>[<span class="str">"REQUEST_METHOD"</span>] == <span class="str">"POST"</span>) {
+    <span class="kw">$conn</span> = <span class="kw">mysqli_connect</span>(<span class="str">"localhost"</span>, <span class="str">"root"</span>, <span class="str">""</span>, <span class="str">"college_db"</span>);
+    <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"CREATE TABLE IF NOT EXISTS students_names (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        firstname VARCHAR(50),
+        lastname VARCHAR(50)
+    )"</span>);
+    <span class="kw">$fn</span> = <span class="kw">mysqli_real_escape_string</span>(<span class="kw">$conn</span>, <span class="kw">$_POST</span>[<span class="str">"firstname"</span>]);
+    <span class="kw">$ln</span> = <span class="kw">mysqli_real_escape_string</span>(<span class="kw">$conn</span>, <span class="kw">$_POST</span>[<span class="str">"lastname"</span>]);
+    <span class="kw">mysqli_query</span>(<span class="kw">$conn</span>, <span class="str">"INSERT INTO students_names (firstname, lastname)
+        VALUES ('$fn', '$ln')"</span>);
+    <span class="kw">echo</span> <span class="str">"&lt;p class='success'&gt;Data saved: $fn $ln&lt;/p&gt;"</span>;
+    <span class="kw">mysqli_close</span>(<span class="kw">$conn</span>);
+}
+<span class="kw">?&gt;</span>
+&lt;/body&gt;&lt;/html&gt;</pre>
+                <div class="output-label">Output (after successful submission)</div>
+                <div class="output-block">Data saved: Rahul Sharma</div>
+                <p>The JavaScript validates that both fields are filled before the form is submitted. If validation passes, the PHP code creates the table (if needed), sanitizes the input, and inserts the data into the database.</p>
+            </div>
+        </article>
+
+        <!-- FOOTER NOTE -->
+        <div class="section-divider"><h2>End of Document</h2></div>
+        <p style="text-align:center;color:var(--text-muted);font-style:italic;padding:2rem 0;">All questions answered. Best of luck with your exams!</p>
+
+    </div><!-- .container -->
+
+    <!-- BACK TO TOP -->
+    <button class="back-top" id="backTop" title="Back to top">&#8593;</button>
+
+    <script>
+        // Back to top button
+        const backTop = document.getElementById('backTop');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 500) {
+                backTop.classList.add('visible');
+            } else {
+                backTop.classList.remove('visible');
+            }
+        });
+        backTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    </script>
+
+</body>
+</html>
